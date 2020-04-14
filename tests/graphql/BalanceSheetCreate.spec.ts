@@ -39,8 +39,7 @@ describe('Balance Sheet API', () => {
         expect(companyFacts.supplyFractions[0].countryCode).toBe('DE');
         expect(companyFacts.employeesFractions).toHaveLength(1);
         const rating: IRating = response.body.data.createBalanceSheet.rating;
-        console.log(rating);
-        expect(rating.topics).toHaveLength(1);
+        expect(rating.topics).toHaveLength(5);
         expect(rating.topics[0].shortName).toBe('A1');
         done();
     })
