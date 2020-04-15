@@ -9,28 +9,78 @@ export class StakeholderWeightCalculator {
     constructor(private companyFacts: ICompanyFacts) {
     }
 
-    public calcStakeholderWeight(stakeholderName: string): number {
-        switch (stakeholderName) {
-            case 'A':
-                console.log("It is a Sunday.");
-                break;
-            case 'B':
-                console.log("It is a Monday.");
-                break;
-            case 'C':
-                console.log("It is a Tuesday.");
-                break;
-            case 'D':
-                console.log("It is a Wednesday.");
-                break;
-            case 'E':
-                console.log("It is a Thursday.");
-                break;
-            default:
-                console.log("No such day exists!");
-                break;
+    public async calcStakeholderWeight(stakeholderName: string): Promise<number> {
+        try {
+            let weight: number = 1;
+            switch (stakeholderName) {
+                case 'A':
+                    weight = await this.calculateSupplierWeightFromCompanyFacts();
+                    break;
+                case 'B':
+                    weight = await this.calculateFinancialWeightFromCompanyFacts();
+                    break;
+                case 'C':
+                    weight = await this.calculateEmployeeWeightFromCompanyFacts();
+                    break;
+                case 'D':
+                    weight = await this.calculateCustomerWeightFromCompanyFacts();
+                    break;
+                case 'E':
+                    weight = await this.calculateSocialEnvironmentlWeightFromCompanyFacts();
+                    break;
+                default:
+                    weight = 1;
+                    break;
+            }
+            return weight;
+        } catch (e) {
+            return 1;
         }
-        return 4;
+    }
+
+    // A
+    public async calculateSupplierWeightFromCompanyFacts(): Promise<number> {
+        const supplierAndEmployeesRiskRation = await this.calculateSupplierAndEmployeesRiskRatio();
+        return this.mapToWeight(this.mapToValueBetween60And300(supplierAndEmployeesRiskRation));
+    }
+
+    // B
+    public async calculateFinancialWeightFromCompanyFacts(): Promise<number> {
+        const financialRisk = await this.calculateFinancialRisk();
+        return this.mapToWeight(this.mapToValueBetween60And300(financialRisk));
+    }
+
+    // C
+    public async calculateEmployeeWeightFromCompanyFacts(): Promise<number> {
+        const employeesRisk = await this.calculateEmployeesRisk();
+        return this.mapToWeight(this.mapToValueBetween60And300(employeesRisk));
+    }
+
+    // D
+    public async calculateCustomerWeightFromCompanyFacts(): Promise<number> {
+        return 1.0;
+    }
+
+    // E
+    public async calculateSocialEnvironmentlWeightFromCompanyFacts(): Promise<number> {
+        return 1.0;
+    }
+
+    public mapToWeight(normedSupplierAndEmployeesRiskRatio: number) {
+        if (normedSupplierAndEmployeesRiskRatio === 60) {
+            return 0.5;
+        } else if (normedSupplierAndEmployeesRiskRatio === 300) {
+            return 2;
+        } else if (normedSupplierAndEmployeesRiskRatio < 180) {
+            return 1;
+        } else {
+            return 1.5;
+        }
+    }
+
+    public mapToValueBetween60And300(supplierAndEmployeesRiskRatio: number): number {
+        return supplierAndEmployeesRiskRatio < 60 ? 60
+            : supplierAndEmployeesRiskRatio > 300 ? 300 : supplierAndEmployeesRiskRatio;
     }
 
     // =WENNFEHLER((60*$'11.Region'.G10/($'11.Region'.G3+$'11.Region'.G10+(I19+I21+I22+G24))*10);100)
