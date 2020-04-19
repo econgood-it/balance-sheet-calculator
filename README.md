@@ -6,9 +6,12 @@ which contains all the calculations. Our application focuses on the calculation 
 The aim is to provide an application programming interface (API) which takes over
 the calculations of the Excel file and stores the results in a database so that they
 are available for other services.
-
 # Technology used
-With an [GraphQL](https://graphql.org/) API    
+Our application uses the [nodejs JavaScript runtime](https://nodejs.org/en/).
+For type safety it is written in [typescript](https://www.typescriptlang.org/).
+The API is based upon [GraphQL](https://graphql.org/). 
+The balance sheets with their calculations results are stored in 
+[Mongo database](https://www.mongodb.com/).     
 # Local Development
 ## Run mongo database
 To run the database you can run the following command:
