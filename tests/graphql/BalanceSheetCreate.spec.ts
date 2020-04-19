@@ -44,7 +44,7 @@ describe('Balance Sheet API', () => {
         done();
     })
 
-    afterAll(async () => {
+    afterAll(async (done) => {
         try {
             // Connection to Mongo killed
             await mongoose.disconnect();
@@ -52,6 +52,7 @@ describe('Balance Sheet API', () => {
             console.log(`You did something wrong dummy!${error}`);
             throw error;
         }
+        done();
     })
 });
 

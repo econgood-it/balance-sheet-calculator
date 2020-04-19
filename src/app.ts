@@ -39,6 +39,7 @@ class App {
     private setMongoConfig() {
         mongoose.Promise = global.Promise;
         mongoose.connect(this.environment.dbUrl, {
+            useUnifiedTopology: true,
             useNewUrlParser: true,
             useFindAndModify: false
         });
