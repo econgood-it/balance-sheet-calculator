@@ -6,7 +6,7 @@ import {BasicStrategy} from "passport-http";
 import passport from "passport";
 import {Environment} from "./environment";
 import {Authentication} from "./authentication";
-import {CompanyFactsQLSchema} from "./graphql/CompanyFactsQLSchema";
+import {BalanceSheetQLSchema} from "./graphql/BalanceSheetQLSchema";
 const graphqlExpress = require("express-graphql");
 
 class App {
@@ -28,7 +28,7 @@ class App {
         this.app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
         this.app.use(cors());
         this.app.use('/balancesheets', graphqlExpress({
-            schema: CompanyFactsQLSchema,
+            schema: BalanceSheetQLSchema,
             rootValue: global,
             graphiql: true
         }));
