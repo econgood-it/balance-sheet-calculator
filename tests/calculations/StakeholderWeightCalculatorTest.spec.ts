@@ -1,11 +1,7 @@
 import {StakeholderWeightCalculator} from "../../src/calculations/StakeholderWeightCalculator";
-import Region, {IRegion} from "../../src/models/region.model";
-import SupplyFraction, {ISupplyFraction} from "../../src/models/supplyFractions.model";
-import EmployeesFraction, {IEmployeesFrations} from "../../src/models/employeesFractions.model";
-import CompanyFacts, {ICompanyFacts} from "../../src/models/companyFacts.model";
-import mongoose from "mongoose";
-import {Environment} from "../../src/environment";
-import {TestDataFactory} from "./TestData";
+import {ICompanyFacts} from "../../src/models/companyFacts.model";
+import {DatabaseHandler} from "../testData/DatabaseHandler";
+import {TestDataFactory} from "../testData/TestDataFactory";
 
 describe('Stakeholder Weight Calculator', () => {
 
@@ -13,9 +9,15 @@ describe('Stakeholder Weight Calculator', () => {
     const testDataFactory: TestDataFactory = new TestDataFactory();
 
     beforeAll(async (done) => {
+        DatabaseHandler.connectIfDisconnected();
         companyFacts = await testDataFactory.createDefaultCompanyFacts();
         done();
     });
+
+    afterAll(async (done) => {
+        await DatabaseHandler.deleteAllEntriesAnddisconnect();
+        done();
+    })
 
     it('should calculate supplier and employees risk ratio', async (done) => {
         const stakeholderWeightCalculator = new StakeholderWeightCalculator(companyFacts);
@@ -62,19 +64,8 @@ describe('Stakeholder Weight Calculator', () => {
         expect(result).toBeCloseTo(1, 2);
         result = await stakeholderWeightCalculator.calcStakeholderWeight('E');
         expect(result).toBeCloseTo(1, 2);
-
         done();
     })
 
-    afterAll(async (done) => {
-        await testDataFactory.deleteDefaultRegionsFromDatabase();
-        try {
-            // Connection to Mongo killed
-            await mongoose.disconnect();
-        } catch (error) {
-            console.log(`You did something wrong dummy!${error}`);
-            throw error;
-        }
-        done();
-    })
+
 })

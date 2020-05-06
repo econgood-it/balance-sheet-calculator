@@ -4,21 +4,16 @@ import Region, {IRegion} from "../../src/models/region.model";
 import SupplyFraction, {ISupplyFraction} from "../../src/models/supplyFractions.model";
 import EmployeesFraction, {IEmployeesFrations} from "../../src/models/employeesFractions.model";
 import CompanyFacts, {ICompanyFacts} from "../../src/models/companyFacts.model";
+import BalanceSheet, {IBalanceSheet} from "../../src/models/balanceSheet.model";
+import Rating, {IRating} from "../../src/models/rating.model";
+import {RatingFactory} from "../../src/factories/RatingFactory";
 
 export class TestDataFactory {
 
-    constructor() {
-        this.connectToDatabase();
-    }
-
-    private connectToDatabase() {
-        mongoose.Promise = global.Promise;
-        const environment = new Environment();
-        mongoose.connect(environment.dbUrl, {
-            useUnifiedTopology: true,
-            useNewUrlParser: true,
-            useFindAndModify: false
-        });
+    public async createAndSaveBalanceSheet(): Promise<IBalanceSheet> {
+        const companyFacts: ICompanyFacts = await new CompanyFacts(this.createDefaultCompanyFacts()).save();
+        const rating: IRating = await new Rating(new RatingFactory().createDefaultRating()).save();
+        return await new BalanceSheet( {companyFacts: companyFacts._id, rating: rating._id}).save();
     }
 
     public async createDefaultCompanyFacts(): Promise<ICompanyFacts> {
@@ -40,11 +35,4 @@ export class TestDataFactory {
             totalStaffCosts: 2345, profit: 238, financialCosts: 473, incomeFromFinancialInvestments: 342,
             additionsToFixedAssets: 234});
     }
-
-    public async deleteDefaultRegionsFromDatabase() {
-        const countryCodes = ["ARE", "AFG"];
-        for (const c of countryCodes) {
-            await Region.findOneAndDelete({countryCode: c})
-        }
-    };
 }

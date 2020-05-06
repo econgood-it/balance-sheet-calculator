@@ -1,12 +1,17 @@
 import app from "../../src/app";
 import supertest from "supertest";
-import mongoose from "mongoose";
 import {Environment} from "../../src/environment";
 import {MutationBuilder} from "../MutationBuilder";
 import {ICompanyFacts} from "../../src/models/companyFacts.model";
 import {IRating} from "../../src/models/rating.model";
+import {DatabaseHandler} from "../testData/DatabaseHandler";
+
 
 describe('Balance Sheet API', () => {
+    afterAll(async (done) => {
+        DatabaseHandler.deleteAllEntriesAnddisconnect();
+        done();
+    })
     it('should create a new balance sheet', async (done) => {
         const testApp = supertest(app);
         const environment = new Environment();
@@ -20,7 +25,7 @@ describe('Balance Sheet API', () => {
             'totalPurchaseFromSuppliers, incomeFromFinancialInvestments,' +
             'additionsToFixedAssets, supplyFractions { countryCode, costs },' +
             'employeesFractions { countryCode, percentage } }' +
-            'rating {topics {shortName} } }}'
+            'rating {topics {shortName} } }';
         const query = new MutationBuilder().method(
             'createBalanceSheet').arguments(args).output(output).build();
         const response = await testApp.post('/balancesheets').auth(environment.username as string,
@@ -44,15 +49,5 @@ describe('Balance Sheet API', () => {
         done();
     })
 
-    afterAll(async (done) => {
-        try {
-            // Connection to Mongo killed
-            await mongoose.disconnect();
-        } catch (error) {
-            console.log(`You did something wrong dummy!${error}`);
-            throw error;
-        }
-        done();
-    })
 });
 

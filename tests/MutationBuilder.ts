@@ -20,6 +20,6 @@ export class MutationBuilder {
     }
 
     public build() {
-        return this.mutation
+        return this.mutation + "}"
     }
 }

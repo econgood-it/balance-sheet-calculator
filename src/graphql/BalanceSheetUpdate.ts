@@ -1,4 +1,4 @@
-import {GraphQLString} from "graphql";
+import {GraphQLError, GraphQLString} from "graphql";
 import BalanceSheet, {IBalanceSheet} from "../models/balanceSheet.model";
 import {BalanceSheetType} from "./BalanceSheetType";
 import {CompanyFactsInput} from "./CompanyFactsInput";
@@ -20,15 +20,21 @@ export const BalanceSheetUpdate = {
     resolve: async (root: any, args: any) => {
         let balanceSheetOpt: IBalanceSheet | null = await BalanceSheet.findById(args.id);
         if (!balanceSheetOpt) {
-            throw new Error('Cannot find and update balancesheet with id');
+            throw new Error(`Cannot find and update balancesheet with id ${args.id}`);
         }
         let balanceSheet: IBalanceSheet = balanceSheetOpt as IBalanceSheet;
-        const companyFactsUpdate: any = ArgumentParser.parse(args.companyFacts);
-        const companyFactsOpt: ICompanyFacts | null = await CompanyFacts.findByIdAndUpdate(balanceSheet.companyFacts,
-            companyFactsUpdate, {upsert: false, new: true});
+        let companyFactsOpt: ICompanyFacts | null;
+        if (args.companyFacts != null) {
+            const companyFactsUpdate: any = ArgumentParser.parse(args.companyFacts);
+            companyFactsOpt = await CompanyFacts.findByIdAndUpdate(balanceSheet.companyFacts,
+                companyFactsUpdate, {upsert: false, new: true});
+        } else {
+            companyFactsOpt = await CompanyFacts.findById(balanceSheet.companyFacts);
+        }
         if (!companyFactsOpt) {
             throw new Error('Cannot update company facts of balancesheet');
         }
+        const companyFacts: ICompanyFacts = companyFactsOpt as ICompanyFacts;
         let ratingOpt: IRating | null = await Rating.findById(balanceSheet.rating);
         if (!ratingOpt) {
             throw new Error('Cannot update rating of balancesheet');
@@ -45,9 +51,6 @@ export const BalanceSheetUpdate = {
                 }
             });
         }
-
-        const companyFacts: ICompanyFacts = companyFactsOpt as ICompanyFacts;
-
         const maxPointsCalculator: MaxPointsCalculator = new MaxPointsCalculator(companyFacts);
         await maxPointsCalculator.updateMaxPointsOfTopics(rating.topics);
         await rating.save();
