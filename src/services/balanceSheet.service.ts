@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { Topic } from "../entities/topic";
+import { Rating } from "../entities/rating";
 
 export class BalanceSheetService {
   public welcomeMessage(req: Request, res: Response) {
@@ -9,7 +9,7 @@ export class BalanceSheetService {
   //Adding a new pokemon
 
   public createBalanceSheet(req: Request, res: Response) {
-    const topic = Topic.fromJSON(req.body);
-    res.json(topic);
+    const rating = Rating.fromJSON(req.body);
+    res.json(rating);
   }
 }
