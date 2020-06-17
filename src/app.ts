@@ -1,50 +1,31 @@
 import express, { Application } from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import mongoose from 'mongoose';
-import {BasicStrategy} from "passport-http";
-import passport from "passport";
-import {Environment} from "./environment";
-import {Authentication} from "./authentication";
-import {BalanceSheetQLSchema} from "./graphql/BalanceSheetQLSchema";
-const graphqlExpress = require("express-graphql");
+import { Controller } from './main.controller';
 
 class App {
-    public app: Application;
+  public app: Application;
+  //declaring our controller
+  public balanceSheetController: Controller;
 
-    public environment: Environment;
-    private authentication: Authentication;
 
-    constructor() {
-        this.app = express();
-        this.environment = new Environment();
-        this.authentication = new Authentication();
-        this.setConfig();
-        this.setMongoConfig();
-    }
+  constructor() {
+    this.app = express();
+    this.setConfig();
+    //Creating and assigning a new instance of our controller
+    this.balanceSheetController = new Controller(this.app);
+  }
 
-    private setConfig() {
-        this.app.use(bodyParser.json({ limit: '50mb' }));
-        this.app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
-        this.app.use(cors());
-        this.app.use('/balancesheets', graphqlExpress({
-            schema: BalanceSheetQLSchema,
-            rootValue: global,
-            graphiql: true
-        }));
-        this.authentication.addBasicAuthToApplication(this.app, this.environment);
-    }
+  private setConfig() {
+    //Allows us to receive requests with data in json format
+    this.app.use(bodyParser.json({ limit: '50mb' }));
 
-    //Connecting to our MongoDB database
-    private setMongoConfig() {
-        mongoose.Promise = global.Promise;
-        mongoose.connect(this.environment.dbUrl, {
-            useUnifiedTopology: true,
-            useNewUrlParser: true,
-            useFindAndModify: false
-        });
-    }
+    //Allows us to receive requests with data in x-www-form-urlencoded format
+    this.app.use(bodyParser.urlencoded({ limit: '50mb', extended:true}));
+
+    //Enables cors   
+    this.app.use(cors());
+  }
 }
 
-const application = new App();
-export default application.app;
+export default new App().app;
