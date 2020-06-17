@@ -4,3 +4,5 @@ dist
 .idea
 .env-cmdrc.json
 coverage/
+combined.log
+error.log
