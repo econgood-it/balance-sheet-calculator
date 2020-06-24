@@ -18,6 +18,7 @@ function assertTopics(received: Topic[], expected: Topic[]) {
     }
 };
 
+
 describe('Max points calculator', () => {
     it('should calculate max points of topics', () => {
         const arabEmiratesCode = "ARE";

@@ -3,11 +3,16 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import { Controller } from './main.controller';
 import { Authentication } from './authentication';
+import "reflect-metadata";
+import { Connection } from 'typeorm';
+import { Database } from './database';
+import { Region } from './entities/region';
+
 
 class App {
   public app: Application;
   //declaring our controller
-  public balanceSheetController: Controller;
+  public controller: Controller;
   private authentication: Authentication;
 
 
@@ -17,7 +22,7 @@ class App {
     this.authentication.addBasicAuthToApplication(this.app);
     this.setConfig();
     //Creating and assigning a new instance of our controller
-    this.balanceSheetController = new Controller(this.app);
+    this.controller = new Controller(this.app);
   }
 
   private setConfig() {
