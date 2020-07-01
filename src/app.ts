@@ -3,10 +3,8 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import { Controller } from './main.controller';
 import { Authentication } from './authentication';
-import "reflect-metadata";
-import { Connection } from 'typeorm';
+import errorMiddleware from './middleware/error.middleware';
 import { Database } from './database';
-import { Region } from './entities/region';
 
 
 class App {
@@ -31,6 +29,7 @@ class App {
 
     //Allows us to receive requests with data in x-www-form-urlencoded format
     this.app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+    this.app.use(errorMiddleware);
 
     //Enables cors   
     this.app.use(cors());

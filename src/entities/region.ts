@@ -6,7 +6,7 @@ import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
 export class Region {
   @PrimaryGeneratedColumn()
   public readonly id!: number;
-  @Column()
+  @Column("double precision")
   public readonly pppIndex: number;
   @Column()
   public readonly countryCode: string;

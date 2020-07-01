@@ -1,7 +1,11 @@
 import { Region } from "../entities/region";
 import { LoggingService } from "../logging";
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { Database } from "../database";
+import { RegionReader } from "../reader/RegionReader";
+import InternalServerException from "../exceptions/InternalServerException";
+import { Repository } from "typeorm";
+import { getRepository } from "typeorm";
 
 export class RegionService {
 
@@ -16,9 +20,21 @@ export class RegionService {
         ]);
     }
 
-    public async initializeRegions(req: Request, res: Response) {
+    public async initializeRegions(req: Request, res: Response, next: NextFunction) {
+        LoggingService.info('Initialize regions');
+        const regionReader: RegionReader = new RegionReader();
+        try {
+            const regions: Region[] = await regionReader.read('./ecg-excel.xlsx');
+            for (const region of regions) {
+                await Database.getRegionRepository().save(region);
+            }
+            res.json(regions);
+        } catch (error) {
+            next(new InternalServerException(error));
+        }
 
     }
+
 
     public async createRegion(req: Request, res: Response) {
         LoggingService.info('Create region');

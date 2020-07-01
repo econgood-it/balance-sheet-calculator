@@ -16,6 +16,7 @@ export class Controller {
     this.app.route('/').get(this.balanceSheetService.welcomeMessage);
     this.app.route("/balancesheet").post(this.balanceSheetService.createBalanceSheet);
     this.app.route("/region").post(this.regionService.createRegion);
+    this.app.route("/regions/initialize").post(this.regionService.initializeRegions);
 
   }
 }

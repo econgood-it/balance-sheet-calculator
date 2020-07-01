@@ -20,6 +20,7 @@
     "@types/log4js": "^2.3.5",
     "@types/passport": "^1.0.3",
     "@types/passport-http": "^0.3.8",
+    "@types/supertest": "^2.0.10",
     "@types/winston": "^2.4.4",
     "cors": "^2.8.5",
     "env-cmd": "^10.1.0",

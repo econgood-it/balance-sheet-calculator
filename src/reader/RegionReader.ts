@@ -9,11 +9,12 @@ export class RegionReader {
         // create object for workbook
         let wb: Workbook = new Workbook();
         wb = await wb.xlsx.readFile(path);
+
         let sheet: Worksheet = wb.getWorksheet("11.Region");
 
         let regions: Region[] = [];
         // cell object
-        for (let row = 22; row <= 242; row++) {
+        for (let row = 22; row <= 237; row++) {
             let cellCountryName: Cell = sheet.getCell(row, 2);
             let cellCountryCode: Cell = sheet.getCell(row, 10);
             let cellPPPIndex: Cell = sheet.getCell(row, 3);
