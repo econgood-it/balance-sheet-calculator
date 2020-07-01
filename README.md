@@ -3,6 +3,12 @@
 sudo apt install nodejs
 sudo apt install npm
 ```
+# Update node to current version
+```
+sudo npm cache clean -f
+sudo npm install -g n
+sudo n stable
+```
 # Description
 At the moment a [ECG balance sheet](https://www.ecogood.org/en/our-work/common-good-balance-sheet/) consists of two files. One is the [common good report](https://www.ecogood.org/media/filer_public/93/5e/935e2c4e-8d87-44b3-afce-70818212bcc3/full-report-template.docx)
 and the other one is an [Excel file](https://www.ecogood.org/media/filer_public/88/3e/883e7106-2aaa-493c-af80-89bbd38c65fd/gwb-rechner_5_0_2_vollbilanz.xlsx)
