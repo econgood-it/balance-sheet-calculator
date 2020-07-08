@@ -6,29 +6,30 @@ import { Region } from "../entities/region";
 export class StakeholderWeightCalculator {
 
     private readonly defaultPPPIndex = 0.978035862587365;
-    private readonly regionService: RegionService = new RegionService();
 
-    constructor(private companyFacts: CompanyFacts) {
+
+    constructor(private companyFacts: CompanyFacts,
+        private readonly regionService: RegionService) {
     }
 
-    public calcStakeholderWeight(stakeholderName: string): number {
+    public async calcStakeholderWeight(stakeholderName: string): Promise<number> {
         try {
             let weight: number = 1;
             switch (stakeholderName) {
                 case 'A':
-                    weight = this.calculateSupplierWeightFromCompanyFacts();
+                    weight = await this.calculateSupplierWeightFromCompanyFacts();
                     break;
                 case 'B':
-                    weight = this.calculateFinancialWeightFromCompanyFacts();
+                    weight = await this.calculateFinancialWeightFromCompanyFacts();
                     break;
                 case 'C':
-                    weight = this.calculateEmployeeWeightFromCompanyFacts();
+                    weight = await this.calculateEmployeeWeightFromCompanyFacts();
                     break;
                 case 'D':
-                    weight = this.calculateCustomerWeightFromCompanyFacts();
+                    weight = await this.calculateCustomerWeightFromCompanyFacts();
                     break;
                 case 'E':
-                    weight = this.calculateSocialEnvironmentlWeightFromCompanyFacts();
+                    weight = await this.calculateSocialEnvironmentlWeightFromCompanyFacts();
                     break;
                 default:
                     weight = 1;
@@ -41,30 +42,30 @@ export class StakeholderWeightCalculator {
     }
 
     // A
-    public calculateSupplierWeightFromCompanyFacts(): number {
-        const supplierAndEmployeesRiskRation = this.calculateSupplierAndEmployeesRiskRatio();
+    public async calculateSupplierWeightFromCompanyFacts(): Promise<number> {
+        const supplierAndEmployeesRiskRation = await this.calculateSupplierAndEmployeesRiskRatio();
         return this.mapToWeight(this.mapToValueBetween60And300(supplierAndEmployeesRiskRation));
     }
 
     // B
-    public calculateFinancialWeightFromCompanyFacts(): number {
-        const financialRisk = this.calculateFinancialRisk();
+    public async calculateFinancialWeightFromCompanyFacts(): Promise<number> {
+        const financialRisk = await this.calculateFinancialRisk();
         return this.mapToWeight(this.mapToValueBetween60And300(financialRisk));
     }
 
     // C
-    public calculateEmployeeWeightFromCompanyFacts(): number {
-        const employeesRisk = this.calculateEmployeesRisk();
+    public async calculateEmployeeWeightFromCompanyFacts(): Promise<number> {
+        const employeesRisk = await this.calculateEmployeesRisk();
         return this.mapToWeight(this.mapToValueBetween60And300(employeesRisk));
     }
 
     // D
-    public calculateCustomerWeightFromCompanyFacts(): number {
+    public async calculateCustomerWeightFromCompanyFacts(): Promise<number> {
         return 1.0;
     }
 
     // E
-    public calculateSocialEnvironmentlWeightFromCompanyFacts(): number {
+    public async calculateSocialEnvironmentlWeightFromCompanyFacts(): Promise<number> {
         return 1.0;
     }
 
@@ -86,9 +87,9 @@ export class StakeholderWeightCalculator {
     }
 
     // =WENNFEHLER((60*$'11.Region'.G10/($'11.Region'.G3+$'11.Region'.G10+(I19+I21+I22+G24))*10);100)
-    public calculateEmployeesRisk(): number {
-        const supplierRisks: number = this.supplyRisks();
-        const employeesRisksNormed: number = this.calculateNormedEmployeesRisk();
+    public async calculateEmployeesRisk(): Promise<number> {
+        const supplierRisks: number = await this.supplyRisks();
+        const employeesRisksNormed: number = await this.calculateNormedEmployeesRisk();
         const sumOfFinances: number = this.getSumOfFinancialAspects();
         const numerator = 60 * employeesRisksNormed;
         const denominator: number = supplierRisks + employeesRisksNormed + sumOfFinances;
@@ -96,19 +97,19 @@ export class StakeholderWeightCalculator {
     }
 
     // =WENNFEHLER((60*(I19+I21+I22+G24)/($'11.Region'.G3+$'11.Region'.G10+(I19+I21+I22+G24))*10);100)
-    public calculateFinancialRisk(): number {
-        const supplierRisks: number = this.supplyRisks();
-        const employeesRisksNormed: number = this.calculateNormedEmployeesRisk();
+    public async calculateFinancialRisk(): Promise<number> {
+        const supplierRisks: number = await this.supplyRisks();
+        const employeesRisksNormed: number = await this.calculateNormedEmployeesRisk();
         const sumOfFinances: number = this.getSumOfFinancialAspects();
         const numerator = 60 * sumOfFinances;
         const denominator: number = supplierRisks + employeesRisksNormed + sumOfFinances;
         return numerator / denominator * 10;
     }
 
-    public calculateSupplierAndEmployeesRiskRatio(): number {
+    public async calculateSupplierAndEmployeesRiskRatio(): Promise<number> {
         // In excel this is equal to the cell $'11.Region'.G3
-        const supplierRisks: number = this.supplyRisks();
-        const employeesRisksNormed: number = this.calculateNormedEmployeesRisk();
+        const supplierRisks: number = await this.supplyRisks();
+        const employeesRisksNormed: number = await this.calculateNormedEmployeesRisk();
 
         const numerator = 60 * supplierRisks;
         // (60*$'11.Region'.G3/($'11.Region'.G3+$'11.Region'.G10+(I19+I21+I22+G24))*5))
@@ -117,8 +118,8 @@ export class StakeholderWeightCalculator {
     }
 
     // In excel this is equal to the cell $'11.Region'.G10
-    public calculateNormedEmployeesRisk(): number {
-        const employeesRisks: number = this.employeesRisks();
+    public async calculateNormedEmployeesRisk(): Promise<number> {
+        const employeesRisks: number = await this.employeesRisks();
         const employeesRisksNormalizer: number = this.employeesRisksNormalizer();
         // In excel this is equal to the cell $'11.Region'.G10
         return employeesRisks + employeesRisksNormalizer;
@@ -136,20 +137,20 @@ export class StakeholderWeightCalculator {
         return (1 - sumEmployeesPercentage) * 0.978035862587365 * this.companyFacts.totalStaffCosts;
     }
 
-    private supplyRisks(): number {
+    private async supplyRisks(): Promise<number> {
         let result: number = 0;
         for (const supplyFraction of this.companyFacts.supplyFractions) {
-            const region: Region | undefined = this.regionService.getRegion(supplyFraction.countryCode);
+            const region: Region | undefined = await this.regionService.getRegion(supplyFraction.countryCode);
             const pppIndex = region !== undefined ? region.pppIndex : this.defaultPPPIndex;
             result += supplyFraction.costs * pppIndex;
         }
         return result;
     }
 
-    private employeesRisks(): number {
+    private async employeesRisks(): Promise<number> {
         let result: number = 0;
         for (const employeesFraction of this.companyFacts.employeesFractions) {
-            const region: Region | undefined = this.regionService.getRegion(employeesFraction.countryCode);
+            const region: Region | undefined = await this.regionService.getRegion(employeesFraction.countryCode);
             const pppIndex = region !== undefined ? region.pppIndex : this.defaultPPPIndex;
             result += this.companyFacts.totalStaffCosts * employeesFraction.percentage
                 * pppIndex;

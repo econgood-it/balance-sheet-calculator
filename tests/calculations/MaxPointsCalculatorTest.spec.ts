@@ -4,7 +4,10 @@ import { Topic } from "../../src/entities/topic";
 import { CompanyFacts } from "../../src/entities/companyFacts";
 import { SupplyFraction } from "../../src/entities/supplyFraction";
 import { EmployeesFraction } from "../../src/entities/employeesFraction";
-
+import { Connection, Repository } from "typeorm";
+import RegionService from "../../src/services/region.service";
+import { Region } from "../../src/entities/region";
+import { DatabaseConnectionCreator } from '../../src/DatabaseConnectionCreator';
 
 function assertTopics(received: Topic[], expected: Topic[]) {
     for (let i = 0; i < received.length; i++) {
@@ -19,10 +22,39 @@ function assertTopics(received: Topic[], expected: Topic[]) {
 };
 
 
+
 describe('Max points calculator', () => {
-    it('should calculate max points of topics', () => {
-        const arabEmiratesCode = "ARE";
-        const afghanistanCode = "AFG";
+
+
+    let connection: Connection;
+    let regionService: RegionService;
+    let regionRepository: Repository<Region>;
+    const arabEmiratesCode = "ARE";
+    const afghanistanCode = "AFG";
+    const regions = [new Region(2.050108031355940, arabEmiratesCode, "United Arab Emirates"), new Region(3.776326416513620, afghanistanCode, "Afghanistan")]
+
+    beforeAll(async (done) => {
+        connection = await DatabaseConnectionCreator.createConnection();
+        regionRepository = connection.getRepository(Region)
+        regionService = new RegionService(regionRepository);
+        for (const region of regions) {
+            await regionRepository.save(regions);
+        }
+        const supplyFractions: SupplyFraction[] = [new SupplyFraction(arabEmiratesCode, 300), new SupplyFraction(afghanistanCode, 20)];
+        const employeesFractions: EmployeesFraction[] = [new EmployeesFraction(arabEmiratesCode, 0.3), new EmployeesFraction(afghanistanCode, 1)];
+        done();
+    });
+
+    afterAll(async (done) => {
+        for (const region of regions) {
+            await regionRepository.delete(region);
+        }
+        await connection.close();
+        done();
+    })
+
+
+    it('should calculate max points of topics', async (done) => {
         const supplyFractions: SupplyFraction[] = [new SupplyFraction(arabEmiratesCode, 300), new SupplyFraction(afghanistanCode, 20)];
         const employeesFractions: EmployeesFraction[] = [new EmployeesFraction(arabEmiratesCode, 0.3), new EmployeesFraction(afghanistanCode, 1)];
         const companyFacts: CompanyFacts = new CompanyFacts(0, 2345, 238, 473, 342, 234, supplyFractions, employeesFractions);
@@ -48,8 +80,8 @@ describe('Max points calculator', () => {
             new Topic("E3", "E3 name", 6, 0, 51, 1),
             new Topic("E4", "E4 name", 10, 0, 51, 1),
         ]
-        const maxPointsCalculator: MaxPointsCalculator = new MaxPointsCalculator(companyFacts);
-        maxPointsCalculator.updateMaxPointsOfTopics(topics);
+        const maxPointsCalculator: MaxPointsCalculator = new MaxPointsCalculator(companyFacts, regionService);
+        await maxPointsCalculator.updateMaxPointsOfTopics(topics);
         const maxPointsA = 22.727272727272727;
         const maxPointsBDE = 45.45454545454545;
         const maxPointsC = 90.9090909090909;
@@ -76,6 +108,7 @@ describe('Max points calculator', () => {
             new Topic("E4", "E4 name", 10, maxPointsBDE, maxPointsBDE, 1),
         ]
         assertTopics(topics, expected);
+        done();
     })
 
 })

@@ -10,7 +10,7 @@ import { RegionController } from './controllers/region.controller';
 
 
 class App {
-  private app: Application;
+  public readonly app: Application;
   //declaring our controllers
   private balanceSheetController: BalanceSheetController;
   private regionController: RegionController;

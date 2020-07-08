@@ -18,7 +18,7 @@ export class RegionController {
     // The bind is needed like it is described at 
     // https://stackoverflow.com/questions/40018472/implement-express-controller-class-with-typescript
     this.app.route("/region").post(this.regionService.createRegion.bind(this.regionService));
-    this.app.route("/regions/initialize").post(this.regionService.createRegion.bind(this.regionService));
+    this.app.route("/regions/initialize").post(this.regionService.initializeRegions.bind(this.regionService));
   }
 
 }

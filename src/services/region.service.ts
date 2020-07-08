@@ -7,17 +7,10 @@ import { Repository } from "typeorm";
 
 export class RegionService {
 
-    private regions: Map<string, Region>;
     private regionRepository: Repository<Region>;
 
     constructor(regionRepository: Repository<Region>) {
         this.regionRepository = regionRepository;
-        const arabEmiratesCode = "ARE";
-        const afghanistanCode = "AFG";
-        this.regions = new Map([
-            [arabEmiratesCode, new Region(2.050108031355940, arabEmiratesCode, "United Arab Emirates")],
-            [afghanistanCode, new Region(3.776326416513620, afghanistanCode, "Afghanistan")],
-        ]);
     }
 
     public async initializeRegions(req: Request, res: Response, next: NextFunction) {
@@ -38,7 +31,6 @@ export class RegionService {
 
     public async createRegion(req: Request, res: Response, next: NextFunction) {
         LoggingService.info('Create region');
-        console.log(this);
         try {
             const region = Region.fromJSON(req.body);
             const regionEntity = await this.regionRepository.save(region);
@@ -49,8 +41,8 @@ export class RegionService {
 
     }
 
-    public getRegion(countryCode: string): Region | undefined {
-        return this.regions.get(countryCode);
+    public getRegion(countryCode: string): Promise<Region | undefined> {
+        return this.regionRepository.findOne({ countryCode: countryCode });
     }
 }
 

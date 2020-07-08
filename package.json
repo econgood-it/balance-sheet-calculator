@@ -6,7 +6,8 @@
   "scripts": {
     "start": "env-cmd -e development nodemon",
     "build": "tsc",
-    "test": "env-cmd -e development jest --watch"
+    "test": "env-cmd -e development jest --watch",
+    "test:prod": "env-cmd -e development jest"
   },
   "repository": {
     "type": "git",
