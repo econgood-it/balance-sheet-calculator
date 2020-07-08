@@ -7,5 +7,5 @@ import { LoggingService } from "./logging";
 
 DatabaseConnectionCreator.createConnection().then((connection: Connection) => {
     const app = new App(connection);
-    app.start();
+    connection.runMigrations().then(() => { app.start(); }).catch(error => LoggingService.error(error));
 }).catch(error => LoggingService.error(error));
