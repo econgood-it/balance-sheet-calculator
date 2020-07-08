@@ -1,17 +1,11 @@
-import { Connection, Repository } from "typeorm";
-import { Region } from "./entities/region";
-import { createConnection } from "typeorm";
-import { LoggingService } from "./logging";
+import { Connection, createConnection } from "typeorm";
 
-export class Database {
-    public static connection: Connection;
-    public static async connect(): Promise<void> {
+export class DatabaseConnectionCreator {
+    public static async createConnection(): Promise<Connection> {
         if (!process.env.DB_NAME || !process.env.DB_PORT || !process.env.DB_USER || !process.env.DB_PASSWORD || !process.env.ENTITY_FOLDER) {
             throw Error('Environment variables for the database are not set.');
         }
-        LoggingService.info(process.cwd());
-
-        Database.connection = await createConnection({
+        return createConnection({
             "type": "postgres",
             "host": "localhost",
             "port": process.env.DB_PORT as unknown as number,
@@ -30,8 +24,5 @@ export class Database {
                 "src/subscriber/**/*.ts"
             ]
         });
-    }
-    public static getRegionRepository(): Repository<Region> {
-        return Database.connection.getRepository(Region);
     }
 }

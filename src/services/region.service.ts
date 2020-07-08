@@ -1,17 +1,17 @@
 import { Region } from "../entities/region";
 import { LoggingService } from "../logging";
 import { Request, Response, NextFunction } from "express";
-import { Database } from "../database";
 import { RegionReader } from "../reader/RegionReader";
 import InternalServerException from "../exceptions/InternalServerException";
 import { Repository } from "typeorm";
-import { getRepository } from "typeorm";
 
 export class RegionService {
 
     private regions: Map<string, Region>;
+    private regionRepository: Repository<Region>;
 
-    constructor() {
+    constructor(regionRepository: Repository<Region>) {
+        this.regionRepository = regionRepository;
         const arabEmiratesCode = "ARE";
         const afghanistanCode = "AFG";
         this.regions = new Map([
@@ -26,7 +26,7 @@ export class RegionService {
         try {
             const regions: Region[] = await regionReader.read('./ecg-excel.xlsx');
             for (const region of regions) {
-                await Database.getRegionRepository().save(region);
+                await this.regionRepository.save(region);
             }
             res.json(regions);
         } catch (error) {
@@ -36,14 +36,23 @@ export class RegionService {
     }
 
 
-    public async createRegion(req: Request, res: Response) {
+    public async createRegion(req: Request, res: Response, next: NextFunction) {
         LoggingService.info('Create region');
-        const region = Region.fromJSON(req.body);
-        const regionEntity = await Database.getRegionRepository().save(region);
-        res.json(regionEntity);
+        console.log(this);
+        try {
+            const region = Region.fromJSON(req.body);
+            const regionEntity = await this.regionRepository.save(region);
+            res.json(regionEntity);
+        } catch (error) {
+            next(new InternalServerException(error));
+        }
+
     }
 
     public getRegion(countryCode: string): Region | undefined {
         return this.regions.get(countryCode);
     }
 }
+
+
+export default RegionService;

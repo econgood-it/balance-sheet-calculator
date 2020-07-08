@@ -1,8 +1,11 @@
 
-import app from "./app";
 import "reflect-metadata";
-import { Database } from "./database";
+import { DatabaseConnectionCreator } from "./DatabaseConnectionCreator";
+import { Connection } from "typeorm";
+import App from "./app";
+import { LoggingService } from "./logging";
 
-Database.connect().then(() => {
-    app.listen(process.env.PORT, () => console.log(`Listening on port ${process.env.PORT}`));
-}).catch(error => console.log(error));
+DatabaseConnectionCreator.createConnection().then((connection: Connection) => {
+    const app = new App(connection);
+    app.start();
+}).catch(error => LoggingService.error(error));

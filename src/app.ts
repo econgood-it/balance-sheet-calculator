@@ -1,26 +1,34 @@
 import express, { Application } from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import { Controller } from './main.controller';
+import { BalanceSheetController } from './controllers/balanceSheet.controller';
 import { Authentication } from './authentication';
 import errorMiddleware from './middleware/error.middleware';
-import { Database } from './database';
+import { Connection } from 'typeorm';
+import { LoggingService } from './logging';
+import { RegionController } from './controllers/region.controller';
 
 
 class App {
-  public app: Application;
-  //declaring our controller
-  public controller: Controller;
+  private app: Application;
+  //declaring our controllers
+  private balanceSheetController: BalanceSheetController;
+  private regionController: RegionController;
   private authentication: Authentication;
 
 
-  constructor() {
+  constructor(connection: Connection) {
     this.app = express();
     this.authentication = new Authentication();
     this.authentication.addBasicAuthToApplication(this.app);
     this.setConfig();
     //Creating and assigning a new instance of our controller
-    this.controller = new Controller(this.app);
+    this.balanceSheetController = new BalanceSheetController(this.app);
+    this.regionController = new RegionController(this.app, connection);
+  }
+
+  public start() {
+    this.app.listen(process.env.PORT, () => LoggingService.info(`Listening on port ${process.env.PORT}`))
   }
 
   private setConfig() {
@@ -36,4 +44,4 @@ class App {
   }
 }
 
-export default new App().app;
+export default App;
