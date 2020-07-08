@@ -140,9 +140,8 @@ export class StakeholderWeightCalculator {
     private async supplyRisks(): Promise<number> {
         let result: number = 0;
         for (const supplyFraction of this.companyFacts.supplyFractions) {
-            const region: Region | undefined = await this.regionService.getRegion(supplyFraction.countryCode);
-            const pppIndex = region !== undefined ? region.pppIndex : this.defaultPPPIndex;
-            result += supplyFraction.costs * pppIndex;
+            const region: Region = await this.regionService.getRegion(supplyFraction.countryCode);
+            result += supplyFraction.costs * region.pppIndex;
         }
         return result;
     }
@@ -150,10 +149,9 @@ export class StakeholderWeightCalculator {
     private async employeesRisks(): Promise<number> {
         let result: number = 0;
         for (const employeesFraction of this.companyFacts.employeesFractions) {
-            const region: Region | undefined = await this.regionService.getRegion(employeesFraction.countryCode);
-            const pppIndex = region !== undefined ? region.pppIndex : this.defaultPPPIndex;
+            const region: Region = await this.regionService.getRegion(employeesFraction.countryCode);
             result += this.companyFacts.totalStaffCosts * employeesFraction.percentage
-                * pppIndex;
+                * region.pppIndex;
         }
         return result;
     }

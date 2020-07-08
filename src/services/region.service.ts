@@ -41,8 +41,8 @@ export class RegionService {
 
     }
 
-    public getRegion(countryCode: string): Promise<Region | undefined> {
-        return this.regionRepository.findOne({ countryCode: countryCode });
+    public getRegion(countryCode: string): Promise<Region> {
+        return this.regionRepository.findOneOrFail({ countryCode: countryCode });
     }
 }
 
