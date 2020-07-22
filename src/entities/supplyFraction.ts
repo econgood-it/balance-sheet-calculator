@@ -1,17 +1,23 @@
-import { strictObjectMapper, expectString, expectNumber, arrayMapper } from '@daniel-faber/json-ts';
-import { Topic } from './topic';
+import { strictObjectMapper, expectString, expectNumber } from '@daniel-faber/json-ts';
+import { PrimaryGeneratedColumn, Column, Entity, ManyToOne } from 'typeorm';
+import { CompanyFacts } from './companyFacts';
 
+@Entity()
 export class SupplyFraction {
-  public constructor(
-    public readonly countryCode: string,
-    public readonly costs: number
-  ) { }
+  @PrimaryGeneratedColumn()
+  public readonly id: number | undefined;
+  @Column()
+  public countryCode: string;
+  @Column("double precision")
+  public costs: number;
 
-  public static readonly fromJSON = strictObjectMapper(
-    accessor =>
-      new SupplyFraction(
-        accessor.get('countryCode', expectString),
-        accessor.get('costs', expectNumber)
-      )
-  );
+  @ManyToOne(type => CompanyFacts, companyFacts => companyFacts.supplyFractions)
+  public companyFacts!: CompanyFacts;
+
+  constructor(id: number | undefined, countryCode: string, costs: number) {
+    this.id = id;
+    this.countryCode = countryCode;
+    this.costs = costs;
+  }
+
 }

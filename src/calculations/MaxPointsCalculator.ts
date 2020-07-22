@@ -5,7 +5,7 @@ import RegionService from "../services/region.service";
 
 export class MaxPointsCalculator {
     private stakeholderWeightCalculator: StakeholderWeightCalculator;
-    constructor(private companyFacts: CompanyFacts, regionService: RegionService) {
+    constructor(companyFacts: CompanyFacts, regionService: RegionService) {
         this.stakeholderWeightCalculator = new StakeholderWeightCalculator(companyFacts, regionService);
     }
 

@@ -1,24 +1,38 @@
 import { strictObjectMapper, expectString, expectNumber } from '@daniel-faber/json-ts';
+import { PrimaryGeneratedColumn, Column, Entity, ManyToOne } from 'typeorm';
+import { Rating } from './rating';
 
+@Entity()
 export class Topic {
-    public constructor(
-        public readonly shortName: string,
-        public readonly name: string,
-        public readonly estimations: number,
-        public points: number,
-        public maxPoints: number,
-        public weight: number
-    ) { }
+    @PrimaryGeneratedColumn()
+    public readonly id: number | undefined;
+    @Column()
+    public readonly shortName: string;
+    @Column()
+    public readonly name: string;
+    @Column("double precision")
+    public estimations: number;
+    @Column("double precision")
+    public points: number = 0;
+    @Column("double precision")
+    public maxPoints: number = 0;
+    @Column("double precision")
+    public weight: number;
 
-    public static readonly fromJSON = strictObjectMapper(
-        accessor =>
-            new Topic(
-                accessor.get('shortName', expectString),
-                accessor.get('name', expectString),
-                accessor.get('estimations', expectNumber),
-                accessor.get('points', expectNumber),
-                accessor.getOptional('maxPoints', expectNumber, 0),
-                accessor.get('weight', expectNumber)
-            ),
-    );
+    @ManyToOne(type => Rating, rating => rating.topics)
+    public rating!: Rating;
+
+    public constructor(
+        id: number | undefined,
+        shortName: string,
+        name: string,
+        estimations: number,
+        weight: number,
+    ) {
+        this.id = id;
+        this.shortName = shortName;
+        this.name = name;
+        this.estimations = estimations;
+        this.weight = weight;
+    }
 }

@@ -50,7 +50,7 @@ describe('Stakeholder Weight Calculator', () => {
     it('should calculate employees risk', async (done) => {
         const stakeholderWeightCalculator = new StakeholderWeightCalculator(companyFacts, regionService);
         const result = await stakeholderWeightCalculator.calculateEmployeesRisk();
-        expect(result).toBeCloseTo(497.5998917818234, 13);
+        expect(result).toBeCloseTo(497.599891781823, 12);
         done();
     })
 

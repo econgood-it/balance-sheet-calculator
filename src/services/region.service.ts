@@ -4,6 +4,7 @@ import { Request, Response, NextFunction } from "express";
 import { RegionReader } from "../reader/RegionReader";
 import InternalServerException from "../exceptions/InternalServerException";
 import { Repository } from "typeorm";
+import { RegionDTOCreate } from "../dto/create/regionCreate.dto";
 
 export class RegionService {
 
@@ -32,8 +33,8 @@ export class RegionService {
     public async createRegion(req: Request, res: Response, next: NextFunction) {
         LoggingService.info('Create region');
         try {
-            const region = Region.fromJSON(req.body);
-            const regionEntity = await this.regionRepository.save(region);
+            const region: RegionDTOCreate = RegionDTOCreate.fromJSON(req.body);
+            const regionEntity: Region = await this.regionRepository.save(region);
             res.json(regionEntity);
         } catch (error) {
             next(new InternalServerException(error));

@@ -1,14 +1,20 @@
 import { strictObjectMapper, expectString, expectNumber, arrayMapper } from '@daniel-faber/json-ts';
 import { Topic } from './topic';
+import { OneToMany, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
+@Entity()
 export class Rating {
-  public constructor(
-    public readonly topics: Topic[]
-  ) { }
+  @PrimaryGeneratedColumn()
+  public readonly id: number | undefined;
+  @OneToMany(type => Topic, topic => topic.rating, { cascade: true })
+  public readonly topics: Topic[];
 
-  public static readonly fromJSON = strictObjectMapper(
-    accessor =>
-      new Rating(
-        accessor.get('topics', arrayMapper(Topic.fromJSON)))
-  );
+  public constructor(
+    id: number | undefined,
+    topics: Topic[]
+  ) {
+
+    this.topics = topics;
+  }
+
 }

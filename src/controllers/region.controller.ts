@@ -7,17 +7,14 @@ import { Request, Response, NextFunction } from "express";
 import InternalServerException from '../exceptions/InternalServerException';
 
 export class RegionController {
-  private regionService: RegionService;
-
-  constructor(private app: Application, connection: Connection) {
-    this.regionService = new RegionService(connection.getRepository(Region));
+  constructor(private app: Application, public regionService: RegionService) {
     this.routes();
   }
 
   public routes() {
     // The bind is needed like it is described at 
     // https://stackoverflow.com/questions/40018472/implement-express-controller-class-with-typescript
-    this.app.route("/region").post(this.regionService.createRegion.bind(this.regionService));
+    this.app.route("/regions").post(this.regionService.createRegion.bind(this.regionService));
     this.app.route("/regions/initialize").post(this.regionService.initializeRegions.bind(this.regionService));
   }
 

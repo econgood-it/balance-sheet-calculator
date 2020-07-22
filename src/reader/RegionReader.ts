@@ -18,7 +18,7 @@ export class RegionReader {
             let cellCountryName: Cell = sheet.getCell(row, 2);
             let cellCountryCode: Cell = sheet.getCell(row, 10);
             let cellPPPIndex: Cell = sheet.getCell(row, 3);
-            regions.push(new Region(cellPPPIndex.result as number, cellCountryCode.text, cellCountryName.text));
+            regions.push(new Region(undefined, cellPPPIndex.result as number, cellCountryCode.text, cellCountryName.text));
         }
         return regions;
     }
