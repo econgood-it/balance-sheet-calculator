@@ -13,7 +13,7 @@ export class DatabaseConnectionCreator {
             "password": process.env.DB_PASSWORD as string,
             "database": process.env.DB_NAME as string,
             "synchronize": true,
-            "logging": false,
+            "logging": true,
             "entities": [
                 process.env.ENTITY_FOLDER as string
             ],
