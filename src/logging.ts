@@ -6,7 +6,9 @@ export class LoggingService {
     private static createLogger(): origWinston.Logger {
         return origWinston.createLogger({
             level: 'info',
-            format: origWinston.format.json(),
+            format: origWinston.format.combine(
+                origWinston.format.json(),
+                origWinston.format.errors({ stack: true })),
             defaultMeta: { service: 'balance-sheet-api-service' },
             transports: [
                 //

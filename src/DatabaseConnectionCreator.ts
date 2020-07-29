@@ -25,4 +25,10 @@ export class DatabaseConnectionCreator {
             ]
         });
     }
+
+    public static async createConnectionAndRunMigrations(): Promise<Connection> {
+        const connection = await DatabaseConnectionCreator.createConnection();
+        await connection.runMigrations();
+        return connection;
+    }
 }

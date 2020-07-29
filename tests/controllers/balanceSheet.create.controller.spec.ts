@@ -9,7 +9,7 @@ describe('Create endpoint of Balance Sheet Controller', () => {
     let connection: Connection;
     let app: Application;
     beforeAll(async (done) => {
-        connection = await DatabaseConnectionCreator.createConnection();
+        connection = await DatabaseConnectionCreator.createConnectionAndRunMigrations();
         app = new App(connection).app;
         done();
     })

@@ -8,17 +8,16 @@ export class RegionReader {
     public async read(path: string): Promise<Region[]> {
         // create object for workbook
         let wb: Workbook = new Workbook();
-        wb = await wb.xlsx.readFile(path);
-
-        let sheet: Worksheet = wb.getWorksheet("11.Region");
+        const sheet: Worksheet = await wb.csv.readFile(path, { parserOptions: { delimiter: ',' } });
+        //wb = await wb.xlsx.readFile(path);
 
         let regions: Region[] = [];
         // cell object
-        for (let row = 22; row <= 237; row++) {
+        for (let row = 6; row <= 226; row++) {
             let cellCountryName: Cell = sheet.getCell(row, 2);
             let cellCountryCode: Cell = sheet.getCell(row, 10);
             let cellPPPIndex: Cell = sheet.getCell(row, 3);
-            regions.push(new Region(undefined, cellPPPIndex.result as number, cellCountryCode.text, cellCountryName.text));
+            regions.push(new Region(undefined, Number(cellPPPIndex.text), cellCountryCode.text, cellCountryName.text));
         }
         return regions;
     }

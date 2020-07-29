@@ -6,7 +6,6 @@ import { Authentication } from './authentication';
 import errorMiddleware from './middleware/error.middleware';
 import { Connection } from 'typeorm';
 import { LoggingService } from './logging';
-import { RegionController } from './controllers/region.controller';
 import RegionService from './services/region.service';
 import { Region } from './entities/region';
 import { BalanceSheetService } from './services/balanceSheet.service';
@@ -19,7 +18,6 @@ class App {
   public readonly app: Application;
   //declaring our controllers
   private balanceSheetController: BalanceSheetController;
-  private regionController: RegionController;
   private authentication: Authentication;
 
 
@@ -32,7 +30,6 @@ class App {
     const regionService = new RegionService(connection.getRepository(Region));
     const balanceSheetService = new BalanceSheetService(connection.getRepository(BalanceSheet), regionService,
       connection.getRepository(SupplyFraction), connection.getRepository(EmployeesFraction));
-    this.regionController = new RegionController(this.app, regionService);
     this.balanceSheetController = new BalanceSheetController(this.app, balanceSheetService);
   }
 

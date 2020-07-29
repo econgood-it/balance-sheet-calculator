@@ -28,26 +28,18 @@ describe('Max points calculator', () => {
 
     let connection: Connection;
     let regionService: RegionService;
-    let regionRepository: Repository<Region>;
+
     const arabEmiratesCode = "ARE";
     const afghanistanCode = "AFG";
-    const regions = [new Region(undefined, 2.050108031355940, arabEmiratesCode, "United Arab Emirates"),
-    new Region(undefined, 3.776326416513620, afghanistanCode, "Afghanistan")]
 
     beforeAll(async (done) => {
-        connection = await DatabaseConnectionCreator.createConnection();
-        regionRepository = connection.getRepository(Region)
+        connection = await DatabaseConnectionCreator.createConnectionAndRunMigrations();
+        const regionRepository = connection.getRepository(Region)
         regionService = new RegionService(regionRepository);
-        for (const region of regions) {
-            await regionRepository.save(regions);
-        }
         done();
     });
 
     afterAll(async (done) => {
-        for (const region of regions) {
-            await regionRepository.delete(region);
-        }
         await connection.close();
         done();
     })
