@@ -14,6 +14,6 @@ export class BalanceSheetController {
   public routes() {
     this.app.route('/').get(this.balanceSheetService.welcomeMessage);
     this.app.route("/balancesheets").post(this.balanceSheetService.createBalanceSheet.bind(this.balanceSheetService));
-    this.app.route("/balancesheets").patch(this.balanceSheetService.updateBalanceSheet.bind(this.balanceSheetService));
+    this.app.route("/balancesheets/:id").patch(this.balanceSheetService.updateBalanceSheet.bind(this.balanceSheetService));
   }
 }

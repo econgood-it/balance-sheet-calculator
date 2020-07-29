@@ -31,7 +31,8 @@ export class EntityWithDTOMerger {
         companyFacts.totalStaffCosts = this.mergeVal(companyFacts.totalStaffCosts, companyFactsDTOUpdate.totalStaffCosts);
         companyFacts.profit = this.mergeVal(companyFacts.profit, companyFactsDTOUpdate.profit);
         companyFacts.financialCosts = this.mergeVal(companyFacts.financialCosts, companyFactsDTOUpdate.financialCosts);
-        companyFacts.incomeFromFinancialInvestments = this.mergeVal(companyFacts.incomeFromFinancialInvestments);
+        companyFacts.incomeFromFinancialInvestments = this.mergeVal(companyFacts.incomeFromFinancialInvestments,
+            companyFactsDTOUpdate.incomeFromFinancialInvestments);
         companyFacts.additionsToFixedAssets = this.mergeVal(companyFacts.additionsToFixedAssets, companyFactsDTOUpdate.additionsToFixedAssets);
         if (companyFactsDTOUpdate.supplyFractions) {
             await this.replaceSupplyFractions(companyFacts, companyFactsDTOUpdate.supplyFractions);

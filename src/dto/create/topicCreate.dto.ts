@@ -20,6 +20,6 @@ export class TopicDTOCreate {
             ),
     );
     public toTopic(): Topic {
-        return new Topic(undefined, this.shortName, this.name, this.estimations, this.weight);
+        return new Topic(undefined, this.shortName, this.name, this.estimations, 0, 51, this.weight);
     }
 }

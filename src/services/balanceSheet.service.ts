@@ -11,6 +11,8 @@ import { CompanyFacts } from "../entities/companyFacts";
 import { SupplyFraction } from "../entities/supplyFraction";
 import { EmployeesFraction } from "../entities/employeesFraction";
 import { EntityWithDTOMerger } from "../entities/entityWithDTOMerger";
+import { JsonMappingError } from "@daniel-faber/json-ts";
+import BadRequestException from "../exceptions/BadRequestException";
 
 
 export class BalanceSheetService {
@@ -35,14 +37,21 @@ export class BalanceSheetService {
       const balanceSheetResponse: BalanceSheet = await this.balanceSheetRepository.save(balancesheet);
       res.json(balanceSheetResponse);
     } catch (error) {
+      if (error instanceof JsonMappingError) {
+        next(new BadRequestException(error.message));
+      }
       next(new InternalServerException(error));
     }
   }
 
   public async updateBalanceSheet(req: Request, res: Response, next: NextFunction) {
-    LoggingService.info('Create balancesheet');
+    LoggingService.info('Update balancesheet');
     try {
+      const balanceSheetId: number = Number(req.params.id);
       const balanceSheetDTOUpdate: BalanceSheetDTOUpdate = BalanceSheetDTOUpdate.fromJSON(req.body);
+      if (balanceSheetDTOUpdate.id !== balanceSheetId) {
+        next(new BadRequestException(`Balance sheet id in request body and url parameter has to be the same`));
+      }
       const balanceSheet = await this.balanceSheetRepository.findOneOrFail(balanceSheetDTOUpdate.id, {
         relations: ['rating', 'companyFacts', 'companyFacts.supplyFractions', 'companyFacts.employeesFractions', 'rating.topics']
       });
@@ -52,6 +61,9 @@ export class BalanceSheetService {
       const balanceSheetResponse: BalanceSheet = await this.balanceSheetRepository.save(balanceSheet);
       res.json(balanceSheetResponse);
     } catch (error) {
+      if (error instanceof JsonMappingError) {
+        next(new BadRequestException(error.message));
+      }
       next(new InternalServerException(error));
     }
   }
