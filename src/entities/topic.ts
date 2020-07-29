@@ -27,12 +27,16 @@ export class Topic {
         shortName: string,
         name: string,
         estimations: number,
+        points: number,
+        maxPoints: number,
         weight: number,
     ) {
         this.id = id;
         this.shortName = shortName;
         this.name = name;
         this.estimations = estimations;
+        this.points = points;
+        this.maxPoints = maxPoints;
         this.weight = weight;
     }
 }

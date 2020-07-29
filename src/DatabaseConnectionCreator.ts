@@ -5,7 +5,6 @@ export class DatabaseConnectionCreator {
         if (!process.env.DB_NAME || !process.env.DB_PORT || !process.env.DB_USER || !process.env.DB_PASSWORD || !process.env.ENTITY_FOLDER) {
             throw Error('Environment variables for the database are not set.');
         }
-        console.log('HERE');
         return createConnection({
             "type": "postgres",
             "host": "localhost",

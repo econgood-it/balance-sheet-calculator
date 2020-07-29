@@ -16,7 +16,7 @@ describe('Stakeholder Weight Calculator', () => {
     let regionRepository: Repository<Region>;
     const arabEmiratesCode = "ARE";
     const afghanistanCode = "AFG";
-    const regions = [new Region(2.050108031355940, arabEmiratesCode, "United Arab Emirates"), new Region(3.776326416513620, afghanistanCode, "Afghanistan")]
+    const regions = [new Region(undefined, 2.050108031355940, arabEmiratesCode, "United Arab Emirates"), new Region(undefined, 3.776326416513620, afghanistanCode, "Afghanistan")]
 
     beforeAll(async (done) => {
         connection = await DatabaseConnectionCreator.createConnection();
@@ -25,9 +25,9 @@ describe('Stakeholder Weight Calculator', () => {
         for (const region of regions) {
             await regionRepository.save(regions);
         }
-        const supplyFractions: SupplyFraction[] = [new SupplyFraction(arabEmiratesCode, 300), new SupplyFraction(afghanistanCode, 20)];
-        const employeesFractions: EmployeesFraction[] = [new EmployeesFraction(arabEmiratesCode, 0.3), new EmployeesFraction(afghanistanCode, 1)];
-        companyFacts = new CompanyFacts(0, 2345, 238, 473, 342, 234, supplyFractions, employeesFractions);
+        const supplyFractions: SupplyFraction[] = [new SupplyFraction(undefined, arabEmiratesCode, 300), new SupplyFraction(undefined, afghanistanCode, 20)];
+        const employeesFractions: EmployeesFraction[] = [new EmployeesFraction(undefined, arabEmiratesCode, 0.3), new EmployeesFraction(undefined, afghanistanCode, 1)];
+        companyFacts = new CompanyFacts(undefined, 0, 2345, 238, 473, 342, 234, supplyFractions, employeesFractions);
         done();
     });
 
