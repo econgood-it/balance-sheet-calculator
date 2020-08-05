@@ -5,7 +5,6 @@ import { CompanyFacts } from "../../src/entities/companyFacts";
 import { SupplyFraction } from "../../src/entities/supplyFraction";
 import { EmployeesFraction } from "../../src/entities/employeesFraction";
 import { Connection, Repository } from "typeorm";
-import RegionService from "../../src/services/region.service";
 import { Region } from "../../src/entities/region";
 import { DatabaseConnectionCreator } from '../../src/DatabaseConnectionCreator';
 
@@ -27,15 +26,14 @@ describe('Max points calculator', () => {
 
 
     let connection: Connection;
-    let regionService: RegionService;
+    let regionRepository: Repository<Region>;
 
     const arabEmiratesCode = "ARE";
     const afghanistanCode = "AFG";
 
     beforeAll(async (done) => {
         connection = await DatabaseConnectionCreator.createConnectionAndRunMigrations();
-        const regionRepository = connection.getRepository(Region)
-        regionService = new RegionService(regionRepository);
+        regionRepository = connection.getRepository(Region)
         done();
     });
 
@@ -71,7 +69,7 @@ describe('Max points calculator', () => {
             new Topic(undefined, "E3", "E3 name", 6, 0, 51, 1),
             new Topic(undefined, "E4", "E4 name", 10, 0, 51, 1),
         ]
-        const maxPointsCalculator: MaxPointsCalculator = new MaxPointsCalculator(companyFacts, regionService);
+        const maxPointsCalculator: MaxPointsCalculator = new MaxPointsCalculator(companyFacts, regionRepository);
         await maxPointsCalculator.updateMaxPointsOfTopics(topics);
         const maxPointsA = 22.727272727272727;
         const maxPointsBDE = 45.45454545454545;

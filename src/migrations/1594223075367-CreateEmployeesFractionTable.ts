@@ -8,15 +8,14 @@ export class CreateEmployeesFractionTable1594223075367 implements MigrationInter
             "countryCode" character varying NOT NULL, 
             "percentage" double precision NOT NULL, 
             "companyFactsId" integer, 
-            PRIMARY KEY ("id"), 
-            FOREIGN KEY ("companyFactsId") REFERENCES company_facts("id")
+            CONSTRAINT "PK_798f89a8c5446d87fdea8cd31f1" PRIMARY KEY ("id")
         )`;
-        queryRunner.query(query);
+        await queryRunner.query(query);
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         const query = `DROP TABLE NOT EXISTS employees_fraction`
-        queryRunner.query(query);
+        await queryRunner.query(query);
     }
 
 }

@@ -11,14 +11,14 @@ export class CreateCompanyFactsTable1594223075366 implements MigrationInterface 
             "financialCosts" double precision NOT NULL, 
             "incomeFromFinancialInvestments" double precision NOT NULL, 
             "additionsToFixedAssets" double precision NOT NULL, 
-            PRIMARY KEY ("id")
+            CONSTRAINT "PK_7784b9bb80f898243187f74cf37" PRIMARY KEY ("id")
         )`;
-        queryRunner.query(query);
+        await queryRunner.query(query);
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         const query = `DROP TABLE IF EXISTS company_facts`
-        queryRunner.query(query);
+        await queryRunner.query(query);
     }
 
 }

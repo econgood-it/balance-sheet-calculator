@@ -1,6 +1,7 @@
 import { MigrationInterface, QueryRunner, Repository } from "typeorm";
 import { RegionReader } from "../reader/RegionReader";
 import { Region } from "../entities/region";
+import { LoggingService } from "../logging";
 
 export class CreateRegionEntries1596038818262 implements MigrationInterface {
 
@@ -9,6 +10,7 @@ export class CreateRegionEntries1596038818262 implements MigrationInterface {
         const regionReader: RegionReader = new RegionReader();
         const regions: Region[] = await regionReader.read('./regions.csv');
         const regionRepository: Repository<Region> = queryRunner.connection.getRepository(Region);
+
         for (const region of regions) {
             await regionRepository.insert(region);
         }
@@ -18,10 +20,11 @@ export class CreateRegionEntries1596038818262 implements MigrationInterface {
         const regionReader: RegionReader = new RegionReader();
         const regions: Region[] = await regionReader.read('./regions.csv');
         const regionRepository: Repository<Region> = queryRunner.connection.getRepository(Region);
+
         for (const region of regions) {
             await regionRepository.delete({ countryCode: region.countryName });
-
         }
+
     }
 
 }

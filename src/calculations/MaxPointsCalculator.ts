@@ -1,12 +1,13 @@
 import { StakeholderWeightCalculator } from "./StakeholderWeightCalculator";
 import { Topic } from "../entities/topic";
 import { CompanyFacts } from "../entities/companyFacts";
-import RegionService from "../services/region.service";
+import { Repository } from "typeorm";
+import { Region } from "../entities/region";
 
 export class MaxPointsCalculator {
     private stakeholderWeightCalculator: StakeholderWeightCalculator;
-    constructor(companyFacts: CompanyFacts, regionService: RegionService) {
-        this.stakeholderWeightCalculator = new StakeholderWeightCalculator(companyFacts, regionService);
+    constructor(companyFacts: CompanyFacts, regionRepository: Repository<Region>) {
+        this.stakeholderWeightCalculator = new StakeholderWeightCalculator(companyFacts, regionRepository);
     }
 
     public async updateMaxPointsOfTopics(topics: Topic[]): Promise<void> {

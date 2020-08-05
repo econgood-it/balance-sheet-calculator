@@ -1,6 +1,6 @@
 import { CompanyFacts } from "../entities/companyFacts";
-import { RegionService } from "../services/region.service";
 import { Region } from "../entities/region";
+import { Repository } from "typeorm";
 
 
 export class StakeholderWeightCalculator {
@@ -9,7 +9,7 @@ export class StakeholderWeightCalculator {
 
 
     constructor(private companyFacts: CompanyFacts,
-        private readonly regionService: RegionService) {
+        private readonly regionRepository: Repository<Region>) {
     }
 
     public async calcStakeholderWeight(stakeholderName: string): Promise<number> {
@@ -140,7 +140,7 @@ export class StakeholderWeightCalculator {
     private async supplyRisks(): Promise<number> {
         let result: number = 0;
         for (const supplyFraction of this.companyFacts.supplyFractions) {
-            const region: Region = await this.regionService.getRegion(supplyFraction.countryCode);
+            const region: Region = await this.regionRepository.findOneOrFail({ countryCode: supplyFraction.countryCode });
             result += supplyFraction.costs * region.pppIndex;
         }
         return result;
@@ -149,7 +149,7 @@ export class StakeholderWeightCalculator {
     private async employeesRisks(): Promise<number> {
         let result: number = 0;
         for (const employeesFraction of this.companyFacts.employeesFractions) {
-            const region: Region = await this.regionService.getRegion(employeesFraction.countryCode);
+            const region: Region = await this.regionRepository.findOneOrFail({ countryCode: employeesFraction.countryCode });
             result += this.companyFacts.totalStaffCosts * employeesFraction.percentage
                 * region.pppIndex;
         }

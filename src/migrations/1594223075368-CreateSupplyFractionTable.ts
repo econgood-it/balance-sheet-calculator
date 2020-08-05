@@ -8,15 +8,14 @@ export class CreateSupplyFractionTable1594223075368 implements MigrationInterfac
             "countryCode" character varying NOT NULL, 
             "costs" double precision NOT NULL, 
             "companyFactsId" integer, 
-            PRIMARY KEY ("id"), 
-            FOREIGN KEY ("companyFactsId") REFERENCES company_facts("id")
+            CONSTRAINT "PK_96da23328a4beb9562e33fbd9fb" PRIMARY KEY ("id")
         )`;
-        queryRunner.query(query);
+        await queryRunner.query(query);
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         const query = `DROP TABLE IF EXISTS supply_fraction`
-        queryRunner.query(query);
+        await queryRunner.query(query);
     }
 
 }

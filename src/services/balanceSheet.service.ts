@@ -3,25 +3,21 @@ import { LoggingService } from "../logging";
 import { BalanceSheetDTOCreate } from "../dto/create/balanceSheetCreate.dto";
 import { BalanceSheet } from "../entities/balanceSheet";
 import InternalServerException from "../exceptions/InternalServerException";
-import { Repository } from "typeorm";
+import { Connection } from "typeorm";
 import { BalanceSheetDTOUpdate } from "../dto/update/balanceSheetUpdate.dto";
 import { MaxPointsCalculator } from "../calculations/MaxPointsCalculator";
-import RegionService from "./region.service";
-import { CompanyFacts } from "../entities/companyFacts";
 import { SupplyFraction } from "../entities/supplyFraction";
 import { EmployeesFraction } from "../entities/employeesFraction";
 import { EntityWithDTOMerger } from "../entities/entityWithDTOMerger";
 import { JsonMappingError } from "@daniel-faber/json-ts";
 import BadRequestException from "../exceptions/BadRequestException";
+import { Region } from "../entities/region";
 
 
 export class BalanceSheetService {
 
-  private readonly entityWithDTOMerger: EntityWithDTOMerger;
 
-  constructor(private balanceSheetRepository: Repository<BalanceSheet>, private regionService: RegionService,
-    supplyFractionRepository: Repository<SupplyFraction>, employeesFractionRepository: Repository<EmployeesFraction>) {
-    this.entityWithDTOMerger = new EntityWithDTOMerger(supplyFractionRepository, employeesFractionRepository);
+  constructor(private connection: Connection) {
   }
 
   public welcomeMessage(req: Request, res: Response) {
@@ -30,41 +26,48 @@ export class BalanceSheetService {
 
   public async createBalanceSheet(req: Request, res: Response, next: NextFunction) {
     LoggingService.info('Create balancesheet');
-    try {
+    this.connection.manager.transaction(async entityManager => {
       const balancesheet: BalanceSheet = BalanceSheetDTOCreate.fromJSON(req.body).toBalanceSheet();
-      const maxPointsCalculator: MaxPointsCalculator = new MaxPointsCalculator(balancesheet.companyFacts, this.regionService);
+      const maxPointsCalculator: MaxPointsCalculator = new MaxPointsCalculator(balancesheet.companyFacts,
+        entityManager.getRepository(Region));
       await maxPointsCalculator.updateMaxPointsOfTopics(balancesheet.rating.topics);
-      const balanceSheetResponse: BalanceSheet = await this.balanceSheetRepository.save(balancesheet);
+      const balanceSheetResponse: BalanceSheet = await entityManager.getRepository(BalanceSheet).save(balancesheet);
       res.json(balanceSheetResponse);
-    } catch (error) {
+    }).catch(error => {
       if (error instanceof JsonMappingError) {
         next(new BadRequestException(error.message));
       }
       next(new InternalServerException(error));
-    }
+    });
   }
+
 
   public async updateBalanceSheet(req: Request, res: Response, next: NextFunction) {
     LoggingService.info('Update balancesheet');
-    try {
+    this.connection.manager.transaction(async entityManager => {
+      const balanceSheetRepository = entityManager.getRepository(BalanceSheet);
+      const entityWithDTOMerger = new EntityWithDTOMerger(entityManager.getRepository(SupplyFraction),
+        entityManager.getRepository(EmployeesFraction));
       const balanceSheetId: number = Number(req.params.id);
       const balanceSheetDTOUpdate: BalanceSheetDTOUpdate = BalanceSheetDTOUpdate.fromJSON(req.body);
       if (balanceSheetDTOUpdate.id !== balanceSheetId) {
         next(new BadRequestException(`Balance sheet id in request body and url parameter has to be the same`));
       }
-      const balanceSheet = await this.balanceSheetRepository.findOneOrFail(balanceSheetDTOUpdate.id, {
+      const balanceSheet = await balanceSheetRepository.findOneOrFail(balanceSheetDTOUpdate.id, {
         relations: ['rating', 'companyFacts', 'companyFacts.supplyFractions', 'companyFacts.employeesFractions', 'rating.topics']
       });
-      await this.entityWithDTOMerger.mergeBalanceSheet(balanceSheet, balanceSheetDTOUpdate);
-      const maxPointsCalculator: MaxPointsCalculator = new MaxPointsCalculator(balanceSheet.companyFacts, this.regionService);
+      await entityWithDTOMerger.mergeBalanceSheet(balanceSheet, balanceSheetDTOUpdate);
+      const maxPointsCalculator: MaxPointsCalculator = new MaxPointsCalculator(balanceSheet.companyFacts,
+        entityManager.getRepository(Region));
       await maxPointsCalculator.updateMaxPointsOfTopics(balanceSheet.rating.topics);
-      const balanceSheetResponse: BalanceSheet = await this.balanceSheetRepository.save(balanceSheet);
+      const balanceSheetResponse: BalanceSheet = await balanceSheetRepository.save(balanceSheet);
+
       res.json(balanceSheetResponse);
-    } catch (error) {
+    }).catch(error => {
       if (error instanceof JsonMappingError) {
         next(new BadRequestException(error.message));
       }
       next(new InternalServerException(error));
-    }
+    });
   }
 }

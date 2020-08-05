@@ -6,12 +6,7 @@ import { Authentication } from './authentication';
 import errorMiddleware from './middleware/error.middleware';
 import { Connection } from 'typeorm';
 import { LoggingService } from './logging';
-import RegionService from './services/region.service';
-import { Region } from './entities/region';
 import { BalanceSheetService } from './services/balanceSheet.service';
-import { BalanceSheet } from './entities/balanceSheet';
-import { SupplyFraction } from './entities/supplyFraction';
-import { EmployeesFraction } from './entities/employeesFraction';
 
 
 class App {
@@ -27,9 +22,7 @@ class App {
     this.authentication.addBasicAuthToApplication(this.app);
     this.setConfig();
     //Creating and assigning a new instance of our controller
-    const regionService = new RegionService(connection.getRepository(Region));
-    const balanceSheetService = new BalanceSheetService(connection.getRepository(BalanceSheet), regionService,
-      connection.getRepository(SupplyFraction), connection.getRepository(EmployeesFraction));
+    const balanceSheetService = new BalanceSheetService(connection);
     this.balanceSheetController = new BalanceSheetController(this.app, balanceSheetService);
   }
 

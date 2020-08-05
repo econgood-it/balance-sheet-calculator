@@ -12,8 +12,8 @@ export class DatabaseConnectionCreator {
             "username": process.env.DB_USER as string,
             "password": process.env.DB_PASSWORD as string,
             "database": process.env.DB_NAME as string,
-            "synchronize": true,
-            "logging": true,
+            "synchronize": false,
+            "logging": false,
             "entities": [
                 process.env.ENTITY_FOLDER as string
             ],
@@ -28,7 +28,7 @@ export class DatabaseConnectionCreator {
 
     public static async createConnectionAndRunMigrations(): Promise<Connection> {
         const connection = await DatabaseConnectionCreator.createConnection();
-        await connection.runMigrations();
+        await connection.runMigrations({ transaction: 'each' });
         return connection;
     }
 }
