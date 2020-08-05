@@ -5,6 +5,7 @@ import { EmployeesFraction } from "../../src/entities/employeesFraction";
 import { DatabaseConnectionCreator } from '../../src/DatabaseConnectionCreator';
 import { Connection, Repository } from "typeorm";
 import { Region } from "../../src/entities/region";
+import { ConfigurationReader } from "../../src/configurationReader";
 
 
 describe('Stakeholder Weight Calculator', () => {
@@ -16,7 +17,7 @@ describe('Stakeholder Weight Calculator', () => {
     const afghanistanCode = "AFG";
 
     beforeAll(async (done) => {
-        connection = await DatabaseConnectionCreator.createConnectionAndRunMigrations();
+        connection = await DatabaseConnectionCreator.createConnectionAndRunMigrations(ConfigurationReader.read());
         regionRepository = connection.getRepository(Region)
         const supplyFractions: SupplyFraction[] = [new SupplyFraction(undefined, arabEmiratesCode, 300), new SupplyFraction(undefined, afghanistanCode, 20)];
         const employeesFractions: EmployeesFraction[] = [new EmployeesFraction(undefined, arabEmiratesCode, 0.3), new EmployeesFraction(undefined, afghanistanCode, 1)];

@@ -4,13 +4,15 @@ import { Connection } from "typeorm";
 import { DatabaseConnectionCreator } from '../../src/DatabaseConnectionCreator';
 import App from '../../src/app';
 import { Application } from "express";
+import { ConfigurationReader } from "../../src/configurationReader";
 
 describe('Update endpoint of Balance Sheet Controller', () => {
     let connection: Connection;
     let app: Application;
+    const configuration = ConfigurationReader.read();
     beforeAll(async (done) => {
-        connection = await DatabaseConnectionCreator.createConnectionAndRunMigrations();
-        app = new App(connection).app;
+        connection = await DatabaseConnectionCreator.createConnectionAndRunMigrations(configuration);
+        app = new App(connection, configuration).app;
         done();
     })
 
@@ -38,8 +40,8 @@ describe('Update endpoint of Balance Sheet Controller', () => {
             }]
         }
 
-        let response = await testApp.post('/balancesheets').auth(process.env.USERNAME as string,
-            process.env.PASSWORD as string).send({ companyFacts });
+        let response = await testApp.post('/balancesheets').auth(configuration.appUsername,
+            configuration.appPassword).send({ companyFacts });
         const balanceSheetUpdate = {
             id: response.body.id,
             companyFacts: {
@@ -60,8 +62,8 @@ describe('Update endpoint of Balance Sheet Controller', () => {
                 ]
             }
         }
-        response = await testApp.patch(`/balancesheets/${response.body.id}`).auth(process.env.USERNAME as string,
-            process.env.PASSWORD as string).send({ ...balanceSheetUpdate });
+        response = await testApp.patch(`/balancesheets/${response.body.id}`).auth(configuration.appUsername,
+            configuration.appPassword).send({ ...balanceSheetUpdate });
         expect(response.status).toEqual(200);
         expect(response.body.companyFacts).toMatchObject(balanceSheetUpdate.companyFacts);
         //expect(response.body.rating).toMatchObject(rating);

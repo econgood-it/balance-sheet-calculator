@@ -7,6 +7,7 @@ import { EmployeesFraction } from "../../src/entities/employeesFraction";
 import { Connection, Repository } from "typeorm";
 import { Region } from "../../src/entities/region";
 import { DatabaseConnectionCreator } from '../../src/DatabaseConnectionCreator';
+import { ConfigurationReader } from "../../src/configurationReader";
 
 function assertTopics(received: Topic[], expected: Topic[]) {
     for (let i = 0; i < received.length; i++) {
@@ -32,7 +33,7 @@ describe('Max points calculator', () => {
     const afghanistanCode = "AFG";
 
     beforeAll(async (done) => {
-        connection = await DatabaseConnectionCreator.createConnectionAndRunMigrations();
+        connection = await DatabaseConnectionCreator.createConnectionAndRunMigrations(ConfigurationReader.read());
         regionRepository = connection.getRepository(Region)
         done();
     });

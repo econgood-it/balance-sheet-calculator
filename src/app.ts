@@ -7,6 +7,7 @@ import errorMiddleware from './middleware/error.middleware';
 import { Connection } from 'typeorm';
 import { LoggingService } from './logging';
 import { BalanceSheetService } from './services/balanceSheet.service';
+import { ConfigurationReader, Configuration } from './configurationReader';
 
 
 class App {
@@ -16,10 +17,10 @@ class App {
   private authentication: Authentication;
 
 
-  constructor(connection: Connection) {
+  constructor(connection: Connection, private configuration: Configuration) {
     this.app = express();
     this.authentication = new Authentication();
-    this.authentication.addBasicAuthToApplication(this.app);
+    this.authentication.addBasicAuthToApplication(this.app, configuration);
     this.setConfig();
     //Creating and assigning a new instance of our controller
     const balanceSheetService = new BalanceSheetService(connection);
@@ -27,7 +28,7 @@ class App {
   }
 
   public start() {
-    this.app.listen(process.env.PORT, () => LoggingService.info(`Listening on port ${process.env.PORT}`))
+    this.app.listen(this.configuration.appPort, () => LoggingService.info(`Listening on port ${this.configuration.appPort}`))
   }
 
   private setConfig() {

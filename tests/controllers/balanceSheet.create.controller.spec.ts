@@ -4,13 +4,15 @@ import { Connection } from "typeorm";
 import { DatabaseConnectionCreator } from '../../src/DatabaseConnectionCreator';
 import App from '../../src/app';
 import { Application } from "express";
+import { ConfigurationReader } from "../../src/configurationReader";
 
 describe('Create endpoint of Balance Sheet Controller', () => {
     let connection: Connection;
     let app: Application;
+    const configuration = ConfigurationReader.read();
     beforeAll(async (done) => {
-        connection = await DatabaseConnectionCreator.createConnectionAndRunMigrations();
-        app = new App(connection).app;
+        connection = await DatabaseConnectionCreator.createConnectionAndRunMigrations(configuration);
+        app = new App(connection, configuration).app;
         done();
     })
 
@@ -58,8 +60,8 @@ describe('Create endpoint of Balance Sheet Controller', () => {
             ]
         }
 
-        const response = await testApp.post('/balancesheets').auth(process.env.USERNAME as string,
-            process.env.PASSWORD as string).send(balanceSheetJson);
+        const response = await testApp.post('/balancesheets').auth(configuration.appUsername,
+            configuration.appPassword).send(balanceSheetJson);
         expect(response.status).toEqual(200);
         expect(response.body.companyFacts).toMatchObject(balanceSheetJson.companyFacts);
         expect(response.body.rating).toMatchObject(rating);
@@ -83,8 +85,8 @@ describe('Create endpoint of Balance Sheet Controller', () => {
     })
     async function testMissingProperty(companyFacts: any, testApp: supertest.SuperTest<supertest.Test>,
         missingProperty: string): Promise<void> {
-        const response = await testApp.post('/balancesheets').auth(process.env.USERNAME as string,
-            process.env.PASSWORD as string).send({ companyFacts });
+        const response = await testApp.post('/balancesheets').auth(configuration.appUsername,
+            configuration.appPassword).send({ companyFacts });
         const message = 'missing property ';
         expect(response.status).toEqual(400);
         expect(response.text).toMatch(message + missingProperty);

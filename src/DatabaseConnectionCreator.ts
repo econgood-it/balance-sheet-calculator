@@ -1,33 +1,34 @@
 import { Connection, createConnection } from "typeorm";
+import { Configuration } from "./configurationReader";
+
+enum Environment {
+    dev, prod
+}
 
 export class DatabaseConnectionCreator {
-    public static async createConnection(): Promise<Connection> {
-        if (!process.env.DB_NAME || !process.env.DB_PORT || !process.env.DB_USER || !process.env.DB_PASSWORD || !process.env.ENTITY_FOLDER) {
-            throw Error('Environment variables for the database are not set.');
-        }
+    public static async createConnection(configuration: Configuration): Promise<Connection> {
+
+
         return createConnection({
             "type": "postgres",
             "host": "localhost",
-            "port": process.env.DB_PORT as unknown as number,
-            "username": process.env.DB_USER as string,
-            "password": process.env.DB_PASSWORD as string,
-            "database": process.env.DB_NAME as string,
+            "port": configuration.dbPort,
+            "username": configuration.dbUser,
+            "password": configuration.dbPassword,
+            "database": configuration.dbName,
             "synchronize": false,
             "logging": false,
             "entities": [
-                process.env.ENTITY_FOLDER as string
+                configuration.entityRegex
             ],
             "migrations": [
-                "src/migrations/**/*.ts"
+                configuration.migrationRegex
             ],
-            "subscribers": [
-                "src/subscriber/**/*.ts"
-            ]
         });
     }
 
-    public static async createConnectionAndRunMigrations(): Promise<Connection> {
-        const connection = await DatabaseConnectionCreator.createConnection();
+    public static async createConnectionAndRunMigrations(configuration: Configuration): Promise<Connection> {
+        const connection = await DatabaseConnectionCreator.createConnection(configuration);
         await connection.runMigrations({ transaction: 'each' });
         return connection;
     }

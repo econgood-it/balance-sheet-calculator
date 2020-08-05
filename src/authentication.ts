@@ -1,15 +1,13 @@
 import { Application } from "express";
 import { BasicStrategy } from "passport-http";
 import passport from "passport";
+import { Configuration } from "./configurationReader";
 
 export class Authentication {
-    public addBasicAuthToApplication(app: Application) {
+    public addBasicAuthToApplication(app: Application, configuration: Configuration) {
         app.use(passport.initialize());
-        if (!process.env.USERNAME || !process.env.PASSWORD) {
-            throw Error('Environment variables for authentification are not set.');
-        }
-        const authenticated = (username: string, password: string) => username === process.env.USERNAME &&
-            password === process.env.PASSWORD;
+        const authenticated = (username: string, password: string) => username === configuration.appUsername &&
+            password === configuration.appPassword;
         const strategy = new BasicStrategy(async (username: string, password: string, done: any) => {
             const authenicated = await authenticated(username, password);
             if (!authenicated) {
