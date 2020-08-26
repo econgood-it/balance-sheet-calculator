@@ -9,7 +9,7 @@ export class Configuration {
         public readonly dbPassword: string, public readonly environment: Environment,
         public readonly appUsername: string, public readonly appPassword: string,
         public readonly appPort: number) {
-        const basePath = environment == Environment.PROD ? 'dist' : 'src/';
+        const basePath = environment == Environment.PROD ? 'dist/' : 'src/';
         const fileExtension = environment == Environment.PROD ? 'js' : 'ts';
         this.entityRegex = basePath + 'entities/**/*.' + fileExtension;
         this.migrationRegex = basePath + 'migrations/**/*.' + fileExtension;
