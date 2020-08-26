@@ -1,10 +1,11 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class BalanceSheetTable1594223075371 implements MigrationInterface {
+export class BalanceSheetTable1594223075372 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         const query = `CREATE TABLE IF NOT EXISTS "balance_sheet" (
             "id" SERIAL NOT NULL, 
+            "type" text NOT NULL, 
             "companyFactsId" integer, 
             "ratingId" integer, 
             CONSTRAINT "REL_1a39d5f0f66c81e7ff783a6cb7" UNIQUE ("companyFactsId"), 

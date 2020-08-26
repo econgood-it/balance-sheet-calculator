@@ -1,13 +1,17 @@
 import { Rating } from './rating';
 import { CompanyFacts } from './companyFacts';
-import { PrimaryGeneratedColumn, Entity, OneToOne, JoinColumn } from 'typeorm';
+import { PrimaryGeneratedColumn, Entity, OneToOne, JoinColumn, Column } from 'typeorm';
 import { strictObjectMapper, expectNumber } from '@daniel-faber/json-ts';
 import { BalanceSheetDTOUpdate } from '../dto/update/balanceSheetUpdate.dto';
+import { BalanceSheetType } from './enums';
+
 
 @Entity()
 export class BalanceSheet {
   @PrimaryGeneratedColumn()
   public readonly id: number | undefined;
+  @Column('text')
+  public readonly type: BalanceSheetType;
   @OneToOne(type => CompanyFacts, { cascade: true })
   @JoinColumn()
   public readonly companyFacts: CompanyFacts;
@@ -16,10 +20,12 @@ export class BalanceSheet {
   public readonly rating: Rating;
   public constructor(
     id: number | undefined,
+    type: BalanceSheetType,
     companyFacts: CompanyFacts,
     rating: Rating,
   ) {
     this.id = id;
+    this.type = type;
     this.companyFacts = companyFacts;
     this.rating = rating;
   }

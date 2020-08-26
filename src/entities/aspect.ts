@@ -1,9 +1,9 @@
-import { PrimaryGeneratedColumn, Column, Entity, ManyToOne, OneToMany } from 'typeorm';
-import { Rating } from './rating';
-import { Aspect } from './aspect';
+import { PrimaryGeneratedColumn, Column, Entity, ManyToOne } from 'typeorm';
+import { Topic } from './topic';
+
 
 @Entity()
-export class Topic {
+export class Aspect {
     @PrimaryGeneratedColumn()
     public readonly id: number | undefined;
     @Column()
@@ -19,11 +19,8 @@ export class Topic {
     @Column("double precision")
     public weight: number;
 
-    @ManyToOne(type => Rating, rating => rating.topics)
-    public rating!: Rating;
-
-    @OneToMany(type => Aspect, aspect => aspect.topic, { cascade: true })
-    public readonly aspects: Aspect[];
+    @ManyToOne(type => Topic, topic => topic.aspects)
+    public topic!: Topic;
 
     public constructor(
         id: number | undefined,
@@ -33,7 +30,6 @@ export class Topic {
         points: number,
         maxPoints: number,
         weight: number,
-        aspects: Aspect[],
     ) {
         this.id = id;
         this.shortName = shortName;
@@ -42,6 +38,5 @@ export class Topic {
         this.points = points;
         this.maxPoints = maxPoints;
         this.weight = weight;
-        this.aspects = aspects;
     }
 }

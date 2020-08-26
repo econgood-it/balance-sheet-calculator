@@ -5,6 +5,7 @@ import { DatabaseConnectionCreator } from '../../src/DatabaseConnectionCreator';
 import App from '../../src/app';
 import { Application } from "express";
 import { ConfigurationReader } from "../../src/configurationReader";
+import { BalanceSheetType } from "../../src/entities/enums";
 
 describe('Create endpoint of Balance Sheet Controller', () => {
     let connection: Connection;
@@ -24,6 +25,7 @@ describe('Create endpoint of Balance Sheet Controller', () => {
     it('should create BalanceSheet from company facts', async (done) => {
         const testApp = supertest(app);
         const balanceSheetJson = {
+            type: BalanceSheetType.Compact,
             companyFacts: {
                 totalPurchaseFromSuppliers: 300,
                 totalStaffCosts: 100,
@@ -86,7 +88,7 @@ describe('Create endpoint of Balance Sheet Controller', () => {
     async function testMissingProperty(companyFacts: any, testApp: supertest.SuperTest<supertest.Test>,
         missingProperty: string): Promise<void> {
         const response = await testApp.post('/balancesheets').auth(configuration.appUsername,
-            configuration.appPassword).send({ companyFacts });
+            configuration.appPassword).send({ type: BalanceSheetType.Compact, companyFacts });
         const message = 'missing property ';
         expect(response.status).toEqual(400);
         expect(response.text).toMatch(message + missingProperty);
