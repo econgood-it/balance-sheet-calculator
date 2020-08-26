@@ -1,8 +1,6 @@
 import { Rating } from './rating';
 import { CompanyFacts } from './companyFacts';
 import { PrimaryGeneratedColumn, Entity, OneToOne, JoinColumn, Column } from 'typeorm';
-import { strictObjectMapper, expectNumber } from '@daniel-faber/json-ts';
-import { BalanceSheetDTOUpdate } from '../dto/update/balanceSheetUpdate.dto';
 import { BalanceSheetType } from './enums';
 
 

@@ -12,6 +12,7 @@ import { EntityWithDTOMerger } from "../entities/entityWithDTOMerger";
 import { JsonMappingError } from "@daniel-faber/json-ts";
 import BadRequestException from "../exceptions/BadRequestException";
 import { Region } from "../entities/region";
+import { BalanceSheetType } from "../entities/enums";
 
 
 export class BalanceSheetService {
@@ -30,7 +31,7 @@ export class BalanceSheetService {
       const balancesheet: BalanceSheet = BalanceSheetDTOCreate.fromJSON(req.body).toBalanceSheet();
       const maxPointsCalculator: MaxPointsCalculator = new MaxPointsCalculator(balancesheet.companyFacts,
         entityManager.getRepository(Region));
-      await maxPointsCalculator.updateMaxPointsOfTopics(balancesheet.rating.topics);
+      await maxPointsCalculator.updateMaxPointsAndPoints(balancesheet.rating.topics, balancesheet.type);
       const balanceSheetResponse: BalanceSheet = await entityManager.getRepository(BalanceSheet).save(balancesheet);
       res.json(balanceSheetResponse);
     }).catch(error => {
@@ -49,17 +50,24 @@ export class BalanceSheetService {
       const entityWithDTOMerger = new EntityWithDTOMerger(entityManager.getRepository(SupplyFraction),
         entityManager.getRepository(EmployeesFraction));
       const balanceSheetId: number = Number(req.params.id);
-      const balanceSheetDTOUpdate: BalanceSheetDTOUpdate = BalanceSheetDTOUpdate.fromJSON(req.body);
+      const balanceSheet = await balanceSheetRepository.findOneOrFail(balanceSheetId, {
+        relations: ['rating', 'companyFacts', 'companyFacts.supplyFractions', 'companyFacts.employeesFractions',
+          'rating.topics', 'rating.topics.positiveAspects', 'rating.topics.negativeAspects']
+      });
+      let balanceSheetDTOUpdate: BalanceSheetDTOUpdate;
+      if (balanceSheet.type === BalanceSheetType.Compact) {
+        balanceSheetDTOUpdate = BalanceSheetDTOUpdate.fromJSONCompact(req.body);
+      } else {
+        balanceSheetDTOUpdate = BalanceSheetDTOUpdate.fromJSONFull(req.body);
+      }
       if (balanceSheetDTOUpdate.id !== balanceSheetId) {
         next(new BadRequestException(`Balance sheet id in request body and url parameter has to be the same`));
       }
-      const balanceSheet = await balanceSheetRepository.findOneOrFail(balanceSheetDTOUpdate.id, {
-        relations: ['rating', 'companyFacts', 'companyFacts.supplyFractions', 'companyFacts.employeesFractions', 'rating.topics']
-      });
+
       await entityWithDTOMerger.mergeBalanceSheet(balanceSheet, balanceSheetDTOUpdate);
       const maxPointsCalculator: MaxPointsCalculator = new MaxPointsCalculator(balanceSheet.companyFacts,
         entityManager.getRepository(Region));
-      await maxPointsCalculator.updateMaxPointsOfTopics(balanceSheet.rating.topics);
+      await maxPointsCalculator.updateMaxPointsAndPoints(balanceSheet.rating.topics, balanceSheet.type);
       const balanceSheetResponse: BalanceSheet = await balanceSheetRepository.save(balanceSheet);
 
       res.json(balanceSheetResponse);

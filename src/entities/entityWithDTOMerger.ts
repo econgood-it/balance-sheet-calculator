@@ -10,6 +10,10 @@ import { EmployeesFractionDTOUpdate } from "../dto/update/employeesFractionUpdat
 import { Rating } from "./rating";
 import { RatingDTOUpdate } from "../dto/update/ratingUpdate.dto";
 import { Topic } from "./topic";
+import { BalanceSheetType } from "./enums";
+import { TopicDTOUpdate } from "../dto/update/topicUpdate.dto";
+import { PositiveAspect } from "./positiveAspect";
+import { NegativeAspect } from "./negativeAspect";
 
 export class EntityWithDTOMerger {
 
@@ -22,7 +26,7 @@ export class EntityWithDTOMerger {
             await this.mergeCompanyFacts(balanceSheet.companyFacts, balanceSheetDTOUpdate.companyFacts);
         }
         if (balanceSheetDTOUpdate.rating) {
-            this.mergeRating(balanceSheet.rating, balanceSheetDTOUpdate.rating);
+            this.mergeRating(balanceSheet.rating, balanceSheetDTOUpdate.rating, balanceSheet.type);
         }
     }
 
@@ -42,16 +46,42 @@ export class EntityWithDTOMerger {
         }
     }
 
-    public mergeRating(rating: Rating, ratingDTOUpdate: RatingDTOUpdate) {
+    public mergeRating(rating: Rating, ratingDTOUpdate: RatingDTOUpdate, balanceSheetType: BalanceSheetType) {
         if (ratingDTOUpdate.topics) {
             for (const topicDTOUpdate of ratingDTOUpdate.topics) {
                 const topic: Topic | undefined = rating.topics.find(t => t.id === topicDTOUpdate.id);
                 if (topic) {
-                    topic.estimations = this.mergeVal(topic.estimations, topicDTOUpdate.estimations);
-                    topic.weight = this.mergeVal(topic.weight, topicDTOUpdate.weight);
+                    this.mergeTopic(topic, topicDTOUpdate, balanceSheetType);
                 } else {
                     throw Error(`Cannot find topic with id ${topicDTOUpdate.id}`);
                 }
+            }
+        }
+    }
+
+    public mergeTopic(topic: Topic, topicDTOUpdate: TopicDTOUpdate, balanceSheetType: BalanceSheetType) {
+        if (balanceSheetType === BalanceSheetType.Compact) {
+            topic.estimations = this.mergeVal(topic.estimations, topicDTOUpdate.estimations);
+        } else if (balanceSheetType === BalanceSheetType.Full) {
+
+            for (const positiveAspectDTOUpdate of topicDTOUpdate.positiveAspects) {
+                const aspect: PositiveAspect | undefined = topic.positiveAspects.find(a => a.id === positiveAspectDTOUpdate.id);
+                if (aspect) {
+                    aspect.estimations = this.mergeVal(aspect.estimations, positiveAspectDTOUpdate.estimations);
+                    aspect.weight = this.mergeVal(aspect.weight, positiveAspectDTOUpdate.weight);
+                } else {
+                    throw Error(`Cannot find aspect with id ${positiveAspectDTOUpdate.id}`);
+                }
+            }
+        }
+
+        topic.weight = this.mergeVal(topic.weight, topicDTOUpdate.weight);
+        for (const negativeAspectDTOUpdate of topicDTOUpdate.negativeAspects) {
+            const aspect: NegativeAspect | undefined = topic.negativeAspects.find(a => a.id === negativeAspectDTOUpdate.id);
+            if (aspect) {
+                aspect.estimations = this.mergeVal(aspect.estimations, negativeAspectDTOUpdate.estimations);
+            } else {
+                throw Error(`Cannot find aspect with id ${negativeAspectDTOUpdate.id}`);
             }
         }
     }

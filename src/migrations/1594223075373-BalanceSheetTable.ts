@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class BalanceSheetTable1594223075372 implements MigrationInterface {
+export class BalanceSheetTable1594223075373 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         const query = `CREATE TABLE IF NOT EXISTS "balance_sheet" (

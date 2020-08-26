@@ -3,7 +3,7 @@ import { Topic } from './topic';
 
 
 @Entity()
-export class Aspect {
+export class PositiveAspect {
     @PrimaryGeneratedColumn()
     public readonly id: number | undefined;
     @Column()
@@ -19,7 +19,7 @@ export class Aspect {
     @Column("double precision")
     public weight: number;
 
-    @ManyToOne(type => Topic, topic => topic.aspects)
+    @ManyToOne(type => Topic, topic => topic.positiveAspects)
     public topic!: Topic;
 
     public constructor(
@@ -29,7 +29,7 @@ export class Aspect {
         estimations: number,
         points: number,
         maxPoints: number,
-        weight: number,
+        weight: number
     ) {
         this.id = id;
         this.shortName = shortName;

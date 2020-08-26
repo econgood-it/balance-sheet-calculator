@@ -1,6 +1,7 @@
 import { PrimaryGeneratedColumn, Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { Rating } from './rating';
-import { Aspect } from './aspect';
+import { PositiveAspect } from './positiveAspect';
+import { NegativeAspect } from './negativeAspect';
 
 @Entity()
 export class Topic {
@@ -22,8 +23,11 @@ export class Topic {
     @ManyToOne(type => Rating, rating => rating.topics)
     public rating!: Rating;
 
-    @OneToMany(type => Aspect, aspect => aspect.topic, { cascade: true })
-    public readonly aspects: Aspect[];
+    @OneToMany(type => PositiveAspect, aspect => aspect.topic, { cascade: true })
+    public readonly positiveAspects: PositiveAspect[];
+
+    @OneToMany(type => NegativeAspect, aspect => aspect.topic, { cascade: true })
+    public readonly negativeAspects: NegativeAspect[];
 
     public constructor(
         id: number | undefined,
@@ -33,7 +37,8 @@ export class Topic {
         points: number,
         maxPoints: number,
         weight: number,
-        aspects: Aspect[],
+        postiveAspects: PositiveAspect[],
+        negativeAspects: NegativeAspect[]
     ) {
         this.id = id;
         this.shortName = shortName;
@@ -42,6 +47,7 @@ export class Topic {
         this.points = points;
         this.maxPoints = maxPoints;
         this.weight = weight;
-        this.aspects = aspects;
+        this.positiveAspects = postiveAspects;
+        this.negativeAspects = negativeAspects;
     }
 }
