@@ -6,6 +6,7 @@ import { Repository } from "typeorm";
 export class StakeholderWeightCalculator {
 
     private readonly defaultPPPIndex = 0.978035862587365;
+    private readonly defaultIfDenominatorIsZero = 100.;
 
 
     constructor(private companyFacts: CompanyFacts,
@@ -86,14 +87,16 @@ export class StakeholderWeightCalculator {
             : supplierAndEmployeesRiskRatio > 300 ? 300 : supplierAndEmployeesRiskRatio;
     }
 
-    // =WENNFEHLER((60*$'11.Region'.G10/($'11.Region'.G3+$'11.Region'.G10+(I19+I21+I22+G24))*10);100)
-    public async calculateEmployeesRisk(): Promise<number> {
+    // =WENNFEHLER((60*$'11.Region'.G3/($'11.Region'.G3+$'11.Region'.G10+(I19+I21+I22+G24))*5),100)
+    public async calculateSupplierAndEmployeesRiskRatio(): Promise<number> {
+        // In excel this is equal to the cell $'11.Region'.G3
         const supplierRisks: number = await this.supplyRisks();
         const employeesRisksNormed: number = await this.calculateNormedEmployeesRisk();
-        const sumOfFinances: number = this.getSumOfFinancialAspects();
-        const numerator = 60 * employeesRisksNormed;
-        const denominator: number = supplierRisks + employeesRisksNormed + sumOfFinances;
-        return numerator / denominator * 10;
+
+        const numerator = 60 * supplierRisks;
+        // (60*$'11.Region'.G3/($'11.Region'.G3+$'11.Region'.G10+(I19+I21+I22+G24))*5))
+        const denominator: number = supplierRisks + employeesRisksNormed + this.getSumOfFinancialAspects();
+        return denominator != 0 ? numerator / denominator * 5 : this.defaultIfDenominatorIsZero;
     }
 
     // =WENNFEHLER((60*(I19+I21+I22+G24)/($'11.Region'.G3+$'11.Region'.G10+(I19+I21+I22+G24))*10);100)
@@ -103,18 +106,17 @@ export class StakeholderWeightCalculator {
         const sumOfFinances: number = this.getSumOfFinancialAspects();
         const numerator = 60 * sumOfFinances;
         const denominator: number = supplierRisks + employeesRisksNormed + sumOfFinances;
-        return numerator / denominator * 10;
+        return denominator != 0 ? numerator / denominator * 10 : this.defaultIfDenominatorIsZero;
     }
 
-    public async calculateSupplierAndEmployeesRiskRatio(): Promise<number> {
-        // In excel this is equal to the cell $'11.Region'.G3
+    // =WENNFEHLER((60*$'11.Region'.G10/($'11.Region'.G3+$'11.Region'.G10+(I19+I21+I22+G24))*10);100)
+    public async calculateEmployeesRisk(): Promise<number> {
         const supplierRisks: number = await this.supplyRisks();
         const employeesRisksNormed: number = await this.calculateNormedEmployeesRisk();
-
-        const numerator = 60 * supplierRisks;
-        // (60*$'11.Region'.G3/($'11.Region'.G3+$'11.Region'.G10+(I19+I21+I22+G24))*5))
-        const denominator: number = supplierRisks + employeesRisksNormed + this.getSumOfFinancialAspects();
-        return numerator / denominator * 5;
+        const sumOfFinances: number = this.getSumOfFinancialAspects();
+        const numerator = 60 * employeesRisksNormed;
+        const denominator: number = supplierRisks + employeesRisksNormed + sumOfFinances;
+        return denominator != 0 ? numerator / denominator * 10 : this.defaultIfDenominatorIsZero;
     }
 
     // In excel this is equal to the cell $'11.Region'.G10

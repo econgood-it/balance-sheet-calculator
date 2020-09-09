@@ -8,20 +8,10 @@ import { Connection, Repository } from "typeorm";
 import { Region } from "../../src/entities/region";
 import { DatabaseConnectionCreator } from '../../src/DatabaseConnectionCreator';
 import { ConfigurationReader } from "../../src/configurationReader";
-import { BalanceSheet } from "../../src/entities/balanceSheet";
 import { BalanceSheetType } from "../../src/entities/enums";
-
-function assertTopics(received: Topic[], expected: Topic[]) {
-    for (let i = 0; i < received.length; i++) {
-        const numDigits = 15;
-        try {
-            expect(received[i].maxPoints).toBeCloseTo(expected[i].maxPoints, numDigits);
-            expect(received[i].points).toBeCloseTo(expected[i].points, numDigits);
-        } catch (e) {
-            throw new Error(`At index ${i} error occured with message \n ${e.message}`);
-        }
-    }
-};
+import { PositiveAspect } from "../../src/entities/positiveAspect";
+import { TestDataFactory } from "../data/test.data.factory";
+import { Assertions } from "./Assertions";
 
 
 
@@ -42,7 +32,6 @@ describe('Max points calculator', () => {
         await connection.close();
         done();
     })
-
 
     it('should calculate max points of topics', async (done) => {
         const supplyFractions: SupplyFraction[] = [new SupplyFraction(undefined, arabEmiratesCode, 300), new SupplyFraction(undefined, afghanistanCode, 20)];
@@ -97,8 +86,21 @@ describe('Max points calculator', () => {
             new Topic(undefined, "E3", "E3 name", 6, 27.272727272727273, maxPointsBDE, 1, [], []),
             new Topic(undefined, "E4", "E4 name", 10, maxPointsBDE, maxPointsBDE, 1, [], []),
         ]
-        assertTopics(topics, expected);
+        Assertions.assertTopics(topics, expected);
         done();
     })
+
+    it('should calculate rating when the company facts values are empty or zero', async (done) => {
+        const supplyFractions: SupplyFraction[] = [new SupplyFraction(undefined, arabEmiratesCode, 300), new SupplyFraction(undefined, afghanistanCode, 20)];
+        const employeesFractions: EmployeesFraction[] = [new EmployeesFraction(undefined, arabEmiratesCode, 0.3), new EmployeesFraction(undefined, afghanistanCode, 1)];
+        const companyFacts: CompanyFacts = new CompanyFacts(undefined, 0, 0, 0, 0, 0, 0, [], []);
+        const topics: Topic[] = TestDataFactory.createTopics();
+        const maxPointsCalculator: MaxPointsCalculator = new MaxPointsCalculator(companyFacts, regionRepository);
+        await maxPointsCalculator.updateMaxPointsAndPoints(topics, BalanceSheetType.Full);
+        const expected: Topic[] = TestDataFactory.createTopics();
+        Assertions.assertTopics(topics, expected);
+        done();
+    })
+
 
 })
