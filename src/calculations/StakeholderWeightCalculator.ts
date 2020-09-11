@@ -91,11 +91,13 @@ export class StakeholderWeightCalculator {
     public async calculateSupplierAndEmployeesRiskRatio(): Promise<number> {
         // In excel this is equal to the cell $'11.Region'.G3
         const supplierRisks: number = await this.supplyRisks();
+        // In excel this is equal to the cell $'11.Region'.G10
         const employeesRisksNormed: number = await this.calculateNormedEmployeesRisk();
-
+        //console.log(`${supplierRisks} , ${employeesRisksNormed}`);
         const numerator = 60 * supplierRisks;
         // (60*$'11.Region'.G3/($'11.Region'.G3+$'11.Region'.G10+(I19+I21+I22+G24))*5))
         const denominator: number = supplierRisks + employeesRisksNormed + this.getSumOfFinancialAspects();
+
         return denominator != 0 ? numerator / denominator * 5 : this.defaultIfDenominatorIsZero;
     }
 
@@ -143,6 +145,7 @@ export class StakeholderWeightCalculator {
         let result: number = 0;
         for (const supplyFraction of this.companyFacts.supplyFractions) {
             const region: Region = await this.regionRepository.findOneOrFail({ countryCode: supplyFraction.countryCode });
+            // console.log(`SupplyRisks: ${supplyFraction.costs} x ${region.pppIndex}`);
             result += supplyFraction.costs * region.pppIndex;
         }
         return result;

@@ -20,6 +20,7 @@ export class MaxPointsCalculator {
             sumOfTopicWeights += stakeholderWeight * topic.weight;
         }
 
+
         for (const topic of topics) {
             // Update max points of topic
             const stackholderName: string = topic.shortName.substring(0, 1);

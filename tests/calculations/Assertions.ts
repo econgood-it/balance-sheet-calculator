@@ -3,9 +3,8 @@ import { PositiveAspect } from "../../src/entities/positiveAspect";
 import { NegativeAspect } from "../../src/entities/negativeAspect";
 
 export class Assertions {
-    public static assertTopics(received: Topic[], expected: Topic[], withAspects: boolean = true) {
+    public static assertTopics(received: Topic[], expected: Topic[], withAspects: boolean = true, numDigits: number = 5) {
         for (let i = 0; i < received.length; i++) {
-            const numDigits = 15;
             try {
                 expect(received[i].maxPoints).toBeCloseTo(expected[i].maxPoints, numDigits);
                 expect(received[i].points).toBeCloseTo(expected[i].points, numDigits);
@@ -20,9 +19,8 @@ export class Assertions {
     };
 
     public static assertAspects(received: PositiveAspect[] | NegativeAspect[],
-        expected: PositiveAspect[] | NegativeAspect[]) {
+        expected: PositiveAspect[] | NegativeAspect[], numDigits: number = 5) {
         for (let i = 0; i < received.length; i++) {
-            const numDigits = 15;
             try {
                 expect(received[i].maxPoints).toBeCloseTo(expected[i].maxPoints, numDigits);
                 expect(received[i].points).toBeCloseTo(expected[i].points, numDigits);

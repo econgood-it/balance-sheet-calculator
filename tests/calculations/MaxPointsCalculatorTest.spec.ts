@@ -10,10 +10,11 @@ import { DatabaseConnectionCreator } from '../../src/DatabaseConnectionCreator';
 import { ConfigurationReader } from "../../src/configurationReader";
 import { BalanceSheetType } from "../../src/entities/enums";
 import { PositiveAspect } from "../../src/entities/positiveAspect";
-import { TestDataFactory } from "../data/test.data.factory";
 import { Assertions } from "./Assertions";
-
-
+import { RatingDefault, CompanyFactsDefault } from "../data/full.default";
+import * as path from 'path';
+import { TestDataReader } from "./TestDataReader";
+import { CompanyFacts1 } from "./testData/fullCompanyFacts1";
 
 describe('Max points calculator', () => {
     let connection: Connection;
@@ -94,13 +95,37 @@ describe('Max points calculator', () => {
         const supplyFractions: SupplyFraction[] = [new SupplyFraction(undefined, arabEmiratesCode, 300), new SupplyFraction(undefined, afghanistanCode, 20)];
         const employeesFractions: EmployeesFraction[] = [new EmployeesFraction(undefined, arabEmiratesCode, 0.3), new EmployeesFraction(undefined, afghanistanCode, 1)];
         const companyFacts: CompanyFacts = new CompanyFacts(undefined, 0, 0, 0, 0, 0, 0, [], []);
-        const topics: Topic[] = TestDataFactory.createTopics();
+        const topics: Topic[] = RatingDefault.topics;
         const maxPointsCalculator: MaxPointsCalculator = new MaxPointsCalculator(companyFacts, regionRepository);
         await maxPointsCalculator.updateMaxPointsAndPoints(topics, BalanceSheetType.Full);
-        const expected: Topic[] = TestDataFactory.createTopics();
+        const expected: Topic[] = RatingDefault.topics;
         Assertions.assertTopics(topics, expected);
         done();
     })
 
+    it('should calculate rating when the company facts values filled out but estimations, and weights are not set', async (done) => {
+        const companyFacts: CompanyFacts = CompanyFacts1;
+        const testDataReader = new TestDataReader();
+        const pathToCsv = path.join(__dirname, 'testData', "fullRating1.csv");
+        const topics: Topic[] = (await testDataReader.readRating(pathToCsv, true)).topics;
+        //console.log(topics);
+        const maxPointsCalculator: MaxPointsCalculator = new MaxPointsCalculator(companyFacts, regionRepository);
+        await maxPointsCalculator.updateMaxPointsAndPoints(topics, BalanceSheetType.Full);
+        const expected: Topic[] = (await testDataReader.readRating(pathToCsv, false)).topics;
+        Assertions.assertTopics(topics, expected);
+        done();
+    })
 
+    it('should calculate rating when the company facts values filled out and estimations, and weights are set', async (done) => {
+        const companyFacts: CompanyFacts = CompanyFacts1;
+        const testDataReader = new TestDataReader();
+        const pathToCsv = path.join(__dirname, 'testData', "fullRating1.csv");
+        const topics: Topic[] = (await testDataReader.readRating(pathToCsv, true)).topics;
+        //console.log(topics);
+        const maxPointsCalculator: MaxPointsCalculator = new MaxPointsCalculator(companyFacts, regionRepository);
+        await maxPointsCalculator.updateMaxPointsAndPoints(topics, BalanceSheetType.Full);
+        const expected: Topic[] = (await testDataReader.readRating(pathToCsv, false)).topics;
+        Assertions.assertTopics(topics, expected);
+        done();
+    })
 })
