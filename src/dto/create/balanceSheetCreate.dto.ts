@@ -3,11 +3,12 @@ import { CompanyFactsDTOCreate } from './companyFactsCreate.dto';
 import { RatingDTOCreate } from './ratingCreate.dto';
 import { RatingFactory } from '../../factories/rating.factory';
 import { BalanceSheet } from '../../entities/balanceSheet';
-import { BalanceSheetType, balanceSheetTypeFromJSON } from '../../entities/enums';
+import { BalanceSheetType, balanceSheetTypeFromJSON, BalanceSheetVersion, balanceSheetVersionFromJSON } from '../../entities/enums';
 
 export class BalanceSheetDTOCreate {
   public constructor(
     public readonly type: BalanceSheetType,
+    public readonly version: BalanceSheetVersion,
     public readonly companyFacts: CompanyFactsDTOCreate,
     public readonly rating: RatingDTOCreate,
   ) {
@@ -18,6 +19,7 @@ export class BalanceSheetDTOCreate {
       const type = accessor.get('type', balanceSheetTypeFromJSON);
       return new BalanceSheetDTOCreate(
         type,
+        accessor.get('version', balanceSheetVersionFromJSON),
         accessor.get('companyFacts', CompanyFactsDTOCreate.fromJSON),
         accessor.getOptional('rating', RatingDTOCreate.fromJSON, RatingFactory.createDefaultRating(type))
       )
@@ -25,7 +27,8 @@ export class BalanceSheetDTOCreate {
   );
 
   public toBalanceSheet(): BalanceSheet {
-    return new BalanceSheet(undefined, this.type, this.companyFacts.toCompanyFacts(), this.rating.toRating())
+    return new BalanceSheet(undefined, this.type, this.version, this.companyFacts.toCompanyFacts(),
+      this.rating.toRating())
   }
 }
 

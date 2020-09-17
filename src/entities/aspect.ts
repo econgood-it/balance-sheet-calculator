@@ -3,7 +3,7 @@ import { Topic } from './topic';
 
 
 @Entity()
-export class PositiveAspect {
+export class Aspect {
     @PrimaryGeneratedColumn()
     public readonly id: number | undefined;
     @Column()
@@ -18,8 +18,12 @@ export class PositiveAspect {
     public maxPoints: number = 0;
     @Column("double precision")
     public weight: number;
+    @Column("boolean")
+    public isWeightSelectedByUser: boolean;
+    @Column("boolean")
+    public isPositive: boolean;
 
-    @ManyToOne(type => Topic, topic => topic.positiveAspects)
+    @ManyToOne(type => Topic, topic => topic.aspects)
     public topic!: Topic;
 
     public constructor(
@@ -29,7 +33,9 @@ export class PositiveAspect {
         estimations: number,
         points: number,
         maxPoints: number,
-        weight: number
+        weight: number,
+        isWeightSelectedByUser: boolean,
+        isPositive: boolean
     ) {
         this.id = id;
         this.shortName = shortName;
@@ -38,5 +44,7 @@ export class PositiveAspect {
         this.points = points;
         this.maxPoints = maxPoints;
         this.weight = weight;
+        this.isWeightSelectedByUser = isWeightSelectedByUser;
+        this.isPositive = isPositive;
     }
 }

@@ -7,3 +7,9 @@ export enum BalanceSheetType {
 }
 
 export const balanceSheetTypeFromJSON = enumMapperByValue<BalanceSheetType>(BalanceSheetType);
+
+export enum BalanceSheetVersion {
+    v5_0_4 = '5.04',
+}
+
+export const balanceSheetVersionFromJSON = enumMapperByValue<BalanceSheetVersion>(BalanceSheetVersion);

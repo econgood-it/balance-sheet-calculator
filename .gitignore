@@ -6,3 +6,4 @@ dist
 coverage/
 combined.log
 error.log
+*.csv#

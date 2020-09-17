@@ -1,7 +1,6 @@
 import { PrimaryGeneratedColumn, Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { Rating } from './rating';
-import { PositiveAspect } from './positiveAspect';
-import { NegativeAspect } from './negativeAspect';
+import { Aspect } from './aspect';
 
 @Entity()
 export class Topic {
@@ -19,15 +18,14 @@ export class Topic {
     public maxPoints: number = 0;
     @Column("double precision")
     public weight: number;
+    @Column("boolean")
+    public isWeightSelectedByUser: boolean;
 
     @ManyToOne(type => Rating, rating => rating.topics)
     public rating!: Rating;
 
-    @OneToMany(type => PositiveAspect, aspect => aspect.topic, { cascade: true })
-    public readonly positiveAspects: PositiveAspect[];
-
-    @OneToMany(type => NegativeAspect, aspect => aspect.topic, { cascade: true })
-    public readonly negativeAspects: NegativeAspect[];
+    @OneToMany(type => Aspect, aspect => aspect.topic, { cascade: true })
+    public readonly aspects: Aspect[];
 
     public constructor(
         id: number | undefined,
@@ -37,8 +35,8 @@ export class Topic {
         points: number,
         maxPoints: number,
         weight: number,
-        postiveAspects: PositiveAspect[],
-        negativeAspects: NegativeAspect[]
+        isWeightSelectedByUser: boolean,
+        aspects: Aspect[],
     ) {
         this.id = id;
         this.shortName = shortName;
@@ -47,7 +45,7 @@ export class Topic {
         this.points = points;
         this.maxPoints = maxPoints;
         this.weight = weight;
-        this.positiveAspects = postiveAspects;
-        this.negativeAspects = negativeAspects;
+        this.isWeightSelectedByUser = isWeightSelectedByUser;
+        this.aspects = aspects;
     }
 }

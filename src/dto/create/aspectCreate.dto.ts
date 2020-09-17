@@ -1,8 +1,7 @@
-import { strictObjectMapper, expectString, expectNumber, arrayMapper } from '@daniel-faber/json-ts';
-import { Topic } from '../../entities/topic';
-import { AspectDTOCreate } from './aspectCreate.dto';
+import { strictObjectMapper, expectString, expectNumber, expectBoolean } from '@daniel-faber/json-ts';
+import { Aspect } from '../../entities/aspect';
 
-export class TopicDTOCreate {
+export class AspectDTOCreate {
 
     public constructor(
         public readonly shortName: string,
@@ -10,25 +9,25 @@ export class TopicDTOCreate {
         public readonly estimations: number,
         public weight: number | undefined,
         public isWeightSelectedByUser: boolean,
-        public readonly aspects: AspectDTOCreate[],
+        public isPositive: boolean
     ) { }
 
     public static readonly fromJSON = strictObjectMapper(
         accessor => {
             const weight = accessor.getOptional('weight', expectNumber);
-            return new TopicDTOCreate(
+            return new AspectDTOCreate(
                 accessor.get('shortName', expectString),
                 accessor.get('name', expectString),
                 accessor.get('estimations', expectNumber),
                 weight,
                 weight ? true : false,
-                accessor.get('aspects', arrayMapper(AspectDTOCreate.fromJSON)),
+                accessor.get('isPositive', expectBoolean)
             );
         }
     );
-    public toTopic(): Topic {
+    public toAspect(): Aspect {
         const weight = this.isWeightSelectedByUser && this.weight ? this.weight : 1;
-        return new Topic(undefined, this.shortName, this.name, this.estimations, 0, 51, weight, this.isWeightSelectedByUser,
-            this.aspects.map(a => a.toAspect()))
+        return new Aspect(undefined, this.shortName, this.name, this.estimations, 0, 51, weight,
+            this.isWeightSelectedByUser, this.isPositive);
     }
 }

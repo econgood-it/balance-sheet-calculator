@@ -6,6 +6,7 @@ export class BalanceSheetTable1594223075373 implements MigrationInterface {
         const query = `CREATE TABLE IF NOT EXISTS "balance_sheet" (
             "id" SERIAL NOT NULL, 
             "type" text NOT NULL, 
+            "version" text NOT NULL, 
             "companyFactsId" integer, 
             "ratingId" integer, 
             CONSTRAINT "REL_1a39d5f0f66c81e7ff783a6cb7" UNIQUE ("companyFactsId"), 

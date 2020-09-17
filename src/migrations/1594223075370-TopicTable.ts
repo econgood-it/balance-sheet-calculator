@@ -11,6 +11,7 @@ export class TopicTable1594223075370 implements MigrationInterface {
             "points" double precision NOT NULL, 
             "maxPoints" double precision NOT NULL, 
             "weight" double precision NOT NULL, 
+            "isWeightSelectedByUser" boolean NOT NULL, 
             "ratingId" integer, 
             CONSTRAINT "PK_33aa4ecb4e4f20aa0157ea7ef61" PRIMARY KEY ("id")
         )`;

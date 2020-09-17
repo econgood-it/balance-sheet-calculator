@@ -12,8 +12,7 @@ import { RatingDTOUpdate } from "../dto/update/ratingUpdate.dto";
 import { Topic } from "./topic";
 import { BalanceSheetType } from "./enums";
 import { TopicDTOUpdate } from "../dto/update/topicUpdate.dto";
-import { PositiveAspect } from "./positiveAspect";
-import { NegativeAspect } from "./negativeAspect";
+import { Aspect } from "./aspect";
 
 export class EntityWithDTOMerger {
 
@@ -64,26 +63,21 @@ export class EntityWithDTOMerger {
             topic.estimations = this.mergeVal(topic.estimations, topicDTOUpdate.estimations);
         } else if (balanceSheetType === BalanceSheetType.Full) {
 
-            for (const positiveAspectDTOUpdate of topicDTOUpdate.positiveAspects) {
-                const aspect: PositiveAspect | undefined = topic.positiveAspects.find(a => a.id === positiveAspectDTOUpdate.id);
+            for (const aspectDTOUpdate of topicDTOUpdate.aspects) {
+                const aspect: Aspect | undefined = topic.aspects.find(a => a.id === aspectDTOUpdate.id);
                 if (aspect) {
-                    aspect.estimations = this.mergeVal(aspect.estimations, positiveAspectDTOUpdate.estimations);
-                    aspect.weight = this.mergeVal(aspect.weight, positiveAspectDTOUpdate.weight);
+                    aspect.estimations = this.mergeVal(aspect.estimations, aspectDTOUpdate.estimations);
+                    if (aspect.isPositive && aspectDTOUpdate.weight !== undefined) {
+                        aspect.isWeightSelectedByUser = true;
+                        aspect.weight = this.mergeVal(aspect.weight, aspectDTOUpdate.weight);
+                    }
                 } else {
-                    throw Error(`Cannot find aspect with id ${positiveAspectDTOUpdate.id}`);
+                    throw Error(`Cannot find aspect with id ${aspectDTOUpdate.id}`);
                 }
             }
         }
-
+        topic.isWeightSelectedByUser = topicDTOUpdate.weight ? true : false;
         topic.weight = this.mergeVal(topic.weight, topicDTOUpdate.weight);
-        for (const negativeAspectDTOUpdate of topicDTOUpdate.negativeAspects) {
-            const aspect: NegativeAspect | undefined = topic.negativeAspects.find(a => a.id === negativeAspectDTOUpdate.id);
-            if (aspect) {
-                aspect.estimations = this.mergeVal(aspect.estimations, negativeAspectDTOUpdate.estimations);
-            } else {
-                throw Error(`Cannot find aspect with id ${negativeAspectDTOUpdate.id}`);
-            }
-        }
     }
 
     public async replaceSupplyFractions(companyFacts: CompanyFacts, supplyFractionDTOUpdates: SupplyFractionDTOUpdate[]): Promise<void> {

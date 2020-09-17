@@ -10,9 +10,7 @@ export class AddForeignKeyConstraints1594223075374 implements MigrationInterface
         ("companyFactsId") REFERENCES "company_facts"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
             `ALTER TABLE "topic" ADD CONSTRAINT "FK_1b04d4d4782b6d1dc514ea3fc09" FOREIGN KEY 
         ("ratingId") REFERENCES "rating"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
-            `ALTER TABLE "positive_aspect" ADD CONSTRAINT "FK_positive_aspect_topic" FOREIGN KEY 
-        ("topicId") REFERENCES "topic"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
-            `ALTER TABLE "negative_aspect" ADD CONSTRAINT "FK_negative_aspect_topic" FOREIGN KEY 
+            `ALTER TABLE "aspect" ADD CONSTRAINT "FK_aspect_topic" FOREIGN KEY 
         ("topicId") REFERENCES "topic"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
             `ALTER TABLE "balance_sheet" ADD CONSTRAINT "FK_1a39d5f0f66c81e7ff783a6cb7f" FOREIGN KEY 
         ("companyFactsId") REFERENCES "company_facts"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
