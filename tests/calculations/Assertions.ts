@@ -11,7 +11,7 @@ export class Assertions {
                 expect(received[i].weight).toBeCloseTo(expected[i].weight, numDigits);
                 expect(received[i].isWeightSelectedByUser).toBe(expected[i].isWeightSelectedByUser);
             } catch (e) {
-                throw new Error(`At topic ${received[i].shortName} error occured with message \n ${e.message}`);
+                throw new Error(Assertions.errorMsg(e, received[i], expected[i]));
             }
             if (withAspects) {
                 Assertions.assertAspects(received[i].aspects, expected[i].aspects);
@@ -28,9 +28,19 @@ export class Assertions {
                 expect(received[i].weight).toBeCloseTo(expected[i].weight, numDigits);
                 expect(received[i].isWeightSelectedByUser).toBe(expected[i].isWeightSelectedByUser);
             } catch (e) {
-                throw new Error(`At aspect ${received[i].shortName} error occured with message \n ${e.message}`);
+                throw new Error(Assertions.errorMsg(e, received[i], expected[i]));
             }
         }
     };
+
+    private static errorMsg(e: Error, received: Topic | Aspect, expected: Topic | Aspect): string {
+        const type = received instanceof Topic ? 'topic' : 'aspect';
+        return `At ${type} ${received.shortName} error occured with message \n ${e.message} \n\n` +
+            `maxPoints: ${expected.maxPoints}, ${received.maxPoints} \n` +
+            `points: ${expected.points}, ${received.points} \n` +
+            `weight: ${expected.weight}, ${received.weight} \n` +
+            `isWeightSelectedByUser: ${expected.isWeightSelectedByUser}, ${received.isWeightSelectedByUser}`;
+
+    }
 
 }

@@ -9,15 +9,12 @@ import { ConfigurationReader } from "../../src/configurationReader";
 import { BalanceSheetType } from "../../src/entities/enums";
 import { Assertions } from "./Assertions";
 import * as path from 'path';
-import { TestRatingReader } from "../reader/TestRatingReader";
+import { RatingReader } from "../../src/reader/RatingReader";
 import { CompanyFacts0, CompanyFacts1 } from "./testData/companyFacts";
 
 describe('Max points calculator', () => {
     let connection: Connection;
     let regionRepository: Repository<Region>;
-
-    const arabEmiratesCode = "ARE";
-    const afghanistanCode = "AFG";
 
     beforeAll(async (done) => {
         connection = await DatabaseConnectionCreator.createConnectionAndRunMigrations(ConfigurationReader.read());
@@ -30,27 +27,29 @@ describe('Max points calculator', () => {
         done();
     })
 
-    async function testCalculation(fileNameOfRatingData: string, companyFacts: CompanyFacts, done: any) {
-        const testDataReader = new TestRatingReader();
-        const pathToCsv = path.join(__dirname, 'testData', fileNameOfRatingData);
-        const topics: Topic[] = (await testDataReader.readRatingInput(pathToCsv)).topics;
+    async function testCalculation(fileNameOfRatingInputData: string, fileNameOfRatingExpectedData: string,
+        companyFacts: CompanyFacts, done: any) {
+        const testDataReader = new RatingReader();
+        let pathToCsv = path.join(__dirname, 'testData', fileNameOfRatingInputData);
+        const topics: Topic[] = (await testDataReader.readRatingFromCsv(pathToCsv)).topics;
         //console.log(topics);
         const maxPointsCalculator: MaxPointsCalculator = new MaxPointsCalculator(companyFacts, regionRepository);
         await maxPointsCalculator.updateMaxPointsAndPoints(topics, BalanceSheetType.Full);
-        const expected: Topic[] = (await testDataReader.readRatingExpected(pathToCsv)).topics;
+        pathToCsv = path.join(__dirname, 'testData', fileNameOfRatingExpectedData);
+        const expected: Topic[] = (await testDataReader.readRatingFromCsv(pathToCsv)).topics;
         Assertions.assertTopics(topics, expected);
         done();
     }
 
     it('should calculate rating when the company facts values and the rating values are empty', async (done) =>
-        testCalculation('fullRating0.csv', CompanyFacts0, done)
+        testCalculation('fullRating01Input.csv', 'fullRating0Expected.csv', CompanyFacts0, done)
     )
 
     it('should calculate rating when the company facts values filled out but estimations, and weights are not set', async (done) =>
-        testCalculation('fullRating1.csv', CompanyFacts1, done)
+        testCalculation('fullRating01Input.csv', 'fullRating1Expected.csv', CompanyFacts1, done)
     )
 
     it('should calculate rating when the company facts values and rating values filled out', async (done) =>
-        testCalculation('fullRating2.csv', CompanyFacts1, done)
+        testCalculation('fullRating2Input.csv', 'fullRating2Expected.csv', CompanyFacts1, done)
     )
 })
