@@ -4,7 +4,7 @@ import { AspectDTOCreate } from "../dto/create/aspectCreate.dto";
 import { BalanceSheetType } from "../entities/enums";
 
 export class RatingFactory {
-    private static readonly DEFAULT_WEIGHT = 1;
+    private static readonly DEFAULT_WEIGHT = undefined;
     private static readonly DEFAULT_ESTIMATION = 0;
 
     public static createDefaultRating(balanceSheetType: BalanceSheetType): RatingDTOCreate {

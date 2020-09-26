@@ -52,7 +52,7 @@ export class BalanceSheetService {
       const balanceSheetId: number = Number(req.params.id);
       const balanceSheet = await balanceSheetRepository.findOneOrFail(balanceSheetId, {
         relations: ['rating', 'companyFacts', 'companyFacts.supplyFractions', 'companyFacts.employeesFractions',
-          'rating.topics', 'rating.topics.positiveAspects', 'rating.topics.negativeAspects']
+          'rating.topics', 'rating.topics.aspects']
       });
       let balanceSheetDTOUpdate: BalanceSheetDTOUpdate;
       if (balanceSheet.type === BalanceSheetType.Compact) {

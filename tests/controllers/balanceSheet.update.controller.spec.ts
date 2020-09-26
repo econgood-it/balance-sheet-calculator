@@ -5,7 +5,7 @@ import { DatabaseConnectionCreator } from '../../src/DatabaseConnectionCreator';
 import App from '../../src/app';
 import { Application } from "express";
 import { ConfigurationReader } from "../../src/configurationReader";
-import { BalanceSheetType } from "../../src/entities/enums";
+import { BalanceSheetType, BalanceSheetVersion } from "../../src/entities/enums";
 
 describe('Update endpoint of Balance Sheet Controller', () => {
     let connection: Connection;
@@ -42,7 +42,10 @@ describe('Update endpoint of Balance Sheet Controller', () => {
         }
 
         let response = await testApp.post('/balancesheets').auth(configuration.appUsername,
-            configuration.appPassword).send({ type: BalanceSheetType.Compact, companyFacts });
+            configuration.appPassword).send({
+                type: BalanceSheetType.Compact, version: BalanceSheetVersion.v5_0_4,
+                companyFacts
+            });
         const balanceSheetUpdate = {
             id: response.body.id,
             companyFacts: {
