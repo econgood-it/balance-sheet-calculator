@@ -1,0 +1,65 @@
+No.,Stakeholders/ Themes/ Aspects,Weight,Estimations,Points,Max. Points
+A,Suppliers,,0.00,0.00,200.00
+A1,Human dignity in the supply chain,,0.00,0.00,50.00
+A1.1,Human dignity in the supply chain,,0.00,0.00,50.00
+A1.2,Negative aspect: violation of human dignity in the supply chain,,0.00,0.00,-200.00
+A2,Solidarity and social justice in the supply chain,,0.00,0.00,50.00
+A2.1,Solidarity and social justice in the supply chain,,0.00,0.00,50.00
+A2.2,Negative aspect: abuse of market power against suppliers,,0.00,0.00,-200.00
+A3,Environmental sustainability in the supply chain,,0.00,0.00,50.00
+A3.1,Environmental sustainability in the supply chain,,0.00,0.00,50.00
+A3.2,Negative aspect: disproportionate environmental impact throughout the supply chain,,0.00,0.00,-200.00
+A4,Transparency & co-determination in the supply chain,,0.00,0.00,50.00
+A4.1,Transparency & co-determination in the supply chain,,0.00,0.00,50.00
+B,"Owners, equity- and financial service providers",,0.00,0.00,200.00
+B1,Ethical position in relation to financial resources,,0.00,0.00,50.00
+B1.1,Ethical position in relation to financial resources,,0.00,0.00,50.00
+B2,Social position in relation to financial resources,,0.00,0.00,50.00
+B2.1,Social position in relation to financial resources,,0.00,0.00,50.00
+B2.2,Negative aspect: unfair distribution of funds,,0.00,0.00,-200.00
+B3,Use of funds in relation to social and environmental impacts,,0.00,0.00,50.00
+B3.1,Use of funds in relation to social and environmental impacts,,0.00,0.00,50.00
+B3.2,Negative aspect: reliance on environmentally unsafe resources,,0.00,0.00,-200.00
+B4,Ownership and co-determination,,0.00,0.00,50.00
+B4.1,Ownership and co-determination,,0.00,0.00,50.00
+B4.2,Negative aspect: hostile takeover,,0.00,0.00,-200.00
+C,Employees,,0.00,0.00,200.00
+C1,Human dignity in the workplace and working environment,,0.00,0.00,50.00
+C1.1,Human dignity in the workplace and working environment,,0.00,0.00,50.00
+C1.2,Negative aspect: unfit working conditions,,0.00,0.00,-200.00
+C2,Self-determined working arrangements,,0.00,0.00,50.00
+C2.1,Self-determined working arrangements,,0.00,0.00,50.00
+C2.2,Negative aspect: unfair employment contracts,,0.00,0.00,-200.00
+C3,Environmentally-friendly behaviour of staff,,0.00,0.00,50.00
+C3.1,Environmentally-friendly behaviour of staff,,0.00,0.00,50.00
+C3.2,Negative aspect: guidance on waste/ environmentally damaging practices,,0.00,0.00,-200.00
+C4,Co-determination and transparency within the organisation,,0.00,0.00,50.00
+C4.1,Co-determination and transparency within the organisation,,0.00,0.00,50.00
+C4.2,Negative aspect: obstruction of works councils,,0.00,0.00,-200.00
+D,Customers and other companies,,0.00,0.00,200.00
+D1,Ethical customer relations,,0.00,0.00,50.00
+D1.1,Ethical customer relations,,0.00,0.00,50.00
+D1.2,Negative aspect: unethical advertising,,0.00,0.00,-200.00
+D2,Cooperation and solidarity with other companies,,0.00,0.00,50.00
+D2.1,Cooperation and solidarity with other companies,,0.00,0.00,50.00
+D2.2,Negative aspect: abuse of market power to the detriment of other companies,,0.00,0.00,-200.00
+D3,Impact on the environment of the use and disposal of products and services,,0.00,0.00,50.00
+D3.1,Impact on the environment of the use and disposal of products and services,,0.00,0.00,50.00
+D3.2,Negative aspect: wilful disregard of disproportionate environmental impacts,,0.00,0.00,-200.00
+D4,Customer participation and product transparency,,0.00,0.00,50.00
+D4.1,Customer participation and product transparency,,0.00,0.00,50.00
+D4.2,Negative aspect: non-disclosure of hazardous substances,,0.00,0.00,-200.00
+E,Social environment,,0.00,0.00,200.00
+E1,Purpose of products and services and their effects on society,,0.00,0.00,50.00
+E1.1,Purpose of products and services and their effects on society,,0.00,0.00,50.00
+E1.2,Negative aspect: unethical and unfit products and services,,0.00,0.00,-200.00
+E2,Contribution to the community,,0.00,0.00,50.00
+E2.1,Contribution to the community,,0.00,0.00,50.00
+E2.2,Negative aspect: inappropriate non-payment of tax,,0.00,0.00,-200.00
+E2.3,Negative aspect: no anti-corruption policy,,0.00,0.00,-200.00
+E3,Reduction of environmental impact,,0.00,0.00,50.00
+E3.1,Reduction of environmental impact,,0.00,0.00,50.00
+E3.2,Negative aspect: infringement of environmental regulations and disproportionate environmental pollution,,0.00,0.00,-200.00
+E4,Social co-determination and transparency,,0.00,0.00,50.00
+E4.1,Social co-determination and transparency,,0.00,0.00,50.00
+E4.2,Negative aspect: lack of transparency and wilful misinformation,,0.00,0.00,-200.00

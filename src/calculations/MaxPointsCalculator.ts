@@ -11,7 +11,7 @@ export class MaxPointsCalculator {
         this.stakeholderWeightCalculator = new StakeholderWeightCalculator(companyFacts, regionRepository);
     }
 
-    public async updateMaxPointsAndPoints(topics: Topic[], balanceSheetType: BalanceSheetType): Promise<void> {
+    public async updateMaxPointsAndPoints(topics: Topic[]): Promise<void> {
         let sumOfTopicWeights = 0;
         // Compute sum of topic weights 
         for (const topic of topics) {

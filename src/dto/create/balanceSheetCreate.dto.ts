@@ -14,17 +14,26 @@ export class BalanceSheetDTOCreate {
   ) {
   }
 
-  public static readonly fromJSON = strictObjectMapper(
-    (accessor) => {
-      const type = accessor.get('type', balanceSheetTypeFromJSON);
-      return new BalanceSheetDTOCreate(
-        type,
-        accessor.get('version', balanceSheetVersionFromJSON),
-        accessor.get('companyFacts', CompanyFactsDTOCreate.fromJSON),
-        accessor.getOptional('rating', RatingDTOCreate.fromJSON, RatingFactory.createDefaultRating(type))
-      )
-    }
-  );
+  public static async fromJSON(jsonString: string): Promise<BalanceSheetDTOCreate> {
+    const fromJsonSync = await strictObjectMapper(
+      (accessor) => {
+        const type = accessor.get('type', balanceSheetTypeFromJSON);
+        const version = accessor.get('version', balanceSheetVersionFromJSON);
+        const companyFacts = accessor.get('companyFacts', CompanyFactsDTOCreate.fromJSON);
+        const rating = accessor.getOptional('rating', RatingDTOCreate.fromJSON);
+        return {
+          type,
+          version,
+          companyFacts,
+          rating
+        }
+      });
+    const jsonObject = fromJsonSync(jsonString);
+    const ratingOfUserOrDefault = jsonObject.rating ? jsonObject.rating : await RatingFactory.createDefaultRating(BalanceSheetType.Compact,
+      BalanceSheetVersion.v5_0_4);
+    return new BalanceSheetDTOCreate(jsonObject.type, jsonObject.version, jsonObject.companyFacts,
+      ratingOfUserOrDefault)
+  }
 
   public toBalanceSheet(): BalanceSheet {
     return new BalanceSheet(undefined, this.type, this.version, this.companyFacts.toCompanyFacts(),

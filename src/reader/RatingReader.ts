@@ -2,6 +2,9 @@ import { Workbook, Row, Cell, Worksheet } from 'exceljs';
 import { Rating } from '../entities/rating';
 import { Topic } from '../entities/topic';
 import { Aspect } from '../entities/aspect';
+import { AspectDTOCreate } from '../dto/create/aspectCreate.dto';
+import { RatingDTOCreate } from '../dto/create/ratingCreate.dto';
+import { TopicDTOCreate } from '../dto/create/topicCreate.dto';
 
 interface Headers {
     shortNameIndex: number;
@@ -11,6 +14,14 @@ interface Headers {
     pointsIndex: number;
     maxPointsIndex: number;
 }
+
+
+enum RatingFormat {
+    Rating = "Rating",
+    RatingDTOCreate = "RatingDTOCreate"
+}
+
+
 
 export class RatingReader {
 
@@ -23,11 +34,28 @@ export class RatingReader {
         maxPointsIndex: 6
     }
 
-    public async readRatingFromCsv(path: string, headers: Headers = RatingReader.DEFAULT_HEADERS): Promise<Rating> {
+    public async readRatingDTOFromCsv(path: string, headers: Headers = RatingReader.DEFAULT_HEADERS): Promise<RatingDTOCreate> {
         // create object for workbook
+        const rating: Rating = await this.readRatingFromCsv(path, headers);
+        const topics: TopicDTOCreate[] = [];
+        for (const topic of rating.topics) {
+            const aspects: AspectDTOCreate[] = [];
+            for (const aspect of topic.aspects) {
+                aspects.push(new AspectDTOCreate(aspect.shortName, aspect.name, aspect.estimations,
+                    aspect.isWeightSelectedByUser ? aspect.weight : undefined, aspect.isWeightSelectedByUser,
+                    aspect.isPositive));
+            }
+            topics.push(new TopicDTOCreate(topic.shortName, topic.name, topic.estimations,
+                topic.isWeightSelectedByUser ? topic.weight : undefined, topic.isWeightSelectedByUser,
+                aspects));
+        }
+        return new RatingDTOCreate(topics);
+    }
+
+    public async readRatingFromCsv(path: string, headers: Headers = RatingReader.DEFAULT_HEADERS): Promise<Rating> {
         let wb: Workbook = new Workbook();
         const sheet: Worksheet = await wb.csv.readFile(path, { parserOptions: { delimiter: ',' } });
-        //wb = await wb.xlsx.readFile(path);
+
         const topics: Topic[] = [];
         let rowIndex = 2;
         while (true) {
