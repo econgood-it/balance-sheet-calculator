@@ -26,7 +26,7 @@ export class AspectDTOCreate {
         }
     );
     public toAspect(): Aspect {
-        const weight = this.isWeightSelectedByUser && this.weight ? this.weight : 1;
+        const weight = this.weight ? this.weight : 1;
         return new Aspect(undefined, this.shortName, this.name, this.estimations, 0, 51, weight,
             this.isWeightSelectedByUser, this.isPositive);
     }

@@ -7,7 +7,7 @@ import { Region } from "../../src/entities/region";
 import { DatabaseConnectionCreator } from '../../src/DatabaseConnectionCreator';
 import { ConfigurationReader } from "../../src/configurationReader";
 import { BalanceSheetType } from "../../src/entities/enums";
-import { Assertions } from "./Assertions";
+import { Assertions } from "../Assertions";
 import * as path from 'path';
 import { RatingReader } from "../../src/reader/RatingReader";
 import { CompanyFacts0, CompanyFacts1 } from "./testData/companyFacts";
@@ -34,7 +34,7 @@ describe('Max points calculator', () => {
         const topics: Topic[] = (await testDataReader.readRatingFromCsv(pathToCsv)).topics;
         //console.log(topics);
         const maxPointsCalculator: MaxPointsCalculator = new MaxPointsCalculator(companyFacts, regionRepository);
-        await maxPointsCalculator.updateMaxPointsAndPoints(topics, BalanceSheetType.Full);
+        await maxPointsCalculator.updateMaxPointsAndPoints(topics);
         pathToCsv = path.join(__dirname, 'testData', fileNameOfRatingExpectedData);
         const expected: Topic[] = (await testDataReader.readRatingFromCsv(pathToCsv)).topics;
         Assertions.assertTopics(topics, expected);

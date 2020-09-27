@@ -29,8 +29,9 @@ export class BalanceSheetDTOCreate {
         }
       });
     const jsonObject = fromJsonSync(jsonString);
-    const ratingOfUserOrDefault = jsonObject.rating ? jsonObject.rating : await RatingFactory.createDefaultRating(BalanceSheetType.Compact,
-      BalanceSheetVersion.v5_0_4);
+    const ratingOfUserOrDefault = jsonObject.rating ? jsonObject.rating :
+      await RatingFactory.createDefaultRating(jsonObject.type, jsonObject.version);
+
     return new BalanceSheetDTOCreate(jsonObject.type, jsonObject.version, jsonObject.companyFacts,
       ratingOfUserOrDefault)
   }

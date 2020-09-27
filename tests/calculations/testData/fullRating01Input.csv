@@ -1,86 +1,86 @@
-No.,Stakeholders/ Themes/ Aspects,Weight,Estimations,Points,MaxPoints
-A,Suppliers,1,0,0,0
-A1,Human dignity in the supply chain,1,0,0,0
-A1.1,Working conditions and social impact in the supply chain,1,0,0,0
-A1.2,Negative aspect: violation of human dignity in the supply chain,1,0,0,0
-A2,Solidarity and social justice in the supply chain,1,0,0,0
-A2.1,Fair business practices towards direct suppliers,1,0,0,0
-A2.2,Exercising a positive influence on solidarity and social justice in the supply chain,1,0,0,0
-A2.3,Negative aspect: abuse of market power against suppliers,1,0,0,0
-A3,Environmental sustainability in the supply chain,1,0,0,0
-A3.1,Environmental impact throughout the supply chain,1,0,0,0
-A3.2,Negative aspect: disproportionate environmental impact throughout the supply chain,1,0,0,0
-A4,Transparency & co-determination in the supply chain,1,0,0,0
-A4.1,Transparency towards suppliers and their right to co-determination,1,0,0,0
-A4.2,Positive influence on transparency and co-determination throughout the supply chain,1,0,0,0
-B,"Owners, equity- and financial service providers",1,0,0,0
-B1,Ethical position in relation to financial resources,1,0,0,0
-B1.1,Financial independence through equity financing,1,0,0,0
-B1.2,Common Good-orientated borrowing,1,0,0,0
-B1.3,Ethical position of external financial partners,1,0,0,0
-B2,Social position in relation to financial resources,1,0,0,0
-B2.1,Solidarity and Common Good-orientated use of funds,1,0,0,0
-B2.2,Negative aspect: unfair distribution of funds,1,0,0,0
-B3,Use of funds in relation to social and environmental impacts,1,0,0,0
-B3.1,Environmental quality of investments,1,0,0,0
-B3.2,Common Good-orientated investment,1,0,0,0
-B3.3,Negative aspect: reliance on environmentally unsafe resources,1,0,0,0
-B4,Ownership and co-determination,1,0,0,0
-B4.1,Common Good-orientated ownership structure,1,0,0,0
-B4.2,Negative aspect: hostile takeover,1,0,0,0
-C,Employees,1,0,0,0
-C1,Human dignity in the workplace and working environment,1,0,0,0
-C1.1,Employee-focused organisational culture,1,0,0,0
-C1.2,Health promotion and occupational health and safety,1,0,0,0
-C1.3,Diversity and equal opportunities,1,0,0,0
-C1.4,Negative aspect: unfit working conditions,1,0,0,0
-C2,Self-determined working arrangements,1,0,0,0
-C2.1,Pay structure,1,0,0,0
-C2.2,Structuring working time,1,0,0,0
-C2.3,Employment structure and work-life balance,1,0,0,0
-C2.4,Negative aspect: unfair employment contracts,1,0,0,0
-C3,Environmentally-friendly behaviour of staff,1,0,0,0
-C3.1,Food during working hours,1,0,0,0
-C3.2,Travel to work,1,0,0,0
-C3.3,"Organisational culture, cultivating awareness for an environmentally-friendly approach",1,0,0,0
-C3.4,Negative aspect: guidance on waste/ environmentally damaging practices,1,0,0,0
-C4,Co-determination and transparency within the organisation,1,0,0,0
-C4.1,Transparency within the organisation,1,0,0,0
-C4.2,Legitimation of the management,1,0,0,0
-C4.3,Employee co-determination,1,0,0,0
-C4.4,Negative aspect: obstruction of works councils,1,0,0,0
-D,Customers and other companies,1,0,0,0
-D1,Ethical customer relations,1,0,0,0
-D1.1,Respect for human dignity in communication with customers,1,0,0,0
-D1.2,Barrier-free access,1,0,0,0
-D1.3,Negative aspect: unethical advertising,1,0,0,0
-D2,Cooperation and solidarity with other companies,1,0,0,0
-D2.1,Cooperation with other companies,1,0,0,0
-D2.2,Solidarity with other companies,1,0,0,0
-D2.3,Negative aspect: abuse of market power to the detriment of other companies,1,0,0,0
-D3,Impact on the environment of the use and disposal of products and services,1,0,0,0
-D3.1,Environmental cost-benefit ration of products and services (efficiency and consistency) ,1,0,0,0
-D3.2,Moderate use of products and services (sufficiency),1,0,0,0
-D3.3,Negative aspect: wilful disregard of disproportionate environmental impacts,1,0,0,0
-D4,Customer participation and product transparency,1,0,0,0
-D4.1,"Customer participation, joint product development and market research",1,0,0,0
-D4.2,Product transparency,1,0,0,0
-D4.2,Negative aspect: non-disclosure of hazardous substances,1,0,0,0
-E,Social environment,1,0,0,0
-E1,Purpose of products and services and their effects on society,1,0,0,0
-E1.1,Products and services should cover basic needs and contribute to a good life,1,0,0,0
-E1.2,Social impact of products and services,1,0,0,0
-E1.3,Negative aspect: unethical and unfit products and services,1,0,0,0
-E2,Contribution to the community,1,0,0,0
-E2.1,Taxes and social security contributions,1,0,0,0
-E2.2,Voluntary contributions that strengthen society,1,0,0,0
-E2.3,Negative aspect: inappropriate non-payment of tax,1,0,0,0
-E2.4,Negative aspect: no anti-corruption policy,1,0,0,0
-E3,Reduction of environmental impact,1,0,0,0
-E3.1,Absolute impact and management strategy,1,0,0,0
-E3.2,Relative impact,1,0,0,0
-E3.3,Negative aspect: infringement of environmental regulations and disproportionate environmental pollution,1,0,0,0
-E4,Social co-determination and transparency,1,0,0,0
-E4.1,Transparency,1,0,0,0
-E4.2,Social participation,1,0,0,0
-E4.3,Negative aspect: lack of transparency and wilful misinformation,1,0,0,0
+No.,Stakeholders/ Themes/ Aspects,Weight,IsWeightSelectedByUser,Estimations,Points,MaxPoints
+A,Suppliers,1,TRUE,0,0,0
+A1,Human dignity in the supply chain,1,TRUE,0,0,0
+A1.1,Working conditions and social impact in the supply chain,1,TRUE,0,0,0
+A1.2,Negative aspect: violation of human dignity in the supply chain,1,TRUE,0,0,0
+A2,Solidarity and social justice in the supply chain,1,TRUE,0,0,0
+A2.1,Fair business practices towards direct suppliers,1,TRUE,0,0,0
+A2.2,Exercising a positive influence on solidarity and social justice in the supply chain,1,TRUE,0,0,0
+A2.3,Negative aspect: abuse of market power against suppliers,1,TRUE,0,0,0
+A3,Environmental sustainability in the supply chain,1,TRUE,0,0,0
+A3.1,Environmental impact throughout the supply chain,1,TRUE,0,0,0
+A3.2,Negative aspect: disproportionate environmental impact throughout the supply chain,1,TRUE,0,0,0
+A4,Transparency & co-determination in the supply chain,1,TRUE,0,0,0
+A4.1,Transparency towards suppliers and their right to co-determination,1,TRUE,0,0,0
+A4.2,Positive influence on transparency and co-determination throughout the supply chain,1,TRUE,0,0,0
+B,"Owners, equity- and financial service providers",1,TRUE,0,0,0
+B1,Ethical position in relation to financial resources,1,TRUE,0,0,0
+B1.1,Financial independence through equity financing,1,TRUE,0,0,0
+B1.2,Common Good-orientated borrowing,1,TRUE,0,0,0
+B1.3,Ethical position of external financial partners,1,TRUE,0,0,0
+B2,Social position in relation to financial resources,1,TRUE,0,0,0
+B2.1,Solidarity and Common Good-orientated use of funds,1,TRUE,0,0,0
+B2.2,Negative aspect: unfair distribution of funds,1,TRUE,0,0,0
+B3,Use of funds in relation to social and environmental impacts,1,TRUE,0,0,0
+B3.1,Environmental quality of investments,1,TRUE,0,0,0
+B3.2,Common Good-orientated investment,1,TRUE,0,0,0
+B3.3,Negative aspect: reliance on environmentally unsafe resources,1,TRUE,0,0,0
+B4,Ownership and co-determination,1,TRUE,0,0,0
+B4.1,Common Good-orientated ownership structure,1,TRUE,0,0,0
+B4.2,Negative aspect: hostile takeover,1,TRUE,0,0,0
+C,Employees,1,TRUE,0,0,0
+C1,Human dignity in the workplace and working environment,1,TRUE,0,0,0
+C1.1,Employee-focused organisational culture,1,TRUE,0,0,0
+C1.2,Health promotion and occupational health and safety,1,TRUE,0,0,0
+C1.3,Diversity and equal opportunities,1,TRUE,0,0,0
+C1.4,Negative aspect: unfit working conditions,1,TRUE,0,0,0
+C2,Self-determined working arrangements,1,TRUE,0,0,0
+C2.1,Pay structure,1,TRUE,0,0,0
+C2.2,Structuring working time,1,TRUE,0,0,0
+C2.3,Employment structure and work-life balance,1,TRUE,0,0,0
+C2.4,Negative aspect: unfair employment contracts,1,TRUE,0,0,0
+C3,Environmentally-friendly behaviour of staff,1,TRUE,0,0,0
+C3.1,Food during working hours,1,TRUE,0,0,0
+C3.2,Travel to work,1,TRUE,0,0,0
+C3.3,"Organisational culture, cultivating awareness for an environmentally-friendly approach",1,TRUE,0,0,0
+C3.4,Negative aspect: guidance on waste/ environmentally damaging practices,1,TRUE,0,0,0
+C4,Co-determination and transparency within the organisation,1,TRUE,0,0,0
+C4.1,Transparency within the organisation,1,TRUE,0,0,0
+C4.2,Legitimation of the management,1,TRUE,0,0,0
+C4.3,Employee co-determination,1,TRUE,0,0,0
+C4.4,Negative aspect: obstruction of works councils,1,TRUE,0,0,0
+D,Customers and other companies,1,TRUE,0,0,0
+D1,Ethical customer relations,1,TRUE,0,0,0
+D1.1,Respect for human dignity in communication with customers,1,TRUE,0,0,0
+D1.2,Barrier-free access,1,TRUE,0,0,0
+D1.3,Negative aspect: unethical advertising,1,TRUE,0,0,0
+D2,Cooperation and solidarity with other companies,1,TRUE,0,0,0
+D2.1,Cooperation with other companies,1,TRUE,0,0,0
+D2.2,Solidarity with other companies,1,TRUE,0,0,0
+D2.3,Negative aspect: abuse of market power to the detriment of other companies,1,TRUE,0,0,0
+D3,Impact on the environment of the use and disposal of products and services,1,TRUE,0,0,0
+D3.1,Environmental cost-benefit ration of products and services (efficiency and consistency) ,1,TRUE,0,0,0
+D3.2,Moderate use of products and services (sufficiency),1,TRUE,0,0,0
+D3.3,Negative aspect: wilful disregard of disproportionate environmental impacts,1,TRUE,0,0,0
+D4,Customer participation and product transparency,1,TRUE,0,0,0
+D4.1,"Customer participation, joint product development and market research",1,TRUE,0,0,0
+D4.2,Product transparency,1,TRUE,0,0,0
+D4.2,Negative aspect: non-disclosure of hazardous substances,1,TRUE,0,0,0
+E,Social environment,1,TRUE,0,0,0
+E1,Purpose of products and services and their effects on society,1,TRUE,0,0,0
+E1.1,Products and services should cover basic needs and contribute to a good life,1,TRUE,0,0,0
+E1.2,Social impact of products and services,1,TRUE,0,0,0
+E1.3,Negative aspect: unethical and unfit products and services,1,TRUE,0,0,0
+E2,Contribution to the community,1,TRUE,0,0,0
+E2.1,Taxes and social security contributions,1,TRUE,0,0,0
+E2.2,Voluntary contributions that strengthen society,1,TRUE,0,0,0
+E2.3,Negative aspect: inappropriate non-payment of tax,1,TRUE,0,0,0
+E2.4,Negative aspect: no anti-corruption policy,1,TRUE,0,0,0
+E3,Reduction of environmental impact,1,TRUE,0,0,0
+E3.1,Absolute impact and management strategy,1,TRUE,0,0,0
+E3.2,Relative impact,1,TRUE,0,0,0
+E3.3,Negative aspect: infringement of environmental regulations and disproportionate environmental pollution,1,TRUE,0,0,0
+E4,Social co-determination and transparency,1,TRUE,0,0,0
+E4.1,Transparency,1,TRUE,0,0,0
+E4.2,Social participation,1,TRUE,0,0,0
+E4.3,Negative aspect: lack of transparency and wilful misinformation,1,TRUE,0,0,0

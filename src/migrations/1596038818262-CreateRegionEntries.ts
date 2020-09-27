@@ -8,7 +8,7 @@ export class CreateRegionEntries1596038818262 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         const regionReader: RegionReader = new RegionReader();
-        const regions: Region[] = await regionReader.read('./regions.csv');
+        const regions: Region[] = await regionReader.read();
         const regionRepository: Repository<Region> = queryRunner.connection.getRepository(Region);
 
         for (const region of regions) {
@@ -18,7 +18,7 @@ export class CreateRegionEntries1596038818262 implements MigrationInterface {
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         const regionReader: RegionReader = new RegionReader();
-        const regions: Region[] = await regionReader.read('./regions.csv');
+        const regions: Region[] = await regionReader.read();
         const regionRepository: Repository<Region> = queryRunner.connection.getRepository(Region);
 
         for (const region of regions) {

@@ -13,6 +13,7 @@ interface Headers {
     estimationIndex: number;
     pointsIndex: number;
     maxPointsIndex: number;
+    isWeightSelectedByUserIndex: number;
 }
 
 
@@ -29,9 +30,10 @@ export class RatingReader {
         shortNameIndex: 1,
         nameIndex: 2,
         weightIndex: 3,
-        estimationIndex: 4,
-        pointsIndex: 5,
-        maxPointsIndex: 6
+        isWeightSelectedByUserIndex: 4,
+        estimationIndex: 5,
+        pointsIndex: 6,
+        maxPointsIndex: 7,
     }
 
     public async readRatingDTOFromCsv(path: string, headers: Headers = RatingReader.DEFAULT_HEADERS): Promise<RatingDTOCreate> {
@@ -42,11 +44,11 @@ export class RatingReader {
             const aspects: AspectDTOCreate[] = [];
             for (const aspect of topic.aspects) {
                 aspects.push(new AspectDTOCreate(aspect.shortName, aspect.name, aspect.estimations,
-                    aspect.isWeightSelectedByUser ? aspect.weight : undefined, aspect.isWeightSelectedByUser,
+                    aspect.weight, aspect.isWeightSelectedByUser,
                     aspect.isPositive));
             }
             topics.push(new TopicDTOCreate(topic.shortName, topic.name, topic.estimations,
-                topic.isWeightSelectedByUser ? topic.weight : undefined, topic.isWeightSelectedByUser,
+                topic.weight, topic.isWeightSelectedByUser,
                 aspects));
         }
         return new RatingDTOCreate(topics);
@@ -78,7 +80,8 @@ export class RatingReader {
         const name = row.getCell(headers.nameIndex).text;
         const estimations = Number(row.getCell(headers.estimationIndex).text);
         const weightAsStr = row.getCell(headers.weightIndex).text;
-        const isWeightSelectedByUser = weightAsStr != "" ? true : false;
+        const isWeightSelectedByUser = row.getCell(headers.isWeightSelectedByUserIndex).text.toLowerCase() == 'true' ?
+            true : false;
         return new Topic(undefined, shortName, name, estimations,
             Number(row.getCell(headers.pointsIndex).text),
             Number(row.getCell(headers.maxPointsIndex).text),
@@ -92,7 +95,8 @@ export class RatingReader {
         const estimations = Number(row.getCell(headers.estimationIndex).text);
         const isPositive = !name.startsWith('Negative');
         const weightAsStr = row.getCell(headers.weightIndex).text;
-        const isWeightSelectedByUser = weightAsStr != "" ? true : false;
+        const isWeightSelectedByUser = row.getCell(headers.isWeightSelectedByUserIndex).text.toLowerCase() == 'true' ?
+            true : false;
         return new Aspect(undefined, shortName, name, estimations,
             Number(row.getCell(headers.pointsIndex).text),
             Number(row.getCell(headers.maxPointsIndex).text),

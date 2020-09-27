@@ -20,10 +20,8 @@ export class Topic {
     public weight: number;
     @Column("boolean")
     public isWeightSelectedByUser: boolean;
-
     @ManyToOne(type => Rating, rating => rating.topics)
     public rating!: Rating;
-
     @OneToMany(type => Aspect, aspect => aspect.topic, { cascade: true })
     public readonly aspects: Aspect[];
 

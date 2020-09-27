@@ -6,7 +6,10 @@ import App from '../../src/app';
 import { Application } from "express";
 import { ConfigurationReader } from "../../src/configurationReader";
 import { BalanceSheetType, BalanceSheetVersion } from "../../src/entities/enums";
-import { BalanceSheet } from "../../src/entities/balanceSheet";
+import * as path from 'path';
+import { RatingReader } from "../../src/reader/RatingReader";
+import { Assertions } from "../Assertions";
+import { Topic } from "../../src/entities/topic";
 
 describe('Create endpoint of Balance Sheet Controller', () => {
     let connection: Connection;
@@ -39,36 +42,17 @@ describe('Create endpoint of Balance Sheet Controller', () => {
                 employeesFractions: []
             }
         }
-        const rating = {
-            topics: [
-                { shortName: 'A1', points: 0, estimations: 0, weight: 1, maxPoints: 25 },
-                { shortName: 'A2', points: 0, estimations: 0, weight: 1, maxPoints: 25 },
-                { shortName: 'A3', points: 0, estimations: 0, weight: 1, maxPoints: 25 },
-                { shortName: 'A4', points: 0, estimations: 0, weight: 1, maxPoints: 25 },
-                { shortName: 'B1', points: 0, estimations: 0, weight: 1, maxPoints: 100 },
-                { shortName: 'B2', points: 0, estimations: 0, weight: 1, maxPoints: 100 },
-                { shortName: 'B3', points: 0, estimations: 0, weight: 1, maxPoints: 100 },
-                { shortName: 'B4', points: 0, estimations: 0, weight: 1, maxPoints: 100 },
-                { shortName: 'C1', points: 0, estimations: 0, weight: 1, maxPoints: 25 },
-                { shortName: 'C2', points: 0, estimations: 0, weight: 1, maxPoints: 25 },
-                { shortName: 'C3', points: 0, estimations: 0, weight: 1, maxPoints: 25 },
-                { shortName: 'C4', points: 0, estimations: 0, weight: 1, maxPoints: 25 },
-                { shortName: 'D1', points: 0, estimations: 0, weight: 1, maxPoints: 50 },
-                { shortName: 'D2', points: 0, estimations: 0, weight: 1, maxPoints: 50 },
-                { shortName: 'D3', points: 0, estimations: 0, weight: 1, maxPoints: 50 },
-                { shortName: 'D4', points: 0, estimations: 0, weight: 1, maxPoints: 50 },
-                { shortName: 'E1', points: 0, estimations: 0, weight: 1, maxPoints: 50 },
-                { shortName: 'E2', points: 0, estimations: 0, weight: 1, maxPoints: 50 },
-                { shortName: 'E3', points: 0, estimations: 0, weight: 1, maxPoints: 50 },
-                { shortName: 'E4', points: 0, estimations: 0, weight: 1, maxPoints: 50 },
-            ]
-        }
-
+        const pathToCsv = path.join(__dirname, "compactRatingExpected.csv");
+        const ratingReader: RatingReader = new RatingReader();
+        const ratingExpected = await ratingReader.readRatingFromCsv(pathToCsv);
         const response = await testApp.post('/balancesheets').auth(configuration.appUsername,
             configuration.appPassword).send(balanceSheetJson);
         expect(response.status).toEqual(200);
         expect(response.body.companyFacts).toMatchObject(balanceSheetJson.companyFacts);
-        expect(response.body.rating).toMatchObject(rating);
+        // ignore ids in comparison
+        Assertions.rmIdFields(ratingExpected);
+        expect(response.body.rating).toMatchObject(ratingExpected);
+        expect(response.body.rating.topics.reduce((sum: number, current: Topic) => sum + current.maxPoints, 0)).toBe(1000);
         done();
     })
 

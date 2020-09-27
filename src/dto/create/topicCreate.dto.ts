@@ -27,7 +27,7 @@ export class TopicDTOCreate {
         }
     );
     public toTopic(): Topic {
-        const weight = this.isWeightSelectedByUser && this.weight ? this.weight : 1;
+        const weight = this.weight ? this.weight : 1;
         return new Topic(undefined, this.shortName, this.name, this.estimations, 0, 51, weight, this.isWeightSelectedByUser,
             this.aspects.map(a => a.toAspect()))
     }

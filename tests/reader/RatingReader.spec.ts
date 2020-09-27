@@ -12,17 +12,17 @@ describe('Rating Reader', () => {
         // Topic	A1	Human dignity in the supply chain	1	0 %	0	83
         expect(topics[0]).toMatchObject(
             {
-                "id": undefined, "shortName": 'A1', "name": 'Human dignity in the supply chain', 'weight': 0,
+                "id": undefined, "shortName": 'A1', "name": 'Human dignity in the supply chain', 'weight': 1,
                 'isWeightSelectedByUser': false, 'estimations': 4, "points": 20.4, "maxPoints": 51,
                 'aspects': [{
                     'id': undefined, 'shortName': 'A1.1',
-                    "name": 'Working conditions and social impact in the supply chain', 'weight': 0,
+                    "name": 'Working conditions and social impact in the supply chain', 'weight': 1,
                     'isWeightSelectedByUser': false, 'estimations': 2, "points": 10.2, "maxPoints": 51,
                     'isPositive': true
                 },
                 {
                     'id': undefined, 'shortName': 'A1.2',
-                    "name": 'Negative aspect: violation of human dignity in the supply chain', 'weight': 0,
+                    "name": 'Negative aspect: violation of human dignity in the supply chain', 'weight': 1,
                     'isWeightSelectedByUser': false, 'estimations': -3, "points": -30.4, "maxPoints": -170.212765957447,
                     'isPositive': false
                 }
@@ -41,7 +41,7 @@ describe('Rating Reader', () => {
                 {
                     'id': undefined, 'shortName': 'A3.2',
                     "name": 'Negative aspect: disproportionate environmental impact throughout the supply chain',
-                    'weight': 0, 'isWeightSelectedByUser': false, 'estimations': -5, "points": -150,
+                    'weight': 1, 'isWeightSelectedByUser': false, 'estimations': -5, "points": -150,
                     "maxPoints": -200, 'isPositive': false
                 }
                 ]
@@ -57,17 +57,17 @@ describe('Rating Reader', () => {
         // Topic	A1	Human dignity in the supply chain	1	0 %	0	83
         expect(topics[0]).toMatchObject(
             {
-                "shortName": 'A1', "name": 'Human dignity in the supply chain', 'weight': undefined,
+                "shortName": 'A1', "name": 'Human dignity in the supply chain', 'weight': 1,
                 'isWeightSelectedByUser': false, 'estimations': 4,
                 'aspects': [{
                     'shortName': 'A1.1',
-                    "name": 'Working conditions and social impact in the supply chain', 'weight': undefined,
+                    "name": 'Working conditions and social impact in the supply chain', 'weight': 1,
                     'isWeightSelectedByUser': false, 'estimations': 2,
                     'isPositive': true
                 },
                 {
                     'shortName': 'A1.2',
-                    "name": 'Negative aspect: violation of human dignity in the supply chain', 'weight': undefined,
+                    "name": 'Negative aspect: violation of human dignity in the supply chain', 'weight': 1,
                     'isWeightSelectedByUser': false, 'estimations': -3,
                     'isPositive': false
                 }
@@ -86,7 +86,7 @@ describe('Rating Reader', () => {
                 {
                     'shortName': 'A3.2',
                     "name": 'Negative aspect: disproportionate environmental impact throughout the supply chain',
-                    'weight': undefined, 'isWeightSelectedByUser': false, 'estimations': -5, 'isPositive': false
+                    'weight': 1, 'isWeightSelectedByUser': false, 'estimations': -5, 'isPositive': false
                 }
                 ]
             });

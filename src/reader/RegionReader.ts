@@ -1,3 +1,4 @@
+import * as path from 'path';
 import { Workbook, Row, Cell, Worksheet } from 'exceljs';
 import { Region } from '../entities/region';
 export class RegionReader {
@@ -5,10 +6,12 @@ export class RegionReader {
     constructor() {
 
     }
-    public async read(path: string): Promise<Region[]> {
+
+    public async read(): Promise<Region[]> {
+        const pathToCsv = path.join(__dirname, "regions.csv");
         // create object for workbook
         let wb: Workbook = new Workbook();
-        const sheet: Worksheet = await wb.csv.readFile(path, { parserOptions: { delimiter: ',' } });
+        const sheet: Worksheet = await wb.csv.readFile(pathToCsv, { parserOptions: { delimiter: ',' } });
         //wb = await wb.xlsx.readFile(path);
 
         let regions: Region[] = [];

@@ -1,5 +1,6 @@
-import { Aspect } from "../../src/entities/aspect";
-import { Topic } from "../../src/entities/topic";
+import { Aspect } from "../src/entities/aspect";
+import { Rating } from "../src/entities/rating";
+import { Topic } from "../src/entities/topic";
 
 
 export class Assertions {
@@ -41,6 +42,16 @@ export class Assertions {
             `weight: ${expected.weight}, ${received.weight} \n` +
             `isWeightSelectedByUser: ${expected.isWeightSelectedByUser}, ${received.isWeightSelectedByUser}`;
 
+    }
+
+    public static rmIdFields(rating: Rating) {
+        delete (rating as any).id;
+        for (const topic of rating.topics) {
+            delete (topic as any).id;
+            for (const aspect of topic.aspects) {
+                delete (aspect as any).id;
+            }
+        }
     }
 
 }
