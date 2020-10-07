@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "env-cmd -e development nodemon",
-    "build": "tsc",
+    "build": "tsc && cp -R src/files dist",
     "test": "env-cmd -e development jest --watch",
     "test:prod": "env-cmd -e development jest"
   },
