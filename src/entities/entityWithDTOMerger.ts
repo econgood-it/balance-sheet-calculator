@@ -91,8 +91,8 @@ export class EntityWithDTOMerger {
     }
 
 
-    private mergeVal<T>(val: T, updatVal?: T): T {
-        return updatVal ? updatVal : val;
+    private mergeVal<T>(val: T, updatVal: T | undefined): T {
+        return updatVal !== undefined ? updatVal : val;
     }
 
 

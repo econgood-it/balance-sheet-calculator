@@ -23,7 +23,7 @@ export class TopicDTOUpdate {
             accessor.get('id', expectNumber),
             balanceSheetType === BalanceSheetType.Compact ? accessor.getOptional('estimations', expectNumber) : undefined,
             accessor.getOptional('weight', expectNumber),
-            accessor.getOptional('positiveAspects', arrayMapper(AspectDTOUpdate.fromJSON), []),
+            accessor.getOptional('aspects', arrayMapper(AspectDTOUpdate.fromJSON), []),
         );
     }
 
