@@ -4,6 +4,7 @@ set -e
 npm update
 npm install
 npm audit fix
+docker-compose down
 docker-compose up -d
 npm run test:prod
 docker-compose down
