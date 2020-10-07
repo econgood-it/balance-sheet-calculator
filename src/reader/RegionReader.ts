@@ -8,7 +8,7 @@ export class RegionReader {
     }
 
     public async read(): Promise<Region[]> {
-        const pathToCsv = path.join(__dirname, "regions.csv");
+        const pathToCsv = path.join(path.resolve(__dirname, '../files/reader'), "regions.csv");
         // create object for workbook
         let wb: Workbook = new Workbook();
         const sheet: Worksheet = await wb.csv.readFile(pathToCsv, { parserOptions: { delimiter: ',' } });

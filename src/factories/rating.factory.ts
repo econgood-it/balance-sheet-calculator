@@ -13,7 +13,7 @@ export class RatingFactory {
         const ratingReader = new RatingReader();
         const fileName = [balanceSheetType.toLowerCase(), balanceSheetVersion.toLowerCase(),
             "rating.csv"].join('_');
-        const pathToCsv = path.join(__dirname, fileName);
+        const pathToCsv = path.join(path.resolve(__dirname, '../files/factories'), fileName);
         return await ratingReader.readRatingDTOFromCsv(pathToCsv);
     }
 
