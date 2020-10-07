@@ -10,6 +10,6 @@ docker-compose down
 npm run build
 rm -r node_modules
 npm install --production
-rsync -a dist ecg00-bcalc@ecg00.hostsharing.net:
-rsync -a node_modules ecg00-bcalc@ecg00.hostsharing.net:
+rsync -a dist ecg00-bcalc@ecg00.hostsharing.net: --delete
+rsync -a node_modules ecg00-bcalc@ecg00.hostsharing.net: --delete
 ssh ecg00-bcalc@ecg00.hostsharing.net 'bash bin/node-svc.sh restart'
