@@ -11,7 +11,7 @@ export class CreateCompanyFactsTable1594223075366 implements MigrationInterface 
             "financialCosts" double precision NOT NULL, 
             "incomeFromFinancialInvestments" double precision NOT NULL, 
             "additionsToFixedAssets" double precision NOT NULL, 
-            CONSTRAINT "PK_7784b9bb80f898243187f74cf37" PRIMARY KEY ("id")
+            CONSTRAINT "PK_company_facts" PRIMARY KEY ("id")
         )`;
         await queryRunner.query(query);
     }

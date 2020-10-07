@@ -9,7 +9,7 @@ export class CreateRegionTable1594223075365 implements MigrationInterface {
             "pppIndex" double precision NOT NULL, 
             "countryCode" character varying NOT NULL, 
             "countryName" character varying NOT NULL, 
-            CONSTRAINT "PK_5f48ffc3af96bc486f5f3f3a6da" PRIMARY KEY ("id")
+            CONSTRAINT "PK_region" PRIMARY KEY ("id")
         )`;
         await queryRunner.query(query);
     }

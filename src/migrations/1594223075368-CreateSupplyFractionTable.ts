@@ -8,7 +8,7 @@ export class CreateSupplyFractionTable1594223075368 implements MigrationInterfac
             "countryCode" character varying NOT NULL, 
             "costs" double precision NOT NULL, 
             "companyFactsId" integer, 
-            CONSTRAINT "PK_96da23328a4beb9562e33fbd9fb" PRIMARY KEY ("id")
+            CONSTRAINT "PK_supply_fraction" PRIMARY KEY ("id")
         )`;
         await queryRunner.query(query);
     }

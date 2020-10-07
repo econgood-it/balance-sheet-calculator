@@ -8,7 +8,7 @@ export class CreateEmployeesFractionTable1594223075367 implements MigrationInter
             "countryCode" character varying NOT NULL, 
             "percentage" double precision NOT NULL, 
             "companyFactsId" integer, 
-            CONSTRAINT "PK_798f89a8c5446d87fdea8cd31f1" PRIMARY KEY ("id")
+            CONSTRAINT "PK_employees_fraction" PRIMARY KEY ("id")
         )`;
         await queryRunner.query(query);
     }
