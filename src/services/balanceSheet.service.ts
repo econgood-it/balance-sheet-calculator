@@ -33,6 +33,7 @@ export class BalanceSheetService {
         entityManager.getRepository(Region));
       await maxPointsCalculator.updateMaxPointsAndPoints(balancesheet.rating.topics);
       const balanceSheetResponse: BalanceSheet = await entityManager.getRepository(BalanceSheet).save(balancesheet);
+      this.sortArraysOfBalanceSheet(balanceSheetResponse);
       res.json(balanceSheetResponse);
     }).catch(error => {
       if (error instanceof JsonMappingError) {
@@ -69,7 +70,7 @@ export class BalanceSheetService {
         entityManager.getRepository(Region));
       await maxPointsCalculator.updateMaxPointsAndPoints(balanceSheet.rating.topics);
       const balanceSheetResponse: BalanceSheet = await balanceSheetRepository.save(balanceSheet);
-
+      this.sortArraysOfBalanceSheet(balanceSheetResponse);
       res.json(balanceSheetResponse);
     }).catch(error => {
       if (error instanceof JsonMappingError) {
@@ -77,5 +78,12 @@ export class BalanceSheetService {
       }
       next(new InternalServerException(error));
     });
+  }
+
+  private sortArraysOfBalanceSheet(balanceSheet: BalanceSheet) {
+    balanceSheet.rating.topics.sort((t1, t2) => t1.shortName.localeCompare(t2.shortName));
+    balanceSheet.rating.topics.forEach(t =>
+      t.aspects.sort((a1, a2) => a1.shortName.localeCompare(a2.shortName))
+    );
   }
 }
