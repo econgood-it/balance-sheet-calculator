@@ -80,6 +80,25 @@ export class BalanceSheetService {
     });
   }
 
+  public async getBalanceSheet(req: Request, res: Response, next: NextFunction) {
+    this.connection.manager.transaction(async entityManager => {
+      const balanceSheetRepository = entityManager.getRepository(BalanceSheet);
+      const balanceSheetId: number = Number(req.params.id);
+      const balanceSheet = await balanceSheetRepository.findOneOrFail(balanceSheetId, {
+        relations: ['rating', 'companyFacts', 'companyFacts.supplyFractions', 'companyFacts.employeesFractions',
+          'rating.topics', 'rating.topics.aspects']
+      });
+      const balanceSheetResponse: BalanceSheet = await balanceSheetRepository.save(balanceSheet);
+      this.sortArraysOfBalanceSheet(balanceSheetResponse);
+      res.json(balanceSheetResponse);
+    }).catch(error => {
+      if (error instanceof JsonMappingError) {
+        next(new BadRequestException(error.message));
+      }
+      next(new InternalServerException(error));
+    });
+  }
+
   private sortArraysOfBalanceSheet(balanceSheet: BalanceSheet) {
     balanceSheet.rating.topics.sort((t1, t2) => t1.shortName.localeCompare(t2.shortName));
     balanceSheet.rating.topics.forEach(t =>
