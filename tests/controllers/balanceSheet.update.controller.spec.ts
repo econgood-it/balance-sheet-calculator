@@ -18,7 +18,7 @@ describe('Update endpoint of Balance Sheet Controller', () => {
     })
 
     afterAll(async (done) => {
-        connection.close();
+        await connection.close();
         done();
     })
 
