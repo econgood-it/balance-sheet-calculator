@@ -9,6 +9,7 @@ import { BalanceSheetType, BalanceSheetVersion } from "../../src/entities/enums"
 import { CompanyFacts1 } from "../testData/companyFacts";
 import * as path from 'path';
 import { Rating } from "../../src/entities/rating";
+import { Topic } from "../../src/entities/topic";
 
 describe('Update endpoint of Balance Sheet Controller', () => {
     let connection: Connection;
@@ -43,12 +44,12 @@ describe('Update endpoint of Balance Sheet Controller', () => {
                 incomeFromFinancialInvestments: 7000,
                 additionsToFixedAssets: 102999,
                 supplyFractions: [
-                    { countryCode: "GB", costs: 300 },
-                    { countryCode: "B", costs: 300 }
+                    { countryCode: "GBR", costs: 300 },
+                    { countryCode: "BEL", costs: 300 }
                 ],
                 employeesFractions: [
-                    { countryCode: "GB", percentage: 0.2 },
-                    { countryCode: "B", percentage: 0.4 }
+                    { countryCode: "GBR", percentage: 0.2 },
+                    { countryCode: "BEL", percentage: 0.4 }
                 ]
             }
         }

@@ -14,32 +14,30 @@ export class StakeholderWeightCalculator {
     }
 
     public async calcStakeholderWeight(stakeholderName: string): Promise<number> {
-        try {
-            let weight: number = 1;
-            switch (stakeholderName) {
-                case 'A':
-                    weight = await this.calculateSupplierWeightFromCompanyFacts();
-                    break;
-                case 'B':
-                    weight = await this.calculateFinancialWeightFromCompanyFacts();
-                    break;
-                case 'C':
-                    weight = await this.calculateEmployeeWeightFromCompanyFacts();
-                    break;
-                case 'D':
-                    weight = await this.calculateCustomerWeightFromCompanyFacts();
-                    break;
-                case 'E':
-                    weight = await this.calculateSocialEnvironmentlWeightFromCompanyFacts();
-                    break;
-                default:
-                    weight = 1;
-                    break;
-            }
-            return weight;
-        } catch (e) {
-            return 1;
+
+        let weight: number = 1;
+        switch (stakeholderName) {
+            case 'A':
+                weight = await this.calculateSupplierWeightFromCompanyFacts();
+                break;
+            case 'B':
+                weight = await this.calculateFinancialWeightFromCompanyFacts();
+                break;
+            case 'C':
+                weight = await this.calculateEmployeeWeightFromCompanyFacts();
+                break;
+            case 'D':
+                weight = await this.calculateCustomerWeightFromCompanyFacts();
+                break;
+            case 'E':
+                weight = await this.calculateSocialEnvironmentlWeightFromCompanyFacts();
+                break;
+            default:
+                weight = 1;
+                break;
         }
+        return weight;
+
     }
 
     // A
@@ -142,9 +140,11 @@ export class StakeholderWeightCalculator {
     }
 
     private async supplyRisks(): Promise<number> {
+
         let result: number = 0;
         for (const supplyFraction of this.companyFacts.supplyFractions) {
             const region: Region = await this.regionRepository.findOneOrFail({ countryCode: supplyFraction.countryCode });
+
             // console.log(`SupplyRisks: ${supplyFraction.costs} x ${region.pppIndex}`);
             result += supplyFraction.costs * region.pppIndex;
         }
