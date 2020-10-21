@@ -48,11 +48,11 @@ export class EntityWithDTOMerger {
     public mergeRating(rating: Rating, ratingDTOUpdate: RatingDTOUpdate, balanceSheetType: BalanceSheetType) {
         if (ratingDTOUpdate.topics) {
             for (const topicDTOUpdate of ratingDTOUpdate.topics) {
-                const topic: Topic | undefined = rating.topics.find(t => t.id === topicDTOUpdate.id);
+                const topic: Topic | undefined = rating.topics.find(t => t.shortName === topicDTOUpdate.shortName);
                 if (topic) {
                     this.mergeTopic(topic, topicDTOUpdate, balanceSheetType);
                 } else {
-                    throw Error(`Cannot find topic with id ${topicDTOUpdate.id}`);
+                    throw Error(`Cannot find topic ${topicDTOUpdate.shortName}`);
                 }
             }
         }
@@ -64,7 +64,7 @@ export class EntityWithDTOMerger {
         } else if (balanceSheetType === BalanceSheetType.Full) {
 
             for (const aspectDTOUpdate of topicDTOUpdate.aspects) {
-                const aspect: Aspect | undefined = topic.aspects.find(a => a.id === aspectDTOUpdate.id);
+                const aspect: Aspect | undefined = topic.aspects.find(a => a.shortName === aspectDTOUpdate.shortName);
                 if (aspect) {
                     aspect.estimations = this.mergeVal(aspect.estimations, aspectDTOUpdate.estimations);
                     if (aspect.isPositive && aspectDTOUpdate.weight !== undefined) {
@@ -72,7 +72,7 @@ export class EntityWithDTOMerger {
                         aspect.weight = this.mergeVal(aspect.weight, aspectDTOUpdate.weight);
                     }
                 } else {
-                    throw Error(`Cannot find aspect with id ${aspectDTOUpdate.id}`);
+                    throw Error(`Cannot find aspect ${aspectDTOUpdate.shortName}`);
                 }
             }
         }

@@ -10,7 +10,7 @@ import { BalanceSheetType } from "../../src/entities/enums";
 import { Assertions } from "../Assertions";
 import * as path from 'path';
 import { RatingReader } from "../../src/reader/RatingReader";
-import { CompanyFacts0, CompanyFacts1 } from "./testData/companyFacts";
+import { CompanyFacts0, CompanyFacts1 } from "../testData/companyFacts";
 
 describe('Max points calculator', () => {
     let connection: Connection;
@@ -30,12 +30,13 @@ describe('Max points calculator', () => {
     async function testCalculation(fileNameOfRatingInputData: string, fileNameOfRatingExpectedData: string,
         companyFacts: CompanyFacts, done: any) {
         const testDataReader = new RatingReader();
-        let pathToCsv = path.join(__dirname, 'testData', fileNameOfRatingInputData);
+        const testDataDir = path.resolve(__dirname, '../testData');
+        let pathToCsv = path.join(testDataDir, fileNameOfRatingInputData);
         const topics: Topic[] = (await testDataReader.readRatingFromCsv(pathToCsv)).topics;
         //console.log(topics);
         const maxPointsCalculator: MaxPointsCalculator = new MaxPointsCalculator(companyFacts, regionRepository);
         await maxPointsCalculator.updateMaxPointsAndPoints(topics);
-        pathToCsv = path.join(__dirname, 'testData', fileNameOfRatingExpectedData);
+        pathToCsv = path.join(testDataDir, fileNameOfRatingExpectedData);
         const expected: Topic[] = (await testDataReader.readRatingFromCsv(pathToCsv)).topics;
         Assertions.assertTopics(topics, expected);
         done();

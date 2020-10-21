@@ -3,7 +3,6 @@ import { strictObjectMapper, expectString, expectNumber } from '@daniel-faber/js
 export class SupplyFractionDTOUpdate {
 
   constructor(
-    public readonly id: number | undefined,
     public readonly countryCode: string,
     public readonly costs: number,
   ) { }
@@ -11,7 +10,6 @@ export class SupplyFractionDTOUpdate {
   public static readonly fromJSON = strictObjectMapper(
     accessor =>
       new SupplyFractionDTOUpdate(
-        accessor.getOptional('id', expectNumber),
         accessor.get('countryCode', expectString),
         accessor.get('costs', expectNumber),
       )

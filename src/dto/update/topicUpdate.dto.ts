@@ -4,7 +4,7 @@ import { BalanceSheetType } from '../../entities/enums';
 
 export class TopicDTOUpdate {
     public constructor(
-        public readonly id: number,
+        public readonly shortName: string,
         public readonly estimations: number | undefined,
         public weight: number | undefined,
         public aspects: AspectDTOUpdate[],
@@ -20,7 +20,7 @@ export class TopicDTOUpdate {
 
     private static fromJSON(accessor: JsonObjectAccessor, balanceSheetType: BalanceSheetType) {
         return new TopicDTOUpdate(
-            accessor.get('id', expectNumber),
+            accessor.get('shortName', expectString),
             balanceSheetType === BalanceSheetType.Compact ? accessor.getOptional('estimations', expectNumber) : undefined,
             accessor.getOptional('weight', expectNumber),
             accessor.getOptional('aspects', arrayMapper(AspectDTOUpdate.fromJSON), []),

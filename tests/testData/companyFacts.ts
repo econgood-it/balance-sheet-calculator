@@ -1,6 +1,6 @@
-import { CompanyFacts } from "../../../src/entities/companyFacts";
-import { SupplyFraction } from "../../../src/entities/supplyFraction";
-import { EmployeesFraction } from "../../../src/entities/employeesFraction";
+import { CompanyFacts } from "../../src/entities/companyFacts";
+import { SupplyFraction } from "../../src/entities/supplyFraction";
+import { EmployeesFraction } from "../../src/entities/employeesFraction";
 
 const arabEmiratesCode = "ARE";
 const afghanistanCode = "AFG";
