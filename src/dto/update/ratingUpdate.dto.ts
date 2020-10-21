@@ -1,5 +1,4 @@
-import { strictObjectMapper, arrayMapper, expectNumber } from '@daniel-faber/json-ts';
-import { TopicDTOCreate } from '../create/topicCreate.dto';
+import { strictObjectMapper, arrayMapper } from '@daniel-faber/json-ts';
 import { TopicDTOUpdate } from './topicUpdate.dto';
 
 export class RatingDTOUpdate {

@@ -28,7 +28,7 @@ export class BalanceSheetService {
   public async createBalanceSheet(req: Request, res: Response, next: NextFunction) {
     LoggingService.info('Create balancesheet');
     this.connection.manager.transaction(async entityManager => {
-      const balancesheet: BalanceSheet = (await BalanceSheetDTOCreate.fromJSON(req.body)).toBalanceSheet();
+      const balancesheet: BalanceSheet = await BalanceSheetDTOCreate.fromJSON(req.body).toBalanceSheet();
       const maxPointsCalculator: MaxPointsCalculator = new MaxPointsCalculator(balancesheet.companyFacts,
         entityManager.getRepository(Region));
       await maxPointsCalculator.updateMaxPointsAndPoints(balancesheet.rating.topics);

@@ -1,12 +1,8 @@
 import { strictObjectMapper, expectNumber, JsonObjectAccessor } from '@daniel-faber/json-ts';
-import { CompanyFactsDTOCreate } from '../create/companyFactsCreate.dto';
-import { RatingDTOCreate } from '../create/ratingCreate.dto';
 import { CompanyFactsDTOUpdate } from './companyFactsUpdate.dto';
 import { RatingDTOUpdate } from './ratingUpdate.dto';
-import { BalanceSheet } from '../../entities/balanceSheet';
-import { BalanceSheetService } from '../../services/balanceSheet.service';
 import { BalanceSheetType } from '../../entities/enums';
-import { RatingFactory } from '../../factories/rating.factory';
+
 
 export class BalanceSheetDTOUpdate {
   public constructor(

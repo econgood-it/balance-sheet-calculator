@@ -2,9 +2,6 @@ import { Workbook, Row, Cell, Worksheet } from 'exceljs';
 import { Rating } from '../entities/rating';
 import { Topic } from '../entities/topic';
 import { Aspect } from '../entities/aspect';
-import { AspectDTOCreate } from '../dto/create/aspectCreate.dto';
-import { RatingDTOCreate } from '../dto/create/ratingCreate.dto';
-import { TopicDTOCreate } from '../dto/create/topicCreate.dto';
 
 interface Headers {
     shortNameIndex: number;
@@ -16,14 +13,6 @@ interface Headers {
     isWeightSelectedByUserIndex: number;
 }
 
-
-enum RatingFormat {
-    Rating = "Rating",
-    RatingDTOCreate = "RatingDTOCreate"
-}
-
-
-
 export class RatingReader {
 
     private static readonly DEFAULT_HEADERS: Headers = {
@@ -34,24 +23,6 @@ export class RatingReader {
         estimationIndex: 5,
         pointsIndex: 6,
         maxPointsIndex: 7,
-    }
-
-    public async readRatingDTOFromCsv(path: string, headers: Headers = RatingReader.DEFAULT_HEADERS): Promise<RatingDTOCreate> {
-        // create object for workbook
-        const rating: Rating = await this.readRatingFromCsv(path, headers);
-        const topics: TopicDTOCreate[] = [];
-        for (const topic of rating.topics) {
-            const aspects: AspectDTOCreate[] = [];
-            for (const aspect of topic.aspects) {
-                aspects.push(new AspectDTOCreate(aspect.shortName, aspect.name, aspect.estimations,
-                    aspect.weight, aspect.isWeightSelectedByUser,
-                    aspect.isPositive));
-            }
-            topics.push(new TopicDTOCreate(topic.shortName, topic.name, topic.estimations,
-                topic.weight, topic.isWeightSelectedByUser,
-                aspects));
-        }
-        return new RatingDTOCreate(topics);
     }
 
     public async readRatingFromCsv(path: string, headers: Headers = RatingReader.DEFAULT_HEADERS): Promise<Rating> {
