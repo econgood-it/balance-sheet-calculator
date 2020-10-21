@@ -1,14 +1,19 @@
 import { strictObjectMapper, expectString, expectNumber, JsonObjectAccessor, arrayMapper } from '@daniel-faber/json-ts';
 import { AspectDTOUpdate } from './aspectUpdate.dto';
 import { BalanceSheetType } from '../../entities/enums';
+import { ValidateNested } from 'class-validator';
 
 export class TopicDTOUpdate {
+    @ValidateNested()
+    public aspects: AspectDTOUpdate[];
     public constructor(
         public readonly shortName: string,
         public readonly estimations: number | undefined,
         public weight: number | undefined,
-        public aspects: AspectDTOUpdate[],
-    ) { }
+        aspects: AspectDTOUpdate[]
+    ) {
+        this.aspects = aspects;
+    }
 
     public static readonly fromJSONCompact = strictObjectMapper(
         accessor => TopicDTOUpdate.fromJSON(accessor, BalanceSheetType.Compact)

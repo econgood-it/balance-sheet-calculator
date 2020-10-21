@@ -3,19 +3,67 @@ import { SupplyFractionDTOCreate } from '../create/supplyFractionCreate.dto';
 import { EmployeesFractionDTOCreate } from '../create/employeesFractionCreate.dto';
 import { SupplyFractionDTOUpdate } from './supplyFractionUpdate.dto';
 import { EmployeesFractionDTOUpdate } from './employeesFractionUpdate.dto';
+import {
+  IsOptional,
+  IsNumber,
+  Min,
+  ValidateNested
+} from 'class-validator';
+
 
 export class CompanyFactsDTOUpdate {
 
+  @IsOptional()
+  @Min(0)
+  @IsNumber({ maxDecimalPlaces: 2 })
+  public readonly totalPurchaseFromSuppliers?: number;
+
+  @IsOptional()
+  @Min(0)
+  @IsNumber({ maxDecimalPlaces: 2 })
+  public readonly totalStaffCosts?: number;
+  @IsOptional()
+  @Min(0)
+  @IsNumber({ maxDecimalPlaces: 2 })
+  public readonly profit?: number;
+  @IsOptional()
+  @Min(0)
+  @IsNumber({ maxDecimalPlaces: 2 })
+  public readonly financialCosts?: number;
+  @IsOptional()
+  @Min(0)
+  @IsNumber({ maxDecimalPlaces: 2 })
+  public readonly incomeFromFinancialInvestments?: number;
+  @IsOptional()
+  @Min(0)
+  @IsNumber({ maxDecimalPlaces: 2 })
+  public readonly additionsToFixedAssets?: number;
+
+  @IsOptional()
+  @ValidateNested()
+  public readonly supplyFractions?: SupplyFractionDTOUpdate[];
+  @IsOptional()
+  @ValidateNested()
+  public readonly employeesFractions?: EmployeesFractionDTOUpdate[];
+
   public constructor(
-    public readonly totalPurchaseFromSuppliers?: number,
-    public readonly totalStaffCosts?: number,
-    public readonly profit?: number,
-    public readonly financialCosts?: number,
-    public readonly incomeFromFinancialInvestments?: number,
-    public readonly additionsToFixedAssets?: number,
-    public readonly supplyFractions?: SupplyFractionDTOUpdate[],
-    public readonly employeesFractions?: EmployeesFractionDTOUpdate[]
+    totalPurchaseFromSuppliers?: number,
+    totalStaffCosts?: number,
+    profit?: number,
+    financialCosts?: number,
+    incomeFromFinancialInvestments?: number,
+    additionsToFixedAssets?: number,
+    supplyFractions?: SupplyFractionDTOUpdate[],
+    employeesFractions?: EmployeesFractionDTOUpdate[]
   ) {
+    this.totalPurchaseFromSuppliers = totalPurchaseFromSuppliers;
+    this.totalStaffCosts = totalStaffCosts;
+    this.profit = profit;
+    this.financialCosts = financialCosts;
+    this.incomeFromFinancialInvestments = incomeFromFinancialInvestments;
+    this.additionsToFixedAssets = additionsToFixedAssets;
+    this.supplyFractions = supplyFractions;
+    this.employeesFractions = employeesFractions;
   }
 
   public static readonly fromJSON = strictObjectMapper(
