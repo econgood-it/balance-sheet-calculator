@@ -13,6 +13,8 @@ import { JsonMappingError } from "@daniel-faber/json-ts";
 import BadRequestException from "../exceptions/BadRequestException";
 import { Region } from "../entities/region";
 import { BalanceSheetType } from "../entities/enums";
+import { validateOrReject, ValidationError } from 'class-validator';
+
 
 
 export class BalanceSheetService {
@@ -64,6 +66,9 @@ export class BalanceSheetService {
       if (balanceSheetDTOUpdate.id !== balanceSheetId) {
         next(new BadRequestException(`Balance sheet id in request body and url parameter has to be the same`));
       }
+      await validateOrReject(balanceSheetDTOUpdate, {
+        validationError: { target: false },
+      });
 
       await entityWithDTOMerger.mergeBalanceSheet(balanceSheet, balanceSheetDTOUpdate);
       const maxPointsCalculator: MaxPointsCalculator = new MaxPointsCalculator(balanceSheet.companyFacts,
@@ -75,6 +80,9 @@ export class BalanceSheetService {
     }).catch(error => {
       if (error instanceof JsonMappingError) {
         next(new BadRequestException(error.message));
+      }
+      if (Array.isArray(error) && error.every(item => item instanceof ValidationError)) {
+        next(new BadRequestException(error.toString()));
       }
       next(new InternalServerException(error));
     });
