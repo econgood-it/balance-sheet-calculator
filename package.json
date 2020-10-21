@@ -6,8 +6,8 @@
   "scripts": {
     "start": "env-cmd -e development nodemon",
     "build": "rm -r dist && tsc && cp -R src/files dist",
-    "test": "env-cmd -e development jest --watch",
-    "test:prod": "env-cmd -e development jest"
+    "test": "env-cmd -e development jest --watch --runInBand",
+    "test:prod": "env-cmd -e development jest --runInBand"
   },
   "repository": {
     "type": "git",
