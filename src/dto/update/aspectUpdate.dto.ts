@@ -11,7 +11,7 @@ import {WEIGHT_VALUES} from "../validation.constants";
 export class AspectDTOUpdate {
 
     @IsInt()
-    @Min(0)
+    @Min(-200)
     @Max(10)
     @IsOptional()
     public readonly estimations?: number;

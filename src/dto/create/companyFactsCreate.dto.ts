@@ -11,7 +11,6 @@ export class CompanyFactsDTOCreate {
   @Min(0)
   @IsNumber({ maxDecimalPlaces: 2 })
   public readonly totalStaffCosts: number;
-  @Min(0)
   @IsNumber({ maxDecimalPlaces: 2 })
   public readonly profit: number
   @Min(0)

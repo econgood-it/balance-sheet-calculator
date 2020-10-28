@@ -2,7 +2,7 @@ import { strictObjectMapper, expectNumber, JsonObjectAccessor } from '@daniel-fa
 import { CompanyFactsDTOUpdate } from './companyFactsUpdate.dto';
 import { RatingDTOUpdate } from './ratingUpdate.dto';
 import { BalanceSheetType } from '../../entities/enums';
-import { ValidateNested, IsOptional } from 'class-validator';
+import {ValidateNested, IsOptional} from 'class-validator';
 
 export class BalanceSheetDTOUpdate {
   @IsOptional()

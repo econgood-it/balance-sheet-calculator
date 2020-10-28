@@ -85,8 +85,8 @@ describe('Update endpoint of Balance Sheet Controller', () => {
         response = await testApp.patch(`/balancesheets/${response.body.id}`).auth(configuration.appUsername,
             configuration.appPassword).send({ ...balanceSheetUpdate });
         expect(response.status).toEqual(200);
-        const aspectA11 = response.body.rating.topics.find(t => t.shortName == 'A1').aspects.find(
-            a => a.shortName == 'A1.1');
+        const aspectA11 = response.body.rating.topics.find((t: { shortName: string; }) => t.shortName == 'A1').aspects.find(
+            (a: { shortName: string; }) => a.shortName == 'A1.1');
         expect(aspectA11).toMatchObject({
             shortName: 'A1.1',
             estimations: 6

@@ -21,7 +21,6 @@ export class CompanyFactsDTOUpdate {
   @IsNumber({ maxDecimalPlaces: 2 })
   public readonly totalStaffCosts?: number;
   @IsOptional()
-  @Min(0)
   @IsNumber({ maxDecimalPlaces: 2 })
   public readonly profit?: number;
   @IsOptional()
