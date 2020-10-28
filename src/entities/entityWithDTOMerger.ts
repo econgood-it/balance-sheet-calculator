@@ -59,21 +59,16 @@ export class EntityWithDTOMerger {
     }
 
     public mergeTopic(topic: Topic, topicDTOUpdate: TopicDTOUpdate, balanceSheetType: BalanceSheetType) {
-        if (balanceSheetType === BalanceSheetType.Compact) {
-            topic.estimations = this.mergeVal(topic.estimations, topicDTOUpdate.estimations);
-        } else if (balanceSheetType === BalanceSheetType.Full) {
-
-            for (const aspectDTOUpdate of topicDTOUpdate.aspects) {
-                const aspect: Aspect | undefined = topic.aspects.find(a => a.shortName === aspectDTOUpdate.shortName);
-                if (aspect) {
-                    aspect.estimations = this.mergeVal(aspect.estimations, aspectDTOUpdate.estimations);
-                    if (aspect.isPositive && aspectDTOUpdate.weight !== undefined) {
-                        aspect.isWeightSelectedByUser = true;
-                        aspect.weight = this.mergeVal(aspect.weight, aspectDTOUpdate.weight);
-                    }
-                } else {
-                    throw Error(`Cannot find aspect ${aspectDTOUpdate.shortName}`);
+        for (const aspectDTOUpdate of topicDTOUpdate.aspects) {
+            const aspect: Aspect | undefined = topic.aspects.find(a => a.shortName === aspectDTOUpdate.shortName);
+            if (aspect) {
+                aspect.estimations = this.mergeVal(aspect.estimations, aspectDTOUpdate.estimations);
+                if (aspect.isPositive && aspectDTOUpdate.weight !== undefined) {
+                    aspect.isWeightSelectedByUser = true;
+                    aspect.weight = this.mergeVal(aspect.weight, aspectDTOUpdate.weight);
                 }
+            } else {
+                throw Error(`Cannot find aspect ${aspectDTOUpdate.shortName}`);
             }
         }
         topic.isWeightSelectedByUser = topicDTOUpdate.weight ? true : false;
