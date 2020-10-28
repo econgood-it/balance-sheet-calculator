@@ -2,7 +2,7 @@ import { strictObjectMapper, expectString, expectNumber, JsonObjectAccessor, arr
 import { AspectDTOUpdate } from './aspectUpdate.dto';
 import { BalanceSheetType } from '../../entities/enums';
 import {IsIn, IsInt, IsOptional, Max, Min, ValidateNested} from 'class-validator';
-import {WEIGHT_VALUES} from "../validation.constans";
+import {WEIGHT_VALUES} from "../validation.constants";
 
 export class TopicDTOUpdate {
     @IsInt()

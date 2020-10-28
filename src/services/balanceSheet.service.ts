@@ -30,7 +30,11 @@ export class BalanceSheetService {
   public async createBalanceSheet(req: Request, res: Response, next: NextFunction) {
     LoggingService.info('Create balancesheet');
     this.connection.manager.transaction(async entityManager => {
-      const balancesheet: BalanceSheet = await BalanceSheetDTOCreate.fromJSON(req.body).toBalanceSheet();
+      const balanceSheetDTOCreate: BalanceSheetDTOCreate = BalanceSheetDTOCreate.fromJSON(req.body);
+      await validateOrReject(balanceSheetDTOCreate, {
+        validationError: { target: false },
+      });
+      const balancesheet: BalanceSheet = await balanceSheetDTOCreate.toBalanceSheet();
       const maxPointsCalculator: MaxPointsCalculator = new MaxPointsCalculator(balancesheet.companyFacts,
         entityManager.getRepository(Region));
       await maxPointsCalculator.updateMaxPointsAndPoints(balancesheet.rating.topics);
@@ -40,6 +44,9 @@ export class BalanceSheetService {
     }).catch(error => {
       if (error instanceof JsonMappingError) {
         next(new BadRequestException(error.message));
+      }
+      if (Array.isArray(error) && error.every(item => item instanceof ValidationError)) {
+        next(new BadRequestException(error.toString()));
       }
       next(new InternalServerException(error));
     });

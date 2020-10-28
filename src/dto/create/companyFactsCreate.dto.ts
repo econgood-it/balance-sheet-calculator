@@ -2,19 +2,50 @@ import { strictObjectMapper, expectNumber, arrayMapper } from '@daniel-faber/jso
 import { SupplyFractionDTOCreate } from './supplyFractionCreate.dto';
 import { EmployeesFractionDTOCreate } from './employeesFractionCreate.dto';
 import { CompanyFacts } from '../../entities/companyFacts';
+import {IsNumber, Min, ValidateNested} from "class-validator";
 
 export class CompanyFactsDTOCreate {
+  @Min(0)
+  @IsNumber({ maxDecimalPlaces: 2 })
+  public readonly totalPurchaseFromSuppliers: number;
+  @Min(0)
+  @IsNumber({ maxDecimalPlaces: 2 })
+  public readonly totalStaffCosts: number;
+  @Min(0)
+  @IsNumber({ maxDecimalPlaces: 2 })
+  public readonly profit: number
+  @Min(0)
+  @IsNumber({ maxDecimalPlaces: 2 })
+  public readonly financialCosts: number
+  @Min(0)
+  @IsNumber({ maxDecimalPlaces: 2 })
+  public readonly incomeFromFinancialInvestments: number;
+  @Min(0)
+  @IsNumber({ maxDecimalPlaces: 2 })
+  public readonly additionsToFixedAssets: number;
+  @ValidateNested()
+  public readonly supplyFractions: SupplyFractionDTOCreate[];
+  @ValidateNested()
+  public readonly employeesFractions: EmployeesFractionDTOCreate[];
 
   public constructor(
-    public readonly totalPurchaseFromSuppliers: number,
-    public readonly totalStaffCosts: number,
-    public readonly profit: number,
-    public readonly financialCosts: number,
-    public readonly incomeFromFinancialInvestments: number,
-    public readonly additionsToFixedAssets: number,
-    public readonly supplyFractions: SupplyFractionDTOCreate[],
-    public readonly employeesFractions: EmployeesFractionDTOCreate[]
+    totalPurchaseFromSuppliers: number,
+    totalStaffCosts: number,
+    profit: number,
+    financialCosts: number,
+    incomeFromFinancialInvestments: number,
+    additionsToFixedAssets: number,
+    supplyFractions: SupplyFractionDTOCreate[],
+    employeesFractions: EmployeesFractionDTOCreate[]
   ) {
+    this.totalPurchaseFromSuppliers = totalPurchaseFromSuppliers;
+    this.totalStaffCosts = totalStaffCosts;
+    this.profit = profit;
+    this.financialCosts = financialCosts;
+    this.incomeFromFinancialInvestments = incomeFromFinancialInvestments;
+    this.additionsToFixedAssets = additionsToFixedAssets;
+    this.supplyFractions = supplyFractions;
+    this.employeesFractions = employeesFractions;
   }
 
   public static readonly fromJSON = strictObjectMapper(

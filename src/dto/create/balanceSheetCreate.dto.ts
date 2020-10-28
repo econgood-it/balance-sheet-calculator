@@ -3,13 +3,17 @@ import { CompanyFactsDTOCreate } from './companyFactsCreate.dto';
 import { RatingFactory } from '../../factories/rating.factory';
 import { BalanceSheet } from '../../entities/balanceSheet';
 import { BalanceSheetType, balanceSheetTypeFromJSON, BalanceSheetVersion, balanceSheetVersionFromJSON } from '../../entities/enums';
+import {ValidateNested} from "class-validator";
 
 export class BalanceSheetDTOCreate {
+  @ValidateNested()
+  public readonly companyFacts: CompanyFactsDTOCreate;
   public constructor(
     public readonly type: BalanceSheetType,
     public readonly version: BalanceSheetVersion,
-    public readonly companyFacts: CompanyFactsDTOCreate,
+    companyFacts: CompanyFactsDTOCreate,
   ) {
+    this.companyFacts = companyFacts;
   }
 
   public static readonly fromJSON = strictObjectMapper(

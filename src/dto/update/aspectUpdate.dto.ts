@@ -6,7 +6,7 @@ import {
     Max,
     IsIn
 } from 'class-validator';
-import {WEIGHT_VALUES} from "../validation.constans";
+import {WEIGHT_VALUES} from "../validation.constants";
 
 export class AspectDTOUpdate {
 
