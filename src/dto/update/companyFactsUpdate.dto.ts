@@ -1,6 +1,4 @@
 import { strictObjectMapper, expectNumber, arrayMapper } from '@daniel-faber/json-ts';
-import { SupplyFractionDTOCreate } from '../create/supplyFractionCreate.dto';
-import { EmployeesFractionDTOCreate } from '../create/employeesFractionCreate.dto';
 import { SupplyFractionDTOUpdate } from './supplyFractionUpdate.dto';
 import { EmployeesFractionDTOUpdate } from './employeesFractionUpdate.dto';
 import {
@@ -38,7 +36,6 @@ export class CompanyFactsDTOUpdate {
   @Min(0)
   @IsNumber({ maxDecimalPlaces: 2 })
   public readonly additionsToFixedAssets?: number;
-
   @IsOptional()
   @ValidateNested()
   public readonly supplyFractions?: SupplyFractionDTOUpdate[];

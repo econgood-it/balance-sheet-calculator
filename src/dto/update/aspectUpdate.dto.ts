@@ -6,18 +6,18 @@ import {
     Max,
     IsIn
 } from 'class-validator';
+import {WEIGHT_VALUES} from "../validation.constans";
 
 export class AspectDTOUpdate {
 
-    private static readonly WEIGHT_VALUES = [0, 0.5, 1, 1.5, 2];
     @IsInt()
     @Min(0)
     @Max(10)
     @IsOptional()
-    public readonly estimations?: number
+    public readonly estimations?: number;
 
     @IsOptional()
-    @IsIn(AspectDTOUpdate.WEIGHT_VALUES)
+    @IsIn(WEIGHT_VALUES)
     public weight?: number;
 
     public constructor(
