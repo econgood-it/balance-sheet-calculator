@@ -20,21 +20,12 @@ export class BalanceSheetDTOUpdate {
     this.companyFacts = companyFacts;
   }
 
-  public static readonly fromJSONCompact = strictObjectMapper(
-    (accessor) => BalanceSheetDTOUpdate.fromJSON(accessor, BalanceSheetType.Compact)
-  );
-
-  public static readonly fromJSONFull = strictObjectMapper(
-    (accessor) => BalanceSheetDTOUpdate.fromJSON(accessor, BalanceSheetType.Full)
-  );
-
-  private static fromJSON(accessor: JsonObjectAccessor, balanceSheetType: BalanceSheetType) {
-    const ratingFromJson = balanceSheetType === BalanceSheetType.Compact ? RatingDTOUpdate.fromJSONCompact : RatingDTOUpdate.fromJSONFull;
-    return new BalanceSheetDTOUpdate(
+  public static readonly fromJSON = strictObjectMapper(
+    accessor => new BalanceSheetDTOUpdate(
       accessor.get('id', expectNumber),
       accessor.getOptional('companyFacts', CompanyFactsDTOUpdate.fromJSON),
-      accessor.getOptional('rating', ratingFromJson)
+      accessor.getOptional('rating', RatingDTOUpdate.fromJSON)
     )
-  }
+  );
 }
 

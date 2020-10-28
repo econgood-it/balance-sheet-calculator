@@ -11,18 +11,12 @@ export class RatingDTOUpdate {
     this.topics = topics;
   }
 
-  public static readonly fromJSONCompact = strictObjectMapper(
+  public static readonly fromJSON = strictObjectMapper(
     accessor =>
       new RatingDTOUpdate(
-        accessor.getOptional('topics', arrayMapper(TopicDTOUpdate.fromJSONCompact), [])
+        accessor.getOptional('topics', arrayMapper(TopicDTOUpdate.fromJSON), [])
       )
   )
 
-  public static readonly fromJSONFull = strictObjectMapper(
-    accessor =>
-      new RatingDTOUpdate(
-        accessor.getOptional('topics', arrayMapper(TopicDTOUpdate.fromJSONFull), [])
-      )
-  )
 
 }

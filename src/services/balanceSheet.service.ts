@@ -64,12 +64,7 @@ export class BalanceSheetService {
         relations: ['rating', 'companyFacts', 'companyFacts.supplyFractions', 'companyFacts.employeesFractions',
           'rating.topics', 'rating.topics.aspects']
       });
-      let balanceSheetDTOUpdate: BalanceSheetDTOUpdate;
-      if (balanceSheet.type === BalanceSheetType.Compact) {
-        balanceSheetDTOUpdate = BalanceSheetDTOUpdate.fromJSONCompact(req.body);
-      } else {
-        balanceSheetDTOUpdate = BalanceSheetDTOUpdate.fromJSONFull(req.body);
-      }
+      const balanceSheetDTOUpdate: BalanceSheetDTOUpdate = BalanceSheetDTOUpdate.fromJSON(req.body);
       if (balanceSheetDTOUpdate.id !== balanceSheetId) {
         next(new BadRequestException(`Balance sheet id in request body and url parameter has to be the same`));
       }
