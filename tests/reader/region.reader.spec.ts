@@ -1,7 +1,7 @@
-import { RegionReader } from "../../src/reader/RegionReader";
+import { RegionReader } from "../../src/reader/region.reader";
 import { Region } from "../../src/entities/region";
-describe('Stakeholder Weight Calculator', () => {
-    it('should calculate supplier and employees risk ratio', async (done) => {
+describe('Region reader', () => {
+    it('should read region.csv', async (done) => {
         const regionReader = new RegionReader();
         const regions: Region[] = await regionReader.read();
         expect(regions).toContainEqual({ "countryCode": 'ABW', "countryName": 'Aruba', 'pppIndex': 1.9628994497935313 });

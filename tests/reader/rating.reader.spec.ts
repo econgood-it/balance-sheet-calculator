@@ -1,7 +1,7 @@
 
 import * as path from 'path';
 import { Topic } from '../../src/entities/topic';
-import { RatingReader } from '../../src/reader/RatingReader';
+import { RatingReader } from '../../src/reader/rating.reader';
 
 describe('Rating Reader', () => {
     it('should read rating from csv', async (done) => {
