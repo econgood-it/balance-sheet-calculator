@@ -6,6 +6,7 @@ import { DatabaseConnectionCreator } from '../../src/DatabaseConnectionCreator';
 import { Connection, Repository } from "typeorm";
 import { Region } from "../../src/entities/region";
 import { ConfigurationReader } from "../../src/configurationReader";
+import {Precalculations, Precalculator} from "../../src/calculations/precalculator";
 
 
 describe('Stakeholder Weight Calculator', () => {
@@ -32,28 +33,34 @@ describe('Stakeholder Weight Calculator', () => {
 
 
     it('should calculate supplier and employees risk ratio', async (done) => {
-        const stakeholderWeightCalculator = new StakeholderWeightCalculator(companyFacts, regionRepository);
-        const result = await stakeholderWeightCalculator.calculateSupplierAndEmployeesRiskRatio();
+        const precalculations: Precalculations = await new Precalculator(regionRepository).calculate(
+          companyFacts);
+        const stakeholderWeightCalculator = new StakeholderWeightCalculator();
+        const result = await stakeholderWeightCalculator.calculateSupplierAndEmployeesRiskRatio(precalculations);
         expect(result).toBeCloseTo(17.8789386768471, 13);
         done();
     })
 
     it('should calculate employees risk', async (done) => {
-        const stakeholderWeightCalculator = new StakeholderWeightCalculator(companyFacts, regionRepository);
-        const result = await stakeholderWeightCalculator.calculateEmployeesRisk();
+        const precalculations: Precalculations = await new Precalculator(regionRepository).calculate(
+          companyFacts);
+        const stakeholderWeightCalculator = new StakeholderWeightCalculator();
+        const result = await stakeholderWeightCalculator.calculateEmployeesRisk(precalculations);
         expect(result).toBeCloseTo(497.599891781823, 12);
         done();
     })
 
     it('should calculate financial risk', async (done) => {
-        const stakeholderWeightCalculator = new StakeholderWeightCalculator(companyFacts, regionRepository);
-        const result = await stakeholderWeightCalculator.calculateFinancialRisk();
+        const precalculations: Precalculations = await new Precalculator(regionRepository).calculate(
+          companyFacts);
+        const stakeholderWeightCalculator = new StakeholderWeightCalculator();
+        const result = await stakeholderWeightCalculator.calculateFinancialRisk(precalculations);
         expect(result).toBeCloseTo(66.6422308644823, 13);
         done();
     })
 
     it('should map to value between 60 and 300', () => {
-        const stakeholderWeightCalculator = new StakeholderWeightCalculator(companyFacts, regionRepository);
+        const stakeholderWeightCalculator = new StakeholderWeightCalculator();
         expect(stakeholderWeightCalculator.mapToValueBetween60And300(59.999)).toBeCloseTo(
             60, 1);
         expect(stakeholderWeightCalculator.mapToValueBetween60And300(300.1)).toBeCloseTo(
@@ -64,16 +71,18 @@ describe('Stakeholder Weight Calculator', () => {
     })
 
     it('should calculate stakeholder weights', async (done) => {
-        const stakeholderWeightCalculator = new StakeholderWeightCalculator(companyFacts, regionRepository);
-        let result: number = await stakeholderWeightCalculator.calcStakeholderWeight('A');
+        const precalculations: Precalculations = await new Precalculator(regionRepository).calculate(
+          companyFacts);
+        const stakeholderWeightCalculator = new StakeholderWeightCalculator();
+        let result: number = await stakeholderWeightCalculator.calcStakeholderWeight('A', precalculations);
         expect(result).toBeCloseTo(0.5, 3);
-        result = await stakeholderWeightCalculator.calcStakeholderWeight('B');
+        result = await stakeholderWeightCalculator.calcStakeholderWeight('B', precalculations);
         expect(result).toBeCloseTo(1, 2);
-        result = await stakeholderWeightCalculator.calcStakeholderWeight('C');
+        result = await stakeholderWeightCalculator.calcStakeholderWeight('C', precalculations);
         expect(result).toBeCloseTo(2, 2);
-        result = await stakeholderWeightCalculator.calcStakeholderWeight('D');
+        result = await stakeholderWeightCalculator.calcStakeholderWeight('D', precalculations);
         expect(result).toBeCloseTo(1, 2);
-        result = await stakeholderWeightCalculator.calcStakeholderWeight('E');
+        result = await stakeholderWeightCalculator.calcStakeholderWeight('E', precalculations);
         expect(result).toBeCloseTo(1, 2);
         done();
     })

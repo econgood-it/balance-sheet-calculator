@@ -14,6 +14,7 @@ import BadRequestException from "../exceptions/BadRequestException";
 import { Region } from "../entities/region";
 import { BalanceSheetType } from "../entities/enums";
 import { validateOrReject, ValidationError } from 'class-validator';
+import {Precalculations, Precalculator} from "../calculations/precalculator";
 
 
 
@@ -35,9 +36,10 @@ export class BalanceSheetService {
         validationError: { target: false },
       });
       const balancesheet: BalanceSheet = await balanceSheetDTOCreate.toBalanceSheet();
-      const maxPointsCalculator: MaxPointsCalculator = new MaxPointsCalculator(balancesheet.companyFacts,
-        entityManager.getRepository(Region));
-      await maxPointsCalculator.updateMaxPointsAndPoints(balancesheet.rating.topics);
+      const precalculations: Precalculations = await new Precalculator(entityManager.getRepository(Region)).calculate(
+        balancesheet.companyFacts);
+      const maxPointsCalculator: MaxPointsCalculator = new MaxPointsCalculator();
+      await maxPointsCalculator.updateMaxPointsAndPoints(balancesheet.rating.topics, precalculations);
       const balanceSheetResponse: BalanceSheet = await entityManager.getRepository(BalanceSheet).save(balancesheet);
       this.sortArraysOfBalanceSheet(balanceSheetResponse);
       res.json(balanceSheetResponse);
@@ -73,9 +75,10 @@ export class BalanceSheetService {
       });
 
       await entityWithDTOMerger.mergeBalanceSheet(balanceSheet, balanceSheetDTOUpdate);
-      const maxPointsCalculator: MaxPointsCalculator = new MaxPointsCalculator(balanceSheet.companyFacts,
-        entityManager.getRepository(Region));
-      await maxPointsCalculator.updateMaxPointsAndPoints(balanceSheet.rating.topics);
+      const precalculations: Precalculations = await new Precalculator(entityManager.getRepository(Region)).calculate(
+        balanceSheet.companyFacts);
+      const maxPointsCalculator: MaxPointsCalculator = new MaxPointsCalculator();
+      await maxPointsCalculator.updateMaxPointsAndPoints(balanceSheet.rating.topics, precalculations);
       const balanceSheetResponse: BalanceSheet = await balanceSheetRepository.save(balanceSheet);
       this.sortArraysOfBalanceSheet(balanceSheetResponse);
       res.json(balanceSheetResponse);

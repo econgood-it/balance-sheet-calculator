@@ -1,29 +1,25 @@
 import { StakeholderWeightCalculator } from "./StakeholderWeightCalculator";
 import { Topic } from "../entities/topic";
-import { CompanyFacts } from "../entities/companyFacts";
-import { Repository } from "typeorm";
-import { Region } from "../entities/region";
-import { BalanceSheetType } from "../entities/enums";
+import {Precalculations} from "./precalculator";
 
 export class MaxPointsCalculator {
-    private stakeholderWeightCalculator: StakeholderWeightCalculator;
-    constructor(companyFacts: CompanyFacts, regionRepository: Repository<Region>) {
-        this.stakeholderWeightCalculator = new StakeholderWeightCalculator(companyFacts, regionRepository);
-    }
+    private stakeholderWeightCalculator: StakeholderWeightCalculator = new StakeholderWeightCalculator();
 
-    public async updateMaxPointsAndPoints(topics: Topic[]): Promise<void> {
+    public async updateMaxPointsAndPoints(topics: Topic[], precalculations: Precalculations): Promise<void> {
         let sumOfTopicWeights = 0;
         // Compute sum of topic weights 
         for (const topic of topics) {
             const stakeholderName: string = topic.shortName.substring(0, 1);
-            const stakeholderWeight: number = await this.stakeholderWeightCalculator.calcStakeholderWeight(stakeholderName);
+            const stakeholderWeight: number = await this.stakeholderWeightCalculator.calcStakeholderWeight(stakeholderName,
+              precalculations);
             sumOfTopicWeights += stakeholderWeight * topic.weight;
         }
 
         for (const topic of topics) {
             // Update max points of topic
             const stackholderName: string = topic.shortName.substring(0, 1);
-            const stakeholderWeight: number = await this.stakeholderWeightCalculator.calcStakeholderWeight(stackholderName);
+            const stakeholderWeight: number = await this.stakeholderWeightCalculator.calcStakeholderWeight(stackholderName,
+              precalculations);
             topic.maxPoints = stakeholderWeight * topic.weight / sumOfTopicWeights * 1000;
             this.updatePositiveAspects(topic);
             this.updateNegativeAspects(topic);

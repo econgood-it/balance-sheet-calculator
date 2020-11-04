@@ -1,6 +1,4 @@
-import { CompanyFacts } from "../entities/companyFacts";
-import { Region } from "../entities/region";
-import { Repository } from "typeorm";
+import {Precalculations} from "./precalculator";
 
 
 export class StakeholderWeightCalculator {
@@ -8,23 +6,18 @@ export class StakeholderWeightCalculator {
     private readonly defaultPPPIndex = 0.978035862587365;
     private readonly defaultIfDenominatorIsZero = 100.;
 
-
-    constructor(private companyFacts: CompanyFacts,
-        private readonly regionRepository: Repository<Region>) {
-    }
-
-    public async calcStakeholderWeight(stakeholderName: string): Promise<number> {
+    public async calcStakeholderWeight(stakeholderName: string, precalculations: Precalculations): Promise<number> {
 
         let weight: number = 1;
         switch (stakeholderName) {
             case 'A':
-                weight = await this.calculateSupplierWeightFromCompanyFacts();
+                weight = await this.calculateSupplierWeightFromCompanyFacts(precalculations);
                 break;
             case 'B':
-                weight = await this.calculateFinancialWeightFromCompanyFacts();
+                weight = await this.calculateFinancialWeightFromCompanyFacts(precalculations);
                 break;
             case 'C':
-                weight = await this.calculateEmployeeWeightFromCompanyFacts();
+                weight = await this.calculateEmployeeWeightFromCompanyFacts(precalculations);
                 break;
             case 'D':
                 weight = await this.calculateCustomerWeightFromCompanyFacts();
@@ -41,20 +34,20 @@ export class StakeholderWeightCalculator {
     }
 
     // A
-    public async calculateSupplierWeightFromCompanyFacts(): Promise<number> {
-        const supplierAndEmployeesRiskRation = await this.calculateSupplierAndEmployeesRiskRatio();
+    public async calculateSupplierWeightFromCompanyFacts(precalculations: Precalculations): Promise<number> {
+        const supplierAndEmployeesRiskRation = await this.calculateSupplierAndEmployeesRiskRatio(precalculations);
         return this.mapToWeight(this.mapToValueBetween60And300(supplierAndEmployeesRiskRation));
     }
 
     // B
-    public async calculateFinancialWeightFromCompanyFacts(): Promise<number> {
-        const financialRisk = await this.calculateFinancialRisk();
+    public async calculateFinancialWeightFromCompanyFacts(precalculations: Precalculations): Promise<number> {
+        const financialRisk = await this.calculateFinancialRisk(precalculations);
         return this.mapToWeight(this.mapToValueBetween60And300(financialRisk));
     }
 
     // C
-    public async calculateEmployeeWeightFromCompanyFacts(): Promise<number> {
-        const employeesRisk = await this.calculateEmployeesRisk();
+    public async calculateEmployeeWeightFromCompanyFacts(precalculations: Precalculations): Promise<number> {
+        const employeesRisk = await this.calculateEmployeesRisk(precalculations);
         return this.mapToWeight(this.mapToValueBetween60And300(employeesRisk));
     }
 
@@ -86,79 +79,29 @@ export class StakeholderWeightCalculator {
     }
 
     // =WENNFEHLER((60*$'11.Region'.G3/($'11.Region'.G3+$'11.Region'.G10+(I19+I21+I22+G24))*5),100)
-    public async calculateSupplierAndEmployeesRiskRatio(): Promise<number> {
-        // In excel this is equal to the cell $'11.Region'.G3
-        const supplierRisks: number = await this.supplyRisks();
-        // In excel this is equal to the cell $'11.Region'.G10
-        const employeesRisksNormed: number = await this.calculateNormedEmployeesRisk();
-        //console.log(`${supplierRisks} , ${employeesRisksNormed}`);
-        const numerator = 60 * supplierRisks;
+    public async calculateSupplierAndEmployeesRiskRatio(precalculations: Precalculations): Promise<number> {
+        // (60*$'11.Region'.G3)
+        const numerator = 60 * precalculations.supplyRisks;
+        // ($'11.Region'.G3+$'11.Region'.G10+(I19+I21+I22+G24))
+        const denominator: number = precalculations.supplyRisks + precalculations.normedEmployeesRisk +
+          precalculations.sumOfFinancialAspects;
         // (60*$'11.Region'.G3/($'11.Region'.G3+$'11.Region'.G10+(I19+I21+I22+G24))*5))
-        const denominator: number = supplierRisks + employeesRisksNormed + this.getSumOfFinancialAspects();
-
         return denominator != 0 ? numerator / denominator * 5 : this.defaultIfDenominatorIsZero;
     }
 
     // =WENNFEHLER((60*(I19+I21+I22+G24)/($'11.Region'.G3+$'11.Region'.G10+(I19+I21+I22+G24))*10);100)
-    public async calculateFinancialRisk(): Promise<number> {
-        const supplierRisks: number = await this.supplyRisks();
-        const employeesRisksNormed: number = await this.calculateNormedEmployeesRisk();
-        const sumOfFinances: number = this.getSumOfFinancialAspects();
-        const numerator = 60 * sumOfFinances;
-        const denominator: number = supplierRisks + employeesRisksNormed + sumOfFinances;
+    public async calculateFinancialRisk(precalculations: Precalculations): Promise<number> {
+        const numerator = 60 * precalculations.sumOfFinancialAspects;
+        const denominator: number = precalculations.supplyRisks + precalculations.normedEmployeesRisk +
+          precalculations.sumOfFinancialAspects;
         return denominator != 0 ? numerator / denominator * 10 : this.defaultIfDenominatorIsZero;
     }
 
     // =WENNFEHLER((60*$'11.Region'.G10/($'11.Region'.G3+$'11.Region'.G10+(I19+I21+I22+G24))*10);100)
-    public async calculateEmployeesRisk(): Promise<number> {
-        const supplierRisks: number = await this.supplyRisks();
-        const employeesRisksNormed: number = await this.calculateNormedEmployeesRisk();
-        const sumOfFinances: number = this.getSumOfFinancialAspects();
-        const numerator = 60 * employeesRisksNormed;
-        const denominator: number = supplierRisks + employeesRisksNormed + sumOfFinances;
+    public async calculateEmployeesRisk(precalculations: Precalculations): Promise<number> {
+        const numerator = 60 * precalculations.normedEmployeesRisk;
+        const denominator: number = precalculations.supplyRisks + precalculations.normedEmployeesRisk +
+          precalculations.sumOfFinancialAspects;
         return denominator != 0 ? numerator / denominator * 10 : this.defaultIfDenominatorIsZero;
     }
-
-    // In excel this is equal to the cell $'11.Region'.G10
-    public async calculateNormedEmployeesRisk(): Promise<number> {
-        const employeesRisks: number = await this.employeesRisks();
-        const employeesRisksNormalizer: number = this.employeesRisksNormalizer();
-        // In excel this is equal to the cell $'11.Region'.G10
-        return employeesRisks + employeesRisksNormalizer;
-    }
-
-    // In Excel I19+I21+I22+G24
-    public getSumOfFinancialAspects(): number {
-        return this.companyFacts.profit + this.companyFacts.financialCosts
-            + this.companyFacts.incomeFromFinancialInvestments + this.companyFacts.additionsToFixedAssets;
-    }
-
-    private employeesRisksNormalizer(): number {
-        const sumEmployeesPercentage: number = this.companyFacts.employeesFractions.reduce(
-            (sum: number, ef) => sum + ef.percentage, 0)
-        return (1 - sumEmployeesPercentage) * 0.978035862587365 * this.companyFacts.totalStaffCosts;
-    }
-
-    private async supplyRisks(): Promise<number> {
-
-        let result: number = 0;
-        for (const supplyFraction of this.companyFacts.supplyFractions) {
-            const region: Region = await this.regionRepository.findOneOrFail({ countryCode: supplyFraction.countryCode });
-
-            // console.log(`SupplyRisks: ${supplyFraction.costs} x ${region.pppIndex}`);
-            result += supplyFraction.costs * region.pppIndex;
-        }
-        return result;
-    }
-
-    private async employeesRisks(): Promise<number> {
-        let result: number = 0;
-        for (const employeesFraction of this.companyFacts.employeesFractions) {
-            const region: Region = await this.regionRepository.findOneOrFail({ countryCode: employeesFraction.countryCode });
-            result += this.companyFacts.totalStaffCosts * employeesFraction.percentage
-                * region.pppIndex;
-        }
-        return result;
-    }
-
 }
