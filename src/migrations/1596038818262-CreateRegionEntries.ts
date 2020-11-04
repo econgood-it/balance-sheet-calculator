@@ -1,5 +1,5 @@
 import { MigrationInterface, QueryRunner, Repository } from "typeorm";
-import { RegionReader } from "../reader/RegionReader";
+import { RegionReader } from "../reader/region.reader";
 import { Region } from "../entities/region";
 import { LoggingService } from "../logging";
 
