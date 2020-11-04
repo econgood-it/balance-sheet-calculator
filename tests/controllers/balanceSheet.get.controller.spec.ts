@@ -7,7 +7,7 @@ import { Application } from "express";
 import { ConfigurationReader } from "../../src/configurationReader";
 import { BalanceSheetType, BalanceSheetVersion } from "../../src/entities/enums";
 import * as path from 'path';
-import { RatingReader } from "../../src/reader/RatingReader";
+import { RatingReader } from "../../src/reader/rating.reader";
 import { Assertions } from "../Assertions";
 import { Topic } from "../../src/entities/topic";
 

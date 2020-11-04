@@ -1,6 +1,6 @@
 import { BalanceSheetType, BalanceSheetVersion } from "../entities/enums";
 import * as path from 'path';
-import { RatingReader } from "../reader/RatingReader";
+import { RatingReader } from "../reader/rating.reader";
 import { Rating } from "../entities/rating";
 
 export class RatingFactory {

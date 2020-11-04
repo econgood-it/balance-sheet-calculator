@@ -9,7 +9,7 @@ import { ConfigurationReader } from "../../src/configurationReader";
 import { BalanceSheetType } from "../../src/entities/enums";
 import { Assertions } from "../Assertions";
 import * as path from 'path';
-import { RatingReader } from "../../src/reader/RatingReader";
+import { RatingReader } from "../../src/reader/rating.reader";
 import { CompanyFacts0, CompanyFacts1 } from "../testData/companyFacts";
 import {Precalculations, Precalculator} from "../../src/calculations/precalculator";
 
