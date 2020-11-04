@@ -1,0 +1,47 @@
+\documentclass[a4paper,10pt]{article}
+%\documentclass[a4paper,10pt]{scrartcl}
+
+\usepackage{amsmath}
+\usepackage[utf8]{inputenc}
+
+\title{Documentation of the Calculations}
+\author{}
+\date{}
+
+\pdfinfo{%
+  /Title    ()
+  /Author   ()
+  /Creator  ()
+  /Producer ()
+  /Subject  ()
+  /Keywords ()
+}
+
+\begin{document}
+\maketitle
+\begin{align*}
+  supplyRisks &= \sum_{i}^{supplyFractions} costs_{i} * pppIndex_{i} \\\\
+  supplyRisk(supplyFraction) &= \frac{costs_{supplyFraction} * pppIndex_{supplyFraction}}{supplyRisks} \\\\
+  industryRisk &= \sum_{i=0}^{supplyFractions} industrySupplyChainRisk_{industry_{i}} \\\\
+  supplyChainWeight &= \sum_{i}^{supplyFractions} industryRisk * supplyRisk(i)\\\\
+  itucAverage &= \sum_{i}^{supplyFractions} supplyRisk(i) * ituc_{i} 
+\end{align*}
+\begin{align*}
+A1Weight &= 1 \\
+A2Weight &= 1 \\
+\end{align*}
+\begin{align*}
+A3Weight(supplyChainWeight) = \begin{cases} 
+    2 &\mbox{if } supplyChainWeight > 1.5 \\
+    1.5 &\mbox{if } supplyChainWeight > 1.25 \\
+    0.5 &\mbox{if } supplyChainWeight > 0.75 \\
+    1 &\mbox{else } \end{cases}
+\end{align*}
+\begin{align*}
+A4Weight(itucAverage) = \begin{cases} 
+    0.5 &\mbox{if } itucAverage < 1.5 \\
+    1 &\mbox{if } itucAverage < 3.26 \\
+    1.5 &\mbox{if } itucAverage < 4.5 \\
+    2 &\mbox{else } \end{cases}
+\end{align*}
+\end{document}
