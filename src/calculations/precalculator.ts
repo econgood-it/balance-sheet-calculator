@@ -6,9 +6,9 @@ import {EmployeesCalc} from "./employees.calc";
 import {FinanceCalc} from "./finance.calc";
 
 export interface Precalculations {
-  supplyRisks: number,
+  supplyRiskSum: number,
   normedEmployeesRisk: number,
-  sumOfFinancialAspects: number
+  sumOfFinancialAspects: number,
 }
 
 export class Precalculator {
@@ -24,9 +24,9 @@ export class Precalculator {
 
   public async calculate(companyFacts: CompanyFacts): Promise<Precalculations> {
     return {
-      supplyRisks: await this.supplierCalc.supplyRisks(companyFacts),
+      supplyRiskSum: await this.supplierCalc.supplyRiskSum(companyFacts),
       normedEmployeesRisk: await this.employeesCalc.calculateNormedEmployeesRisk(companyFacts),
-      sumOfFinancialAspects: await this.financeCalc.getSumOfFinancialAspects(companyFacts)
+      sumOfFinancialAspects: await this.financeCalc.getSumOfFinancialAspects(companyFacts),
     }
   }
 

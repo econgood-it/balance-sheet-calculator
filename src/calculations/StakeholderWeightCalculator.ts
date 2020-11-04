@@ -81,9 +81,9 @@ export class StakeholderWeightCalculator {
     // =WENNFEHLER((60*$'11.Region'.G3/($'11.Region'.G3+$'11.Region'.G10+(I19+I21+I22+G24))*5),100)
     public async calculateSupplierAndEmployeesRiskRatio(precalculations: Precalculations): Promise<number> {
         // (60*$'11.Region'.G3)
-        const numerator = 60 * precalculations.supplyRisks;
+        const numerator = 60 * precalculations.supplyRiskSum;
         // ($'11.Region'.G3+$'11.Region'.G10+(I19+I21+I22+G24))
-        const denominator: number = precalculations.supplyRisks + precalculations.normedEmployeesRisk +
+        const denominator: number = precalculations.supplyRiskSum + precalculations.normedEmployeesRisk +
           precalculations.sumOfFinancialAspects;
         // (60*$'11.Region'.G3/($'11.Region'.G3+$'11.Region'.G10+(I19+I21+I22+G24))*5))
         return denominator != 0 ? numerator / denominator * 5 : this.defaultIfDenominatorIsZero;
@@ -92,7 +92,7 @@ export class StakeholderWeightCalculator {
     // =WENNFEHLER((60*(I19+I21+I22+G24)/($'11.Region'.G3+$'11.Region'.G10+(I19+I21+I22+G24))*10);100)
     public async calculateFinancialRisk(precalculations: Precalculations): Promise<number> {
         const numerator = 60 * precalculations.sumOfFinancialAspects;
-        const denominator: number = precalculations.supplyRisks + precalculations.normedEmployeesRisk +
+        const denominator: number = precalculations.supplyRiskSum + precalculations.normedEmployeesRisk +
           precalculations.sumOfFinancialAspects;
         return denominator != 0 ? numerator / denominator * 10 : this.defaultIfDenominatorIsZero;
     }
@@ -100,7 +100,7 @@ export class StakeholderWeightCalculator {
     // =WENNFEHLER((60*$'11.Region'.G10/($'11.Region'.G3+$'11.Region'.G10+(I19+I21+I22+G24))*10);100)
     public async calculateEmployeesRisk(precalculations: Precalculations): Promise<number> {
         const numerator = 60 * precalculations.normedEmployeesRisk;
-        const denominator: number = precalculations.supplyRisks + precalculations.normedEmployeesRisk +
+        const denominator: number = precalculations.supplyRiskSum + precalculations.normedEmployeesRisk +
           precalculations.sumOfFinancialAspects;
         return denominator != 0 ? numerator / denominator * 10 : this.defaultIfDenominatorIsZero;
     }
