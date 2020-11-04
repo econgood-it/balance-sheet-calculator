@@ -1,5 +1,5 @@
 
-import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
+import {Entity, Column, PrimaryGeneratedColumn, Index} from "typeorm";
 
 @Entity()
 export class Region {
@@ -7,6 +7,7 @@ export class Region {
   public readonly id: number | undefined;
   @Column("double precision")
   public readonly pppIndex: number;
+  @Index({ unique: true })
   @Column()
   public readonly countryCode: string;
   @Column()
