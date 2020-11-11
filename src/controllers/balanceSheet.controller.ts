@@ -10,9 +10,9 @@ export class BalanceSheetController {
   }
 
   public routes() {
-    this.app.route('/').get(this.balanceSheetService.welcomeMessage);
-    this.app.route("/balancesheets/:id").get(this.balanceSheetService.getBalanceSheet.bind(this.balanceSheetService));
-    this.app.route("/balancesheets").post(this.balanceSheetService.createBalanceSheet.bind(this.balanceSheetService));
-    this.app.route("/balancesheets/:id").patch(this.balanceSheetService.updateBalanceSheet.bind(this.balanceSheetService));
+    this.app.get("/", this.balanceSheetService.welcomeMessage);
+    this.app.get("/balancesheets/:id", this.balanceSheetService.getBalanceSheet.bind(this.balanceSheetService));
+    this.app.post("/balancesheets", this.balanceSheetService.createBalanceSheet.bind(this.balanceSheetService));
+    this.app.patch("/balancesheets/:id", this.balanceSheetService.updateBalanceSheet.bind(this.balanceSheetService));
   }
 }

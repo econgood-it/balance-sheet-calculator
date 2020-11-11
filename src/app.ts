@@ -19,9 +19,9 @@ class App {
 
   constructor(connection: Connection, private configuration: Configuration) {
     this.app = express();
+    this.setConfig();
     this.authentication = new Authentication();
     this.authentication.addBasicAuthToApplication(this.app, configuration);
-    this.setConfig();
     //Creating and assigning a new instance of our controller
     const balanceSheetService = new BalanceSheetService(connection);
     this.balanceSheetController = new BalanceSheetController(this.app, balanceSheetService);
@@ -32,6 +32,7 @@ class App {
   }
 
   private setConfig() {
+    this.app.use(cors());
     //Allows us to receive requests with data in json format
     this.app.use(bodyParser.json({ limit: '50mb' }));
 
@@ -40,7 +41,7 @@ class App {
     this.app.use(errorMiddleware);
 
     //Enables cors   
-    this.app.use(cors());
+
   }
 }
 
