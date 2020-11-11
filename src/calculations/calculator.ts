@@ -1,18 +1,18 @@
 import {CompanyFacts} from "../entities/companyFacts";
 import {Repository} from "typeorm";
 import {Region} from "../entities/region";
-import {SupplierCalc, SupplyAggregations} from "./supplier.calc";
+import {SupplierCalc, SupplyCalcResults} from "./supplier.calc";
 import {EmployeesCalc} from "./employees.calc";
 import {FinanceCalc} from "./finance.calc";
 import {Industry} from "../entities/industry";
 
-export interface Precalculations {
+export interface CalcResults {
   supplyRiskSum: number,
   normedEmployeesRisk: number,
   sumOfFinancialAspects: number,
 }
 
-export class Precalculator {
+export class Calculator {
   public readonly supplierCalc: SupplierCalc;
   public readonly employeesCalc: EmployeesCalc;
   public readonly financeCalc: FinanceCalc;
@@ -24,10 +24,10 @@ export class Precalculator {
     this.financeCalc = new FinanceCalc(this.regionRepository);
   }
 
-  public async calculate(companyFacts: CompanyFacts): Promise<Precalculations> {
-    const supplyAggregations: SupplyAggregations = await this.supplierCalc.supplyAggregations(companyFacts);
+  public async calculate(companyFacts: CompanyFacts): Promise<CalcResults> {
+    const supplyCalcResults: SupplyCalcResults = await this.supplierCalc.calculate(companyFacts);
     return {
-      supplyRiskSum: supplyAggregations.supplyRiskSum,
+      supplyRiskSum: supplyCalcResults.supplyRiskSum,
       normedEmployeesRisk: await this.employeesCalc.calculateNormedEmployeesRisk(companyFacts),
       sumOfFinancialAspects: await this.financeCalc.getSumOfFinancialAspects(companyFacts),
     }

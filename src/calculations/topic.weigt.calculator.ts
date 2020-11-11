@@ -1,9 +1,9 @@
-import {Precalculations} from "./precalculator";
+import {CalcResults} from "./calculator";
 
 
 export class TopicWeigtCalculator {
 
-    public async calcTopicWeight(topicShortName: string, precalculations: Precalculations): Promise<number> {
+    public async calcTopicWeight(topicShortName: string, precalculations: CalcResults): Promise<number> {
         let weight: number = 1;
         switch (topicShortName) {
             case 'A1':
@@ -26,7 +26,7 @@ export class TopicWeigtCalculator {
         return 1.0;
     }
 
-    public calculateTopicWeightOfA3(precalculations: Precalculations): number {
+    public calculateTopicWeightOfA3(precalculations: CalcResults): number {
         throw new Error();
     }
 }

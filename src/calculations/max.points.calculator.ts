@@ -1,11 +1,11 @@
 import { StakeholderWeightCalculator } from "./stakeholder.weight.calculator";
 import { Topic } from "../entities/topic";
-import {Precalculations} from "./precalculator";
+import {CalcResults} from "./calculator";
 
 export class MaxPointsCalculator {
     private stakeholderWeightCalculator: StakeholderWeightCalculator = new StakeholderWeightCalculator();
 
-    public async updateMaxPointsAndPoints(topics: Topic[], precalculations: Precalculations): Promise<void> {
+    public async updateMaxPointsAndPoints(topics: Topic[], precalculations: CalcResults): Promise<void> {
         let sumOfTopicWeights = 0;
         // Compute sum of topic weights 
         for (const topic of topics) {

@@ -14,7 +14,7 @@ import BadRequestException from "../exceptions/bad.request.exception";
 import { Region } from "../entities/region";
 import { BalanceSheetType } from "../entities/enums";
 import { validateOrReject, ValidationError } from 'class-validator';
-import {Precalculations, Precalculator} from "../calculations/precalculator";
+import {CalcResults, Calculator} from "../calculations/calculator";
 import {Industry} from "../entities/industry";
 
 
@@ -36,7 +36,7 @@ export class BalanceSheetService {
         validationError: { target: false },
       });
       const balancesheet: BalanceSheet = await balanceSheetDTOCreate.toBalanceSheet();
-      const precalculations: Precalculations = await new Precalculator(entityManager.getRepository(Region),
+      const precalculations: CalcResults = await new Calculator(entityManager.getRepository(Region),
         entityManager.getRepository(Industry)).calculate(balancesheet.companyFacts);
       const maxPointsCalculator: MaxPointsCalculator = new MaxPointsCalculator();
       await maxPointsCalculator.updateMaxPointsAndPoints(balancesheet.rating.topics, precalculations);
@@ -74,7 +74,7 @@ export class BalanceSheetService {
       });
 
       await entityWithDTOMerger.mergeBalanceSheet(balanceSheet, balanceSheetDTOUpdate);
-      const precalculations: Precalculations = await new Precalculator(entityManager.getRepository(Region),
+      const precalculations: CalcResults = await new Calculator(entityManager.getRepository(Region),
         entityManager.getRepository(Industry)).calculate(balanceSheet.companyFacts);
       const maxPointsCalculator: MaxPointsCalculator = new MaxPointsCalculator();
       await maxPointsCalculator.updateMaxPointsAndPoints(balanceSheet.rating.topics, precalculations);

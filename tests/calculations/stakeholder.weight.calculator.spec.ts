@@ -6,7 +6,7 @@ import { DatabaseConnectionCreator } from '../../src/database.connection.creator
 import { Connection, Repository } from "typeorm";
 import { Region } from "../../src/entities/region";
 import { ConfigurationReader } from "../../src/configuration.reader";
-import {Precalculations, Precalculator} from "../../src/calculations/precalculator";
+import {CalcResults, Calculator} from "../../src/calculations/calculator";
 import {Industry} from "../../src/entities/industry";
 
 
@@ -40,7 +40,7 @@ describe('Stakeholder Weight Calculator', () => {
 
 
     it('should calculate supplier and employees risk ratio', async (done) => {
-        const precalculations: Precalculations = await new Precalculator(regionRepository, industryRepository).calculate(
+        const precalculations: CalcResults = await new Calculator(regionRepository, industryRepository).calculate(
           companyFacts);
         const stakeholderWeightCalculator = new StakeholderWeightCalculator();
         const result = await stakeholderWeightCalculator.calculateSupplierAndEmployeesRiskRatio(precalculations);
@@ -49,7 +49,7 @@ describe('Stakeholder Weight Calculator', () => {
     })
 
     it('should calculate employees risk', async (done) => {
-        const precalculations: Precalculations = await new Precalculator(regionRepository, industryRepository).calculate(
+        const precalculations: CalcResults = await new Calculator(regionRepository, industryRepository).calculate(
           companyFacts);
         const stakeholderWeightCalculator = new StakeholderWeightCalculator();
         const result = await stakeholderWeightCalculator.calculateEmployeesRisk(precalculations);
@@ -58,7 +58,7 @@ describe('Stakeholder Weight Calculator', () => {
     })
 
     it('should calculate financial risk', async (done) => {
-        const precalculations: Precalculations = await new Precalculator(regionRepository, industryRepository).calculate(
+        const precalculations: CalcResults = await new Calculator(regionRepository, industryRepository).calculate(
           companyFacts);
         const stakeholderWeightCalculator = new StakeholderWeightCalculator();
         const result = await stakeholderWeightCalculator.calculateFinancialRisk(precalculations);
@@ -78,7 +78,7 @@ describe('Stakeholder Weight Calculator', () => {
     })
 
     it('should calculate stakeholder weights', async (done) => {
-        const precalculations: Precalculations = await new Precalculator(regionRepository, industryRepository).calculate(
+        const precalculations: CalcResults = await new Calculator(regionRepository, industryRepository).calculate(
           companyFacts);
         const stakeholderWeightCalculator = new StakeholderWeightCalculator();
         let result: number = await stakeholderWeightCalculator.calcStakeholderWeight('A', precalculations);

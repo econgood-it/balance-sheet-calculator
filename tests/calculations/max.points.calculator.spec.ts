@@ -11,7 +11,7 @@ import { Assertions } from "../Assertions";
 import * as path from 'path';
 import { RatingReader } from "../../src/reader/rating.reader";
 import { CompanyFacts0, CompanyFacts1 } from "../testData/company.facts";
-import {Precalculations, Precalculator} from "../../src/calculations/precalculator";
+import {CalcResults, Calculator} from "../../src/calculations/calculator";
 import {Industry} from "../../src/entities/industry";
 
 describe('Max points calculator', () => {
@@ -38,7 +38,7 @@ describe('Max points calculator', () => {
         let pathToCsv = path.join(testDataDir, fileNameOfRatingInputData);
         const topics: Topic[] = (await testDataReader.readRatingFromCsv(pathToCsv)).topics;
         //console.log(topics);
-        const precalculations: Precalculations = await new Precalculator(regionRepository, industryRepository).calculate(
+        const precalculations: CalcResults = await new Calculator(regionRepository, industryRepository).calculate(
           companyFacts);
         const maxPointsCalculator: MaxPointsCalculator = new MaxPointsCalculator();
         await maxPointsCalculator.updateMaxPointsAndPoints(topics, precalculations);
