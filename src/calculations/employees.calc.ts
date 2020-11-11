@@ -1,7 +1,7 @@
 import {Region} from "../entities/region";
 import {CompanyFacts} from "../entities/companyFacts";
 import {Repository} from "typeorm";
-import {Precalculations} from "./precalculator";
+
 
 export class EmployeesCalc {
   constructor(private readonly regionRepository: Repository<Region>) {
@@ -24,7 +24,7 @@ export class EmployeesCalc {
   }
 
   // In excel this is equal to the cell $'11.Region'.G10
-  public async calculateNormedEmployeesRisk(companyFacts: CompanyFacts): Promise<number> {
+  public async  calculateNormedEmployeesRisk(companyFacts: CompanyFacts): Promise<number> {
     const employeesRisk = await this.employeesRisks(companyFacts);
 
     return employeesRisk + this.employeesRisksNormalizer(companyFacts);
