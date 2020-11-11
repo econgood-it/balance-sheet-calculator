@@ -29,7 +29,6 @@ export class BalanceSheetService {
   }
 
   public async createBalanceSheet(req: Request, res: Response, next: NextFunction) {
-    LoggingService.info('Create balancesheet');
     this.connection.manager.transaction(async entityManager => {
       const balanceSheetDTOCreate: BalanceSheetDTOCreate = BalanceSheetDTOCreate.fromJSON(req.body);
       await validateOrReject(balanceSheetDTOCreate, {
@@ -56,7 +55,6 @@ export class BalanceSheetService {
 
 
   public async updateBalanceSheet(req: Request, res: Response, next: NextFunction) {
-    LoggingService.info('Update balancesheet');
     this.connection.manager.transaction(async entityManager => {
       const balanceSheetRepository = entityManager.getRepository(BalanceSheet);
       const entityWithDTOMerger = new EntityWithDTOMerger(entityManager.getRepository(SupplyFraction),
