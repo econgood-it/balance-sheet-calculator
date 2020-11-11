@@ -16,13 +16,17 @@ describe('Stakeholder Weight Calculator', () => {
     let regionRepository: Repository<Region>;
     const arabEmiratesCode = "ARE";
     const afghanistanCode = "AFG";
+    const agricultureCode = 'A';
+    const pharmaceuticCode = 'Ce';
 
     beforeAll(async (done) => {
         connection = await DatabaseConnectionCreator.createConnectionAndRunMigrations(ConfigurationReader.read());
         regionRepository = connection.getRepository(Region)
-        const supplyFractions: SupplyFraction[] = [new SupplyFraction(undefined, arabEmiratesCode, 300), new SupplyFraction(undefined, afghanistanCode, 20)];
+        const supplyFractions: SupplyFraction[] = [new SupplyFraction(undefined, agricultureCode,
+          arabEmiratesCode, 300), new SupplyFraction(undefined, pharmaceuticCode, afghanistanCode, 20)];
         const employeesFractions: EmployeesFraction[] = [new EmployeesFraction(undefined, arabEmiratesCode, 0.3), new EmployeesFraction(undefined, afghanistanCode, 1)];
-        companyFacts = new CompanyFacts(undefined, 0, 2345, 238, 473, 342, 234, supplyFractions, employeesFractions);
+        companyFacts = new CompanyFacts(undefined, 0, 2345, 238,
+          473, 342, 234, supplyFractions, employeesFractions);
         done();
     });
 

@@ -2,7 +2,17 @@ import * as path from 'path';
 import { Workbook, Cell, Worksheet } from 'exceljs';
 import {Industry} from "../entities/industry";
 
+interface Headers {
+    ecologicalSupplyChainRiskIndex: number;
+    industryCodeIndex: number;
+}
+
 export class IndustryReader {
+
+    private static readonly DEFAULT_HEADERS: Headers = {
+        ecologicalSupplyChainRiskIndex: 16,
+        industryCodeIndex: 2,
+    }
 
     public async read(): Promise<Industry[]> {
         const pathToCsv = path.join(path.resolve(__dirname, '../files/reader'), "industry.csv");

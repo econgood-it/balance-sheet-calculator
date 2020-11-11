@@ -41,8 +41,8 @@ describe('Update endpoint of Balance Sheet Controller', () => {
                 incomeFromFinancialInvestments: 7000,
                 additionsToFixedAssets: 102999,
                 supplyFractions: [
-                    { countryCode: "GBR", costs: 300 },
-                    { countryCode: "BEL", costs: 300 }
+                    { industryCode: 'A', countryCode: "GBR", costs: 300 },
+                    { industryCode: 'Ce', countryCode: "BEL", costs: 300 }
                 ],
                 employeesFractions: [
                     { countryCode: "GBR", percentage: 0.2 },

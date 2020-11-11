@@ -8,7 +8,6 @@ describe('Industry Reader', () => {
 
         expect(industries).toContainEqual({ "industryCode": 'A', 'ecologicalSupplyChainRisk': 2, 'id': undefined});
         expect(industries).toContainEqual({ "industryCode": 'Ce', 'ecologicalSupplyChainRisk': 1.5, 'id': undefined});
-        // expect(regions).toContainEqual({ "countryCode": 'ZWE', "countryName": 'Zimbabwe', 'pppIndex': 3.0325616327831186 });
         done();
     })
 

@@ -77,7 +77,7 @@ export class EntityWithDTOMerger {
 
     public async replaceSupplyFractions(companyFacts: CompanyFacts, supplyFractionDTOUpdates: SupplyFractionDTOUpdate[]): Promise<void> {
         await this.supplyFractionRepository.remove(companyFacts.supplyFractions);
-        companyFacts.supplyFractions = supplyFractionDTOUpdates.map(sf => new SupplyFraction(undefined, sf.countryCode, sf.costs));
+        companyFacts.supplyFractions = supplyFractionDTOUpdates.map(sf => new SupplyFraction(undefined, sf.industryCode, sf.countryCode, sf.costs));
     }
 
     public async replaceEmployeesFractions(companyFacts: CompanyFacts, employeesFractionDTOUpdates: EmployeesFractionDTOUpdate[]): Promise<void> {

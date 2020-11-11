@@ -5,6 +5,7 @@ export class CreateSupplyFractionTable1594223075368 implements MigrationInterfac
     public async up(queryRunner: QueryRunner): Promise<void> {
         const query = `CREATE TABLE IF NOT EXISTS "supply_fraction" (
             "id" SERIAL NOT NULL, 
+            "industryCode" character varying NOT NULL, 
             "countryCode" character varying NOT NULL, 
             "costs" double precision NOT NULL, 
             "companyFactsId" integer, 
