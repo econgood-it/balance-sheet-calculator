@@ -7,6 +7,7 @@ import { Connection, Repository } from "typeorm";
 import { Region } from "../../src/entities/region";
 import { ConfigurationReader } from "../../src/configurationReader";
 import {Precalculations, Precalculator} from "../../src/calculations/precalculator";
+import {Industry} from "../../src/entities/industry";
 
 
 describe('Stakeholder Weight Calculator', () => {
@@ -14,6 +15,7 @@ describe('Stakeholder Weight Calculator', () => {
     let companyFacts: CompanyFacts;
     let connection: Connection;
     let regionRepository: Repository<Region>;
+    let industryRepository: Repository<Industry>;
     const arabEmiratesCode = "ARE";
     const afghanistanCode = "AFG";
     const agricultureCode = 'A';
@@ -21,7 +23,8 @@ describe('Stakeholder Weight Calculator', () => {
 
     beforeAll(async (done) => {
         connection = await DatabaseConnectionCreator.createConnectionAndRunMigrations(ConfigurationReader.read());
-        regionRepository = connection.getRepository(Region)
+        regionRepository = connection.getRepository(Region);
+        industryRepository = connection.getRepository(Industry);
         const supplyFractions: SupplyFraction[] = [new SupplyFraction(undefined, agricultureCode,
           arabEmiratesCode, 300), new SupplyFraction(undefined, pharmaceuticCode, afghanistanCode, 20)];
         const employeesFractions: EmployeesFraction[] = [new EmployeesFraction(undefined, arabEmiratesCode, 0.3), new EmployeesFraction(undefined, afghanistanCode, 1)];
@@ -37,7 +40,7 @@ describe('Stakeholder Weight Calculator', () => {
 
 
     it('should calculate supplier and employees risk ratio', async (done) => {
-        const precalculations: Precalculations = await new Precalculator(regionRepository).calculate(
+        const precalculations: Precalculations = await new Precalculator(regionRepository, industryRepository).calculate(
           companyFacts);
         const stakeholderWeightCalculator = new StakeholderWeightCalculator();
         const result = await stakeholderWeightCalculator.calculateSupplierAndEmployeesRiskRatio(precalculations);
@@ -46,7 +49,7 @@ describe('Stakeholder Weight Calculator', () => {
     })
 
     it('should calculate employees risk', async (done) => {
-        const precalculations: Precalculations = await new Precalculator(regionRepository).calculate(
+        const precalculations: Precalculations = await new Precalculator(regionRepository, industryRepository).calculate(
           companyFacts);
         const stakeholderWeightCalculator = new StakeholderWeightCalculator();
         const result = await stakeholderWeightCalculator.calculateEmployeesRisk(precalculations);
@@ -55,7 +58,7 @@ describe('Stakeholder Weight Calculator', () => {
     })
 
     it('should calculate financial risk', async (done) => {
-        const precalculations: Precalculations = await new Precalculator(regionRepository).calculate(
+        const precalculations: Precalculations = await new Precalculator(regionRepository, industryRepository).calculate(
           companyFacts);
         const stakeholderWeightCalculator = new StakeholderWeightCalculator();
         const result = await stakeholderWeightCalculator.calculateFinancialRisk(precalculations);
@@ -75,7 +78,7 @@ describe('Stakeholder Weight Calculator', () => {
     })
 
     it('should calculate stakeholder weights', async (done) => {
-        const precalculations: Precalculations = await new Precalculator(regionRepository).calculate(
+        const precalculations: Precalculations = await new Precalculator(regionRepository, industryRepository).calculate(
           companyFacts);
         const stakeholderWeightCalculator = new StakeholderWeightCalculator();
         let result: number = await stakeholderWeightCalculator.calcStakeholderWeight('A', precalculations);

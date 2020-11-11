@@ -12,14 +12,17 @@ import * as path from 'path';
 import { RatingReader } from "../../src/reader/rating.reader";
 import { CompanyFacts0, CompanyFacts1 } from "../testData/companyFacts";
 import {Precalculations, Precalculator} from "../../src/calculations/precalculator";
+import {Industry} from "../../src/entities/industry";
 
 describe('Max points calculator', () => {
     let connection: Connection;
     let regionRepository: Repository<Region>;
+    let industryRepository: Repository<Industry>;
 
     beforeAll(async (done) => {
         connection = await DatabaseConnectionCreator.createConnectionAndRunMigrations(ConfigurationReader.read());
-        regionRepository = connection.getRepository(Region)
+        regionRepository = connection.getRepository(Region);
+        industryRepository = connection.getRepository(Industry);
         done();
     });
 
@@ -35,7 +38,7 @@ describe('Max points calculator', () => {
         let pathToCsv = path.join(testDataDir, fileNameOfRatingInputData);
         const topics: Topic[] = (await testDataReader.readRatingFromCsv(pathToCsv)).topics;
         //console.log(topics);
-        const precalculations: Precalculations = await new Precalculator(regionRepository).calculate(
+        const precalculations: Precalculations = await new Precalculator(regionRepository, industryRepository).calculate(
           companyFacts);
         const maxPointsCalculator: MaxPointsCalculator = new MaxPointsCalculator();
         await maxPointsCalculator.updateMaxPointsAndPoints(topics, precalculations);
