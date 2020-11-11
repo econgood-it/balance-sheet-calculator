@@ -1,4 +1,4 @@
-import { StakeholderWeightCalculator } from "./StakeholderWeightCalculator";
+import { StakeholderWeightCalculator } from "./stakeholder.weight.calculator";
 import { Topic } from "../entities/topic";
 import {Precalculations} from "./precalculator";
 

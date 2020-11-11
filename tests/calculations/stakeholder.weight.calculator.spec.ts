@@ -1,11 +1,11 @@
-import { StakeholderWeightCalculator } from "../../src/calculations/StakeholderWeightCalculator";
+import { StakeholderWeightCalculator } from "../../src/calculations/stakeholder.weight.calculator";
 import { CompanyFacts } from "../../src/entities/companyFacts";
 import { SupplyFraction } from "../../src/entities/supplyFraction";
 import { EmployeesFraction } from "../../src/entities/employeesFraction";
-import { DatabaseConnectionCreator } from '../../src/DatabaseConnectionCreator';
+import { DatabaseConnectionCreator } from '../../src/database.connection.creator';
 import { Connection, Repository } from "typeorm";
 import { Region } from "../../src/entities/region";
-import { ConfigurationReader } from "../../src/configurationReader";
+import { ConfigurationReader } from "../../src/configuration.reader";
 import {Precalculations, Precalculator} from "../../src/calculations/precalculator";
 import {Industry} from "../../src/entities/industry";
 

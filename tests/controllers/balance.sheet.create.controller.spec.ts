@@ -1,10 +1,10 @@
 
 import supertest from "supertest";
 import { Connection } from "typeorm";
-import { DatabaseConnectionCreator } from '../../src/DatabaseConnectionCreator';
+import { DatabaseConnectionCreator } from '../../src/database.connection.creator';
 import App from '../../src/app';
 import { Application } from "express";
-import { ConfigurationReader } from "../../src/configurationReader";
+import { ConfigurationReader } from "../../src/configuration.reader";
 import { BalanceSheetType, BalanceSheetVersion } from "../../src/entities/enums";
 import * as path from 'path';
 import { RatingReader } from "../../src/reader/rating.reader";

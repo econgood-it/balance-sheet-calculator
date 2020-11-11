@@ -1,5 +1,5 @@
 import { strictObjectMapper } from '@daniel-faber/json-ts';
-import { CompanyFactsDTOCreate } from './companyFactsCreate.dto';
+import { CompanyFactsDTOCreate } from './company.facts.create.dto';
 import { RatingFactory } from '../../factories/rating.factory';
 import { BalanceSheet } from '../../entities/balanceSheet';
 import { BalanceSheetType, balanceSheetTypeFromJSON, BalanceSheetVersion, balanceSheetVersionFromJSON } from '../../entities/enums';

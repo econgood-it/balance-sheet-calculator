@@ -1,4 +1,4 @@
-import HttpException from "./HttpException";
+import HttpException from "./http.exception";
 import {LoggingService} from "../logging";
 
 class InternalServerException extends HttpException {

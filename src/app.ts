@@ -1,13 +1,13 @@
 import express, { Application } from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import { BalanceSheetController } from './controllers/balanceSheet.controller';
+import { BalanceSheetController } from './controllers/balance.sheet.controller';
 import { Authentication } from './authentication';
 import errorMiddleware from './middleware/error.middleware';
 import { Connection } from 'typeorm';
 import { LoggingService } from './logging';
-import { BalanceSheetService } from './services/balanceSheet.service';
-import { ConfigurationReader, Configuration } from './configurationReader';
+import { BalanceSheetService } from './services/balance.sheet.service';
+import { ConfigurationReader, Configuration } from './configuration.reader';
 
 
 class App {

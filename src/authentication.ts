@@ -1,7 +1,7 @@
 import { Application } from "express";
 import { BasicStrategy } from "passport-http";
 import passport from "passport";
-import { Configuration } from "./configurationReader";
+import { Configuration } from "./configuration.reader";
 
 export class Authentication {
     public addBasicAuthToApplication(app: Application, configuration: Configuration) {

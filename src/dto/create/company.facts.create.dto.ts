@@ -1,6 +1,6 @@
 import { strictObjectMapper, expectNumber, arrayMapper } from '@daniel-faber/json-ts';
-import { SupplyFractionDTOCreate } from './supplyFractionCreate.dto';
-import { EmployeesFractionDTOCreate } from './employeesFractionCreate.dto';
+import { SupplyFractionDTOCreate } from './supply.fraction.create.dto';
+import { EmployeesFractionDTOCreate } from './employees.fraction.create.dto';
 import { CompanyFacts } from '../../entities/companyFacts';
 import {IsNumber, Min, ValidateNested} from "class-validator";
 

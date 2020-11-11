@@ -1,16 +1,16 @@
 
-import { MaxPointsCalculator } from "../../src/calculations/MaxPointsCalculator";
+import { MaxPointsCalculator } from "../../src/calculations/max.points.calculator";
 import { Topic } from "../../src/entities/topic";
 import { CompanyFacts } from "../../src/entities/companyFacts";
 import { Connection, Repository } from "typeorm";
 import { Region } from "../../src/entities/region";
-import { DatabaseConnectionCreator } from '../../src/DatabaseConnectionCreator';
-import { ConfigurationReader } from "../../src/configurationReader";
+import { DatabaseConnectionCreator } from '../../src/database.connection.creator';
+import { ConfigurationReader } from "../../src/configuration.reader";
 import { BalanceSheetType } from "../../src/entities/enums";
 import { Assertions } from "../Assertions";
 import * as path from 'path';
 import { RatingReader } from "../../src/reader/rating.reader";
-import { CompanyFacts0, CompanyFacts1 } from "../testData/companyFacts";
+import { CompanyFacts0, CompanyFacts1 } from "../testData/company.facts";
 import {Precalculations, Precalculator} from "../../src/calculations/precalculator";
 import {Industry} from "../../src/entities/industry";
 

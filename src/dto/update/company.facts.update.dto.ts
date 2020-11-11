@@ -1,6 +1,6 @@
 import { strictObjectMapper, expectNumber, arrayMapper } from '@daniel-faber/json-ts';
-import { SupplyFractionDTOUpdate } from './supplyFractionUpdate.dto';
-import { EmployeesFractionDTOUpdate } from './employeesFractionUpdate.dto';
+import { SupplyFractionDTOUpdate } from './supply.fraction.update.dto';
+import { EmployeesFractionDTOUpdate } from './employees.fraction.update.dto';
 import {
   IsOptional,
   IsNumber,

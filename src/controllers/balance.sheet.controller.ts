@@ -1,5 +1,5 @@
 import { Application } from 'express';
-import { BalanceSheetService } from '../services/balanceSheet.service';
+import { BalanceSheetService } from '../services/balance.sheet.service';
 
 
 export class BalanceSheetController {

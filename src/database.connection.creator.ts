@@ -1,5 +1,5 @@
 import { Connection, createConnection } from "typeorm";
-import { Configuration } from "./configurationReader";
+import { Configuration } from "./configuration.reader";
 
 enum Environment {
     dev, prod

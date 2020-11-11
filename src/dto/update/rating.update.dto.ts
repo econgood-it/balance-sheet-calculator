@@ -1,5 +1,5 @@
 import { strictObjectMapper, arrayMapper } from '@daniel-faber/json-ts';
-import { TopicDTOUpdate } from './topicUpdate.dto';
+import { TopicDTOUpdate } from './topic.update.dto';
 import { ValidateNested } from 'class-validator';
 
 export class RatingDTOUpdate {

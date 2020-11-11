@@ -1,6 +1,6 @@
 import { strictObjectMapper, expectNumber, JsonObjectAccessor } from '@daniel-faber/json-ts';
-import { CompanyFactsDTOUpdate } from './companyFactsUpdate.dto';
-import { RatingDTOUpdate } from './ratingUpdate.dto';
+import { CompanyFactsDTOUpdate } from './company.facts.update.dto';
+import { RatingDTOUpdate } from './rating.update.dto';
 import { BalanceSheetType } from '../../entities/enums';
 import {ValidateNested, IsOptional} from 'class-validator';
 

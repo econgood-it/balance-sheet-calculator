@@ -1,17 +1,17 @@
-import { BalanceSheetDTOUpdate } from "../dto/update/balanceSheetUpdate.dto";
+import { BalanceSheetDTOUpdate } from "../dto/update/balance.sheet.update.dto";
 import { BalanceSheet } from "./balanceSheet";
 import { CompanyFacts } from "./companyFacts";
-import { CompanyFactsDTOUpdate } from "../dto/update/companyFactsUpdate.dto";
-import { SupplyFractionDTOUpdate } from "../dto/update/supplyFractionUpdate.dto";
+import { CompanyFactsDTOUpdate } from "../dto/update/company.facts.update.dto";
+import { SupplyFractionDTOUpdate } from "../dto/update/supply.fraction.update.dto";
 import { Repository } from "typeorm";
 import { SupplyFraction } from "./supplyFraction";
 import { EmployeesFraction } from "./employeesFraction";
-import { EmployeesFractionDTOUpdate } from "../dto/update/employeesFractionUpdate.dto";
+import { EmployeesFractionDTOUpdate } from "../dto/update/employees.fraction.update.dto";
 import { Rating } from "./rating";
-import { RatingDTOUpdate } from "../dto/update/ratingUpdate.dto";
+import { RatingDTOUpdate } from "../dto/update/rating.update.dto";
 import { Topic } from "./topic";
 import { BalanceSheetType } from "./enums";
-import { TopicDTOUpdate } from "../dto/update/topicUpdate.dto";
+import { TopicDTOUpdate } from "../dto/update/topic.update.dto";
 import { Aspect } from "./aspect";
 
 export class EntityWithDTOMerger {

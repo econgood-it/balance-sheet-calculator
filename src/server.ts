@@ -1,10 +1,10 @@
 
 import "reflect-metadata";
-import { DatabaseConnectionCreator } from "./DatabaseConnectionCreator";
+import { DatabaseConnectionCreator } from "./database.connection.creator";
 import { Connection } from "typeorm";
 import App from "./app";
 import { LoggingService } from "./logging";
-import { ConfigurationReader } from "./configurationReader";
+import { ConfigurationReader } from "./configuration.reader";
 
 const configuration = ConfigurationReader.read();
 

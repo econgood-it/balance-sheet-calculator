@@ -1,5 +1,5 @@
 import { strictObjectMapper, expectString, expectNumber, JsonObjectAccessor, arrayMapper } from '@daniel-faber/json-ts';
-import { AspectDTOUpdate } from './aspectUpdate.dto';
+import { AspectDTOUpdate } from './aspect.update.dto';
 import { BalanceSheetType } from '../../entities/enums';
 import {IsIn, IsInt, IsOptional, Max, Min, ValidateNested} from 'class-validator';
 import {WEIGHT_VALUES} from "../validation.constants";
