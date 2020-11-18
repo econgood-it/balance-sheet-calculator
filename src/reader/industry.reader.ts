@@ -11,10 +11,10 @@ export class IndustryReader {
 
     private static readonly DEFAULT_HEADERS: Headers = {
         ecologicalSupplyChainRiskIndex: 16,
-        industryCodeIndex: 2,
+        industryCodeIndex: 1,
     }
 
-    public async read(): Promise<Industry[]> {
+    public async read(headers: Headers = IndustryReader.DEFAULT_HEADERS): Promise<Industry[]> {
         const pathToCsv = path.join(path.resolve(__dirname, '../files/reader'), "industry.csv");
         // create object for workbook
         let wb: Workbook = new Workbook();
@@ -23,8 +23,8 @@ export class IndustryReader {
         let industries: Industry[] = [];
         // cell object
         for (let row = 4; row <= 32; row++) {
-            const cellIndustryCode: Cell = sheet.getCell(row, 1);
-            const cellEcologicalSupplyChainRisk: Cell = sheet.getCell(row, 16);
+            const cellIndustryCode: Cell = sheet.getCell(row, headers.industryCodeIndex);
+            const cellEcologicalSupplyChainRisk: Cell = sheet.getCell(row, headers.ecologicalSupplyChainRiskIndex);
             industries.push(new Industry(undefined, this.mapTextToWeightValue(cellEcologicalSupplyChainRisk.text),
               cellIndustryCode.text.trim()));
         }

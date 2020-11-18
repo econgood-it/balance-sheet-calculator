@@ -1,17 +1,21 @@
 import { StakeholderWeightCalculator } from "./stakeholder.weight.calculator";
 import { Topic } from "../entities/topic";
 import {CalcResults} from "./calculator";
+import {TopicWeihgtCalculator} from "./topic.weihgt.calculator";
 
-export class MaxPointsCalculator {
+export class TopicUpdater {
     private stakeholderWeightCalculator: StakeholderWeightCalculator = new StakeholderWeightCalculator();
+    private topicWeightCalculator: TopicWeihgtCalculator = new TopicWeihgtCalculator();
 
-    public async updateMaxPointsAndPoints(topics: Topic[], precalculations: CalcResults): Promise<void> {
+    public async updateMaxPointsAndPoints(topics: Topic[], calcResults: CalcResults): Promise<void> {
         let sumOfTopicWeights = 0;
         // Compute sum of topic weights 
         for (const topic of topics) {
             const stakeholderName: string = topic.shortName.substring(0, 1);
             const stakeholderWeight: number = await this.stakeholderWeightCalculator.calcStakeholderWeight(stakeholderName,
-              precalculations);
+              calcResults);
+            topic.weight = topic.isWeightSelectedByUser ? topic.weight : await this.topicWeightCalculator.calcTopicWeight(
+              topic.shortName, calcResults);
             sumOfTopicWeights += stakeholderWeight * topic.weight;
         }
 
@@ -19,7 +23,7 @@ export class MaxPointsCalculator {
             // Update max points of topic
             const stackholderName: string = topic.shortName.substring(0, 1);
             const stakeholderWeight: number = await this.stakeholderWeightCalculator.calcStakeholderWeight(stackholderName,
-              precalculations);
+              calcResults);
             topic.maxPoints = stakeholderWeight * topic.weight / sumOfTopicWeights * 1000;
             this.updatePositiveAspects(topic);
             this.updateNegativeAspects(topic);

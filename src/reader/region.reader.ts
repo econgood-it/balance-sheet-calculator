@@ -1,13 +1,24 @@
 import * as path from 'path';
-import { Workbook, Row, Cell, Worksheet } from 'exceljs';
+import { Workbook, Cell, Worksheet } from 'exceljs';
 import { Region } from '../entities/region';
+
+interface Headers {
+    countryNameIndex: number;
+    countryCodeIndex: number;
+    pppIndexIndex: number
+    itucIndex: number;
+}
+
 export class RegionReader {
 
-    constructor() {
-
+    private static readonly DEFAULT_HEADERS: Headers = {
+        countryNameIndex: 2,
+        countryCodeIndex: 10,
+        pppIndexIndex: 3,
+        itucIndex: 6,
     }
 
-    public async read(): Promise<Region[]> {
+    public async read(headers: Headers = RegionReader.DEFAULT_HEADERS): Promise<Region[]> {
         const pathToCsv = path.join(path.resolve(__dirname, '../files/reader'), "regions.csv");
         // create object for workbook
         let wb: Workbook = new Workbook();
@@ -17,10 +28,12 @@ export class RegionReader {
         let regions: Region[] = [];
         // cell object
         for (let row = 6; row <= 226; row++) {
-            let cellCountryName: Cell = sheet.getCell(row, 2);
-            let cellCountryCode: Cell = sheet.getCell(row, 10);
-            let cellPPPIndex: Cell = sheet.getCell(row, 3);
-            regions.push(new Region(undefined, Number(cellPPPIndex.text), cellCountryCode.text, cellCountryName.text));
+            let cellCountryName: Cell = sheet.getCell(row, headers.countryNameIndex);
+            let cellCountryCode: Cell = sheet.getCell(row, headers.countryCodeIndex);
+            let cellPPPIndex: Cell = sheet.getCell(row, headers.pppIndexIndex);
+            let cellItuc: Cell = sheet.getCell(row, headers.itucIndex);
+            regions.push(new Region(undefined, Number(cellPPPIndex.text), cellCountryCode.text, cellCountryName.text,
+              Number(cellItuc.text)));
         }
         return regions;
     }

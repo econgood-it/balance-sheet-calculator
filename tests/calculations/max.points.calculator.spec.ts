@@ -1,5 +1,5 @@
 
-import { MaxPointsCalculator } from "../../src/calculations/max.points.calculator";
+import { TopicUpdater } from "../../src/calculations/topic.updater";
 import { Topic } from "../../src/entities/topic";
 import { CompanyFacts } from "../../src/entities/companyFacts";
 import { Connection, Repository } from "typeorm";
@@ -40,7 +40,7 @@ describe('Max points calculator', () => {
         //console.log(topics);
         const precalculations: CalcResults = await new Calculator(regionRepository, industryRepository).calculate(
           companyFacts);
-        const maxPointsCalculator: MaxPointsCalculator = new MaxPointsCalculator();
+        const maxPointsCalculator: TopicUpdater = new TopicUpdater();
         await maxPointsCalculator.updateMaxPointsAndPoints(topics, precalculations);
         pathToCsv = path.join(testDataDir, fileNameOfRatingExpectedData);
         const expected: Topic[] = (await testDataReader.readRatingFromCsv(pathToCsv)).topics;

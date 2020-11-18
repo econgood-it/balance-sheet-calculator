@@ -12,12 +12,15 @@ export class Region {
   public readonly countryCode: string;
   @Column()
   public readonly countryName: string;
+  @Column("double precision")
+  public readonly ituc: number;
 
-  constructor(id: number | undefined, pppIndex: number, countryCode: string, countryName: string) {
+  constructor(id: number | undefined, pppIndex: number, countryCode: string, countryName: string, ituc: number) {
     this.id = id;
     this.pppIndex = pppIndex;
     this.countryCode = countryCode;
     this.countryName = countryName;
+    this.ituc = ituc;
   }
 
 }

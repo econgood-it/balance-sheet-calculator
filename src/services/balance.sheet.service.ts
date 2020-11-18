@@ -5,7 +5,7 @@ import { BalanceSheet } from "../entities/balanceSheet";
 import InternalServerException from "../exceptions/internal.server.exception";
 import { Connection } from "typeorm";
 import { BalanceSheetDTOUpdate } from "../dto/update/balance.sheet.update.dto";
-import { MaxPointsCalculator } from "../calculations/max.points.calculator";
+import { TopicUpdater } from "../calculations/topic.updater";
 import { SupplyFraction } from "../entities/supplyFraction";
 import { EmployeesFraction } from "../entities/employeesFraction";
 import { EntityWithDTOMerger } from "../entities/entityWithDTOMerger";
@@ -38,7 +38,7 @@ export class BalanceSheetService {
       const balancesheet: BalanceSheet = await balanceSheetDTOCreate.toBalanceSheet();
       const precalculations: CalcResults = await new Calculator(entityManager.getRepository(Region),
         entityManager.getRepository(Industry)).calculate(balancesheet.companyFacts);
-      const maxPointsCalculator: MaxPointsCalculator = new MaxPointsCalculator();
+      const maxPointsCalculator: TopicUpdater = new TopicUpdater();
       await maxPointsCalculator.updateMaxPointsAndPoints(balancesheet.rating.topics, precalculations);
       const balanceSheetResponse: BalanceSheet = await entityManager.getRepository(BalanceSheet).save(balancesheet);
       this.sortArraysOfBalanceSheet(balanceSheetResponse);
@@ -76,7 +76,7 @@ export class BalanceSheetService {
       await entityWithDTOMerger.mergeBalanceSheet(balanceSheet, balanceSheetDTOUpdate);
       const precalculations: CalcResults = await new Calculator(entityManager.getRepository(Region),
         entityManager.getRepository(Industry)).calculate(balanceSheet.companyFacts);
-      const maxPointsCalculator: MaxPointsCalculator = new MaxPointsCalculator();
+      const maxPointsCalculator: TopicUpdater = new TopicUpdater();
       await maxPointsCalculator.updateMaxPointsAndPoints(balanceSheet.rating.topics, precalculations);
       const balanceSheetResponse: BalanceSheet = await balanceSheetRepository.save(balanceSheet);
       this.sortArraysOfBalanceSheet(balanceSheetResponse);
