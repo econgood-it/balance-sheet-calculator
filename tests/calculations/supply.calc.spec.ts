@@ -46,6 +46,7 @@ describe('Supply Calculator', () => {
       industryRepository).calculate(companyFacts);
     expect(supplyCalcResults.supplyRiskSum).toBeCloseTo( 3197.88426323363, 13);
     expect(supplyCalcResults.supplyChainWeight).toBeCloseTo(1.62000609960581, 13);
+    expect(supplyCalcResults.itucAverage).toBeCloseTo(3.96945539178631, 13);
     done();
   })
 })

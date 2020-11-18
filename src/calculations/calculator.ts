@@ -9,6 +9,7 @@ import {Industry} from "../entities/industry";
 export interface CalcResults {
   supplyRiskSum: number,
   supplyChainWeight: number,
+  itucAverage: number,
   normedEmployeesRisk: number,
   sumOfFinancialAspects: number,
 }
@@ -30,6 +31,7 @@ export class Calculator {
     return {
       supplyRiskSum: supplyCalcResults.supplyRiskSum,
       supplyChainWeight: supplyCalcResults.supplyChainWeight,
+      itucAverage: supplyCalcResults.itucAverage,
       normedEmployeesRisk: await this.employeesCalc.calculateNormedEmployeesRisk(companyFacts),
       sumOfFinancialAspects: await this.financeCalc.getSumOfFinancialAspects(companyFacts),
     }

@@ -15,6 +15,9 @@ export class TopicWeihgtCalculator {
             case 'A3':
                 weight = await this.calculateTopicWeightOfA3(calcResults);
                 break;
+            case 'A4':
+                weight = await this.calculateTopicWeightOfA4(calcResults);
+                break;
             default:
                 weight = 1;
                 break;
@@ -35,6 +38,18 @@ export class TopicWeihgtCalculator {
             return 0.5;
         } else {
             return 1;
+        }
+    }
+
+    public calculateTopicWeightOfA4(calcResults: CalcResults): number {
+        if (calcResults.itucAverage < 1.5) {
+            return 0.5;
+        } else if (calcResults.itucAverage < 3.26) {
+            return 1;
+        } else if (calcResults.itucAverage < 4.5) {
+            return 1.5;
+        } else {
+            return 2;
         }
     }
 }
