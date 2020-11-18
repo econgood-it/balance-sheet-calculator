@@ -14,7 +14,7 @@ import { CompanyFacts0, CompanyFacts1 } from "../testData/company.facts";
 import {CalcResults, Calculator} from "../../src/calculations/calculator";
 import {Industry} from "../../src/entities/industry";
 
-describe('Max points calculator', () => {
+describe('Topic updater', () => {
     let connection: Connection;
     let regionRepository: Repository<Region>;
     let industryRepository: Repository<Industry>;
