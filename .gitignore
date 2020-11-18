@@ -7,3 +7,4 @@ coverage/
 combined.log
 error.log
 *.csv#
+documentation
