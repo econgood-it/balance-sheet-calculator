@@ -3,7 +3,7 @@ import {CalcResults} from "./calculator";
 
 export class TopicWeigtCalculator {
 
-    public async calcTopicWeight(topicShortName: string, precalculations: CalcResults): Promise<number> {
+    public async calcTopicWeight(topicShortName: string, calcResults: CalcResults): Promise<number> {
         let weight: number = 1;
         switch (topicShortName) {
             case 'A1':
@@ -13,7 +13,7 @@ export class TopicWeigtCalculator {
                 weight = await this.constantWeight();
                 break;
             case 'A3':
-                weight = await this.calculateTopicWeightOfA3(precalculations);
+                weight = await this.calculateTopicWeightOfA3(calcResults);
                 break;
             default:
                 weight = 1;
@@ -26,7 +26,7 @@ export class TopicWeigtCalculator {
         return 1.0;
     }
 
-    public calculateTopicWeightOfA3(precalculations: CalcResults): number {
+    public calculateTopicWeightOfA3(calcResults: CalcResults): number {
         throw new Error();
     }
 }
