@@ -8,6 +8,7 @@ import {Industry} from "../entities/industry";
 
 export interface CalcResults {
   supplyRiskSum: number,
+  supplyChainWeight: number,
   normedEmployeesRisk: number,
   sumOfFinancialAspects: number,
 }
@@ -28,6 +29,7 @@ export class Calculator {
     const supplyCalcResults: SupplyCalcResults = await this.supplierCalc.calculate(companyFacts);
     return {
       supplyRiskSum: supplyCalcResults.supplyRiskSum,
+      supplyChainWeight: supplyCalcResults.supplyChainWeight,
       normedEmployeesRisk: await this.employeesCalc.calculateNormedEmployeesRisk(companyFacts),
       sumOfFinancialAspects: await this.financeCalc.getSumOfFinancialAspects(companyFacts),
     }

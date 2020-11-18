@@ -1,7 +1,7 @@
 import {CalcResults} from "./calculator";
 
 
-export class TopicWeigtCalculator {
+export class TopicWeihgtCalculator {
 
     public async calcTopicWeight(topicShortName: string, calcResults: CalcResults): Promise<number> {
         let weight: number = 1;
@@ -27,6 +27,14 @@ export class TopicWeigtCalculator {
     }
 
     public calculateTopicWeightOfA3(calcResults: CalcResults): number {
-        throw new Error();
+        if (calcResults.supplyChainWeight > 1.5) {
+            return 2;
+        } else if (calcResults.supplyChainWeight > 1.25) {
+            return 1.5;
+        } else if (calcResults.supplyChainWeight < 0.75) {
+            return 0.5;
+        } else {
+            return 1;
+        }
     }
 }
