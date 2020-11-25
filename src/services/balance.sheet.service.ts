@@ -38,8 +38,8 @@ export class BalanceSheetService {
       const balancesheet: BalanceSheet = await balanceSheetDTOCreate.toBalanceSheet();
       const precalculations: CalcResults = await new Calculator(entityManager.getRepository(Region),
         entityManager.getRepository(Industry)).calculate(balancesheet.companyFacts);
-      const maxPointsCalculator: TopicUpdater = new TopicUpdater();
-      await maxPointsCalculator.updateMaxPointsAndPoints(balancesheet.rating.topics, precalculations);
+      const topicUpdater: TopicUpdater = new TopicUpdater();
+      await topicUpdater.update(balancesheet.rating.topics, precalculations);
       const balanceSheetResponse: BalanceSheet = await entityManager.getRepository(BalanceSheet).save(balancesheet);
       this.sortArraysOfBalanceSheet(balanceSheetResponse);
       res.json(balanceSheetResponse);
@@ -76,8 +76,8 @@ export class BalanceSheetService {
       await entityWithDTOMerger.mergeBalanceSheet(balanceSheet, balanceSheetDTOUpdate);
       const precalculations: CalcResults = await new Calculator(entityManager.getRepository(Region),
         entityManager.getRepository(Industry)).calculate(balanceSheet.companyFacts);
-      const maxPointsCalculator: TopicUpdater = new TopicUpdater();
-      await maxPointsCalculator.updateMaxPointsAndPoints(balanceSheet.rating.topics, precalculations);
+      const topicUpdater: TopicUpdater = new TopicUpdater();
+      await topicUpdater.update(balanceSheet.rating.topics, precalculations);
       const balanceSheetResponse: BalanceSheet = await balanceSheetRepository.save(balanceSheet);
       this.sortArraysOfBalanceSheet(balanceSheetResponse);
       res.json(balanceSheetResponse);

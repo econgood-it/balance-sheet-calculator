@@ -1,4 +1,3 @@
-
 import { TopicUpdater } from "../../src/calculations/topic.updater";
 import { Topic } from "../../src/entities/topic";
 import { CompanyFacts } from "../../src/entities/companyFacts";
@@ -6,13 +5,13 @@ import { Connection, Repository } from "typeorm";
 import { Region } from "../../src/entities/region";
 import { DatabaseConnectionCreator } from '../../src/database.connection.creator';
 import { ConfigurationReader } from "../../src/configuration.reader";
-import { BalanceSheetType } from "../../src/entities/enums";
 import { Assertions } from "../Assertions";
 import * as path from 'path';
 import { RatingReader } from "../../src/reader/rating.reader";
 import { CompanyFacts0, CompanyFacts1 } from "../testData/company.facts";
 import {CalcResults, Calculator} from "../../src/calculations/calculator";
 import {Industry} from "../../src/entities/industry";
+import {Rating} from "../../src/entities/rating";
 
 describe('Topic updater', () => {
     let connection: Connection;
@@ -38,15 +37,26 @@ describe('Topic updater', () => {
         let pathToCsv = path.join(testDataDir, fileNameOfRatingInputData);
         const topics: Topic[] = (await testDataReader.readRatingFromCsv(pathToCsv)).topics;
         //console.log(topics);
-        const precalculations: CalcResults = await new Calculator(regionRepository, industryRepository).calculate(
+        const calcResults: CalcResults = await new Calculator(regionRepository, industryRepository).calculate(
           companyFacts);
-        const maxPointsCalculator: TopicUpdater = new TopicUpdater();
-        await maxPointsCalculator.updateMaxPointsAndPoints(topics, precalculations);
+        const topicUpdater: TopicUpdater = new TopicUpdater();
+        await topicUpdater.update(topics, calcResults);
         pathToCsv = path.join(testDataDir, fileNameOfRatingExpectedData);
         const expected: Topic[] = (await testDataReader.readRatingFromCsv(pathToCsv)).topics;
         Assertions.assertTopics(topics, expected);
         done();
     }
+
+    it('should not calculate automatic weight', async (done) => {
+          const calcResults: CalcResults = await new Calculator(regionRepository, industryRepository).calculate(
+            CompanyFacts1);
+          const topicUpdater: TopicUpdater = new TopicUpdater();
+          const rating = new Rating(undefined, [new Topic(undefined, 'A1', 'A1 name', 0, 0,
+            0, 2, true, [])]);
+          await topicUpdater.update(rating.topics, calcResults);
+          expect(rating.topics[0].weight).toBeCloseTo(2, 2);
+          done();
+    })
 
     it('should calculate rating when the company facts values and the rating values are empty', async (done) =>
         testCalculation('fullRating01Input.csv', 'fullRating0Expected.csv', CompanyFacts0, done)

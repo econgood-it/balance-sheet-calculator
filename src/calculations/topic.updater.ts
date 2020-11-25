@@ -7,7 +7,7 @@ export class TopicUpdater {
     private stakeholderWeightCalculator: StakeholderWeightCalculator = new StakeholderWeightCalculator();
     private topicWeightCalculator: TopicWeihgtCalculator = new TopicWeihgtCalculator();
 
-    public async updateMaxPointsAndPoints(topics: Topic[], calcResults: CalcResults): Promise<void> {
+    public async update(topics: Topic[], calcResults: CalcResults): Promise<void> {
         let sumOfTopicWeights = 0;
         // Compute sum of topic weights 
         for (const topic of topics) {
