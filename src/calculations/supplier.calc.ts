@@ -13,6 +13,7 @@ export interface SupplyCalcResults {
 }
 
 export class SupplierCalc {
+  private static readonly DEFAULT_SUPPLY_CHAIN_WEIGHT = 1;
   constructor(private readonly regionRepository: Repository<Region>,
               private readonly industryRepository: Repository<Industry>) {
   }
@@ -22,9 +23,10 @@ export class SupplierCalc {
     const industries = new ExtendedMap<string, Industry>();
     await this.loadRegionsAndIndustries(companyFacts, regions, industries)
     const supplyRiskSum = this.supplyRiskSum(companyFacts, regions);
-    const supplyChainWeight = this.supplyChainWeight(companyFacts, supplyRiskSum, regions, industries);
-    const itucAverge = this.itucAverage(companyFacts, supplyRiskSum, regions);
-    return {supplyRiskSum: supplyRiskSum, supplyChainWeight: supplyChainWeight, itucAverage: itucAverge};
+    let supplyChainWeight = this.supplyChainWeight(companyFacts, supplyRiskSum, regions, industries);
+    const itucAverage = this.itucAverage(companyFacts, supplyRiskSum, regions);
+    supplyChainWeight = Number.isNaN(supplyChainWeight) ? SupplierCalc.DEFAULT_SUPPLY_CHAIN_WEIGHT : supplyChainWeight;
+    return {supplyRiskSum: supplyRiskSum, supplyChainWeight: supplyChainWeight, itucAverage: itucAverage};
   }
 
   private async loadRegionsAndIndustries(companyFacts: CompanyFacts, regions: ExtendedMap<string,
