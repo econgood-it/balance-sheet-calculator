@@ -56,7 +56,7 @@ describe('Get endpoint of Balance Sheet Controller', () => {
         // ignore ids in comparison
         Assertions.rmIdFields(ratingExpected);
         expect(response.body.rating).toMatchObject(ratingExpected);
-        expect(response.body.rating.topics.reduce((sum: number, current: Topic) => sum + current.maxPoints, 0)).toBe(1000);
+        expect(response.body.rating.topics.reduce((sum: number, current: Topic) => sum + current.maxPoints, 0)).toBeCloseTo(999.9999999999998);
         done();
     })
 
