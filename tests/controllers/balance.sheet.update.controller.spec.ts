@@ -47,7 +47,8 @@ describe('Update endpoint of Balance Sheet Controller', () => {
                 employeesFractions: [
                     { countryCode: "GBR", percentage: 0.2 },
                     { countryCode: "BEL", percentage: 0.4 }
-                ]
+                ],
+                industrySectors: []
             }
         }
         response = await testApp.patch(`/balancesheets/${response.body.id}`).auth(configuration.appUsername,

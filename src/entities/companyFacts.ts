@@ -2,6 +2,7 @@ import { strictObjectMapper, expectString, expectNumber, arrayMapper } from '@da
 import { SupplyFraction } from './supplyFraction';
 import { EmployeesFraction } from './employeesFraction';
 import { Entity, Column, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {IndustrySector} from "./industry.sector";
 
 @Entity()
 export class CompanyFacts {
@@ -23,6 +24,8 @@ export class CompanyFacts {
   public supplyFractions: SupplyFraction[];
   @OneToMany(type => EmployeesFraction, employeesFraction => employeesFraction.companyFacts, { cascade: true })
   public employeesFractions: EmployeesFraction[];
+  @OneToMany(type => IndustrySector, industrySector => industrySector.companyFacts, { cascade: true })
+  public industrySectors: IndustrySector[];
 
   public constructor(
     id: number | undefined,
@@ -33,7 +36,8 @@ export class CompanyFacts {
     incomeFromFinancialInvestments: number,
     additionsToFixedAssets: number,
     supplyFractions: SupplyFraction[],
-    employeesFractions: EmployeesFraction[]
+    employeesFractions: EmployeesFraction[],
+    industrySectors: IndustrySector[]
   ) {
     this.id = id;
     this.totalPurchaseFromSuppliers = totalPurchaseFromSuppliers;
@@ -44,6 +48,7 @@ export class CompanyFacts {
     this.additionsToFixedAssets = additionsToFixedAssets;
     this.supplyFractions = supplyFractions;
     this.employeesFractions = employeesFractions;
+    this.industrySectors = industrySectors;
   }
 
 }

@@ -13,11 +13,14 @@ import { Topic } from "./topic";
 import { BalanceSheetType } from "./enums";
 import { TopicDTOUpdate } from "../dto/update/topic.update.dto";
 import { Aspect } from "./aspect";
+import {IndustrySectorDtoUpdate} from "../dto/update/industry.sector.update.dto";
+import {IndustrySector} from "./industry.sector";
 
-export class EntityWithDTOMerger {
+export class EntityWithDtoMerger {
 
     public constructor(private supplyFractionRepository: Repository<SupplyFraction>,
-        private employeesFractionRepository: Repository<EmployeesFraction>) {
+                       private employeesFractionRepository: Repository<EmployeesFraction>,
+                       private industrySectorRepository: Repository<IndustrySector>) {
     }
 
     public async mergeBalanceSheet(balanceSheet: BalanceSheet, balanceSheetDTOUpdate: BalanceSheetDTOUpdate): Promise<void> {
@@ -37,6 +40,9 @@ export class EntityWithDTOMerger {
         companyFacts.incomeFromFinancialInvestments = this.mergeVal(companyFacts.incomeFromFinancialInvestments,
             companyFactsDTOUpdate.incomeFromFinancialInvestments);
         companyFacts.additionsToFixedAssets = this.mergeVal(companyFacts.additionsToFixedAssets, companyFactsDTOUpdate.additionsToFixedAssets);
+        if (companyFactsDTOUpdate.industrySectors) {
+            await this.replaceIndustrySectors(companyFacts, companyFactsDTOUpdate.industrySectors);
+        }
         if (companyFactsDTOUpdate.supplyFractions) {
             await this.replaceSupplyFractions(companyFacts, companyFactsDTOUpdate.supplyFractions);
         }
@@ -73,6 +79,13 @@ export class EntityWithDTOMerger {
         }
         topic.isWeightSelectedByUser = topicDTOUpdate.weight ? true : false;
         topic.weight = this.mergeVal(topic.weight, topicDTOUpdate.weight);
+    }
+
+    public async replaceIndustrySectors(companyFacts: CompanyFacts,
+                                        industrySectorDTOUpdates: IndustrySectorDtoUpdate[]): Promise<void> {
+        await this.industrySectorRepository.remove(companyFacts.industrySectors);
+        companyFacts.industrySectors = industrySectorDTOUpdates.map(is => new IndustrySector(undefined,
+          is.industryCode, is.amountOfTotalTurnover, is.description));
     }
 
     public async replaceSupplyFractions(companyFacts: CompanyFacts, supplyFractionDTOUpdates: SupplyFractionDTOUpdate[]): Promise<void> {

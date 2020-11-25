@@ -3,6 +3,7 @@ import { SupplyFractionDTOCreate } from './supply.fraction.create.dto';
 import { EmployeesFractionDTOCreate } from './employees.fraction.create.dto';
 import { CompanyFacts } from '../../entities/companyFacts';
 import {IsNumber, Min, ValidateNested} from "class-validator";
+import {IndustrySectorCreateDtoCreate} from "./industry.sector.create.dto";
 
 export class CompanyFactsDTOCreate {
   @Min(0)
@@ -26,6 +27,8 @@ export class CompanyFactsDTOCreate {
   public readonly supplyFractions: SupplyFractionDTOCreate[];
   @ValidateNested()
   public readonly employeesFractions: EmployeesFractionDTOCreate[];
+  @ValidateNested()
+  public readonly industrySectors: IndustrySectorCreateDtoCreate[];
 
   public constructor(
     totalPurchaseFromSuppliers: number,
@@ -35,7 +38,8 @@ export class CompanyFactsDTOCreate {
     incomeFromFinancialInvestments: number,
     additionsToFixedAssets: number,
     supplyFractions: SupplyFractionDTOCreate[],
-    employeesFractions: EmployeesFractionDTOCreate[]
+    employeesFractions: EmployeesFractionDTOCreate[],
+    industrySectors: IndustrySectorCreateDtoCreate[]
   ) {
     this.totalPurchaseFromSuppliers = totalPurchaseFromSuppliers;
     this.totalStaffCosts = totalStaffCosts;
@@ -45,6 +49,7 @@ export class CompanyFactsDTOCreate {
     this.additionsToFixedAssets = additionsToFixedAssets;
     this.supplyFractions = supplyFractions;
     this.employeesFractions = employeesFractions;
+    this.industrySectors = industrySectors;
   }
 
   public static readonly fromJSON = strictObjectMapper(
@@ -58,12 +63,13 @@ export class CompanyFactsDTOCreate {
         accessor.get('additionsToFixedAssets', expectNumber),
         accessor.get('supplyFractions', arrayMapper(SupplyFractionDTOCreate.fromJSON)),
         accessor.get('employeesFractions', arrayMapper(EmployeesFractionDTOCreate.fromJSON)),
+        accessor.get('industrySectors', arrayMapper(IndustrySectorCreateDtoCreate.fromJSON))
       )
   );
 
   public toCompanyFacts(): CompanyFacts {
     return new CompanyFacts(undefined, this.totalPurchaseFromSuppliers, this.totalStaffCosts, this.profit, this.financialCosts,
       this.incomeFromFinancialInvestments, this.additionsToFixedAssets, this.supplyFractions.map(sf => sf.toSupplyFraction()),
-      this.employeesFractions.map(ef => ef.toEmployeesFraction()));
+      this.employeesFractions.map(ef => ef.toEmployeesFraction()), this.industrySectors.map(is => is.toIndustrySector()));
   }
 }

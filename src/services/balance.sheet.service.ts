@@ -8,7 +8,7 @@ import { BalanceSheetDTOUpdate } from "../dto/update/balance.sheet.update.dto";
 import { TopicUpdater } from "../calculations/topic.updater";
 import { SupplyFraction } from "../entities/supplyFraction";
 import { EmployeesFraction } from "../entities/employeesFraction";
-import { EntityWithDTOMerger } from "../entities/entityWithDTOMerger";
+import { EntityWithDtoMerger } from "../entities/entity.with.dto.merger";
 import { JsonMappingError } from "@daniel-faber/json-ts";
 import BadRequestException from "../exceptions/bad.request.exception";
 import { Region } from "../entities/region";
@@ -16,11 +16,14 @@ import { BalanceSheetType } from "../entities/enums";
 import { validateOrReject, ValidationError } from 'class-validator';
 import {CalcResults, Calculator} from "../calculations/calculator";
 import {Industry} from "../entities/industry";
+import {IndustrySector} from "../entities/industry.sector";
 
 
 
 export class BalanceSheetService {
-
+  private static readonly BALANCE_SHEET_RELATIONS = ['rating', 'companyFacts',
+    'companyFacts.supplyFractions', 'companyFacts.employeesFractions',
+    'companyFacts.industrySectors', 'rating.topics', 'rating.topics.aspects'];
 
   constructor(private connection: Connection) {
   }
@@ -58,12 +61,11 @@ export class BalanceSheetService {
   public async updateBalanceSheet(req: Request, res: Response, next: NextFunction) {
     this.connection.manager.transaction(async entityManager => {
       const balanceSheetRepository = entityManager.getRepository(BalanceSheet);
-      const entityWithDTOMerger = new EntityWithDTOMerger(entityManager.getRepository(SupplyFraction),
-        entityManager.getRepository(EmployeesFraction));
+      const entityWithDTOMerger = new EntityWithDtoMerger(entityManager.getRepository(SupplyFraction),
+        entityManager.getRepository(EmployeesFraction), entityManager.getRepository(IndustrySector));
       const balanceSheetId: number = Number(req.params.id);
       const balanceSheet = await balanceSheetRepository.findOneOrFail(balanceSheetId, {
-        relations: ['rating', 'companyFacts', 'companyFacts.supplyFractions', 'companyFacts.employeesFractions',
-          'rating.topics', 'rating.topics.aspects']
+        relations: BalanceSheetService.BALANCE_SHEET_RELATIONS
       });
       const balanceSheetDTOUpdate: BalanceSheetDTOUpdate = BalanceSheetDTOUpdate.fromJSON(req.body);
       if (balanceSheetDTOUpdate.id !== balanceSheetId) {
@@ -97,8 +99,7 @@ export class BalanceSheetService {
       const balanceSheetRepository = entityManager.getRepository(BalanceSheet);
       const balanceSheetId: number = Number(req.params.id);
       const balanceSheet = await balanceSheetRepository.findOneOrFail(balanceSheetId, {
-        relations: ['rating', 'companyFacts', 'companyFacts.supplyFractions', 'companyFacts.employeesFractions',
-          'rating.topics', 'rating.topics.aspects']
+        relations: BalanceSheetService.BALANCE_SHEET_RELATIONS
       });
       const balanceSheetResponse: BalanceSheet = await balanceSheetRepository.save(balanceSheet);
       this.sortArraysOfBalanceSheet(balanceSheetResponse);

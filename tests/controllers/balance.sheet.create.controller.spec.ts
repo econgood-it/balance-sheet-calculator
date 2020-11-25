@@ -39,7 +39,8 @@ describe('Create endpoint of Balance Sheet Controller', () => {
                 incomeFromFinancialInvestments: 201,
                 additionsToFixedAssets: 2019,
                 supplyFractions: [],
-                employeesFractions: []
+                employeesFractions: [],
+                industrySectors: []
             }
         }
         const pathToCsv = path.join(__dirname, "compactRatingExpected.csv");

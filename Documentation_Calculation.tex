@@ -44,4 +44,20 @@ A4Weight(itucAverage) = \begin{cases}
     1.5 &\mbox{if } itucAverage < 4.5 \\
     2 &\mbox{else } \end{cases}
 \end{align*}
+
+\begin{align*}
+    E23 &= \begin{cases}
+       \frac{turnover}{totalAssets} &\mbox{if } NO ERROR \\
+       0.3 &\mbox{if } ERROR \\
+    \end{cases}
+\end{align*}
+
+\begin{align*}
+    B1Weight(industrySector1) &= \begin{cases}
+        2 &\mbox{if } industrySector1 = Financial Services (K) \\
+        1.5 &\mbox{if } E23 < 0.1 \\
+        0.5 &\mbox{if } E23 > 0.5 \\
+        1 &\mbox{else } \\
+    \end{cases}
+\end{align*}
 \end{document}

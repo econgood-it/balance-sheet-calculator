@@ -7,6 +7,8 @@ import {
   Min,
   ValidateNested
 } from 'class-validator';
+import {IndustrySectorCreateDtoCreate} from "../create/industry.sector.create.dto";
+import {IndustrySectorDtoUpdate} from "./industry.sector.update.dto";
 
 
 export class CompanyFactsDTOUpdate {
@@ -41,6 +43,9 @@ export class CompanyFactsDTOUpdate {
   @IsOptional()
   @ValidateNested()
   public readonly employeesFractions?: EmployeesFractionDTOUpdate[];
+  @IsOptional()
+  @ValidateNested()
+  public readonly industrySectors?: IndustrySectorDtoUpdate[];
 
   public constructor(
     totalPurchaseFromSuppliers?: number,
@@ -50,7 +55,8 @@ export class CompanyFactsDTOUpdate {
     incomeFromFinancialInvestments?: number,
     additionsToFixedAssets?: number,
     supplyFractions?: SupplyFractionDTOUpdate[],
-    employeesFractions?: EmployeesFractionDTOUpdate[]
+    employeesFractions?: EmployeesFractionDTOUpdate[],
+    industrySectors?: IndustrySectorDtoUpdate[]
   ) {
     this.totalPurchaseFromSuppliers = totalPurchaseFromSuppliers;
     this.totalStaffCosts = totalStaffCosts;
@@ -60,6 +66,7 @@ export class CompanyFactsDTOUpdate {
     this.additionsToFixedAssets = additionsToFixedAssets;
     this.supplyFractions = supplyFractions;
     this.employeesFractions = employeesFractions;
+    this.industrySectors = industrySectors;
   }
 
   public static readonly fromJSON = strictObjectMapper(
@@ -73,6 +80,7 @@ export class CompanyFactsDTOUpdate {
         accessor.getOptional('additionsToFixedAssets', expectNumber),
         accessor.getOptional('supplyFractions', arrayMapper(SupplyFractionDTOUpdate.fromJSON)),
         accessor.getOptional('employeesFractions', arrayMapper(EmployeesFractionDTOUpdate.fromJSON)),
+        accessor.getOptional('industrySectors', arrayMapper(IndustrySectorDtoUpdate.fromJSON)),
       )
   );
 
