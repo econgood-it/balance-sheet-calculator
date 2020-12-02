@@ -3,7 +3,7 @@ import {Repository} from "typeorm";
 import {Region} from "../entities/region";
 import {SupplierCalc, SupplyCalcResults} from "./supplier.calc";
 import {EmployeesCalc} from "./employees.calc";
-import {FinanceCalc} from "./finance.calc";
+import {FinanceCalc, FinanceCalcResults} from "./finance.calc";
 import {Industry} from "../entities/industry";
 
 export interface CalcResults {
@@ -12,6 +12,7 @@ export interface CalcResults {
   itucAverage: number,
   normedEmployeesRisk: number,
   sumOfFinancialAspects: number,
+  economicRatio: number
 }
 
 export class Calculator {
@@ -23,17 +24,19 @@ export class Calculator {
               private readonly industryRepository: Repository<Industry>) {
     this.supplierCalc = new SupplierCalc(this.regionRepository, this.industryRepository);
     this.employeesCalc = new EmployeesCalc(this.regionRepository);
-    this.financeCalc = new FinanceCalc(this.regionRepository);
+    this.financeCalc = new FinanceCalc();
   }
 
   public async calculate(companyFacts: CompanyFacts): Promise<CalcResults> {
     const supplyCalcResults: SupplyCalcResults = await this.supplierCalc.calculate(companyFacts);
+    const financeCalcResults: FinanceCalcResults = this.financeCalc.calculate(companyFacts);
     return {
       supplyRiskSum: supplyCalcResults.supplyRiskSum,
       supplyChainWeight: supplyCalcResults.supplyChainWeight,
       itucAverage: supplyCalcResults.itucAverage,
       normedEmployeesRisk: await this.employeesCalc.calculateNormedEmployeesRisk(companyFacts),
-      sumOfFinancialAspects: await this.financeCalc.getSumOfFinancialAspects(companyFacts),
+      sumOfFinancialAspects: financeCalcResults.sumOfFinancialAspects,
+      economicRatio: financeCalcResults.economicRatio,
     }
   }
 

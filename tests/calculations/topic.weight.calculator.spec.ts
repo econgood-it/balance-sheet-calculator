@@ -11,6 +11,7 @@ describe('Topic Weight Calculator', () => {
       supplyChainWeight: 1.6,
       normedEmployeesRisk: 1.3,
       sumOfFinancialAspects: 8,
+      economicRatio: 2
     }
     const topicShortName = 'A3';
     let result = await topicWeihgtCalculator.calcTopicWeight(topicShortName, calcResults);
@@ -35,6 +36,7 @@ describe('Topic Weight Calculator', () => {
       supplyChainWeight: 1.6,
       normedEmployeesRisk: 1.3,
       sumOfFinancialAspects: 8,
+      economicRatio: 2
     }
     const topicShortName = 'A4';
     let result = await topicWeihgtCalculator.calcTopicWeight(topicShortName, calcResults);

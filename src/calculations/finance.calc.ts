@@ -1,9 +1,26 @@
 import {Repository} from "typeorm";
 import {Region} from "../entities/region";
 import {CompanyFacts} from "../entities/companyFacts";
+import ExtendedMap from "./extended.map";
+import {Industry} from "../entities/industry";
+import {SupplyCalcResults} from "./supplier.calc";
+
+export interface FinanceCalcResults {
+  sumOfFinancialAspects: number,
+  economicRatio: number,
+}
 
 export class FinanceCalc {
-  constructor(private readonly regionRepository: Repository<Region>) {
+
+  public static readonly DEFAULT_SUPPLY_ECONOMIC_RATIO = 0.3;
+  constructor() {
+  }
+
+  public calculate(companyFacts: CompanyFacts): FinanceCalcResults  {
+    const sumOfFinancialAspects = this.getSumOfFinancialAspects(companyFacts);
+    let economicRatio = this.calculateEconomicRatio(companyFacts);
+    economicRatio = Number.isNaN(economicRatio) ? FinanceCalc.DEFAULT_SUPPLY_ECONOMIC_RATIO : economicRatio;
+    return {sumOfFinancialAspects: sumOfFinancialAspects, economicRatio: economicRatio};
   }
 
   // In Excel I19+I21+I22+G24
@@ -12,7 +29,8 @@ export class FinanceCalc {
       + companyFacts.incomeFromFinancialInvestments + companyFacts.additionsToFixedAssets;
   }
 
-  // public calculateEconomicRatio(companyFacts: CompanyFacts): number {
-  //   return companyFacts.turnover / companyFacts.tot
-  // }
+  // In Excel Weight.E23
+  public calculateEconomicRatio(companyFacts: CompanyFacts): number {
+    return companyFacts.turnover / companyFacts.totalAssets;
+  }
 }
