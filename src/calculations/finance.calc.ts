@@ -13,6 +13,6 @@ export class FinanceCalc {
   }
 
   // public calculateEconomicRatio(companyFacts: CompanyFacts): number {
-  //   return companyFacts
+  //   return companyFacts.turnover / companyFacts.tot
   // }
 }
