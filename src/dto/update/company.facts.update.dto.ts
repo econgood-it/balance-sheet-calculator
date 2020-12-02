@@ -7,7 +7,6 @@ import {
   Min,
   ValidateNested
 } from 'class-validator';
-import {IndustrySectorCreateDtoCreate} from "../create/industry.sector.create.dto";
 import {IndustrySectorDtoUpdate} from "./industry.sector.update.dto";
 
 
@@ -17,7 +16,6 @@ export class CompanyFactsDTOUpdate {
   @Min(0)
   @IsNumber({ maxDecimalPlaces: 2 })
   public readonly totalPurchaseFromSuppliers?: number;
-
   @IsOptional()
   @Min(0)
   @IsNumber({ maxDecimalPlaces: 2 })
@@ -38,6 +36,10 @@ export class CompanyFactsDTOUpdate {
   @IsNumber({ maxDecimalPlaces: 2 })
   public readonly additionsToFixedAssets?: number;
   @IsOptional()
+  @Min(0)
+  @IsNumber({ maxDecimalPlaces: 2 })
+  public readonly turnover?: number;
+  @IsOptional()
   @ValidateNested()
   public readonly supplyFractions?: SupplyFractionDTOUpdate[];
   @IsOptional()
@@ -54,6 +56,7 @@ export class CompanyFactsDTOUpdate {
     financialCosts?: number,
     incomeFromFinancialInvestments?: number,
     additionsToFixedAssets?: number,
+    turnover?: number,
     supplyFractions?: SupplyFractionDTOUpdate[],
     employeesFractions?: EmployeesFractionDTOUpdate[],
     industrySectors?: IndustrySectorDtoUpdate[]
@@ -64,6 +67,7 @@ export class CompanyFactsDTOUpdate {
     this.financialCosts = financialCosts;
     this.incomeFromFinancialInvestments = incomeFromFinancialInvestments;
     this.additionsToFixedAssets = additionsToFixedAssets;
+    this.turnover = turnover;
     this.supplyFractions = supplyFractions;
     this.employeesFractions = employeesFractions;
     this.industrySectors = industrySectors;
@@ -78,6 +82,7 @@ export class CompanyFactsDTOUpdate {
         accessor.getOptional('financialCosts', expectNumber),
         accessor.getOptional('incomeFromFinancialInvestments', expectNumber),
         accessor.getOptional('additionsToFixedAssets', expectNumber),
+        accessor.getOptional('turnover', expectNumber),
         accessor.getOptional('supplyFractions', arrayMapper(SupplyFractionDTOUpdate.fromJSON)),
         accessor.getOptional('employeesFractions', arrayMapper(EmployeesFractionDTOUpdate.fromJSON)),
         accessor.getOptional('industrySectors', arrayMapper(IndustrySectorDtoUpdate.fromJSON)),

@@ -11,4 +11,8 @@ export class FinanceCalc {
     return companyFacts.profit + companyFacts.financialCosts
       + companyFacts.incomeFromFinancialInvestments + companyFacts.additionsToFixedAssets;
   }
+
+  // public calculateEconomicRatio(companyFacts: CompanyFacts): number {
+  //   return companyFacts
+  // }
 }

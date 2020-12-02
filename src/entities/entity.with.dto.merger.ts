@@ -3,7 +3,7 @@ import { BalanceSheet } from "./balanceSheet";
 import { CompanyFacts } from "./companyFacts";
 import { CompanyFactsDTOUpdate } from "../dto/update/company.facts.update.dto";
 import { SupplyFractionDTOUpdate } from "../dto/update/supply.fraction.update.dto";
-import { Repository } from "typeorm";
+import {Column, PrimaryGeneratedColumn, Repository} from "typeorm";
 import { SupplyFraction } from "./supplyFraction";
 import { EmployeesFraction } from "./employeesFraction";
 import { EmployeesFractionDTOUpdate } from "../dto/update/employees.fraction.update.dto";
@@ -40,6 +40,7 @@ export class EntityWithDtoMerger {
         companyFacts.incomeFromFinancialInvestments = this.mergeVal(companyFacts.incomeFromFinancialInvestments,
             companyFactsDTOUpdate.incomeFromFinancialInvestments);
         companyFacts.additionsToFixedAssets = this.mergeVal(companyFacts.additionsToFixedAssets, companyFactsDTOUpdate.additionsToFixedAssets);
+        companyFacts.turnover = this.mergeVal(companyFacts.turnover, companyFactsDTOUpdate.turnover);
         if (companyFactsDTOUpdate.industrySectors) {
             await this.replaceIndustrySectors(companyFacts, companyFactsDTOUpdate.industrySectors);
         }

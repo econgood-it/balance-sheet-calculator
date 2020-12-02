@@ -38,6 +38,7 @@ describe('Create endpoint of Balance Sheet Controller', () => {
                 financialCosts: 19,
                 incomeFromFinancialInvestments: 201,
                 additionsToFixedAssets: 2019,
+                turnover: 30,
                 supplyFractions: [],
                 employeesFractions: [],
                 industrySectors: []

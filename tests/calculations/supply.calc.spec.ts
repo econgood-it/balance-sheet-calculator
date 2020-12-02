@@ -31,7 +31,7 @@ describe('Supply Calculator', () => {
       new SupplyFraction(undefined, 'P', 'BHS', 500),
     ];
     companyFacts = new CompanyFacts(undefined, 0, 0, 0,
-      0, 0, 0, supplyFractions, [],
+      0, 0, 0, 0, supplyFractions, [],
       []);
     done();
   });

@@ -40,6 +40,7 @@ describe('Update endpoint of Balance Sheet Controller', () => {
                 financialCosts: 98098,
                 incomeFromFinancialInvestments: 7000,
                 additionsToFixedAssets: 102999,
+                turnover: 30,
                 supplyFractions: [
                     { industryCode: 'A', countryCode: "GBR", costs: 300 },
                     { industryCode: 'Ce', countryCode: "BEL", costs: 300 }
