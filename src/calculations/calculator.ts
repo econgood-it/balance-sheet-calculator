@@ -17,10 +17,11 @@ export class Calculator {
   public readonly financeCalc: FinanceCalc;
 
   constructor(regionProvider: RegionProvider,
-              industryProvider: IndustryProvider) {
+              industryProvider: IndustryProvider,
+              industryCodeForFinancialServices: string) {
     this.supplierCalc = new SupplierCalc(regionProvider, industryProvider);
     this.employeesCalc = new EmployeesCalc(regionProvider);
-    this.financeCalc = new FinanceCalc();
+    this.financeCalc = new FinanceCalc(industryCodeForFinancialServices);
   }
 
   public async calculate(companyFacts: CompanyFacts): Promise<CalcResults> {

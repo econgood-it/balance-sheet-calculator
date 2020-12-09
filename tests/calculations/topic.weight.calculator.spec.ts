@@ -13,7 +13,8 @@ describe('Topic Weight Calculator', () => {
       },
       financeCalcResults: {
         sumOfFinancialAspects: 8,
-        economicRatio: 2
+        economicRatio: 2,
+        companyIsActiveInFinancialServices: false
       },
       employeesCalcResults: {
         normedEmployeesRisk: 1.3,
@@ -44,7 +45,8 @@ describe('Topic Weight Calculator', () => {
       },
       financeCalcResults: {
         sumOfFinancialAspects: 8,
-        economicRatio: 2
+        economicRatio: 2,
+        companyIsActiveInFinancialServices: false
       },
       employeesCalcResults: {
         normedEmployeesRisk: 1.3,
