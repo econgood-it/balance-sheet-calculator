@@ -1,7 +1,7 @@
 import {Repository} from "typeorm";
 import {Region} from "../entities/region";
 import {CompanyFacts} from "../entities/companyFacts";
-import ExtendedMap from "./extended.map";
+import Provider from "../providers/provider";
 import {Industry} from "../entities/industry";
 import {SupplyCalcResults} from "./supplier.calc";
 

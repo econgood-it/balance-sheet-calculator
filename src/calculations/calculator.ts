@@ -5,6 +5,8 @@ import {SupplierCalc, SupplyCalcResults} from "./supplier.calc";
 import {EmployeesCalc} from "./employees.calc";
 import {FinanceCalc, FinanceCalcResults} from "./finance.calc";
 import {Industry} from "../entities/industry";
+import {RegionProvider} from "../providers/region.provider";
+import {IndustryProvider} from "../providers/industry.provider";
 
 export interface CalcResults {
   supplyRiskSum: number,
@@ -20,10 +22,10 @@ export class Calculator {
   public readonly employeesCalc: EmployeesCalc;
   public readonly financeCalc: FinanceCalc;
 
-  constructor(private readonly regionRepository: Repository<Region>,
-              private readonly industryRepository: Repository<Industry>) {
-    this.supplierCalc = new SupplierCalc(this.regionRepository, this.industryRepository);
-    this.employeesCalc = new EmployeesCalc(this.regionRepository);
+  constructor(regionProvider: RegionProvider,
+              industryProvider: IndustryProvider) {
+    this.supplierCalc = new SupplierCalc(regionProvider, industryProvider);
+    this.employeesCalc = new EmployeesCalc(regionProvider);
     this.financeCalc = new FinanceCalc();
   }
 

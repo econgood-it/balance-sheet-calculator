@@ -1,9 +1,8 @@
 import { Request, Response, NextFunction } from "express";
-import { LoggingService } from "../logging";
 import { BalanceSheetDTOCreate } from "../dto/create/balance.sheet.create.dto";
 import { BalanceSheet } from "../entities/balanceSheet";
 import InternalServerException from "../exceptions/internal.server.exception";
-import { Connection } from "typeorm";
+import {Connection, EntityManager} from "typeorm";
 import { BalanceSheetDTOUpdate } from "../dto/update/balance.sheet.update.dto";
 import { TopicUpdater } from "../calculations/topic.updater";
 import { SupplyFraction } from "../entities/supplyFraction";
@@ -12,11 +11,12 @@ import { EntityWithDtoMerger } from "../entities/entity.with.dto.merger";
 import { JsonMappingError } from "@daniel-faber/json-ts";
 import BadRequestException from "../exceptions/bad.request.exception";
 import { Region } from "../entities/region";
-import { BalanceSheetType } from "../entities/enums";
 import { validateOrReject, ValidationError } from 'class-validator';
 import {CalcResults, Calculator} from "../calculations/calculator";
 import {Industry} from "../entities/industry";
 import {IndustrySector} from "../entities/industry.sector";
+import {RegionProvider} from "../providers/region.provider";
+import {IndustryProvider} from "../providers/industry.provider";
 
 
 
@@ -35,28 +35,14 @@ export class BalanceSheetService {
   public async createBalanceSheet(req: Request, res: Response, next: NextFunction) {
     this.connection.manager.transaction(async entityManager => {
       const balanceSheetDTOCreate: BalanceSheetDTOCreate = BalanceSheetDTOCreate.fromJSON(req.body);
-      await validateOrReject(balanceSheetDTOCreate, {
-        validationError: { target: false },
-      });
-      const balancesheet: BalanceSheet = await balanceSheetDTOCreate.toBalanceSheet();
-      const precalculations: CalcResults = await new Calculator(entityManager.getRepository(Region),
-        entityManager.getRepository(Industry)).calculate(balancesheet.companyFacts);
-      const topicUpdater: TopicUpdater = new TopicUpdater();
-      await topicUpdater.update(balancesheet.rating.topics, precalculations);
-      const balanceSheetResponse: BalanceSheet = await entityManager.getRepository(BalanceSheet).save(balancesheet);
-      this.sortArraysOfBalanceSheet(balanceSheetResponse);
+      await this.validateOrFail(balanceSheetDTOCreate);
+      const balanceSheet: BalanceSheet = await balanceSheetDTOCreate.toBalanceSheet();
+      const balanceSheetResponse: BalanceSheet = await this.calculateAndSave(balanceSheet, entityManager);
       res.json(balanceSheetResponse);
     }).catch(error => {
-      if (error instanceof JsonMappingError) {
-        next(new BadRequestException(error.message));
-      }
-      if (Array.isArray(error) && error.every(item => item instanceof ValidationError)) {
-        next(new BadRequestException(error.toString()));
-      }
-      next(new InternalServerException(error));
+      this.handleError(error, next);
     });
   }
-
 
   public async updateBalanceSheet(req: Request, res: Response, next: NextFunction) {
     this.connection.manager.transaction(async entityManager => {
@@ -71,26 +57,12 @@ export class BalanceSheetService {
       if (balanceSheetDTOUpdate.id !== balanceSheetId) {
         next(new BadRequestException(`Balance sheet id in request body and url parameter has to be the same`));
       }
-      await validateOrReject(balanceSheetDTOUpdate, {
-        validationError: { target: false },
-      });
-
+      await this.validateOrFail(balanceSheetDTOUpdate);
       await entityWithDTOMerger.mergeBalanceSheet(balanceSheet, balanceSheetDTOUpdate);
-      const precalculations: CalcResults = await new Calculator(entityManager.getRepository(Region),
-        entityManager.getRepository(Industry)).calculate(balanceSheet.companyFacts);
-      const topicUpdater: TopicUpdater = new TopicUpdater();
-      await topicUpdater.update(balanceSheet.rating.topics, precalculations);
-      const balanceSheetResponse: BalanceSheet = await balanceSheetRepository.save(balanceSheet);
-      this.sortArraysOfBalanceSheet(balanceSheetResponse);
+      const balanceSheetResponse: BalanceSheet = await this.calculateAndSave(balanceSheet, entityManager);
       res.json(balanceSheetResponse);
     }).catch(error => {
-      if (error instanceof JsonMappingError) {
-        next(new BadRequestException(error.message));
-      }
-      if (Array.isArray(error) && error.every(item => item instanceof ValidationError)) {
-        next(new BadRequestException(error.toString()));
-      }
-      next(new InternalServerException(error));
+      this.handleError(error, next);
     });
   }
 
@@ -105,11 +77,38 @@ export class BalanceSheetService {
       this.sortArraysOfBalanceSheet(balanceSheetResponse);
       res.json(balanceSheetResponse);
     }).catch(error => {
-      if (error instanceof JsonMappingError) {
-        next(new BadRequestException(error.message));
-      }
-      next(new InternalServerException(error));
+      this.handleError(error, next);
     });
+  }
+
+  private handleError(error: Error, next: NextFunction) {
+    if (error instanceof JsonMappingError) {
+      next(new BadRequestException(error.message));
+    }
+    if (Array.isArray(error) && error.every(item => item instanceof ValidationError)) {
+      next(new BadRequestException(error.toString()));
+    }
+    next(new InternalServerException(error.message));
+  }
+
+  private async validateOrFail(balanceSheet: BalanceSheetDTOCreate | BalanceSheetDTOUpdate) {
+    await validateOrReject(balanceSheet, {
+      validationError: { target: false },
+    });
+  }
+
+  private async calculateAndSave(balanceSheet: BalanceSheet, entityManager: EntityManager): Promise<BalanceSheet> {
+    const regionProvider = await RegionProvider.createFromCompanyFacts(balanceSheet.companyFacts,
+      entityManager.getRepository(Region));
+    const industryProvider = await IndustryProvider.createFromCompanyFacts(balanceSheet.companyFacts,
+      entityManager.getRepository(Industry));
+    const precalculations: CalcResults = await new Calculator(regionProvider, industryProvider).calculate(
+      balanceSheet.companyFacts);
+    const topicUpdater: TopicUpdater = new TopicUpdater();
+    await topicUpdater.update(balanceSheet.rating.topics, precalculations);
+    const balanceSheetResponse: BalanceSheet = await entityManager.getRepository(BalanceSheet).save(balanceSheet);
+    this.sortArraysOfBalanceSheet(balanceSheetResponse);
+    return balanceSheetResponse;
   }
 
   private sortArraysOfBalanceSheet(balanceSheet: BalanceSheet) {

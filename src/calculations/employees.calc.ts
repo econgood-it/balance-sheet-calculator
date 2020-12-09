@@ -1,16 +1,17 @@
 import {Region} from "../entities/region";
 import {CompanyFacts} from "../entities/companyFacts";
 import {Repository} from "typeorm";
+import {RegionProvider} from "../providers/region.provider";
 
 
 export class EmployeesCalc {
-  constructor(private readonly regionRepository: Repository<Region>) {
+  constructor(private readonly regionProvider: RegionProvider) {
   }
 
   private async employeesRisks(companyFacts: CompanyFacts): Promise<number> {
     let result: number = 0;
     for (const employeesFraction of companyFacts.employeesFractions) {
-      const region: Region = await this.regionRepository.findOneOrFail({countryCode: employeesFraction.countryCode});
+      const region: Region = await this.regionProvider.getOrFail(employeesFraction.countryCode);
       result += companyFacts.totalStaffCosts * employeesFraction.percentage
         * region.pppIndex;
     }

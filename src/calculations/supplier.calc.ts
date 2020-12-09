@@ -4,7 +4,9 @@ import {Region} from "../entities/region";
 import {CalcResults} from "./calculator";
 import {SupplyFraction} from "../entities/supplyFraction";
 import {Industry} from "../entities/industry";
-import ExtendedMap from "./extended.map";
+import Provider from "../providers/provider";
+import {RegionProvider} from "../providers/region.provider";
+import {IndustryProvider} from "../providers/industry.provider";
 
 export interface SupplyCalcResults {
   supplyRiskSum: number;
@@ -14,75 +16,57 @@ export interface SupplyCalcResults {
 
 export class SupplierCalc {
   private static readonly DEFAULT_SUPPLY_CHAIN_WEIGHT = 1;
-  constructor(private readonly regionRepository: Repository<Region>,
-              private readonly industryRepository: Repository<Industry>) {
+  constructor(private readonly regionProvider: RegionProvider,
+              private readonly industryProvider: IndustryProvider) {
   }
 
   public async calculate(companyFacts: CompanyFacts): Promise<SupplyCalcResults>  {
-    const regions = new ExtendedMap<string, Region>();
-    const industries = new ExtendedMap<string, Industry>();
-    await this.loadRegionsAndIndustries(companyFacts, regions, industries)
-    const supplyRiskSum = this.supplyRiskSum(companyFacts, regions);
-    let supplyChainWeight = this.supplyChainWeight(companyFacts, supplyRiskSum, regions, industries);
-    const itucAverage = this.itucAverage(companyFacts, supplyRiskSum, regions);
+    const supplyRiskSum = this.supplyRiskSum(companyFacts);
+    let supplyChainWeight = this.supplyChainWeight(companyFacts, supplyRiskSum);
+    const itucAverage = this.itucAverage(companyFacts, supplyRiskSum);
     supplyChainWeight = Number.isNaN(supplyChainWeight) ? SupplierCalc.DEFAULT_SUPPLY_CHAIN_WEIGHT : supplyChainWeight;
     return {supplyRiskSum: supplyRiskSum, supplyChainWeight: supplyChainWeight, itucAverage: itucAverage};
   }
 
-  private async loadRegionsAndIndustries(companyFacts: CompanyFacts, regions: ExtendedMap<string,
-    Region>, industries: ExtendedMap<string, Industry>): Promise<void> {
-    for (const supplyFraction of companyFacts.supplyFractions) {
-      regions.set(supplyFraction.countryCode,
-        await this.regionRepository.findOneOrFail({ countryCode: supplyFraction.countryCode }));
-      industries.set(supplyFraction.industryCode,
-        await this.industryRepository.findOneOrFail({ industryCode: supplyFraction.industryCode }))
-    }
-  }
-
   // In excel this is equal to the cell $'11.Region'.G3
-  public supplyRiskSum(companyFacts: CompanyFacts, regions: ExtendedMap<string,
-    Region>): number {
+  public supplyRiskSum(companyFacts: CompanyFacts): number {
     let result = 0;
     for (const supplyFraction of companyFacts.supplyFractions) {
-      const region: Region = regions.getOrFail(supplyFraction.countryCode);
+      const region: Region = this.regionProvider.getOrFail(supplyFraction.countryCode);
       result += supplyFraction.costs * region.pppIndex;
     }
     return result;
   }
 
-  public supplyChainWeight(companyFacts: CompanyFacts, supplyRiskSum: number, regions: ExtendedMap<string,
-    Region>, industries: ExtendedMap<string, Industry>): number {
+  public supplyChainWeight(companyFacts: CompanyFacts, supplyRiskSum: number): number {
     let result: number = 0;
     let sumOfSupplyRisk: number = 0;
     for (const supplyFraction of companyFacts.supplyFractions) {
-      const supplyRisk = this.supplyRisk(supplyFraction, supplyRiskSum, regions);
+      const supplyRisk = this.supplyRisk(supplyFraction, supplyRiskSum);
       sumOfSupplyRisk += supplyRisk;
-      result += supplyRisk * this.ecologicalSupplyChainRisk(supplyFraction, industries);
+      result += supplyRisk * this.ecologicalSupplyChainRisk(supplyFraction);
     }
     return result / sumOfSupplyRisk;
   }
 
-  public itucAverage(companyFacts: CompanyFacts, supplyRiskSum: number, regions: ExtendedMap<string,
-    Region>): number {
+  public itucAverage(companyFacts: CompanyFacts, supplyRiskSum: number): number {
     let result: number = 0;
     for (const supplyFraction of companyFacts.supplyFractions) {
-      const region = regions.getOrFail(supplyFraction.countryCode);
-      result += region.ituc * this.supplyRisk(supplyFraction, supplyRiskSum, regions);
+      const region = this.regionProvider.getOrFail(supplyFraction.countryCode);
+      result += region.ituc * this.supplyRisk(supplyFraction, supplyRiskSum);
     }
     return result;
   }
 
   // In excel this is equal to the cell $'11.Region'.H[3-8]
-  public supplyRisk(supplyFraction: SupplyFraction, supplyRiskSum: number, regions: ExtendedMap<string,
-    Region>): number {
-    const region: Region = regions.getOrFail(supplyFraction.countryCode);
+  public supplyRisk(supplyFraction: SupplyFraction, supplyRiskSum: number): number {
+    const region: Region = this.regionProvider.getOrFail(supplyFraction.countryCode);
     return (supplyFraction.costs * region.pppIndex) / supplyRiskSum;
   }
 
   // In excel this is equal to the cell $'11.Region'.M[3-7]
-  public ecologicalSupplyChainRisk(supplyFraction: SupplyFraction,
-                                         industries: ExtendedMap<string, Industry>): number {
-    const industry: Industry = industries.getOrFail(supplyFraction.industryCode);
+  public ecologicalSupplyChainRisk(supplyFraction: SupplyFraction): number {
+    const industry: Industry = this.industryProvider.getOrFail(supplyFraction.industryCode);
     return industry.ecologicalSupplyChainRisk;
   }
 

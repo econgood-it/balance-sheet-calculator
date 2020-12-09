@@ -1,4 +1,4 @@
-class ExtendedMap<K, V> extends Map<K,V> {
+class Provider<K, V> extends Map<K,V> {
   public getOrFail(key: K) {
     const value: V | undefined = this.get(key);
     if (value) {
@@ -9,4 +9,4 @@ class ExtendedMap<K, V> extends Map<K,V> {
   }
 }
 
-export default ExtendedMap;
+export default Provider;

@@ -12,6 +12,8 @@ import { CompanyFacts0, CompanyFacts1 } from "../testData/company.facts";
 import {CalcResults, Calculator} from "../../src/calculations/calculator";
 import {Industry} from "../../src/entities/industry";
 import {Rating} from "../../src/entities/rating";
+import {RegionProvider} from "../../src/providers/region.provider";
+import {IndustryProvider} from "../../src/providers/industry.provider";
 
 describe('Topic updater', () => {
     let connection: Connection;
@@ -36,8 +38,9 @@ describe('Topic updater', () => {
         const testDataDir = path.resolve(__dirname, '../testData');
         let pathToCsv = path.join(testDataDir, fileNameOfRatingInputData);
         const topics: Topic[] = (await testDataReader.readRatingFromCsv(pathToCsv)).topics;
-        //console.log(topics);
-        const calcResults: CalcResults = await new Calculator(regionRepository, industryRepository).calculate(
+        const regionProvider = await RegionProvider.createFromCompanyFacts(companyFacts, connection.getRepository(Region));
+        const industryProvider = await IndustryProvider.createFromCompanyFacts(companyFacts, connection.getRepository(Industry));
+        const calcResults: CalcResults = await new Calculator(regionProvider, industryProvider).calculate(
           companyFacts);
         const topicUpdater: TopicUpdater = new TopicUpdater();
         await topicUpdater.update(topics, calcResults);
@@ -48,14 +51,16 @@ describe('Topic updater', () => {
     }
 
     it('should not calculate automatic weight', async (done) => {
-          const calcResults: CalcResults = await new Calculator(regionRepository, industryRepository).calculate(
+        const regionProvider = await RegionProvider.createFromCompanyFacts(CompanyFacts1, connection.getRepository(Region));
+        const industryProvider = await IndustryProvider.createFromCompanyFacts(CompanyFacts1, connection.getRepository(Industry));
+        const calcResults: CalcResults = await new Calculator(regionProvider, industryProvider).calculate(
             CompanyFacts1);
-          const topicUpdater: TopicUpdater = new TopicUpdater();
-          const rating = new Rating(undefined, [new Topic(undefined, 'A1', 'A1 name', 0, 0,
-            0, 2, true, [])]);
-          await topicUpdater.update(rating.topics, calcResults);
-          expect(rating.topics[0].weight).toBeCloseTo(2, 2);
-          done();
+        const topicUpdater: TopicUpdater = new TopicUpdater();
+        const rating = new Rating(undefined, [new Topic(undefined, 'A1', 'A1 name', 0, 0,
+        0, 2, true, [])]);
+        await topicUpdater.update(rating.topics, calcResults);
+        expect(rating.topics[0].weight).toBeCloseTo(2, 2);
+        done();
     })
 
     it('should calculate rating when the company facts values and the rating values are empty', async (done) =>
