@@ -19,6 +19,9 @@ export class TopicWeihgtCalculator {
             case 'A4':
                 weight = await this.calculateTopicWeightOfA4(calcResults);
                 break;
+            case 'B1':
+                weight = await this.calculateTopicWeightOfB1(calcResults);
+                break;
             default:
                 weight = 1;
                 break;
@@ -55,15 +58,15 @@ export class TopicWeihgtCalculator {
     }
 
     public calculateTopicWeightOfB1(calcResults: CalcResults): number {
-
-        if (calcResults.supplyCalcResults.itucAverage < 1.5) {
-            return 0.5;
-        } else if (calcResults.supplyCalcResults.itucAverage < 3.26) {
-            return 1;
-        } else if (calcResults.supplyCalcResults.itucAverage < 4.5) {
-            return 1.5;
-        } else {
+        if (calcResults.financeCalcResults.companyIsActiveInFinancialServices) {
             return 2;
+        } else if (calcResults.financeCalcResults.economicRatio < 0.1) {
+            return 1.5;
+        } else if (calcResults.financeCalcResults.economicRatio > 0.5) {
+            return 0.5;
+        } else {
+            return 1;
         }
+
     }
 }
