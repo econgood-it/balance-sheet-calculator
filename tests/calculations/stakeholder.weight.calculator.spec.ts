@@ -81,18 +81,18 @@ describe('Stakeholder Weight Calculator', () => {
     })
 
     it('should calculate stakeholder weights', async (done) => {
-        const precalculations: CalcResults = await new Calculator(regionProvider, industryProvider).calculate(
+        const calcResults: CalcResults = await new Calculator(regionProvider, industryProvider).calculate(
           companyFacts);
         const stakeholderWeightCalculator = new StakeholderWeightCalculator();
-        let result: number = await stakeholderWeightCalculator.calcStakeholderWeight('A', precalculations);
+        let result: number = await stakeholderWeightCalculator.calcStakeholderWeight('A', calcResults);
         expect(result).toBeCloseTo(0.5, 3);
-        result = await stakeholderWeightCalculator.calcStakeholderWeight('B', precalculations);
+        result = await stakeholderWeightCalculator.calcStakeholderWeight('B', calcResults);
         expect(result).toBeCloseTo(1, 2);
-        result = await stakeholderWeightCalculator.calcStakeholderWeight('C', precalculations);
+        result = await stakeholderWeightCalculator.calcStakeholderWeight('C', calcResults);
         expect(result).toBeCloseTo(2, 2);
-        result = await stakeholderWeightCalculator.calcStakeholderWeight('D', precalculations);
+        result = await stakeholderWeightCalculator.calcStakeholderWeight('D', calcResults);
         expect(result).toBeCloseTo(1, 2);
-        result = await stakeholderWeightCalculator.calcStakeholderWeight('E', precalculations);
+        result = await stakeholderWeightCalculator.calcStakeholderWeight('E', calcResults);
         expect(result).toBeCloseTo(1, 2);
         done();
     })

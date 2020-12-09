@@ -1,20 +1,14 @@
 import {CompanyFacts} from "../entities/companyFacts";
-import {Repository} from "typeorm";
-import {Region} from "../entities/region";
 import {SupplierCalc, SupplyCalcResults} from "./supplier.calc";
-import {EmployeesCalc} from "./employees.calc";
+import {EmployeesCalc, EmployeesCalcResults} from "./employees.calc";
 import {FinanceCalc, FinanceCalcResults} from "./finance.calc";
-import {Industry} from "../entities/industry";
 import {RegionProvider} from "../providers/region.provider";
 import {IndustryProvider} from "../providers/industry.provider";
 
 export interface CalcResults {
-  supplyRiskSum: number,
-  supplyChainWeight: number,
-  itucAverage: number,
-  normedEmployeesRisk: number,
-  sumOfFinancialAspects: number,
-  economicRatio: number
+  supplyCalcResults: SupplyCalcResults,
+  financeCalcResults: FinanceCalcResults,
+  employeesCalcResults: EmployeesCalcResults,
 }
 
 export class Calculator {
@@ -30,15 +24,10 @@ export class Calculator {
   }
 
   public async calculate(companyFacts: CompanyFacts): Promise<CalcResults> {
-    const supplyCalcResults: SupplyCalcResults = await this.supplierCalc.calculate(companyFacts);
-    const financeCalcResults: FinanceCalcResults = this.financeCalc.calculate(companyFacts);
     return {
-      supplyRiskSum: supplyCalcResults.supplyRiskSum,
-      supplyChainWeight: supplyCalcResults.supplyChainWeight,
-      itucAverage: supplyCalcResults.itucAverage,
-      normedEmployeesRisk: await this.employeesCalc.calculateNormedEmployeesRisk(companyFacts),
-      sumOfFinancialAspects: financeCalcResults.sumOfFinancialAspects,
-      economicRatio: financeCalcResults.economicRatio,
+      supplyCalcResults: this.supplierCalc.calculate(companyFacts),
+      financeCalcResults: this.financeCalc.calculate(companyFacts),
+      employeesCalcResults: this.employeesCalc.calculate(companyFacts)
     }
   }
 

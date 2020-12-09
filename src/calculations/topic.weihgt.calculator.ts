@@ -1,4 +1,5 @@
 import {CalcResults} from "./calculator";
+import {IndustryProvider} from "../providers/industry.provider";
 
 
 export class TopicWeihgtCalculator {
@@ -30,11 +31,11 @@ export class TopicWeihgtCalculator {
     }
 
     public calculateTopicWeightOfA3(calcResults: CalcResults): number {
-        if (calcResults.supplyChainWeight > 1.5) {
+        if (calcResults.supplyCalcResults.supplyChainWeight > 1.5) {
             return 2;
-        } else if (calcResults.supplyChainWeight > 1.25) {
+        } else if (calcResults.supplyCalcResults.supplyChainWeight > 1.25) {
             return 1.5;
-        } else if (calcResults.supplyChainWeight < 0.75) {
+        } else if (calcResults.supplyCalcResults.supplyChainWeight < 0.75) {
             return 0.5;
         } else {
             return 1;
@@ -42,11 +43,24 @@ export class TopicWeihgtCalculator {
     }
 
     public calculateTopicWeightOfA4(calcResults: CalcResults): number {
-        if (calcResults.itucAverage < 1.5) {
+        if (calcResults.supplyCalcResults.itucAverage < 1.5) {
             return 0.5;
-        } else if (calcResults.itucAverage < 3.26) {
+        } else if (calcResults.supplyCalcResults.itucAverage < 3.26) {
             return 1;
-        } else if (calcResults.itucAverage < 4.5) {
+        } else if (calcResults.supplyCalcResults.itucAverage < 4.5) {
+            return 1.5;
+        } else {
+            return 2;
+        }
+    }
+
+    public calculateTopicWeightOfB1(calcResults: CalcResults): number {
+
+        if (calcResults.supplyCalcResults.itucAverage < 1.5) {
+            return 0.5;
+        } else if (calcResults.supplyCalcResults.itucAverage < 3.26) {
+            return 1;
+        } else if (calcResults.supplyCalcResults.itucAverage < 4.5) {
             return 1.5;
         } else {
             return 2;

@@ -1,17 +1,14 @@
 import {CompanyFacts} from "../entities/companyFacts";
-import {Repository} from "typeorm";
 import {Region} from "../entities/region";
-import {CalcResults} from "./calculator";
 import {SupplyFraction} from "../entities/supplyFraction";
 import {Industry} from "../entities/industry";
-import Provider from "../providers/provider";
 import {RegionProvider} from "../providers/region.provider";
 import {IndustryProvider} from "../providers/industry.provider";
 
 export interface SupplyCalcResults {
-  supplyRiskSum: number;
-  supplyChainWeight: number;
-  itucAverage: number;
+  supplyRiskSum: number,
+  supplyChainWeight: number,
+  itucAverage: number,
 }
 
 export class SupplierCalc {
@@ -20,7 +17,7 @@ export class SupplierCalc {
               private readonly industryProvider: IndustryProvider) {
   }
 
-  public async calculate(companyFacts: CompanyFacts): Promise<SupplyCalcResults>  {
+  public calculate(companyFacts: CompanyFacts): SupplyCalcResults  {
     const supplyRiskSum = this.supplyRiskSum(companyFacts);
     let supplyChainWeight = this.supplyChainWeight(companyFacts, supplyRiskSum);
     const itucAverage = this.itucAverage(companyFacts, supplyRiskSum);

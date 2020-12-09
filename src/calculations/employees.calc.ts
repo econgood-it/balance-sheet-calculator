@@ -1,17 +1,24 @@
 import {Region} from "../entities/region";
 import {CompanyFacts} from "../entities/companyFacts";
-import {Repository} from "typeorm";
 import {RegionProvider} from "../providers/region.provider";
 
+export interface EmployeesCalcResults {
+  normedEmployeesRisk: number
+}
 
 export class EmployeesCalc {
   constructor(private readonly regionProvider: RegionProvider) {
   }
 
-  private async employeesRisks(companyFacts: CompanyFacts): Promise<number> {
+  public calculate(companyFacts: CompanyFacts): EmployeesCalcResults  {
+    const normedEmployeesRisk = this.calculateNormedEmployeesRisk(companyFacts);
+    return {normedEmployeesRisk: normedEmployeesRisk};
+  }
+
+  private employeesRisks(companyFacts: CompanyFacts): number {
     let result: number = 0;
     for (const employeesFraction of companyFacts.employeesFractions) {
-      const region: Region = await this.regionProvider.getOrFail(employeesFraction.countryCode);
+      const region: Region = this.regionProvider.getOrFail(employeesFraction.countryCode);
       result += companyFacts.totalStaffCosts * employeesFraction.percentage
         * region.pppIndex;
     }
@@ -25,8 +32,8 @@ export class EmployeesCalc {
   }
 
   // In excel this is equal to the cell $'11.Region'.G10
-  public async  calculateNormedEmployeesRisk(companyFacts: CompanyFacts): Promise<number> {
-    const employeesRisk = await this.employeesRisks(companyFacts);
+  private calculateNormedEmployeesRisk(companyFacts: CompanyFacts): number {
+    const employeesRisk = this.employeesRisks(companyFacts);
 
     return employeesRisk + this.employeesRisksNormalizer(companyFacts);
   }

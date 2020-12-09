@@ -6,18 +6,18 @@ export class StakeholderWeightCalculator {
     private readonly defaultPPPIndex = 0.978035862587365;
     private readonly defaultIfDenominatorIsZero = 100.;
 
-    public async calcStakeholderWeight(stakeholderName: string, precalculations: CalcResults): Promise<number> {
+    public async calcStakeholderWeight(stakeholderName: string, calcResults: CalcResults): Promise<number> {
 
         let weight: number = 1;
         switch (stakeholderName) {
             case 'A':
-                weight = await this.calculateSupplierWeightFromCompanyFacts(precalculations);
+                weight = await this.calculateSupplierWeightFromCompanyFacts(calcResults);
                 break;
             case 'B':
-                weight = await this.calculateFinancialWeightFromCompanyFacts(precalculations);
+                weight = await this.calculateFinancialWeightFromCompanyFacts(calcResults);
                 break;
             case 'C':
-                weight = await this.calculateEmployeeWeightFromCompanyFacts(precalculations);
+                weight = await this.calculateEmployeeWeightFromCompanyFacts(calcResults);
                 break;
             case 'D':
                 weight = await this.calculateCustomerWeightFromCompanyFacts();
@@ -34,20 +34,20 @@ export class StakeholderWeightCalculator {
     }
 
     // A
-    public async calculateSupplierWeightFromCompanyFacts(precalculations: CalcResults): Promise<number> {
-        const supplierAndEmployeesRiskRation = await this.calculateSupplierAndEmployeesRiskRatio(precalculations);
+    public async calculateSupplierWeightFromCompanyFacts(calcResults: CalcResults): Promise<number> {
+        const supplierAndEmployeesRiskRation = await this.calculateSupplierAndEmployeesRiskRatio(calcResults);
         return this.mapToWeight(this.mapToValueBetween60And300(supplierAndEmployeesRiskRation));
     }
 
     // B
-    public async calculateFinancialWeightFromCompanyFacts(precalculations: CalcResults): Promise<number> {
-        const financialRisk = await this.calculateFinancialRisk(precalculations);
+    public async calculateFinancialWeightFromCompanyFacts(calcResults: CalcResults): Promise<number> {
+        const financialRisk = await this.calculateFinancialRisk(calcResults);
         return this.mapToWeight(this.mapToValueBetween60And300(financialRisk));
     }
 
     // C
-    public async calculateEmployeeWeightFromCompanyFacts(precalculations: CalcResults): Promise<number> {
-        const employeesRisk = await this.calculateEmployeesRisk(precalculations);
+    public async calculateEmployeeWeightFromCompanyFacts(calcResults: CalcResults): Promise<number> {
+        const employeesRisk = await this.calculateEmployeesRisk(calcResults);
         return this.mapToWeight(this.mapToValueBetween60And300(employeesRisk));
     }
 
@@ -79,29 +79,29 @@ export class StakeholderWeightCalculator {
     }
 
     // =WENNFEHLER((60*$'11.Region'.G3/($'11.Region'.G3+$'11.Region'.G10+(I19+I21+I22+G24))*5),100)
-    public async calculateSupplierAndEmployeesRiskRatio(precalculations: CalcResults): Promise<number> {
+    public async calculateSupplierAndEmployeesRiskRatio(calcResults: CalcResults): Promise<number> {
         // (60*$'11.Region'.G3)
-        const numerator = 60 * precalculations.supplyRiskSum;
+        const numerator = 60 * calcResults.supplyCalcResults.supplyRiskSum;
         // ($'11.Region'.G3+$'11.Region'.G10+(I19+I21+I22+G24))
-        const denominator: number = precalculations.supplyRiskSum + precalculations.normedEmployeesRisk +
-          precalculations.sumOfFinancialAspects;
+        const denominator = calcResults.supplyCalcResults.supplyRiskSum +
+          calcResults.employeesCalcResults.normedEmployeesRisk + calcResults.financeCalcResults.sumOfFinancialAspects;
         // (60*$'11.Region'.G3/($'11.Region'.G3+$'11.Region'.G10+(I19+I21+I22+G24))*5))
         return denominator != 0 ? numerator / denominator * 5 : this.defaultIfDenominatorIsZero;
     }
 
     // =WENNFEHLER((60*(I19+I21+I22+G24)/($'11.Region'.G3+$'11.Region'.G10+(I19+I21+I22+G24))*10);100)
-    public async calculateFinancialRisk(precalculations: CalcResults): Promise<number> {
-        const numerator = 60 * precalculations.sumOfFinancialAspects;
-        const denominator: number = precalculations.supplyRiskSum + precalculations.normedEmployeesRisk +
-          precalculations.sumOfFinancialAspects;
+    public async calculateFinancialRisk(calcResults: CalcResults): Promise<number> {
+        const numerator = 60 * calcResults.financeCalcResults.sumOfFinancialAspects;
+        const denominator: number = calcResults.supplyCalcResults.supplyRiskSum +
+          calcResults.employeesCalcResults.normedEmployeesRisk + calcResults.financeCalcResults.sumOfFinancialAspects;
         return denominator != 0 ? numerator / denominator * 10 : this.defaultIfDenominatorIsZero;
     }
 
     // =WENNFEHLER((60*$'11.Region'.G10/($'11.Region'.G3+$'11.Region'.G10+(I19+I21+I22+G24))*10);100)
-    public async calculateEmployeesRisk(precalculations: CalcResults): Promise<number> {
-        const numerator = 60 * precalculations.normedEmployeesRisk;
-        const denominator: number = precalculations.supplyRiskSum + precalculations.normedEmployeesRisk +
-          precalculations.sumOfFinancialAspects;
+    public async calculateEmployeesRisk(calcResults: CalcResults): Promise<number> {
+        const numerator = 60 * calcResults.employeesCalcResults.normedEmployeesRisk;
+        const denominator: number = calcResults.supplyCalcResults.supplyRiskSum +
+          calcResults.employeesCalcResults.normedEmployeesRisk + calcResults.financeCalcResults.sumOfFinancialAspects;
         return denominator != 0 ? numerator / denominator * 10 : this.defaultIfDenominatorIsZero;
     }
 }
