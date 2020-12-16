@@ -1,4 +1,4 @@
-import {IndustrySectorCreateDtoCreate} from "../../src/dto/create/industry.sector.create.dto";
+import {IndustrySectorCreateDtoCreate} from "../../../src/dto/create/industry.sector.create.dto";
 
 describe('Industry Sector DTO', () => {
 

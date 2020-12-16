@@ -53,7 +53,7 @@ A4Weight(itucAverage) = \begin{cases}
 \end{align*}
 
 \begin{align*}
-    B1Weight(industrySector1) &= \begin{cases}
+    B1Weight(industrySector1, E23) &= \begin{cases}
         2 &\mbox{if } industrySector1 = Financial Services (K) \\
         1.5 &\mbox{if } E23 < 0.1 \\
         0.5 &\mbox{if } E23 > 0.5 \\
@@ -68,6 +68,22 @@ A4Weight(itucAverage) = \begin{cases}
                                      0 &\mbox{if } financialCosts < 0.001 \\
                                      0.5 &\mbox{if } financialCosts < 0.03 \\
                                      1 &\mbox{else } \\
+    \end{cases}
+\end{align*}
+
+\begin{align*}
+    E22 &= \begin{cases}
+               \frac{additionsToFixedAssets + financialAssetsAndCashBalance}{totalAssets} &\mbox{if } NO ERROR \\
+               0.2 &\mbox{if } ERROR \\
+    \end{cases}
+\end{align*}
+
+\begin{align*}
+    B3Weight(industrySector1, E22) &= \begin{cases}
+        2 &\mbox{if } industrySector1 = Financial Services (K) \\
+        0.5 &\mbox{if } E22 < 0.1 \\
+        1.5 &\mbox{if } E22 > 0.25 \\
+        1 &\mbox{else } \\
     \end{cases}
 \end{align*}
 \end{document}
