@@ -7,6 +7,7 @@
     "start": "env-cmd -e development nodemon",
     "build": "rm -r dist && tsc && cp -R src/files dist",
     "test": "env-cmd -e development jest --watch --runInBand",
+    "coverage": "env-cmd -e development jest --runInBand --coverage",
     "test:prod": "env-cmd -e development jest --runInBand"
   },
   "repository": {
