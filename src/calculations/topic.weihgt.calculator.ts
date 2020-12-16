@@ -26,6 +26,9 @@ export class TopicWeihgtCalculator {
             case 'B2':
                 weight = await this.calculateTopicWeightOfB2(companyFacts.financialCosts);
                 break;
+            case 'B3':
+                weight = await this.calculateTopicWeightOfB3(calcResults);
+                break;
             default:
                 weight = 1;
                 break;
@@ -86,5 +89,17 @@ export class TopicWeihgtCalculator {
             return 1;
         }
 
+    }
+
+    public calculateTopicWeightOfB3(calcResults: CalcResults): number {
+        if (calcResults.financeCalcResults.companyIsActiveInFinancialServices) {
+            return 2;
+        } else if (calcResults.financeCalcResults.economicRatioE22 < 0.1) {
+            return 0.5;
+        } else if (calcResults.financeCalcResults.economicRatioE22 > 0.25) {
+            return 1.5
+        } else {
+            return 1;
+        }
     }
 }

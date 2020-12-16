@@ -113,4 +113,27 @@ describe('Topic Weight Calculator', () => {
 
     done();
   })
+
+  it('should calculate topic weight of B3', async (done) => {
+    const topicShortName = 'B3';
+    calcResults.financeCalcResults.companyIsActiveInFinancialServices = true;
+    let result = await calc(topicShortName, calcResults, companyFacts)
+    expect(result).toBeCloseTo( 2, numDigits);
+
+    calcResults.financeCalcResults.companyIsActiveInFinancialServices = false;
+
+    calcResults.financeCalcResults.economicRatioE22 = 0.099;
+    result = await calc(topicShortName, calcResults, companyFacts)
+    expect(result).toBeCloseTo( 0.5, numDigits);
+
+    calcResults.financeCalcResults.economicRatioE22 = 0.251;
+    result = await calc(topicShortName, calcResults, companyFacts)
+    expect(result).toBeCloseTo( 1.5, numDigits);
+
+    calcResults.financeCalcResults.economicRatioE22 = 0.245;
+    result = await calc(topicShortName, calcResults, companyFacts)
+    expect(result).toBeCloseTo( 1, numDigits);
+
+    done();
+  })
 })
