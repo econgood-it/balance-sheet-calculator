@@ -23,6 +23,11 @@ describe('Balance Sheet Controller', () => {
     const configuration = ConfigurationReader.read();
     let balanceSheetJson: any;
     const endpointPath = '/balancesheets';
+    const assertTopicWeight = (shortName: string, expectedWeight: number, rating: Rating) => {
+        const topic: Topic | undefined = rating.topics.find((t: Topic) => t.shortName==shortName);
+        expect(topic).toBeDefined();
+        expect((topic as Topic).weight).toBe(expectedWeight);
+    }
     beforeAll(async (done) => {
         connection = await DatabaseConnectionCreator.createConnectionAndRunMigrations(configuration);
         app = new App(connection, configuration).app;
@@ -67,9 +72,7 @@ describe('Balance Sheet Controller', () => {
         const response = await testApp.post(endpointPath).auth(configuration.appUsername,
           configuration.appPassword).send(balanceSheetJson);
         expect(response.status).toEqual(200);
-        const topicB1: Topic | undefined = (response.body.rating as Rating).topics.find((t: Topic) => t.shortName=='B1');
-        expect(topicB1).toBeDefined();
-        expect((topicB1 as Topic).weight).toBe(2);
+        assertTopicWeight('B1', 2, (response.body.rating as Rating));
         done();
     })
 
@@ -79,9 +82,7 @@ describe('Balance Sheet Controller', () => {
         const response = await testApp.post(endpointPath).auth(configuration.appUsername,
           configuration.appPassword).send(balanceSheetJson);
         expect(response.status).toEqual(200);
-        const topicB2: Topic | undefined = (response.body.rating as Rating).topics.find((t: Topic) => t.shortName=='B2');
-        expect(topicB2).toBeDefined();
-        expect((topicB2 as Topic).weight).toBe(1.5);
+        assertTopicWeight('B2', 1.5, (response.body.rating as Rating));
         done();
     })
 
