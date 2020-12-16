@@ -3,23 +3,25 @@ import {CalcResults} from "../../src/calculations/calculator";
 
 describe('Topic Weight Calculator', () => {
 
+  let calcResults: CalcResults = {
+    supplyCalcResults: {
+      itucAverage: 1,
+      supplyRiskSum: 2.3,
+      supplyChainWeight: 1.6,
+    },
+    financeCalcResults: {
+      sumOfFinancialAspects: 8,
+      economicRatio: 2,
+      companyIsActiveInFinancialServices: false
+    },
+    employeesCalcResults: {
+      normedEmployeesRisk: 1.3,
+    }
+  }
+
   it('should calculate topic weight of A3', async (done) => {
     const topicWeihgtCalculator = new TopicWeihgtCalculator();
-    const calcResults: CalcResults = {
-      supplyCalcResults: {
-        itucAverage: 1,
-        supplyRiskSum: 2.3,
-        supplyChainWeight: 1.6,
-      },
-      financeCalcResults: {
-        sumOfFinancialAspects: 8,
-        economicRatio: 2,
-        companyIsActiveInFinancialServices: false
-      },
-      employeesCalcResults: {
-        normedEmployeesRisk: 1.3,
-      }
-    }
+    calcResults.supplyCalcResults.supplyChainWeight = 1.6;
     const topicShortName = 'A3';
     let result = await topicWeihgtCalculator.calcTopicWeight(topicShortName, calcResults);
     expect(result).toBeCloseTo( 2, 2);
@@ -37,21 +39,7 @@ describe('Topic Weight Calculator', () => {
 
   it('should calculate topic weight of A4', async (done) => {
     const topicWeihgtCalculator = new TopicWeihgtCalculator();
-    const calcResults: CalcResults = {
-      supplyCalcResults: {
-        itucAverage: 4.6,
-        supplyRiskSum: 2.3,
-        supplyChainWeight: 1.6,
-      },
-      financeCalcResults: {
-        sumOfFinancialAspects: 8,
-        economicRatio: 2,
-        companyIsActiveInFinancialServices: false
-      },
-      employeesCalcResults: {
-        normedEmployeesRisk: 1.3,
-      }
-    }
+    calcResults.supplyCalcResults.itucAverage = 4.6;
     const topicShortName = 'A4';
     let result = await topicWeihgtCalculator.calcTopicWeight(topicShortName, calcResults);
     expect(result).toBeCloseTo( 2, 2);
@@ -69,21 +57,7 @@ describe('Topic Weight Calculator', () => {
 
   it('should calculate topic weight of B1', async (done) => {
     const topicWeihgtCalculator = new TopicWeihgtCalculator();
-    const calcResults: CalcResults = {
-      supplyCalcResults: {
-        itucAverage: 1,
-        supplyRiskSum: 2.3,
-        supplyChainWeight: 1.6,
-      },
-      financeCalcResults: {
-        sumOfFinancialAspects: 8,
-        economicRatio: 0.05,
-        companyIsActiveInFinancialServices: false
-      },
-      employeesCalcResults: {
-        normedEmployeesRisk: 1.3,
-      }
-    }
+    calcResults.financeCalcResults.economicRatio = 0.05;
     const topicShortName = 'B1';
     let result = await topicWeihgtCalculator.calcTopicWeight(topicShortName, calcResults);
     expect(result).toBeCloseTo( 1.5, 2);
