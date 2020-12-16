@@ -60,4 +60,14 @@ A4Weight(itucAverage) = \begin{cases}
         1 &\mbox{else } \\
     \end{cases}
 \end{align*}
+
+\begin{align*}
+    B2Weight(financialCosts) &= \begin{cases}
+                                     1 &\mbox{if } financialCosts = 0 \\
+                                     1.5 &\mbox{if } financialCosts > 0.1 \\
+                                     0 &\mbox{if } financialCosts < 0.001 \\
+                                     0.5 &\mbox{if } financialCosts < 0.03 \\
+                                     1 &\mbox{else } \\
+    \end{cases}
+\end{align*}
 \end{document}

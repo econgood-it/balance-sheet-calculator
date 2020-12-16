@@ -24,7 +24,7 @@ export class BalanceSheetService {
   private static readonly BALANCE_SHEET_RELATIONS = ['rating', 'companyFacts',
     'companyFacts.supplyFractions', 'companyFacts.employeesFractions',
     'companyFacts.industrySectors', 'rating.topics', 'rating.topics.aspects'];
-  private static readonly INDUSTRY_CODE_FOR_FINANCIAL_SERVICES = 'K';
+
 
   constructor(private connection: Connection) {
   }
@@ -104,11 +104,10 @@ export class BalanceSheetService {
       entityManager.getRepository(Region));
     const industryProvider = await IndustryProvider.createFromCompanyFacts(balanceSheet.companyFacts,
       industryRepository);
-    const calcResults: CalcResults = await new Calculator(regionProvider, industryProvider,
-      BalanceSheetService.INDUSTRY_CODE_FOR_FINANCIAL_SERVICES).calculate(
+    const calcResults: CalcResults = await new Calculator(regionProvider, industryProvider).calculate(
       balanceSheet.companyFacts);
     const topicUpdater: TopicUpdater = new TopicUpdater();
-    await topicUpdater.update(balanceSheet.rating.topics, calcResults);
+    await topicUpdater.update(balanceSheet.rating.topics, balanceSheet.companyFacts, calcResults);
     const balanceSheetResponse: BalanceSheet = await entityManager.getRepository(BalanceSheet).save(balanceSheet);
     this.sortArraysOfBalanceSheet(balanceSheetResponse);
     return balanceSheetResponse;

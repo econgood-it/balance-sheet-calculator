@@ -1,6 +1,7 @@
 import { Aspect } from "../src/entities/aspect";
 import { Rating } from "../src/entities/rating";
 import { Topic } from "../src/entities/topic";
+import {CompanyFacts} from "../src/entities/companyFacts";
 
 
 export class Assertions {
@@ -42,6 +43,10 @@ export class Assertions {
             `weight: ${expected.weight}, ${received.weight} \n` +
             `isWeightSelectedByUser: ${expected.isWeightSelectedByUser}, ${received.isWeightSelectedByUser}`;
 
+    }
+
+    public static rmIdFieldsOfCompanyFacts(companyFacts: CompanyFacts) {
+        delete (companyFacts as any).id;
     }
 
     public static rmIdFields(rating: Rating) {

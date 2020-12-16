@@ -8,7 +8,7 @@ import { ConfigurationReader } from "../../src/configuration.reader";
 import { Assertions } from "../Assertions";
 import * as path from 'path';
 import { RatingReader } from "../../src/reader/rating.reader";
-import { CompanyFacts0, CompanyFacts1 } from "../testData/company.facts";
+import { EmptyCompanyFacts, CompanyFacts1 } from "../testData/company.facts";
 import {CalcResults, Calculator} from "../../src/calculations/calculator";
 import {Industry} from "../../src/entities/industry";
 import {Rating} from "../../src/entities/rating";
@@ -43,7 +43,7 @@ describe('Topic updater', () => {
         const calcResults: CalcResults = await new Calculator(regionProvider, industryProvider).calculate(
           companyFacts);
         const topicUpdater: TopicUpdater = new TopicUpdater();
-        await topicUpdater.update(topics, calcResults);
+        await topicUpdater.update(topics, companyFacts, calcResults);
         pathToCsv = path.join(testDataDir, fileNameOfRatingExpectedData);
         const expected: Topic[] = (await testDataReader.readRatingFromCsv(pathToCsv)).topics;
         Assertions.assertTopics(topics, expected);
@@ -58,13 +58,13 @@ describe('Topic updater', () => {
         const topicUpdater: TopicUpdater = new TopicUpdater();
         const rating = new Rating(undefined, [new Topic(undefined, 'A1', 'A1 name', 0, 0,
         0, 2, true, [])]);
-        await topicUpdater.update(rating.topics, calcResults);
+        await topicUpdater.update(rating.topics, CompanyFacts1, calcResults);
         expect(rating.topics[0].weight).toBeCloseTo(2, 2);
         done();
     })
 
     it('should calculate rating when the company facts values and the rating values are empty', async (done) =>
-        testCalculation('fullRating01Input.csv', 'fullRating0Expected.csv', CompanyFacts0, done)
+        testCalculation('fullRating01Input.csv', 'fullRating0Expected.csv', EmptyCompanyFacts, done)
     )
 
     it('should calculate rating when the company facts values filled out but estimations, and weights are not set', async (done) =>

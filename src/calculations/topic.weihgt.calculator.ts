@@ -1,10 +1,11 @@
 import {CalcResults} from "./calculator";
 import {IndustryProvider} from "../providers/industry.provider";
+import {CompanyFacts} from "../entities/companyFacts";
 
 
 export class TopicWeihgtCalculator {
 
-    public async calcTopicWeight(topicShortName: string, calcResults: CalcResults): Promise<number> {
+    public async calcTopicWeight(topicShortName: string, calcResults: CalcResults, companyFacts: CompanyFacts): Promise<number> {
         let weight: number = 1;
         switch (topicShortName) {
             case 'A1':
@@ -21,6 +22,9 @@ export class TopicWeihgtCalculator {
                 break;
             case 'B1':
                 weight = await this.calculateTopicWeightOfB1(calcResults);
+                break;
+            case 'B2':
+                weight = await this.calculateTopicWeightOfB2(companyFacts.financialCosts);
                 break;
             default:
                 weight = 1;
@@ -63,6 +67,20 @@ export class TopicWeihgtCalculator {
         } else if (calcResults.financeCalcResults.economicRatio < 0.1) {
             return 1.5;
         } else if (calcResults.financeCalcResults.economicRatio > 0.5) {
+            return 0.5;
+        } else {
+            return 1;
+        }
+    }
+
+    public calculateTopicWeightOfB2(financialCosts: number): number {
+        if (financialCosts == 0) {
+            return 1;
+        } else if (financialCosts > 0.1) {
+            return 1.5
+        } else if (financialCosts < 0.001) {
+            return 0;
+        } else if (financialCosts < 0.03) {
             return 0.5;
         } else {
             return 1;

@@ -9,8 +9,9 @@ export interface FinanceCalcResults {
 
 export class FinanceCalc {
 
+  public static readonly INDUSTRY_CODE_FOR_FINANCIAL_SERVICES = 'K';
   public static readonly DEFAULT_SUPPLY_ECONOMIC_RATIO = 0.3;
-  constructor(private readonly industryCodeForFinancialServices: string) {
+  constructor() {
   }
 
   public calculate(companyFacts: CompanyFacts): FinanceCalcResults  {
@@ -21,8 +22,8 @@ export class FinanceCalc {
       companyIsActiveInFinancialServices: this.checkCompanysActivityInFinancialServices(companyFacts)};
   }
 
-  private checkCompanysActivityInFinancialServices(companyFacts: CompanyFacts): number {
-    return companyFacts.industrySectors.some(is => is.industryCode == this.industryCodeForFinancialServices);
+  private checkCompanysActivityInFinancialServices(companyFacts: CompanyFacts): boolean {
+    return companyFacts.industrySectors.some(is => is.industryCode == FinanceCalc.INDUSTRY_CODE_FOR_FINANCIAL_SERVICES);
   }
 
   // In Excel I19+I21+I22+G24

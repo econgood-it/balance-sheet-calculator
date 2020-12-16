@@ -16,7 +16,7 @@ const employeesFractions: EmployeesFraction[] = [
     new EmployeesFraction(undefined, afghanistanCode, 0.5)
 ];
 
-export const CompanyFacts0 = new CompanyFacts(undefined, 0, 0, 0, 0, 0, 0,
+export const EmptyCompanyFacts = new CompanyFacts(undefined, 0, 0, 0, 0, 0, 0,
     0, 0,[], [], [])
 
 export const CompanyFacts1 = new CompanyFacts(undefined, 10000, 900, 500,
