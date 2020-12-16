@@ -17,8 +17,8 @@ const employeesFractions: EmployeesFraction[] = [
 ];
 
 export const EmptyCompanyFacts = new CompanyFacts(undefined, 0, 0, 0, 0, 0, 0,
-    0, 0,[], [], [])
+    0, 0, 0,[], [], [])
 
 export const CompanyFacts1 = new CompanyFacts(undefined, 10000, 900, 500,
-  600, 700, 800, 30, 40,
+  600, 700, 800, 0, 30, 40,
     supplyFractions, employeesFractions, [])

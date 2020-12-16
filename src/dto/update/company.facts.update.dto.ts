@@ -44,6 +44,10 @@ export class CompanyFactsDTOUpdate {
   @IsNumber({ maxDecimalPlaces: 2 })
   public readonly totalAssets?: number;
   @IsOptional()
+  @Min(0)
+  @IsNumber({ maxDecimalPlaces: 2 })
+  public readonly financialAssetsAndCashBalance?: number;
+  @IsOptional()
   @ValidateNested()
   public readonly supplyFractions?: SupplyFractionDTOUpdate[];
   @IsOptional()
@@ -62,6 +66,7 @@ export class CompanyFactsDTOUpdate {
     additionsToFixedAssets?: number,
     turnover?: number,
     totalAssets?: number,
+    financialAssetsAndCashBalance?: number,
     supplyFractions?: SupplyFractionDTOUpdate[],
     employeesFractions?: EmployeesFractionDTOUpdate[],
     industrySectors?: IndustrySectorDtoUpdate[]
@@ -74,6 +79,7 @@ export class CompanyFactsDTOUpdate {
     this.additionsToFixedAssets = additionsToFixedAssets;
     this.turnover = turnover;
     this.totalAssets = totalAssets;
+    this.financialAssetsAndCashBalance = financialAssetsAndCashBalance;
     this.supplyFractions = supplyFractions;
     this.employeesFractions = employeesFractions;
     this.industrySectors = industrySectors;
@@ -90,6 +96,7 @@ export class CompanyFactsDTOUpdate {
         accessor.getOptional('additionsToFixedAssets', expectNumber),
         accessor.getOptional('turnover', expectNumber),
         accessor.getOptional('totalAssets', expectNumber),
+        accessor.getOptional('financialAssetsAndCashBalance', expectNumber),
         accessor.getOptional('supplyFractions', arrayMapper(SupplyFractionDTOUpdate.fromJSON)),
         accessor.getOptional('employeesFractions', arrayMapper(EmployeesFractionDTOUpdate.fromJSON)),
         accessor.getOptional('industrySectors', arrayMapper(IndustrySectorDtoUpdate.fromJSON)),
