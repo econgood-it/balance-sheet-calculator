@@ -15,6 +15,7 @@ describe('CompanyFactsCreateDTO', () => {
             turnover: 7,
             totalAssets: 8,
             financialAssetsAndCashBalance: 9,
+            totalSales: 10,
             supplyFractions: [],
             employeesFractions: [],
             industrySectors: [],

@@ -37,6 +37,7 @@ describe('CompanyFactsUpdateDTO', () => {
                 turnover: 7,
                 totalAssets: 8,
                 financialAssetsAndCashBalance: 9,
+                totalSales: 10,
                 supplyFractions: [],
                 employeesFractions: [],
                 industrySectors: [],
@@ -53,6 +54,12 @@ describe('CompanyFactsUpdateDTO', () => {
             delete json.profit;
             const companyFactsDTOUpdate: CompanyFactsDTOUpdate = CompanyFactsDTOUpdate.fromJSON(json);
             expect(companyFactsDTOUpdate.profit).toBeUndefined();
+        })
+
+        it('totalSales',  () => {
+            delete json.totalSales;
+            const companyFactsDTOUpdate: CompanyFactsDTOUpdate = CompanyFactsDTOUpdate.fromJSON(json);
+            expect(companyFactsDTOUpdate.totalSales).toBeUndefined();
         })
     });
 

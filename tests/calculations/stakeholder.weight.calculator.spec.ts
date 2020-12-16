@@ -29,8 +29,8 @@ describe('Stakeholder Weight Calculator', () => {
           arabEmiratesCode, 300), new SupplyFraction(undefined, pharmaceuticCode, afghanistanCode, 20)];
         const employeesFractions: EmployeesFraction[] = [new EmployeesFraction(undefined, arabEmiratesCode, 0.3), new EmployeesFraction(undefined, afghanistanCode, 1)];
         companyFacts = new CompanyFacts(undefined, 0, 2345, 238,
-          473, 342, 234, 30, 40, 0,
-          supplyFractions, employeesFractions, []);
+          473, 342, 234, 30, 40,
+          0, 0, supplyFractions, employeesFractions, []);
         regionProvider = await RegionProvider.createFromCompanyFacts(companyFacts, connection.getRepository(Region));
         industryProvider = await IndustryProvider.createFromCompanyFacts(companyFacts, connection.getRepository(Industry));
         done();
