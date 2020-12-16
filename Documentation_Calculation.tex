@@ -86,4 +86,19 @@ A4Weight(itucAverage) = \begin{cases}
         1 &\mbox{else } \\
     \end{cases}
 \end{align*}
+
+\begin{align*}
+    companySize(FTE, totalSales, totalAssets) &= \begin{cases}
+      micro &\mbox{if } FTE < 10 \ \wedge \\
+        & (totalSales <= 2 \ Mio \ \vee \\
+        &  totalAssets <= 2 \ Mio) \\
+      small &\mbox{if } FTE < 50 \ \wedge \\
+        & (totalSales <= 10 \ Mio \ \vee \\
+        &  totalAssets <= 10 \ Mio) \\
+      middle &\mbox{if } FTE < 250 \ \wedge \\
+        & (totalSales <= 50 \ Mio \ \vee \\
+        &  totalAssets <= 43 \ Mio) \\
+      large  &\mbox{else } \\
+    \end{cases}
+\end{align*}
 \end{document}
