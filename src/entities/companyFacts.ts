@@ -28,6 +28,8 @@ export class CompanyFacts {
   public financialAssetsAndCashBalance: number;
   @Column("double precision")
   public totalSales: number;
+  @Column("double precision")
+  public numberOfEmployees: number;
   @OneToMany(type => SupplyFraction, supplyFraction => supplyFraction.companyFacts, { cascade: true })
   public supplyFractions: SupplyFraction[];
   @OneToMany(type => EmployeesFraction, employeesFraction => employeesFraction.companyFacts, { cascade: true })
@@ -47,6 +49,7 @@ export class CompanyFacts {
     totalAssets: number,
     financialAssetsAndCashBalance: number,
     totalSales: number,
+    numberOfEmployees: number,
     supplyFractions: SupplyFraction[],
     employeesFractions: EmployeesFraction[],
     industrySectors: IndustrySector[]
@@ -65,6 +68,7 @@ export class CompanyFacts {
     this.employeesFractions = employeesFractions;
     this.industrySectors = industrySectors;
     this.totalSales = totalSales;
+    this.numberOfEmployees = numberOfEmployees;
   }
 
 }

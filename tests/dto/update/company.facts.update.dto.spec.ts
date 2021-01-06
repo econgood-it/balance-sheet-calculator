@@ -1,46 +1,34 @@
 
 import {CompanyFactsDTOUpdate} from "../../../src/dto/update/company.facts.update.dto";
+import {Min} from "class-validator";
 
 describe('CompanyFactsUpdateDTO', () => {
-
+    const jsonConst = {
+        totalPurchaseFromSuppliers: 1,
+        totalStaffCosts: 2,
+        profit: 3,
+        financialCosts: 4,
+        incomeFromFinancialInvestments: 5,
+        additionsToFixedAssets: 6,
+        turnover: 7,
+        totalAssets: 8,
+        financialAssetsAndCashBalance: 9,
+        totalSales: 10,
+        numberOfEmployees: 11,
+        supplyFractions: [],
+        employeesFractions: [],
+        industrySectors: [],
+    }
 
     it('is created from json',  () => {
-        const json = {
-            totalPurchaseFromSuppliers: 1,
-            totalStaffCosts: 2,
-            profit: 3,
-            financialCosts: 4,
-            incomeFromFinancialInvestments: 5,
-            additionsToFixedAssets: 6,
-            turnover: 7,
-            totalAssets: 8,
-            financialAssetsAndCashBalance: 9,
-            supplyFractions: [],
-            employeesFractions: [],
-            industrySectors: [],
-        }
-        const companyFactsDTOUpdate: CompanyFactsDTOUpdate = CompanyFactsDTOUpdate.fromJSON(json);
-        expect(companyFactsDTOUpdate).toMatchObject(json);
+        const companyFactsDTOUpdate: CompanyFactsDTOUpdate = CompanyFactsDTOUpdate.fromJSON(jsonConst);
+        expect(companyFactsDTOUpdate).toMatchObject(jsonConst);
     })
 
     describe('is created from json where value is missing for field',  () => {
         let json: any;
         beforeEach(() => {
-            json = {
-                totalPurchaseFromSuppliers: 1,
-                totalStaffCosts: 2,
-                profit: 3,
-                financialCosts: 4,
-                incomeFromFinancialInvestments: 5,
-                additionsToFixedAssets: 6,
-                turnover: 7,
-                totalAssets: 8,
-                financialAssetsAndCashBalance: 9,
-                totalSales: 10,
-                supplyFractions: [],
-                employeesFractions: [],
-                industrySectors: [],
-            }
+            json = jsonConst;
         });
 
         it('financialAssetsAndCashBalance',  () => {
@@ -59,6 +47,12 @@ describe('CompanyFactsUpdateDTO', () => {
             delete json.totalSales;
             const companyFactsDTOUpdate: CompanyFactsDTOUpdate = CompanyFactsDTOUpdate.fromJSON(json);
             expect(companyFactsDTOUpdate.totalSales).toBeUndefined();
+        })
+
+        it('numberOfEmployees',  () => {
+            delete json.numberOfEmployees;
+            const companyFactsDTOUpdate: CompanyFactsDTOUpdate = CompanyFactsDTOUpdate.fromJSON(json);
+            expect(companyFactsDTOUpdate.numberOfEmployees).toBeUndefined();
         })
     });
 

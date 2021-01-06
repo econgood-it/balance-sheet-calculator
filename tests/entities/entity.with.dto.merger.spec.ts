@@ -181,5 +181,19 @@ describe('EntityWithDTOMerger', () => {
             done();
         });
 
+        it('using numberOfEmployees from db', async (done) => {
+            companyFacts.numberOfEmployees = 200;
+            await merge({});
+            expect(companyFacts.numberOfEmployees).toBeCloseTo(200);
+            done();
+        });
+
+        it('using numberOfEmployees from dto', async (done) => {
+            companyFacts.numberOfEmployees = 200;
+            await merge({numberOfEmployees: 300});
+            expect(companyFacts.numberOfEmployees).toBeCloseTo(300);
+            done();
+        });
+
     });
 })

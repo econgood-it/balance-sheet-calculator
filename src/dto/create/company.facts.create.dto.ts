@@ -29,10 +29,15 @@ export class CompanyFactsDTOCreate {
   @Min(0)
   @IsNumber({ maxDecimalPlaces: 2 })
   public readonly totalAssets: number;
+  @Min(0)
   @IsNumber({ maxDecimalPlaces: 2 })
   public readonly financialAssetsAndCashBalance: number;
+  @Min(0)
   @IsNumber({ maxDecimalPlaces: 2 })
   public readonly totalSales: number;
+  @Min(0)
+  @IsNumber({ maxDecimalPlaces: 2 })
+  public readonly numberOfEmployees: number;
   @ValidateNested()
   public readonly supplyFractions: SupplyFractionDTOCreate[];
   @ValidateNested()
@@ -51,6 +56,7 @@ export class CompanyFactsDTOCreate {
     totalAssets: number,
     financialAssetsAndCashBalance: number,
     totalSales: number,
+    numberOfEmployees: number,
     supplyFractions: SupplyFractionDTOCreate[],
     employeesFractions: EmployeesFractionDTOCreate[],
     industrySectors: IndustrySectorCreateDtoCreate[]
@@ -68,6 +74,7 @@ export class CompanyFactsDTOCreate {
     this.industrySectors = industrySectors;
     this.financialAssetsAndCashBalance = financialAssetsAndCashBalance;
     this.totalSales = totalSales;
+    this.numberOfEmployees = numberOfEmployees;
   }
 
   public static readonly fromJSON = strictObjectMapper(
@@ -83,6 +90,7 @@ export class CompanyFactsDTOCreate {
         accessor.get('totalAssets', expectNumber),
         accessor.get('financialAssetsAndCashBalance', expectNumber),
         accessor.get('totalSales', expectNumber),
+        accessor.get('numberOfEmployees', expectNumber),
         accessor.get('supplyFractions', arrayMapper(SupplyFractionDTOCreate.fromJSON)),
         accessor.get('employeesFractions', arrayMapper(EmployeesFractionDTOCreate.fromJSON)),
         accessor.get('industrySectors', arrayMapper(IndustrySectorCreateDtoCreate.fromJSON))
@@ -92,7 +100,8 @@ export class CompanyFactsDTOCreate {
   public toCompanyFacts(): CompanyFacts {
     return new CompanyFacts(undefined, this.totalPurchaseFromSuppliers, this.totalStaffCosts,
       this.profit, this.financialCosts, this.incomeFromFinancialInvestments, this.additionsToFixedAssets, this.turnover,
-      this.totalAssets, this.financialAssetsAndCashBalance, this.totalSales, this.supplyFractions.map(sf => sf.toSupplyFraction()),
+      this.totalAssets, this.financialAssetsAndCashBalance, this.totalSales,
+      this.numberOfEmployees, this.supplyFractions.map(sf => sf.toSupplyFraction()),
       this.employeesFractions.map(ef => ef.toEmployeesFraction()), this.industrySectors.map(is => is.toIndustrySector()));
   }
 }

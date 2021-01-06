@@ -1,7 +1,6 @@
 import { DatabaseConnectionCreator } from '../../src/database.connection.creator';
 import { Connection, Repository } from "typeorm";
 import { ConfigurationReader } from "../../src/configuration.reader";
-import {IndustrySector} from "../../src/entities/industry.sector";
 import {CompanyFacts} from "../../src/entities/companyFacts";
 import {EmptyCompanyFacts} from "../testData/company.facts";
 
@@ -47,6 +46,14 @@ describe('Company Facts entity', () => {
             companyFacts.totalSales = 300;
             const result = await companyFactsRepository.save(companyFacts);
             expect(result.totalSales).toBe(300);
+            await companyFactsRepository.remove(result);
+            done();
+        })
+
+        it('numberOfEmployees', async (done) => {
+            companyFacts.numberOfEmployees = 300;
+            const result = await companyFactsRepository.save(companyFacts);
+            expect(result.numberOfEmployees).toBe(300);
             await companyFactsRepository.remove(result);
             done();
         })

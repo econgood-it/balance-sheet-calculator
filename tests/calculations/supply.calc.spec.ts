@@ -8,6 +8,7 @@ import {Industry} from "../../src/entities/industry";
 import {SupplierCalc,  SupplyCalcResults} from "../../src/calculations/supplier.calc";
 import {RegionProvider} from "../../src/providers/region.provider";
 import {IndustryProvider} from "../../src/providers/industry.provider";
+import {EmptyCompanyFacts} from "../testData/company.facts";
 
 
 describe('Supply Calculator', () => {
@@ -26,10 +27,8 @@ describe('Supply Calculator', () => {
       new SupplyFraction(undefined, 'J', 'BHR', 400),
       new SupplyFraction(undefined, 'P', 'BHS', 500),
     ];
-    companyFacts = new CompanyFacts(undefined, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0,
-      supplyFractions, [],
-      []);
+    companyFacts = EmptyCompanyFacts;
+    companyFacts.supplyFractions = supplyFractions;
     regionProvider = await RegionProvider.createFromCompanyFacts(companyFacts, connection.getRepository(Region));
     industryProvider = await IndustryProvider.createFromCompanyFacts(companyFacts, connection.getRepository(Industry));
     done();
