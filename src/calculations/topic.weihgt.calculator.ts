@@ -35,6 +35,9 @@ export class TopicWeihgtCalculator {
             case 'C1':
                 weight = this.constantWeight();
                 break;
+            case 'C2':
+                weight = this.constantWeight();
+                break;
             default:
                 weight = 1;
                 break;
