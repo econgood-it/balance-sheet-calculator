@@ -42,6 +42,9 @@ export class EntityWithDtoMerger {
         companyFacts.additionsToFixedAssets = this.mergeVal(companyFacts.additionsToFixedAssets, companyFactsDTOUpdate.additionsToFixedAssets);
         companyFacts.turnover = this.mergeVal(companyFacts.turnover, companyFactsDTOUpdate.turnover);
         companyFacts.totalAssets = this.mergeVal(companyFacts.totalAssets, companyFactsDTOUpdate.totalAssets);
+        companyFacts.totalSales = this.mergeVal(companyFacts.totalSales, companyFactsDTOUpdate.totalSales);
+        companyFacts.financialAssetsAndCashBalance = this.mergeVal(companyFacts.financialAssetsAndCashBalance,
+          companyFactsDTOUpdate.financialAssetsAndCashBalance);
         if (companyFactsDTOUpdate.industrySectors) {
             await this.replaceIndustrySectors(companyFacts, companyFactsDTOUpdate.industrySectors);
         }
