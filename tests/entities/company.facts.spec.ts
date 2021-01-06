@@ -65,6 +65,14 @@ describe('Company Facts entity', () => {
             await companyFactsRepository.remove(result);
             done();
         })
+
+        it('averageJourneyToWorkForStaffInKm', async (done) => {
+            companyFacts.averageJourneyToWorkForStaffInKm = 200;
+            const result = await companyFactsRepository.save(companyFacts);
+            expect(result.averageJourneyToWorkForStaffInKm).toBeCloseTo(200);
+            await companyFactsRepository.remove(result);
+            done();
+        })
     });
 
 

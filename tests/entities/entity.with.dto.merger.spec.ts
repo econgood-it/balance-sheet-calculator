@@ -209,5 +209,19 @@ describe('EntityWithDTOMerger', () => {
             done();
         });
 
+        it('using averageJourneyToWorkForStaffInKm from db', async (done) => {
+            companyFacts.averageJourneyToWorkForStaffInKm = 200;
+            await merge({});
+            expect(companyFacts.averageJourneyToWorkForStaffInKm).toBeCloseTo(200);
+            done();
+        });
+
+        it('using averageJourneyToWorkForStaffInKm from dto', async (done) => {
+            companyFacts.averageJourneyToWorkForStaffInKm = 200;
+            await merge({averageJourneyToWorkForStaffInKm: 300});
+            expect(companyFacts.averageJourneyToWorkForStaffInKm).toBeCloseTo(300);
+            done();
+        });
+
     });
 })

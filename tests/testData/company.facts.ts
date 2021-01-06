@@ -18,7 +18,8 @@ const employeesFractions: EmployeesFraction[] = [
 
 export const EmptyCompanyFacts = new CompanyFacts(undefined, 0, 0, 0,
   0, 0, 0, 0, 0, 0,
-  0, 0, false,[], [], [])
+  0, 0, false, 0,
+  [], [], [])
 
 export const EmptyCompanyFactsJson = {
     totalPurchaseFromSuppliers: 0,
@@ -33,6 +34,7 @@ export const EmptyCompanyFactsJson = {
     totalSales: 0,
     numberOfEmployees: 0,
     hasCanteen: false,
+    averageJourneyToWorkForStaffInKm: 0,
     supplyFractions: [],
     employeesFractions: [],
     industrySectors: [],
@@ -40,4 +42,5 @@ export const EmptyCompanyFactsJson = {
 
 export const CompanyFacts1 = new CompanyFacts(undefined, 10000, 900, 500,
   600, 700, 800, 0, 30, 40,
-  0, 0, false, supplyFractions, employeesFractions, [])
+  0, 0, false,0,
+  supplyFractions, employeesFractions, [])

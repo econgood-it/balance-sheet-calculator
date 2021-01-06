@@ -40,6 +40,9 @@ export class CompanyFactsDTOCreate {
   public readonly numberOfEmployees: number;
   @IsBoolean()
   public readonly hasCanteen: boolean;
+  @Min(0)
+  @IsNumber({ maxDecimalPlaces: 2 })
+  public readonly averageJourneyToWorkForStaffInKm;
   @ValidateNested()
   public readonly supplyFractions: SupplyFractionDTOCreate[];
   @ValidateNested()
@@ -60,6 +63,7 @@ export class CompanyFactsDTOCreate {
     totalSales: number,
     numberOfEmployees: number,
     hasCanteen: boolean,
+    averageJourneyToWorkForStaffInKm: number,
     supplyFractions: SupplyFractionDTOCreate[],
     employeesFractions: EmployeesFractionDTOCreate[],
     industrySectors: IndustrySectorCreateDtoCreate[]
@@ -79,6 +83,7 @@ export class CompanyFactsDTOCreate {
     this.totalSales = totalSales;
     this.numberOfEmployees = numberOfEmployees;
     this.hasCanteen = hasCanteen;
+    this.averageJourneyToWorkForStaffInKm = averageJourneyToWorkForStaffInKm;
   }
 
   public static readonly fromJSON = strictObjectMapper(
@@ -96,6 +101,7 @@ export class CompanyFactsDTOCreate {
         accessor.get('totalSales', expectNumber),
         accessor.get('numberOfEmployees', expectNumber),
         accessor.get('hasCanteen', expectBoolean),
+        accessor.get('averageJourneyToWorkForStaffInKm', expectNumber),
         accessor.get('supplyFractions', arrayMapper(SupplyFractionDTOCreate.fromJSON)),
         accessor.get('employeesFractions', arrayMapper(EmployeesFractionDTOCreate.fromJSON)),
         accessor.get('industrySectors', arrayMapper(IndustrySectorCreateDtoCreate.fromJSON))
@@ -106,7 +112,8 @@ export class CompanyFactsDTOCreate {
     return new CompanyFacts(undefined, this.totalPurchaseFromSuppliers, this.totalStaffCosts,
       this.profit, this.financialCosts, this.incomeFromFinancialInvestments, this.additionsToFixedAssets, this.turnover,
       this.totalAssets, this.financialAssetsAndCashBalance, this.totalSales,
-      this.numberOfEmployees, this.hasCanteen, this.supplyFractions.map(sf => sf.toSupplyFraction()),
+      this.numberOfEmployees, this.hasCanteen, this.averageJourneyToWorkForStaffInKm,
+      this.supplyFractions.map(sf => sf.toSupplyFraction()),
       this.employeesFractions.map(ef => ef.toEmployeesFraction()), this.industrySectors.map(is => is.toIndustrySector()));
   }
 }

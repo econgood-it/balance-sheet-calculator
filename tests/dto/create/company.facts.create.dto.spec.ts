@@ -18,6 +18,7 @@ describe('CompanyFactsCreateDTO', () => {
             totalSales: 10,
             numberOfEmployees: 11,
             hasCanteen: true,
+            averageJourneyToWorkForStaffInKm: 12,
             supplyFractions: [],
             employeesFractions: [],
             industrySectors: [],

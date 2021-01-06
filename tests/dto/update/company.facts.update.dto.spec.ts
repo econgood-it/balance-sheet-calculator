@@ -16,6 +16,7 @@ describe('CompanyFactsUpdateDTO', () => {
         totalSales: 10,
         numberOfEmployees: 11,
         hasCanteen: true,
+        averageJourneyToWorkForStaffInKm: 12,
         supplyFractions: [],
         employeesFractions: [],
         industrySectors: [],
@@ -60,6 +61,12 @@ describe('CompanyFactsUpdateDTO', () => {
             delete json.hasCanteen;
             const companyFactsDTOUpdate: CompanyFactsDTOUpdate = CompanyFactsDTOUpdate.fromJSON(json);
             expect(companyFactsDTOUpdate.hasCanteen).toBeUndefined();
+        })
+
+        it('averageJourneyToWorkForStaffInKm',  () => {
+            delete json.averageJourneyToWorkForStaffInKm;
+            const companyFactsDTOUpdate: CompanyFactsDTOUpdate = CompanyFactsDTOUpdate.fromJSON(json);
+            expect(companyFactsDTOUpdate.averageJourneyToWorkForStaffInKm).toBeUndefined();
         })
     });
 

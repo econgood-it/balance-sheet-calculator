@@ -59,6 +59,10 @@ export class CompanyFactsDTOUpdate {
   @IsBoolean()
   public readonly hasCanteen?: boolean;
   @IsOptional()
+  @Min(0)
+  @IsNumber({ maxDecimalPlaces: 2 })
+  public readonly averageJourneyToWorkForStaffInKm?: number;
+  @IsOptional()
   @ValidateNested()
   public readonly supplyFractions?: SupplyFractionDTOUpdate[];
   @IsOptional()
@@ -81,6 +85,7 @@ export class CompanyFactsDTOUpdate {
     totalSales?: number,
     numberOfEmployees?: number,
     hasCanteen?: boolean,
+    averageJourneyToWorkForStaffInKm?: number,
     supplyFractions?: SupplyFractionDTOUpdate[],
     employeesFractions?: EmployeesFractionDTOUpdate[],
     industrySectors?: IndustrySectorDtoUpdate[]
@@ -100,6 +105,7 @@ export class CompanyFactsDTOUpdate {
     this.employeesFractions = employeesFractions;
     this.industrySectors = industrySectors;
     this.hasCanteen = hasCanteen;
+    this.averageJourneyToWorkForStaffInKm = averageJourneyToWorkForStaffInKm;
   }
 
   public static readonly fromJSON = strictObjectMapper(
@@ -117,6 +123,7 @@ export class CompanyFactsDTOUpdate {
         accessor.getOptional('totalSales', expectNumber),
         accessor.getOptional('numberOfEmployees', expectNumber),
         accessor.getOptional('hasCanteen', expectBoolean),
+        accessor.getOptional('averageJourneyToWorkForStaffInKm', expectNumber),
         accessor.getOptional('supplyFractions', arrayMapper(SupplyFractionDTOUpdate.fromJSON)),
         accessor.getOptional('employeesFractions', arrayMapper(EmployeesFractionDTOUpdate.fromJSON)),
         accessor.getOptional('industrySectors', arrayMapper(IndustrySectorDtoUpdate.fromJSON)),
