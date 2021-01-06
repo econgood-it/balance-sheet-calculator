@@ -1,6 +1,6 @@
 import {CalcResults} from "./calculator";
-import {IndustryProvider} from "../providers/industry.provider";
 import {CompanyFacts} from "../entities/companyFacts";
+import {CompanySize} from "./employees.calc";
 
 
 export class TopicWeihgtCalculator {
@@ -30,7 +30,7 @@ export class TopicWeihgtCalculator {
                 weight = await this.calculateTopicWeightOfB3(calcResults);
                 break;
             default:
-                weight = 1;
+                weight = await this.calculateTopicWeightOfB4(calcResults);;
                 break;
         }
         return weight;
@@ -98,6 +98,14 @@ export class TopicWeihgtCalculator {
             return 0.5;
         } else if (calcResults.financeCalcResults.economicRatioE22 > 0.25) {
             return 1.5
+        } else {
+            return 1;
+        }
+    }
+
+    public calculateTopicWeightOfB4(calcResults: CalcResults): number {
+        if (calcResults.employeesCalcResults.companySize === CompanySize.micro) {
+            return 0.5;
         } else {
             return 1;
         }

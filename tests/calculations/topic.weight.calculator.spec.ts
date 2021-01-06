@@ -1,10 +1,8 @@
 import {TopicWeihgtCalculator} from "../../src/calculations/topic.weihgt.calculator";
 import {CalcResults} from "../../src/calculations/calculator";
-import {DatabaseConnectionCreator} from "../../src/database.connection.creator";
-import App from "../../src/app";
-import {BalanceSheetType, BalanceSheetVersion} from "../../src/entities/enums";
 import {CompanyFacts} from "../../src/entities/companyFacts";
 import {EmptyCompanyFacts} from "../testData/company.facts";
+import {CompanySize} from "../../src/calculations/employees.calc";
 
 describe('Topic Weight Calculator', () => {
 
@@ -31,6 +29,7 @@ describe('Topic Weight Calculator', () => {
       },
       employeesCalcResults: {
         normedEmployeesRisk: 1.3,
+        companySize: CompanySize.micro
       }
     }
   })
@@ -135,6 +134,26 @@ describe('Topic Weight Calculator', () => {
     result = await calc(topicShortName, calcResults, companyFacts)
     expect(result).toBeCloseTo( 1, numDigits);
 
+    done();
+  })
+
+  it('should calculate topic weight of B4', async (done) => {
+    const topicShortName = 'B4';
+    calcResults.employeesCalcResults.companySize = CompanySize.micro;
+    let result = await calc(topicShortName, calcResults, companyFacts);
+    expect(result).toBeCloseTo( 0.5, numDigits);
+
+    calcResults.employeesCalcResults.companySize = CompanySize.small;
+    result = await calc(topicShortName, calcResults, companyFacts);
+    expect(result).toBeCloseTo( 1, numDigits);
+
+    calcResults.employeesCalcResults.companySize = CompanySize.middle;
+    result = await calc(topicShortName, calcResults, companyFacts);
+    expect(result).toBeCloseTo( 1, numDigits);
+
+    calcResults.employeesCalcResults.companySize = CompanySize.large;
+    result = await calc(topicShortName, calcResults, companyFacts);
+    expect(result).toBeCloseTo( 1, numDigits);
     done();
   })
 })

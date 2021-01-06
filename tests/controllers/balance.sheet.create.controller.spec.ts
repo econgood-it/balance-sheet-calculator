@@ -6,8 +6,6 @@ import App from '../../src/app';
 import { Application } from "express";
 import { ConfigurationReader } from "../../src/configuration.reader";
 import { BalanceSheetType, BalanceSheetVersion } from "../../src/entities/enums";
-import * as path from 'path';
-import { RatingReader } from "../../src/reader/rating.reader";
 import { Assertions } from "../Assertions";
 import { Topic } from "../../src/entities/topic";
 import {IndustrySector} from "../../src/entities/industry.sector";
@@ -15,7 +13,7 @@ import {FinanceCalc} from "../../src/calculations/finance.calc";
 import {Rating} from "../../src/entities/rating";
 import {CompanyFacts} from "../../src/entities/companyFacts";
 import {EmptyCompanyFacts} from "../testData/company.facts";
-import {readRatingResultForEmptyCompanyFacts} from "../testData/rating.reader";
+
 
 describe('Balance Sheet Controller', () => {
     let connection: Connection;
@@ -28,6 +26,7 @@ describe('Balance Sheet Controller', () => {
         expect(topic).toBeDefined();
         expect((topic as Topic).weight).toBe(expectedWeight);
     }
+
     beforeAll(async (done) => {
         connection = await DatabaseConnectionCreator.createConnectionAndRunMigrations(configuration);
         app = new App(connection, configuration).app;
@@ -49,18 +48,12 @@ describe('Balance Sheet Controller', () => {
 
     it('creates BalanceSheet from company facts', async (done) => {
         const testApp = supertest(app);
-        const pathToCsv = path.join(__dirname, "compactRatingExpected.csv");
-        const ratingReader: RatingReader = new RatingReader();
-        const ratingExpected = await readRatingResultForEmptyCompanyFacts();
         const response = await testApp.post(endpointPath).auth(configuration.appUsername,
             configuration.appPassword).send(balanceSheetJson);
         expect(response.status).toEqual(200);
         const companyFacts = balanceSheetJson.companyFacts as CompanyFacts;
         Assertions.rmIdFieldsOfCompanyFacts(companyFacts)
         expect(response.body.companyFacts).toMatchObject(companyFacts);
-        // ignore ids in comparison
-        Assertions.rmIdFields(ratingExpected);
-        expect(response.body.rating).toMatchObject(ratingExpected);
         expect(response.body.rating.topics.reduce((sum: number, current: Topic) => sum + current.maxPoints, 0)).toBeCloseTo(999.9999999999998);
         done();
     })
@@ -83,6 +76,26 @@ describe('Balance Sheet Controller', () => {
           configuration.appPassword).send(balanceSheetJson);
         expect(response.status).toEqual(200);
         assertTopicWeight('B2', 1.5, (response.body.rating as Rating));
+        done();
+    })
+
+    it('creates BalanceSheet where B4 weight is 0.5', async (done) => {
+        const testApp = supertest(app);
+        balanceSheetJson.companyFacts.numberOfEmployees = 9;
+        const response = await testApp.post(endpointPath).auth(configuration.appUsername,
+          configuration.appPassword).send(balanceSheetJson);
+        expect(response.status).toEqual(200);
+        assertTopicWeight('B4', 0.5, (response.body.rating as Rating));
+        done();
+    })
+
+    it('creates BalanceSheet where B4 weight is 1', async (done) => {
+        const testApp = supertest(app);
+        balanceSheetJson.companyFacts.numberOfEmployees = 10;
+        const response = await testApp.post(endpointPath).auth(configuration.appUsername,
+          configuration.appPassword).send(balanceSheetJson);
+        expect(response.status).toEqual(200);
+        assertTopicWeight('B4', 1, (response.body.rating as Rating));
         done();
     })
 
