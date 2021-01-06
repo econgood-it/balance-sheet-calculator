@@ -156,4 +156,11 @@ describe('Topic Weight Calculator', () => {
     expect(result).toBeCloseTo( 1, numDigits);
     done();
   })
+
+  it('should calculate topic weight of C1', async (done) => {
+    const topicShortName = 'C1';
+    let result = await calc(topicShortName, calcResults, companyFacts);
+    expect(result).toBeCloseTo( 1, numDigits);
+    done();
+  })
 })

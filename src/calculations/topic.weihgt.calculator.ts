@@ -29,8 +29,14 @@ export class TopicWeihgtCalculator {
             case 'B3':
                 weight = await this.calculateTopicWeightOfB3(calcResults);
                 break;
+            case 'B4':
+                weight = await this.calculateTopicWeightOfB4(calcResults);
+                break;
+            case 'C1':
+                weight = this.constantWeight();
+                break;
             default:
-                weight = await this.calculateTopicWeightOfB4(calcResults);;
+                weight = 1;
                 break;
         }
         return weight;
