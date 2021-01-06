@@ -1,5 +1,4 @@
 
-import {CompanyFactsDTOCreate} from "../../../src/dto/create/company.facts.create.dto";
 import {CompanyFactsDTOUpdate} from "../../../src/dto/update/company.facts.update.dto";
 
 describe('CompanyFactsUpdateDTO', () => {
