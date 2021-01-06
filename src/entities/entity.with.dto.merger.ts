@@ -47,6 +47,7 @@ export class EntityWithDtoMerger {
           companyFactsDTOUpdate.financialAssetsAndCashBalance);
         companyFacts.numberOfEmployees = this.mergeVal(companyFacts.numberOfEmployees,
           companyFactsDTOUpdate.numberOfEmployees);
+        companyFacts.hasCanteen = this.mergeVal(companyFacts.hasCanteen, companyFactsDTOUpdate.hasCanteen);
         if (companyFactsDTOUpdate.industrySectors) {
             await this.replaceIndustrySectors(companyFacts, companyFactsDTOUpdate.industrySectors);
         }

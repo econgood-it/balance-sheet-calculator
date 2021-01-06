@@ -57,6 +57,14 @@ describe('Company Facts entity', () => {
             await companyFactsRepository.remove(result);
             done();
         })
+
+        it('hasCanteen', async (done) => {
+            companyFacts.hasCanteen = true;
+            const result = await companyFactsRepository.save(companyFacts);
+            expect(result.hasCanteen).toBeTruthy();
+            await companyFactsRepository.remove(result);
+            done();
+        })
     });
 
 

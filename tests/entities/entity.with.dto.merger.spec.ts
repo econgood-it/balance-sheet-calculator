@@ -195,5 +195,19 @@ describe('EntityWithDTOMerger', () => {
             done();
         });
 
+        it('using hasCanteen from db', async (done) => {
+            companyFacts.hasCanteen = true;
+            await merge({});
+            expect(companyFacts.numberOfEmployees).toBeTruthy();
+            done();
+        });
+
+        it('using hasCanteen from dto', async (done) => {
+            companyFacts.hasCanteen = true;
+            await merge({hasCanteen: false});
+            expect(companyFacts.hasCanteen).toBeFalsy();
+            done();
+        });
+
     });
 })

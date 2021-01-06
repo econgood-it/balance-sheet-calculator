@@ -1,11 +1,11 @@
-import { strictObjectMapper, expectNumber, arrayMapper } from '@daniel-faber/json-ts';
+import {strictObjectMapper, expectNumber, arrayMapper, expectBoolean} from '@daniel-faber/json-ts';
 import { SupplyFractionDTOUpdate } from './supply.fraction.update.dto';
 import { EmployeesFractionDTOUpdate } from './employees.fraction.update.dto';
 import {
   IsOptional,
   IsNumber,
   Min,
-  ValidateNested
+  ValidateNested, IsBoolean
 } from 'class-validator';
 import {IndustrySectorDtoUpdate} from "./industry.sector.update.dto";
 
@@ -51,9 +51,13 @@ export class CompanyFactsDTOUpdate {
   @Min(0)
   @IsNumber({ maxDecimalPlaces: 2 })
   public readonly totalSales?: number;
+  @IsOptional()
   @Min(0)
   @IsNumber({ maxDecimalPlaces: 2 })
   public readonly numberOfEmployees?: number;
+  @IsOptional()
+  @IsBoolean()
+  public readonly hasCanteen?: boolean;
   @IsOptional()
   @ValidateNested()
   public readonly supplyFractions?: SupplyFractionDTOUpdate[];
@@ -76,6 +80,7 @@ export class CompanyFactsDTOUpdate {
     financialAssetsAndCashBalance?: number,
     totalSales?: number,
     numberOfEmployees?: number,
+    hasCanteen?: boolean,
     supplyFractions?: SupplyFractionDTOUpdate[],
     employeesFractions?: EmployeesFractionDTOUpdate[],
     industrySectors?: IndustrySectorDtoUpdate[]
@@ -94,6 +99,7 @@ export class CompanyFactsDTOUpdate {
     this.supplyFractions = supplyFractions;
     this.employeesFractions = employeesFractions;
     this.industrySectors = industrySectors;
+    this.hasCanteen = hasCanteen;
   }
 
   public static readonly fromJSON = strictObjectMapper(
@@ -110,6 +116,7 @@ export class CompanyFactsDTOUpdate {
         accessor.getOptional('financialAssetsAndCashBalance', expectNumber),
         accessor.getOptional('totalSales', expectNumber),
         accessor.getOptional('numberOfEmployees', expectNumber),
+        accessor.getOptional('hasCanteen', expectBoolean),
         accessor.getOptional('supplyFractions', arrayMapper(SupplyFractionDTOUpdate.fromJSON)),
         accessor.getOptional('employeesFractions', arrayMapper(EmployeesFractionDTOUpdate.fromJSON)),
         accessor.getOptional('industrySectors', arrayMapper(IndustrySectorDtoUpdate.fromJSON)),
