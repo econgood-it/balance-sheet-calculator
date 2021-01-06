@@ -111,6 +111,11 @@ A4Weight(itucAverage) = \begin{cases}
 
 \begin{align*}
     C1Weight &= 1 \\
-    C2Weight &= 1
+    C2Weight &= 1 \\
+    C3Weight &= \begin{cases}
+        0.5 &\mbox{if } canteen \ not \ exists \ \wedge averageJourneyToWorkForStaffInKm < 10 \\
+        1.5 &\mbox{if } averageJourneyToWorkForStaffInKm > 25 \\
+        1 &\mbox{else } \\
+    \end{cases}
 \end{align*}
 \end{document}
