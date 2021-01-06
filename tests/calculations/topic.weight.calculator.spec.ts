@@ -170,4 +170,29 @@ describe('Topic Weight Calculator', () => {
     expect(result).toBeCloseTo( 1, numDigits);
     done();
   })
+
+  it('should calculate topic weight of C3', async (done) => {
+    const topicShortName = 'C3';
+    companyFacts.hasCanteen = false;
+    companyFacts.averageJourneyToWorkForStaffInKm = 9;
+    let result = await calc(topicShortName, calcResults, companyFacts);
+    expect(result).toBeCloseTo( 0.5, numDigits);
+
+    companyFacts.hasCanteen = true;
+    companyFacts.averageJourneyToWorkForStaffInKm = 9;
+    result = await calc(topicShortName, calcResults, companyFacts);
+    expect(result).toBeCloseTo( 1, numDigits);
+
+    companyFacts.hasCanteen = false;
+    companyFacts.averageJourneyToWorkForStaffInKm = 25.5;
+    result = await calc(topicShortName, calcResults, companyFacts);
+    expect(result).toBeCloseTo( 1.5, numDigits);
+
+    companyFacts.hasCanteen = true;
+    companyFacts.averageJourneyToWorkForStaffInKm = 25.5;
+    result = await calc(topicShortName, calcResults, companyFacts);
+    expect(result).toBeCloseTo( 1.5, numDigits);
+
+    done();
+  })
 })

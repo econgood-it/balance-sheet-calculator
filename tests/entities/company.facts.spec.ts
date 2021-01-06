@@ -57,6 +57,22 @@ describe('Company Facts entity', () => {
             await companyFactsRepository.remove(result);
             done();
         })
+
+        it('hasCanteen', async (done) => {
+            companyFacts.hasCanteen = true;
+            const result = await companyFactsRepository.save(companyFacts);
+            expect(result.hasCanteen).toBeTruthy();
+            await companyFactsRepository.remove(result);
+            done();
+        })
+
+        it('averageJourneyToWorkForStaffInKm', async (done) => {
+            companyFacts.averageJourneyToWorkForStaffInKm = 200;
+            const result = await companyFactsRepository.save(companyFacts);
+            expect(result.averageJourneyToWorkForStaffInKm).toBeCloseTo(200);
+            await companyFactsRepository.remove(result);
+            done();
+        })
     });
 
 

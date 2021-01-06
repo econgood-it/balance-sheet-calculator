@@ -38,6 +38,9 @@ export class TopicWeihgtCalculator {
             case 'C2':
                 weight = this.constantWeight();
                 break;
+            case 'C3':
+                weight = this.calculateTopicWeightOfC3(companyFacts);
+                break;
             default:
                 weight = 1;
                 break;
@@ -115,6 +118,16 @@ export class TopicWeihgtCalculator {
     public calculateTopicWeightOfB4(calcResults: CalcResults): number {
         if (calcResults.employeesCalcResults.companySize === CompanySize.micro) {
             return 0.5;
+        } else {
+            return 1;
+        }
+    }
+
+    public calculateTopicWeightOfC3(companyFacts: CompanyFacts): number {
+        if (companyFacts.averageJourneyToWorkForStaffInKm < 10 && !companyFacts.hasCanteen) {
+            return 0.5;
+        } else if (companyFacts.averageJourneyToWorkForStaffInKm > 25) {
+            return 1.5;
         } else {
             return 1;
         }
