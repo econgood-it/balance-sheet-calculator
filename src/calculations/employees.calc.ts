@@ -2,8 +2,16 @@ import {Region} from "../entities/region";
 import {CompanyFacts} from "../entities/companyFacts";
 import {RegionProvider} from "../providers/region.provider";
 
+export enum CompanySize {
+  micro = 'micro',
+  small = 'small',
+  middle = 'middle',
+  large = 'large'
+}
+
 export interface EmployeesCalcResults {
-  normedEmployeesRisk: number
+  normedEmployeesRisk: number,
+  companySize: CompanySize
 }
 
 export class EmployeesCalc {
@@ -12,7 +20,8 @@ export class EmployeesCalc {
 
   public calculate(companyFacts: CompanyFacts): EmployeesCalcResults  {
     const normedEmployeesRisk = this.calculateNormedEmployeesRisk(companyFacts);
-    return {normedEmployeesRisk: normedEmployeesRisk};
+    const companySize = this.calculateCompanySize(companyFacts);
+    return {normedEmployeesRisk: normedEmployeesRisk, companySize: companySize};
   }
 
   private employeesRisks(companyFacts: CompanyFacts): number {
@@ -36,5 +45,23 @@ export class EmployeesCalc {
     const employeesRisk = this.employeesRisks(companyFacts);
 
     return employeesRisk + this.employeesRisksNormalizer(companyFacts);
+  }
+
+  private calculateCompanySize(companyFacts: CompanyFacts): CompanySize {
+    const mio = 1000000;
+    const mio2 = 2*mio;
+    const mio10 = 10*mio;
+    if (companyFacts.numberOfEmployees < 10 &&
+      (companyFacts.totalSales <= mio2 || companyFacts.totalAssets <= mio2)) {
+      return CompanySize.micro;
+    } else if (companyFacts.numberOfEmployees < 50 &&
+      (companyFacts.totalSales <= mio10 || companyFacts.totalAssets <= mio10)) {
+      return CompanySize.small;
+    } else if (companyFacts.numberOfEmployees < 250 &&
+      (companyFacts.totalSales <= 50*mio || companyFacts.totalAssets <= 43*mio)) {
+      return CompanySize.middle;
+    } else {
+      return CompanySize.large;
+    }
   }
 }
