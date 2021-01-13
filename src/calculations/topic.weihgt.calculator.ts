@@ -44,6 +44,9 @@ export class TopicWeihgtCalculator {
             case 'C4':
                 weight = this.calculateTopicWeightOfC4(calcResults, companyFacts);
                 break;
+            case 'D1':
+                weight = this.constantWeight();
+                break;
             default:
                 weight = 1;
                 break;
