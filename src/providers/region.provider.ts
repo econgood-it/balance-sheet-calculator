@@ -13,6 +13,12 @@ export class RegionProvider extends Provider<string, Region>{
         await regionRepository.findOneOrFail(
           { countryCode: supplyFraction.countryCode }));
     }
+
+    for (const employeesFraction of companyFacts.employeesFractions) {
+      regionProvider.set(employeesFraction.countryCode,
+        await regionRepository.findOneOrFail(
+          { countryCode: employeesFraction.countryCode }));
+    }
     return regionProvider;
   };
 }

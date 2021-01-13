@@ -118,4 +118,15 @@ A4Weight(itucAverage) = \begin{cases}
         1 &\mbox{else } \\
     \end{cases}
 \end{align*}
+
+\begin{align*}
+    itucAverageEmployees &= \sum_{i}^{employeesFractions} amount_{i} * ituc_{i}  \\\\
+    C4Weight &= \begin{cases}
+        0 &\mbox{if } FTE = 1 \\
+        0.5 &\mbox{if } companySize = micro \\
+        1.5 &\mbox{if } itucAverageEmployees > 3.25 \\
+        1 &\mbox{else } \\
+    \end{cases}
+\end{align*}
+
 \end{document}

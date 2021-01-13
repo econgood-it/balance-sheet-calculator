@@ -6,6 +6,7 @@ import {ConfigurationReader} from "../../src/configuration.reader";
 import {RegionProvider} from "../../src/providers/region.provider";
 import {EmptyCompanyFacts} from "../testData/company.facts";
 import {CompanySize, EmployeesCalc, EmployeesCalcResults} from "../../src/calculations/employees.calc";
+import {EmployeesFraction} from "../../src/entities/employeesFraction";
 
 
 describe('Employees Calculator', () => {
@@ -20,6 +21,46 @@ describe('Employees Calculator', () => {
     await connection.close();
     done();
   })
+
+  describe('should calculate the itucAverage ', () => {
+    let companyFacts: CompanyFacts;
+    let regionProvider: RegionProvider;
+    beforeEach(async (done) => {
+      companyFacts = EmptyCompanyFacts;
+      done();
+    })
+
+
+    const calc = async (companyFacts: CompanyFacts): Promise<EmployeesCalcResults> => {
+      regionProvider = await RegionProvider.createFromCompanyFacts(companyFacts,
+        connection.getRepository(Region));
+      return new EmployeesCalc(regionProvider).calculate(companyFacts);
+    }
+
+    it('when employeesFractions array empty', async (done) => {
+      companyFacts.employeesFractions = [];
+      const employeesCalcResults = await calc(companyFacts);
+      expect(employeesCalcResults.itucAverage).toBeCloseTo(0);
+      done();
+    })
+
+    it('when employeesFractions array has size 1', async (done) => {
+      companyFacts.employeesFractions = [new EmployeesFraction(undefined, 'CRI', 3)];
+      const employeesCalcResults = await calc(companyFacts);
+      expect(employeesCalcResults.itucAverage).toBeCloseTo(9);
+      done();
+    })
+
+    it('when employeesFractions array has size > 1', async (done) => {
+      companyFacts.employeesFractions = [new EmployeesFraction(undefined, 'CRI', 3),
+        new EmployeesFraction(undefined, 'CHN', 2)];
+      const employeesCalcResults = await calc(companyFacts);
+      expect(employeesCalcResults.itucAverage).toBeCloseTo(19);
+      done();
+    })
+
+  });
+
 
   describe('should calculate the company size ', () => {
     let companyFacts: CompanyFacts;

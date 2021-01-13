@@ -11,7 +11,8 @@ export enum CompanySize {
 
 export interface EmployeesCalcResults {
   normedEmployeesRisk: number,
-  companySize: CompanySize
+  companySize: CompanySize,
+  itucAverage: number,
 }
 
 export class EmployeesCalc {
@@ -21,7 +22,8 @@ export class EmployeesCalc {
   public calculate(companyFacts: CompanyFacts): EmployeesCalcResults  {
     const normedEmployeesRisk = this.calculateNormedEmployeesRisk(companyFacts);
     const companySize = this.calculateCompanySize(companyFacts);
-    return {normedEmployeesRisk: normedEmployeesRisk, companySize: companySize};
+    const itucAverage = this.calculateItucAverage(companyFacts);
+    return {normedEmployeesRisk: normedEmployeesRisk, companySize: companySize, itucAverage: itucAverage};
   }
 
   private employeesRisks(companyFacts: CompanyFacts): number {
@@ -45,6 +47,14 @@ export class EmployeesCalc {
     const employeesRisk = this.employeesRisks(companyFacts);
 
     return employeesRisk + this.employeesRisksNormalizer(companyFacts);
+  }
+
+  private calculateItucAverage(companyFacts: CompanyFacts): number {
+    let result = 0;
+    for (const employeesFraction of companyFacts.employeesFractions) {
+      result += employeesFraction.percentage * this.regionProvider.getOrFail(employeesFraction.countryCode).ituc;
+    }
+    return result;
   }
 
   private calculateCompanySize(companyFacts: CompanyFacts): CompanySize {
