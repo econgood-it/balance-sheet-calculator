@@ -7,13 +7,17 @@ export class Industry {
   public readonly id: number | undefined;
   @Column("double precision")
   public readonly ecologicalSupplyChainRisk: number;
+  @Column("double precision")
+  public readonly ecologicalDesignOfProductsAndServices: number;
   @Index({ unique: true })
   @Column()
   public readonly industryCode: string;
 
-  constructor(id: number | undefined, ecologicalSupplyChainRisk: number, industryCode: string) {
+  constructor(id: number | undefined, ecologicalSupplyChainRisk: number, ecologicalDesignOfProductsAndServices: number,
+              industryCode: string) {
     this.id = id;
     this.ecologicalSupplyChainRisk = ecologicalSupplyChainRisk;
+    this.ecologicalDesignOfProductsAndServices = ecologicalDesignOfProductsAndServices;
     this.industryCode = industryCode;
   }
 

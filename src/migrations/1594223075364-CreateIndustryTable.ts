@@ -7,6 +7,7 @@ export class CreateIndustryTable1594223075364 implements MigrationInterface {
         let query = `CREATE TABLE IF NOT EXISTS "industry" (
             "id" SERIAL NOT NULL, 
             "ecologicalSupplyChainRisk" double precision NOT NULL, 
+            "ecologicalDesignOfProductsAndServices" double precision NOT NULL, 
             "industryCode" character varying NOT NULL, 
             CONSTRAINT "PK_industry" PRIMARY KEY ("id")
         )`;
