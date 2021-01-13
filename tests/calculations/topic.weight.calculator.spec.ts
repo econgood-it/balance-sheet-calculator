@@ -29,7 +29,8 @@ describe('Topic Weight Calculator', () => {
       },
       employeesCalcResults: {
         normedEmployeesRisk: 1.3,
-        companySize: CompanySize.micro
+        companySize: CompanySize.micro,
+        itucAverage: 0
       }
     }
   })
@@ -195,4 +196,31 @@ describe('Topic Weight Calculator', () => {
 
     done();
   })
+
+  it('should calculate topic weight of C4', async (done) => {
+    const topicShortName = 'C4';
+    companyFacts.numberOfEmployees = 1;
+    let result = await calc(topicShortName, calcResults, companyFacts);
+    expect(result).toBeCloseTo( 0, numDigits);
+
+    companyFacts.numberOfEmployees = 2;
+    calcResults.employeesCalcResults.companySize = CompanySize.micro;
+    result = await calc(topicShortName, calcResults, companyFacts);
+    expect(result).toBeCloseTo( 0.5, numDigits);
+
+    companyFacts.numberOfEmployees = 2;
+    calcResults.employeesCalcResults.companySize = CompanySize.small;
+    calcResults.employeesCalcResults.itucAverage = 3.26;
+    result = await calc(topicShortName, calcResults, companyFacts);
+    expect(result).toBeCloseTo( 1.5, numDigits);
+
+    companyFacts.numberOfEmployees = 2;
+    calcResults.employeesCalcResults.companySize = CompanySize.small;
+    calcResults.employeesCalcResults.itucAverage = 3.25;
+    result = await calc(topicShortName, calcResults, companyFacts);
+    expect(result).toBeCloseTo( 1, numDigits);
+
+    done();
+  })
+
 })
