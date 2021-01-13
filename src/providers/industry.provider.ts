@@ -11,6 +11,10 @@ export class IndustryProvider extends Provider<string, Industry>{
       industryProvider.set(supplyFraction.industryCode,
         await industryRepository.findOneOrFail({industryCode: supplyFraction.industryCode}))
     }
+    for (const industrySector of companyFacts.industrySectors) {
+      industryProvider.set(industrySector.industryCode,
+        await industryRepository.findOneOrFail({industryCode: industrySector.industryCode}))
+    }
     return industryProvider;
   };
 }
