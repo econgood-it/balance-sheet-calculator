@@ -6,6 +6,15 @@ abstract class OptionBase<A> {
     if (this.tag === "none") return defaultValue;
     return this.value;
   }
+
+  get(this: Option<A>): A | undefined {
+    if (this.tag === "none") return undefined;
+    return this.value;
+  }
+
+  isPresent(this: Option<A>): boolean {
+    return this.tag === "some";
+  }
 }
 
 // 5. `extends` keyword creating inheritance relationship

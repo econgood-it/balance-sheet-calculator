@@ -59,6 +59,9 @@ export class TopicWeightCalculator {
             case 'E1':
                 weight = this.constantWeight();
                 break;
+            case 'E2':
+                weight = this.calculateTopicWeightOfE2(calcResults);
+                break;
             default:
                 weight = 1;
                 break;
@@ -180,5 +183,21 @@ export class TopicWeightCalculator {
 
     public calculateTopicWeightOfD4(companyFacts: CompanyFacts): number {
         return companyFacts.isB2B ? 1.5 : 1;
+    }
+
+    public calculateTopicWeightOfE2(calcResults: CalcResults): number {
+        if (calcResults.socialEnvironmentCalcResults.profitInPercentOfTotalSales.isPresent()) {
+            const profitInPercentOfTotalSales = calcResults.socialEnvironmentCalcResults.profitInPercentOfTotalSales.get() as number;
+            if (profitInPercentOfTotalSales < 0.05) {
+                return 0.5;
+            } else if (profitInPercentOfTotalSales > 0.1) {
+                return 1.5;
+            } else {
+                return 1;
+            }
+        } else {
+            return 1;
+        }
+
     }
 }

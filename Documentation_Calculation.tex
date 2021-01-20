@@ -162,4 +162,25 @@ A4Weight(itucAverage) = \begin{cases}
     \end{cases}
 \end{align*}
 
+\begin{align*}
+    E1Weight &= 1 \\
+\end{align*}
+
+\begin{align*}
+    profitInPercentOfTotalSales &= \begin{cases}
+        \frac{profit}{totalSales} &\mbox{if } no Error \\
+        Error &\mbox{else } \\
+    \end{cases}
+\end{align*}
+
+\begin{align*}
+    E2Weight &= \begin{cases}
+       1 &\mbox{if } profitInPercentOfTotalSales \ is \ Error \\
+       0.5 &\mbox{if } profitInPercentOfTotalSales < 0.05 \\
+       1 &\mbox{if } profitInPercentOfTotalSales < 0.1 \\
+       1.5 &\mbox{if } profitInPercentOfTotalSales > 0.1 \\
+       1 &\mbox{else } \\
+    \end{cases}
+\end{align*}
+
 \end{document}

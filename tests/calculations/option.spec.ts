@@ -16,4 +16,24 @@ describe('Option', () => {
     expect(option.getOrElse(7)).toBe(7);
   })
 
+  it('should return value on get',  () => {
+    const option = some(4);
+    expect(option.get()).toBe(4);
+  })
+
+  it('should return undefined on getOrElse',  () => {
+    const option = none();
+    expect(option.get()).toBeUndefined();
+  })
+
+  it('should return true for isPresent ',  () => {
+    const option = some(4);
+    expect(option.isPresent()).toBeTruthy();
+  })
+
+  it('should return false for isPresent ',  () => {
+    const option = none();
+    expect(option.isPresent()).toBeFalsy();
+  })
+
 })
