@@ -51,7 +51,7 @@ export class TopicWeightCalculator {
                 weight = this.constantWeight();
                 break;
             case 'D3':
-                weight = this.calculateTopicWeightOfD3(calcResults);
+                weight = this.calculateTopicWeightOfD3AndE3(calcResults);
                 break;
             case 'D4':
                 weight = this.calculateTopicWeightOfD4(companyFacts);
@@ -61,6 +61,9 @@ export class TopicWeightCalculator {
                 break;
             case 'E2':
                 weight = this.calculateTopicWeightOfE2(calcResults);
+                break;
+            case 'E3':
+                weight = this.calculateTopicWeightOfD3AndE3(calcResults);
                 break;
             default:
                 weight = 1;
@@ -168,7 +171,7 @@ export class TopicWeightCalculator {
         }
     }
 
-    public calculateTopicWeightOfD3(calcResults: CalcResults): number {
+    public calculateTopicWeightOfD3AndE3(calcResults: CalcResults): number {
         if (calcResults.customerCalcResults.sumOfEcologicalDesignOfProductsAndService < 0.75) {
             return 0.5;
         }
