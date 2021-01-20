@@ -3,6 +3,7 @@ import {CalcResults} from "../../src/calculations/calculator";
 import {CompanyFacts} from "../../src/entities/companyFacts";
 import {EmptyCompanyFacts} from "../testData/company.facts";
 import {CompanySize} from "../../src/calculations/employees.calc";
+import {none, some} from "../../src/calculations/option";
 
 describe('Topic Weight Calculator', () => {
 
@@ -34,6 +35,9 @@ describe('Topic Weight Calculator', () => {
       },
       customerCalcResults: {
         sumOfEcologicalDesignOfProductsAndService: 0
+      },
+      socialEnvironmentCalcResults: {
+        profitInPercentOfTotalSales: some(0),
       }
     }
   })
@@ -277,6 +281,26 @@ describe('Topic Weight Calculator', () => {
     const topicShortName = 'E1';
     const result = await calc(topicShortName, calcResults, companyFacts);
     expect(result).toBeCloseTo(1,numDigits);
+    done();
+  })
+
+  it('should calculate topic weight of E2', async (done) => {
+    const topicShortName = 'E2';
+    calcResults.socialEnvironmentCalcResults.profitInPercentOfTotalSales = some(0.11);
+    let result = await calc(topicShortName, calcResults, companyFacts);
+    expect(result).toBeCloseTo(1.5, numDigits);
+
+    calcResults.socialEnvironmentCalcResults.profitInPercentOfTotalSales = none();
+    result = await calc(topicShortName, calcResults, companyFacts);
+    expect(result).toBeCloseTo(1, numDigits);
+
+    calcResults.socialEnvironmentCalcResults.profitInPercentOfTotalSales = some(0.04);
+    result = await calc(topicShortName, calcResults, companyFacts);
+    expect(result).toBeCloseTo(0.5, numDigits);
+
+    calcResults.socialEnvironmentCalcResults.profitInPercentOfTotalSales = some(0.09);
+    result = await calc(topicShortName, calcResults, companyFacts);
+    expect(result).toBeCloseTo(1, numDigits);
     done();
   })
 
