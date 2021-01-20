@@ -120,7 +120,7 @@ A4Weight(itucAverage) = \begin{cases}
 \end{align*}
 
 \begin{align*}
-    itucAverageEmployees &= \sum_{i}^{employeesFractions} amount_{i} * ituc_{i}  \\\\
+    itucAverageEmployees &= \sum_{i}^{employeesFractions} percentage_{i} * ituc_{i}  \\\\
     C4Weight &= \begin{cases}
         0 &\mbox{if } FTE = 1 \\
         0.5 &\mbox{if } companySize = micro \\
@@ -132,6 +132,27 @@ A4Weight(itucAverage) = \begin{cases}
 \begin{align*}
     D1Weight &= 1 \\
     D2Weight &= 1 \\
+\end{align*}
+
+\begin{align*}
+    ecologicalDesignOfProductsAndServices &= \begin{cases}
+                                                 ecologicalDesignOfProductsAndServices &\mbox{if } If industry found \\
+      1 &\mbox{else } \\
+    \end{cases}
+\end{align*}
+\begin{align*}
+    \begin{split}
+        sumOfEcologicalDesignOfProductsAndServices &= (\sum_{i}^{industries} amountOfTotalTurnover_{i} *
+                                            &ecologicalDesignOfProductsAndServices_{i}) \\\\
+    \end{split}
+\end{align*}
+\begin{align*}
+    D3Weight &= \begin{cases}
+        0.5 &\mbox{if } sumOfEcologicalDesignOfProductsAndServices < 0.75 \\
+        1 &\mbox{if } sumOfEcologicalDesignOfProductsAndServices < 1.25 \\
+        2 &\mbox{if } sumOfEcologicalDesignOfProductsAndServices > 1.75 \\
+        1.5 &\mbox{else } \\
+    \end{cases}
 \end{align*}
 
 \end{document}

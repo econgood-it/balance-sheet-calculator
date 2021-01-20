@@ -3,6 +3,7 @@ import { Workbook, Cell, Worksheet } from 'exceljs';
 import {Industry} from "../entities/industry";
 
 interface Headers {
+    ecologicalDesignOfProductsAndServicesIndex: number;
     ecologicalSupplyChainRiskIndex: number;
     industryCodeIndex: number;
 }
@@ -10,6 +11,7 @@ interface Headers {
 export class IndustryReader {
 
     private static readonly DEFAULT_HEADERS: Headers = {
+        ecologicalDesignOfProductsAndServicesIndex: 9,
         ecologicalSupplyChainRiskIndex: 16,
         industryCodeIndex: 1,
     }
@@ -25,7 +27,11 @@ export class IndustryReader {
         for (let row = 4; row <= 32; row++) {
             const cellIndustryCode: Cell = sheet.getCell(row, headers.industryCodeIndex);
             const cellEcologicalSupplyChainRisk: Cell = sheet.getCell(row, headers.ecologicalSupplyChainRiskIndex);
+            const cellEcologicalDesignOfProductsAndServices: Cell = sheet.getCell(row,
+              headers.ecologicalDesignOfProductsAndServicesIndex);
+
             industries.push(new Industry(undefined, this.mapTextToWeightValue(cellEcologicalSupplyChainRisk.text),
+              this.mapTextToWeightValue(cellEcologicalDesignOfProductsAndServices.text),
               cellIndustryCode.text.trim()));
         }
         return industries;
