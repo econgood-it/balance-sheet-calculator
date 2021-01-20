@@ -17,6 +17,7 @@ describe('CompanyFactsUpdateDTO', () => {
         numberOfEmployees: 11,
         hasCanteen: true,
         averageJourneyToWorkForStaffInKm: 12,
+        isB2B: true,
         supplyFractions: [],
         employeesFractions: [],
         industrySectors: [],
@@ -68,6 +69,13 @@ describe('CompanyFactsUpdateDTO', () => {
             const companyFactsDTOUpdate: CompanyFactsDTOUpdate = CompanyFactsDTOUpdate.fromJSON(json);
             expect(companyFactsDTOUpdate.averageJourneyToWorkForStaffInKm).toBeUndefined();
         })
+
+        it('isB2B',  () => {
+            delete json.isB2B;
+            const companyFactsDTOUpdate: CompanyFactsDTOUpdate = CompanyFactsDTOUpdate.fromJSON(json);
+            expect(companyFactsDTOUpdate.isB2B).toBeUndefined();
+        })
+
     });
 
 })

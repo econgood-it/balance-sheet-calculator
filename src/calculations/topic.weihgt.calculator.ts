@@ -53,6 +53,9 @@ export class TopicWeihgtCalculator {
             case 'D3':
                 weight = this.calculateTopicWeightOfD3(calcResults);
                 break;
+            case 'D4':
+                weight = this.calculateTopicWeightOfD4(companyFacts);
+                break;
             default:
                 weight = 1;
                 break;
@@ -170,5 +173,9 @@ export class TopicWeihgtCalculator {
         } else {
             return 1.5;
         }
+    }
+
+    public calculateTopicWeightOfD4(companyFacts: CompanyFacts): number {
+        return companyFacts.isB2B ? 1.5 : 1;
     }
 }

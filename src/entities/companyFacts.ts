@@ -32,6 +32,8 @@ export class CompanyFacts {
   public numberOfEmployees: number;
   @Column()
   public hasCanteen: boolean;
+  @Column()
+  public isB2B: boolean;
   @Column("double precision")
   public averageJourneyToWorkForStaffInKm: number;
   @OneToMany(type => SupplyFraction, supplyFraction => supplyFraction.companyFacts, { cascade: true })
@@ -56,6 +58,7 @@ export class CompanyFacts {
     numberOfEmployees: number,
     hasCanteen: boolean,
     averageJourneyToWorkForStaffInKm: number,
+    isB2B: boolean,
     supplyFractions: SupplyFraction[],
     employeesFractions: EmployeesFraction[],
     industrySectors: IndustrySector[]
@@ -76,6 +79,7 @@ export class CompanyFacts {
     this.totalSales = totalSales;
     this.numberOfEmployees = numberOfEmployees;
     this.hasCanteen = hasCanteen;
+    this.isB2B = isB2B;
     this.averageJourneyToWorkForStaffInKm = averageJourneyToWorkForStaffInKm;
   }
 

@@ -73,6 +73,15 @@ describe('Company Facts entity', () => {
             await companyFactsRepository.remove(result);
             done();
         })
+
+        it('isB2B', async (done) => {
+            companyFacts.isB2B = true;
+            const result = await companyFactsRepository.save(companyFacts);
+            expect(result.isB2B).toBeTruthy();
+            await companyFactsRepository.remove(result);
+            done();
+        })
+
     });
 
 
