@@ -187,4 +187,12 @@ A4Weight(itucAverage) = \begin{cases}
     E3Weight &= D3Weight
 \end{align*}
 
+\begin{align*}
+    E4Weight(industrySector1) &= \begin{cases}
+      1.5 &\mbox{if } industrySector1 = Mining (B) \vee industrySector1 = Construction Industry (F) \\
+      0.5 &\mbox{if } companySize is micro or small \\
+      1 &\mbox{else } \\
+    \end{cases}
+\end{align*}
+
 \end{document}

@@ -38,6 +38,7 @@ describe('Topic Weight Calculator', () => {
       },
       socialEnvironmentCalcResults: {
         profitInPercentOfTotalSales: some(0),
+        companyIsActiveInMiningOrConstructionIndustry: false,
       }
     }
   })
@@ -321,6 +322,30 @@ describe('Topic Weight Calculator', () => {
     calcResults.customerCalcResults.sumOfEcologicalDesignOfProductsAndService = 1.25;
     result = await calc(topicShortName, calcResults, companyFacts);
     expect(result).toBeCloseTo(1.5,numDigits);
+    done();
+  })
+
+  it('should calculate topic weight of E4', async (done) => {
+    const topicShortName = 'E4';
+    calcResults.socialEnvironmentCalcResults.companyIsActiveInMiningOrConstructionIndustry = true;
+    let result = await calc(topicShortName, calcResults, companyFacts);
+    expect(result).toBeCloseTo(1.5,numDigits);
+
+    calcResults.socialEnvironmentCalcResults.companyIsActiveInMiningOrConstructionIndustry = false;
+    calcResults.employeesCalcResults.companySize = CompanySize.micro;
+    result = await calc(topicShortName, calcResults, companyFacts);
+    expect(result).toBeCloseTo(0.5, numDigits);
+
+    calcResults.socialEnvironmentCalcResults.companyIsActiveInMiningOrConstructionIndustry = false;
+    calcResults.employeesCalcResults.companySize = CompanySize.small;
+    result = await calc(topicShortName, calcResults, companyFacts);
+    expect(result).toBeCloseTo(0.5, numDigits);
+
+    calcResults.socialEnvironmentCalcResults.companyIsActiveInMiningOrConstructionIndustry = false;
+    calcResults.employeesCalcResults.companySize = CompanySize.middle;
+    result = await calc(topicShortName, calcResults, companyFacts);
+    expect(result).toBeCloseTo(1,numDigits);
+
     done();
   })
 

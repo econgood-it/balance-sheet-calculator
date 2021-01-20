@@ -47,4 +47,26 @@ describe('Social Environment Calculator', () => {
     done();
   })
 
+  it('should return that company is active in mining', async (done) => {
+    companyFacts.industrySectors = [new IndustrySector(undefined, 'B', 0, "")]
+    const socialEnvironmentCalcResults = await new SocialEnvironmentCalc().calculate(companyFacts);
+    expect(socialEnvironmentCalcResults.companyIsActiveInMiningOrConstructionIndustry).toBeTruthy();
+    done();
+  })
+
+  it('should return that company is active in construction industry', async (done) => {
+    companyFacts.industrySectors = [new IndustrySector(undefined, 'F', 0, "")]
+    const socialEnvironmentCalcResults = await new SocialEnvironmentCalc().calculate(companyFacts);
+    expect(socialEnvironmentCalcResults.companyIsActiveInMiningOrConstructionIndustry).toBeTruthy();
+    done();
+  })
+
+  it('should return that company is not active in mining or construction industry', async (done) => {
+    companyFacts.industrySectors = [new IndustrySector(undefined, 'A', 0, ""),
+      new IndustrySector(undefined, 'Ce', 0, "")]
+    const socialEnvironmentCalcResults = await new SocialEnvironmentCalc().calculate(companyFacts);
+    expect(socialEnvironmentCalcResults.companyIsActiveInMiningOrConstructionIndustry).toBeFalsy();
+    done();
+  })
+
 })
