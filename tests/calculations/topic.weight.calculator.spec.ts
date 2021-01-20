@@ -260,4 +260,17 @@ describe('Topic Weight Calculator', () => {
     done();
   })
 
+  it('should calculate topic weight of D4', async (done) => {
+    const topicShortName = 'D4';
+    companyFacts.isB2B = true;
+    let result = await calc(topicShortName, calcResults, companyFacts);
+    expect(result).toBeCloseTo(1.5,numDigits);
+
+    companyFacts.isB2B = false;
+    result = await calc(topicShortName, calcResults, companyFacts);
+    expect(result).toBeCloseTo(1,numDigits);
+
+    done();
+  })
+
 })
