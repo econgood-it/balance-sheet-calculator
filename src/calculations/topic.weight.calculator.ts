@@ -65,6 +65,9 @@ export class TopicWeightCalculator {
             case 'E3':
                 weight = this.calculateTopicWeightOfD3AndE3(calcResults);
                 break;
+            case 'E4':
+                weight = this.calculateTopicWeightOfE4(calcResults);
+                break;
             default:
                 weight = 1;
                 break;
@@ -201,6 +204,16 @@ export class TopicWeightCalculator {
         } else {
             return 1;
         }
+    }
 
+    public calculateTopicWeightOfE4(calcResults: CalcResults): number {
+        if (calcResults.socialEnvironmentCalcResults.companyIsActiveInMiningOrConstructionIndustry) {
+            return 1.5;
+        } else if (calcResults.employeesCalcResults.companySize === CompanySize.micro ||
+            calcResults.employeesCalcResults.companySize === CompanySize.small) {
+            return 0.5;
+        } else {
+            return 1;
+        }
     }
 }
