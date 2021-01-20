@@ -1,12 +1,12 @@
 import { StakeholderWeightCalculator } from "./stakeholder.weight.calculator";
 import { Topic } from "../entities/topic";
 import {CalcResults} from "./calculator";
-import {TopicWeihgtCalculator} from "./topic.weihgt.calculator";
+import {TopicWeightCalculator} from "./topic.weight.calculator";
 import {CompanyFacts} from "../entities/companyFacts";
 
 export class TopicUpdater {
     private stakeholderWeightCalculator: StakeholderWeightCalculator = new StakeholderWeightCalculator();
-    private topicWeightCalculator: TopicWeihgtCalculator = new TopicWeihgtCalculator();
+    private topicWeightCalculator: TopicWeightCalculator = new TopicWeightCalculator();
 
     public async update(topics: Topic[], companyFacts: CompanyFacts, calcResults: CalcResults): Promise<void> {
         let sumOfTopicWeights = 0;

@@ -3,7 +3,7 @@ import {CompanyFacts} from "../entities/companyFacts";
 import {CompanySize} from "./employees.calc";
 
 
-export class TopicWeihgtCalculator {
+export class TopicWeightCalculator {
 
     public async calcTopicWeight(topicShortName: string, calcResults: CalcResults, companyFacts: CompanyFacts): Promise<number> {
         let weight: number = 1;
@@ -55,6 +55,9 @@ export class TopicWeihgtCalculator {
                 break;
             case 'D4':
                 weight = this.calculateTopicWeightOfD4(companyFacts);
+                break;
+            case 'E1':
+                weight = this.constantWeight();
                 break;
             default:
                 weight = 1;
