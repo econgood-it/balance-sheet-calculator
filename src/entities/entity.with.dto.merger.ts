@@ -50,6 +50,7 @@ export class EntityWithDtoMerger {
         companyFacts.hasCanteen = this.mergeVal(companyFacts.hasCanteen, companyFactsDTOUpdate.hasCanteen);
         companyFacts.averageJourneyToWorkForStaffInKm = this.mergeVal(companyFacts.averageJourneyToWorkForStaffInKm,
           companyFactsDTOUpdate.averageJourneyToWorkForStaffInKm);
+        companyFacts.isB2B = this.mergeVal(companyFacts.isB2B, companyFactsDTOUpdate.isB2B);
         if (companyFactsDTOUpdate.industrySectors) {
             await this.replaceIndustrySectors(companyFacts, companyFactsDTOUpdate.industrySectors);
         }

@@ -223,5 +223,19 @@ describe('EntityWithDTOMerger', () => {
             done();
         });
 
+        it('using isB2B from db', async (done) => {
+            companyFacts.isB2B = true;
+            await merge({});
+            expect(companyFacts.isB2B).toBeTruthy();
+            done();
+        });
+
+        it('using isB2B from dto', async (done) => {
+            companyFacts.isB2B = true;
+            await merge({isB2B: false});
+            expect(companyFacts.isB2B).toBeFalsy();
+            done();
+        });
+
     });
 })
