@@ -43,6 +43,8 @@ export class CompanyFactsDTOCreate {
   @Min(0)
   @IsNumber({ maxDecimalPlaces: 2 })
   public readonly averageJourneyToWorkForStaffInKm;
+  @IsBoolean()
+  public readonly isB2B: boolean;
   @ValidateNested()
   public readonly supplyFractions: SupplyFractionDTOCreate[];
   @ValidateNested()
@@ -64,6 +66,7 @@ export class CompanyFactsDTOCreate {
     numberOfEmployees: number,
     hasCanteen: boolean,
     averageJourneyToWorkForStaffInKm: number,
+    isB2B: boolean,
     supplyFractions: SupplyFractionDTOCreate[],
     employeesFractions: EmployeesFractionDTOCreate[],
     industrySectors: IndustrySectorCreateDtoCreate[]
@@ -84,6 +87,7 @@ export class CompanyFactsDTOCreate {
     this.numberOfEmployees = numberOfEmployees;
     this.hasCanteen = hasCanteen;
     this.averageJourneyToWorkForStaffInKm = averageJourneyToWorkForStaffInKm;
+    this.isB2B = isB2B;
   }
 
   public static readonly fromJSON = strictObjectMapper(
@@ -102,6 +106,7 @@ export class CompanyFactsDTOCreate {
         accessor.get('numberOfEmployees', expectNumber),
         accessor.get('hasCanteen', expectBoolean),
         accessor.get('averageJourneyToWorkForStaffInKm', expectNumber),
+        accessor.get('isB2B', expectBoolean),
         accessor.get('supplyFractions', arrayMapper(SupplyFractionDTOCreate.fromJSON)),
         accessor.get('employeesFractions', arrayMapper(EmployeesFractionDTOCreate.fromJSON)),
         accessor.get('industrySectors', arrayMapper(IndustrySectorCreateDtoCreate.fromJSON))
@@ -112,7 +117,7 @@ export class CompanyFactsDTOCreate {
     return new CompanyFacts(undefined, this.totalPurchaseFromSuppliers, this.totalStaffCosts,
       this.profit, this.financialCosts, this.incomeFromFinancialInvestments, this.additionsToFixedAssets, this.turnover,
       this.totalAssets, this.financialAssetsAndCashBalance, this.totalSales,
-      this.numberOfEmployees, this.hasCanteen, this.averageJourneyToWorkForStaffInKm,
+      this.numberOfEmployees, this.hasCanteen, this.averageJourneyToWorkForStaffInKm, this.isB2B,
       this.supplyFractions.map(sf => sf.toSupplyFraction()),
       this.employeesFractions.map(ef => ef.toEmployeesFraction()), this.industrySectors.map(is => is.toIndustrySector()));
   }
