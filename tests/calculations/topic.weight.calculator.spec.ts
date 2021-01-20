@@ -31,6 +31,9 @@ describe('Topic Weight Calculator', () => {
         normedEmployeesRisk: 1.3,
         companySize: CompanySize.micro,
         itucAverage: 0
+      },
+      customerCalcResults: {
+        sumOfEcologicalDesignOfProductsAndService: 0
       }
     }
   })
@@ -234,6 +237,26 @@ describe('Topic Weight Calculator', () => {
     const topicShortName = 'D2';
     const result = await calc(topicShortName, calcResults, companyFacts);
     expect(result).toBeCloseTo(1,numDigits);
+    done();
+  })
+
+  it('should calculate topic weight of D3', async (done) => {
+    const topicShortName = 'D3';
+    calcResults.customerCalcResults.sumOfEcologicalDesignOfProductsAndService = 0.74;
+    let result = await calc(topicShortName, calcResults, companyFacts);
+    expect(result).toBeCloseTo(0.5,numDigits);
+
+    calcResults.customerCalcResults.sumOfEcologicalDesignOfProductsAndService = 1.24;
+    result = await calc(topicShortName, calcResults, companyFacts);
+    expect(result).toBeCloseTo(1,numDigits);
+
+    calcResults.customerCalcResults.sumOfEcologicalDesignOfProductsAndService = 1.76;
+    result = await calc(topicShortName, calcResults, companyFacts);
+    expect(result).toBeCloseTo(2,numDigits);
+
+    calcResults.customerCalcResults.sumOfEcologicalDesignOfProductsAndService = 1.25;
+    result = await calc(topicShortName, calcResults, companyFacts);
+    expect(result).toBeCloseTo(1.5,numDigits);
     done();
   })
 
