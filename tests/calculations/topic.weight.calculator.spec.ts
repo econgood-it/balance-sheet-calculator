@@ -1,4 +1,4 @@
-import {TopicWeihgtCalculator} from "../../src/calculations/topic.weihgt.calculator";
+import {TopicWeightCalculator} from "../../src/calculations/topic.weight.calculator";
 import {CalcResults} from "../../src/calculations/calculator";
 import {CompanyFacts} from "../../src/entities/companyFacts";
 import {EmptyCompanyFacts} from "../testData/company.facts";
@@ -8,7 +8,7 @@ describe('Topic Weight Calculator', () => {
 
   let calcResults: CalcResults;
   let companyFacts: CompanyFacts;
-  const topicWeihgtCalculator = new TopicWeihgtCalculator();
+  const topicWeihgtCalculator = new TopicWeightCalculator();
   const numDigits = 2;
   const calc = async (topicShortName: string, calcResults: CalcResults, companyFacts: CompanyFacts) =>
     await topicWeihgtCalculator.calcTopicWeight(topicShortName, calcResults, companyFacts)
@@ -270,6 +270,13 @@ describe('Topic Weight Calculator', () => {
     result = await calc(topicShortName, calcResults, companyFacts);
     expect(result).toBeCloseTo(1,numDigits);
 
+    done();
+  })
+
+  it('should calculate topic weight of E1', async (done) => {
+    const topicShortName = 'E1';
+    const result = await calc(topicShortName, calcResults, companyFacts);
+    expect(result).toBeCloseTo(1,numDigits);
     done();
   })
 
