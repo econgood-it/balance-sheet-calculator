@@ -5,7 +5,6 @@ import { BalanceSheetService } from '../services/balance.sheet.service';
 export class BalanceSheetController {
 
   constructor(private app: Application, public balanceSheetService: BalanceSheetService) {
-    this.balanceSheetService = balanceSheetService;
     this.routes();
   }
 

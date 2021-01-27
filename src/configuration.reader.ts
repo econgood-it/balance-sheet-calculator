@@ -8,7 +8,7 @@ export class Configuration {
     constructor(public readonly dbName: string, public readonly dbPort: number, public readonly dbUser: string,
         public readonly dbPassword: string, public readonly environment: Environment,
         public readonly appUsername: string, public readonly appPassword: string,
-        public readonly appPort: number) {
+        public readonly appPort: number, public readonly jwtSecret: string) {
         const basePath = environment == Environment.PROD ? 'dist/' : 'src/';
         const fileExtension = environment == Environment.PROD ? 'js' : 'ts';
         this.entityRegex = basePath + 'entities/**/*.' + fileExtension;
@@ -27,6 +27,7 @@ export class ConfigurationReader {
         const appPort = process.env.PORT;
         const appUser = process.env.USERNAME;
         const appPassword = process.env.PASSWORD;
+        const jwtsecret = process.env.JWT_SECRET;
         ConfigurationReader.checkIfEnvironmentVariableIsSet('DB_NAME', dbName);
         ConfigurationReader.checkIfEnvironmentVariableIsSet('DB_PORT', dbPort);
         ConfigurationReader.checkIfEnvironmentVariableIsSet('DB_USER', dbUser);
@@ -35,6 +36,7 @@ export class ConfigurationReader {
         ConfigurationReader.checkIfEnvironmentVariableIsSet('USERNAME', appUser);
         ConfigurationReader.checkIfEnvironmentVariableIsSet('PASSWORD', appPassword);
         ConfigurationReader.checkIfEnvironmentVariableIsSet('PORT', appPort);
+        ConfigurationReader.checkIfEnvironmentVariableIsSet('JWT_SECRET', jwtsecret);
         let environmentAsEnum: Environment;
         if (environment === "DEV") {
             environmentAsEnum = Environment.DEV;
@@ -44,7 +46,7 @@ export class ConfigurationReader {
             throw Error('Unsupported value for ENVIRONMENT. Allowed are only DEV and PROD');
         }
         return new Configuration(dbName as string, Number(dbPort), dbUser as string, dbPassword as string,
-            environmentAsEnum, appUser as string, appPassword as string, Number(appPort));
+            environmentAsEnum, appUser as string, appPassword as string, Number(appPort), jwtsecret as string);
     }
 
     private static checkIfEnvironmentVariableIsSet(envName: string, envValue: any): void {
