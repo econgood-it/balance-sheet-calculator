@@ -17,6 +17,8 @@ import {Industry} from "../entities/industry";
 import {IndustrySector} from "../entities/industry.sector";
 import {RegionProvider} from "../providers/region.provider";
 import {IndustryProvider} from "../providers/industry.provider";
+import {MatrixTopicDTO} from "../dto/matrix/matrix.topic.dto";
+import {MatrixDTO} from "../dto/matrix/matrix.dto";
 
 
 
@@ -24,7 +26,7 @@ export class BalanceSheetService {
   private static readonly BALANCE_SHEET_RELATIONS = ['rating', 'companyFacts',
     'companyFacts.supplyFractions', 'companyFacts.employeesFractions',
     'companyFacts.industrySectors', 'rating.topics', 'rating.topics.aspects'];
-
+  private static readonly RATING_RELATIONS = ['rating','rating.topics', 'rating.topics.aspects'];
 
   constructor(private connection: Connection) {
   }
@@ -74,9 +76,23 @@ export class BalanceSheetService {
       const balanceSheet = await balanceSheetRepository.findOneOrFail(balanceSheetId, {
         relations: BalanceSheetService.BALANCE_SHEET_RELATIONS
       });
-      const balanceSheetResponse: BalanceSheet = await balanceSheetRepository.save(balanceSheet);
-      this.sortArraysOfBalanceSheet(balanceSheetResponse);
-      res.json(balanceSheetResponse);
+      this.sortArraysOfBalanceSheet(balanceSheet);
+      res.json(balanceSheet);
+    }).catch(error => {
+      this.handleError(error, next);
+    });
+  }
+
+
+  public getMatrixRepresentationOfBalanceSheet(req: Request, res: Response, next: NextFunction) {
+    this.connection.manager.transaction(async entityManager => {
+      const balanceSheetRepository = entityManager.getRepository(BalanceSheet);
+      const balanceSheetId: number = Number(req.params.id);
+      const balanceSheet = await balanceSheetRepository.findOneOrFail(balanceSheetId, {
+        relations: BalanceSheetService.RATING_RELATIONS
+      });
+      this.sortArraysOfBalanceSheet(balanceSheet);
+      res.json(MatrixDTO.fromRating(balanceSheet.rating));
     }).catch(error => {
       this.handleError(error, next);
     });

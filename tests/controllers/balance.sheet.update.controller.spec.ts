@@ -12,6 +12,7 @@ describe('Update endpoint of Balance Sheet Controller', () => {
     let connection: Connection;
     let app: Application;
     const configuration = ConfigurationReader.read();
+    const endpointPath = '/v1/balancesheets'
     beforeAll(async (done) => {
         connection = await DatabaseConnectionCreator.createConnectionAndRunMigrations(configuration);
         app = new App(connection, configuration).app;
@@ -26,7 +27,7 @@ describe('Update endpoint of Balance Sheet Controller', () => {
     it('should update company facts of balance sheet', async (done) => {
         const testApp = supertest(app);
 
-        let response = await testApp.post('/balancesheets').auth(configuration.appUsername,
+        let response = await testApp.post(endpointPath).auth(configuration.appUsername,
             configuration.appPassword).send({
                 type: BalanceSheetType.Compact, version: BalanceSheetVersion.v5_0_4,
                 companyFacts: CompanyFacts1
@@ -55,7 +56,7 @@ describe('Update endpoint of Balance Sheet Controller', () => {
                 industrySectors: []
             }
         }
-        response = await testApp.patch(`/balancesheets/${response.body.id}`).auth(configuration.appUsername,
+        response = await testApp.patch(`${endpointPath}/${response.body.id}`).auth(configuration.appUsername,
             configuration.appPassword).send({ ...balanceSheetUpdate });
         expect(response.status).toEqual(200);
         expect(response.body.companyFacts).toMatchObject(balanceSheetUpdate.companyFacts);
@@ -75,7 +76,7 @@ describe('Update endpoint of Balance Sheet Controller', () => {
     async function testEstimationsUpdate(balanceSheetType: BalanceSheetType): Promise<void> {
         const testApp = supertest(app);
 
-        let response = await testApp.post('/balancesheets').auth(configuration.appUsername,
+        let response = await testApp.post(endpointPath).auth(configuration.appUsername,
           configuration.appPassword).send({
             type: balanceSheetType, version: BalanceSheetVersion.v5_0_4,
             companyFacts: CompanyFacts1
@@ -100,7 +101,7 @@ describe('Update endpoint of Balance Sheet Controller', () => {
                 ]
             }
         }
-        response = await testApp.patch(`/balancesheets/${response.body.id}`).auth(configuration.appUsername,
+        response = await testApp.patch(`${endpointPath}/${response.body.id}`).auth(configuration.appUsername,
           configuration.appPassword).send({ ...balanceSheetUpdate });
         expect(response.status).toEqual(200);
         const aspectA11 = findAspect('A1.1', response);

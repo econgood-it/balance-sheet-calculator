@@ -20,7 +20,7 @@ describe('Balance Sheet Controller', () => {
     let app: Application;
     const configuration = ConfigurationReader.read();
     let balanceSheetJson: any;
-    const endpointPath = '/balancesheets';
+    const endpointPath = '/v1/balancesheets';
     const assertTopicWeight = (shortName: string, expectedWeight: number, rating: Rating) => {
         const topic: Topic | undefined = rating.topics.find((t: Topic) => t.shortName==shortName);
         expect(topic).toBeDefined();
@@ -116,7 +116,7 @@ describe('Balance Sheet Controller', () => {
     })
     async function testMissingProperty(companyFacts: any, testApp: supertest.SuperTest<supertest.Test>,
         missingProperty: string): Promise<void> {
-        const response = await testApp.post('/balancesheets').auth(configuration.appUsername,
+        const response = await testApp.post(endpointPath).auth(configuration.appUsername,
             configuration.appPassword).send({
                 type: BalanceSheetType.Compact, version: BalanceSheetVersion.v5_0_4,
                 companyFacts

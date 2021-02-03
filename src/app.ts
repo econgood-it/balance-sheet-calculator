@@ -8,12 +8,15 @@ import { Connection } from 'typeorm';
 import { LoggingService } from './logging';
 import { BalanceSheetService } from './services/balance.sheet.service';
 import { ConfigurationReader, Configuration } from './configuration.reader';
+import {HealthCheckController} from "./controllers/health.check.controller";
+import {HealthCheckService} from "./services/health.check.service";
 
 
 class App {
   public readonly app: Application;
   //declaring our controllers
   private balanceSheetController: BalanceSheetController;
+  private healthCheckController: HealthCheckController;
   private authentication: Authentication;
 
 
@@ -25,6 +28,7 @@ class App {
     //Creating and assigning a new instance of our controller
     const balanceSheetService = new BalanceSheetService(connection);
     this.balanceSheetController = new BalanceSheetController(this.app, balanceSheetService);
+    this.healthCheckController = new HealthCheckController(this.app, new HealthCheckService());
   }
 
   public start() {

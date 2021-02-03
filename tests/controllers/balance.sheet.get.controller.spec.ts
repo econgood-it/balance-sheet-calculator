@@ -13,7 +13,7 @@ describe('Balance Sheet Controller', () => {
     let app: Application;
     const configuration = ConfigurationReader.read();
     let balanceSheetJson: any;
-    const endpointPath = '/balancesheets';
+    const endpointPath = '/v1/balancesheets';
 
     beforeAll(async (done) => {
         connection = await DatabaseConnectionCreator.createConnectionAndRunMigrations(configuration);
@@ -45,6 +45,17 @@ describe('Balance Sheet Controller', () => {
         expect(response.body.rating).toMatchObject(postResponse.body.rating);
         expect(response.body.rating.topics.reduce((sum: number, current: Topic) => sum + current.maxPoints,
           0)).toBeCloseTo(999.9999999999998);
+        done();
+    })
+
+    it('get matrix representation of balance sheet by id', async (done) => {
+        const testApp = supertest(app);
+        const postResponse = await testApp.post(endpointPath).auth(configuration.appUsername,
+          configuration.appPassword).send(balanceSheetJson);
+        const response = await testApp.get(`${endpointPath}/${postResponse.body.id}/matrix`).auth(
+            configuration.appUsername, configuration.appPassword).send();
+        expect(response.status).toEqual(200);
+        expect(response.body.topics).toHaveLength(20);
         done();
     })
 
