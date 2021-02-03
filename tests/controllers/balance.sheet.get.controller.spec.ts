@@ -13,7 +13,7 @@ describe('Balance Sheet Controller', () => {
     let app: Application;
     const configuration = ConfigurationReader.read();
     let balanceSheetJson: any;
-    const endpointPath = '/balancesheets';
+    const endpointPath = '/v1/balancesheets';
 
     beforeAll(async (done) => {
         connection = await DatabaseConnectionCreator.createConnectionAndRunMigrations(configuration);
