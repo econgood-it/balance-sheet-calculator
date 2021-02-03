@@ -3,7 +3,6 @@ package-lock.json
 dist
 .idea
 .env-cmdrc.json
-coverage/
 combined.log
 error.log
 *.csv#
