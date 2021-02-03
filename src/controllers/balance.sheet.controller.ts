@@ -10,6 +10,8 @@ export class BalanceSheetController {
 
   public routes() {
     this.app.get("/v1/balancesheets/:id", this.balanceSheetService.getBalanceSheet.bind(this.balanceSheetService));
+    this.app.get("/v1/balancesheets/:id/matrix", this.balanceSheetService.getMatrixRepresentationOfBalanceSheet.bind(
+      this.balanceSheetService));
     this.app.post("/v1/balancesheets", this.balanceSheetService.createBalanceSheet.bind(this.balanceSheetService));
     this.app.patch("/v1/balancesheets/:id", this.balanceSheetService.updateBalanceSheet.bind(this.balanceSheetService));
   }

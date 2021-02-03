@@ -48,6 +48,16 @@ describe('Balance Sheet Controller', () => {
         done();
     })
 
+    it('get matrix representation of balance sheet by id', async (done) => {
+        const testApp = supertest(app);
+        const postResponse = await testApp.post(endpointPath).auth(configuration.appUsername,
+          configuration.appPassword).send(balanceSheetJson);
+        const response = await testApp.get(`${endpointPath}/${postResponse.body.id}/matrix`).auth(configuration.appUsername,
+          configuration.appPassword).send();
+        expect(response.status).toEqual(200);
+        done();
+    })
+
 
 
 })

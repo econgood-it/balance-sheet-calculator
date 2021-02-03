@@ -82,6 +82,11 @@ export class BalanceSheetService {
     });
   }
 
+
+  public getMatrixRepresentationOfBalanceSheet(req: Request, res: Response, next: NextFunction) {
+
+  }
+
   private handleError(error: Error, next: NextFunction) {
     if (error instanceof JsonMappingError) {
       next(new BadRequestException(error.message));
