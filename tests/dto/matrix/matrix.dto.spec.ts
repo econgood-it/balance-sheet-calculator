@@ -26,4 +26,20 @@ describe('Matrix DTO', () => {
     done()
   })
 
+  it('has topic A1 with 30 of 50 reached points',  async (done) => {
+    rating.topics[0].points = 30;
+    rating.topics[0].maxPoints = 50;
+    const matrixDTO = MatrixDTO.fromRating(rating);
+    expect(matrixDTO.topics[0].pointsReached).toBe('30 of 50');
+    done()
+  })
+
+  it('has topic E4 with 20 of 60 reached points',  async (done) => {
+    rating.topics[0].points = 20;
+    rating.topics[0].maxPoints = 60;
+    const matrixDTO = MatrixDTO.fromRating(rating);
+    expect(matrixDTO.topics[0].pointsReached).toBe('20 of 60');
+    done()
+  })
+
 })

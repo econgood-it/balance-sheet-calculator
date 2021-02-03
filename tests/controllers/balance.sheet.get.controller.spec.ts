@@ -52,9 +52,10 @@ describe('Balance Sheet Controller', () => {
         const testApp = supertest(app);
         const postResponse = await testApp.post(endpointPath).auth(configuration.appUsername,
           configuration.appPassword).send(balanceSheetJson);
-        const response = await testApp.get(`${endpointPath}/${postResponse.body.id}/matrix`).auth(configuration.appUsername,
-          configuration.appPassword).send();
+        const response = await testApp.get(`${endpointPath}/${postResponse.body.id}/matrix`).auth(
+            configuration.appUsername, configuration.appPassword).send();
         expect(response.status).toEqual(200);
+        expect(response.body.topics).toHaveLength(20);
         done();
     })
 

@@ -11,7 +11,7 @@ export class MatrixDTO {
   public static fromRating(rating: Rating): MatrixDTO {
     const topics: MatrixTopicDTO[] = [];
     for (const topic of rating.topics) {
-      topics.push(new MatrixTopicDTO('','','', ''))
+      topics.push(MatrixTopicDTO.fromTopic(topic));
     }
     return new MatrixDTO(topics);
   }
