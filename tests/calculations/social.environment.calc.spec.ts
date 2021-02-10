@@ -30,20 +30,20 @@ describe('Social Environment Calculator', () => {
     done();
   })
 
-  it('should return empty option if totalSales is zero', async (done) => {
+  it('should return empty option if turnover is zero', async (done) => {
     companyFacts.profit = 0;
-    companyFacts.totalSales = 0;
+    companyFacts.turnover = 0;
     const socialEnvironmentCalcResults = await new SocialEnvironmentCalc().calculate(companyFacts);
-    expect(socialEnvironmentCalcResults.profitInPercentOfTotalSales.isPresent()).toBeFalsy();
+    expect(socialEnvironmentCalcResults.profitInPercentOfTurnover.isPresent()).toBeFalsy();
     done();
   })
 
-  it('should return result if totalSales is not zero', async (done) => {
+  it('should return result if turnover is not zero', async (done) => {
     companyFacts.profit = 4;
-    companyFacts.totalSales = 8;
+    companyFacts.turnover = 8;
     const socialEnvironmentCalcResults = await new SocialEnvironmentCalc().calculate(companyFacts);
-    expect(socialEnvironmentCalcResults.profitInPercentOfTotalSales.isPresent()).toBeTruthy();
-    expect(socialEnvironmentCalcResults.profitInPercentOfTotalSales.get()).toBeCloseTo(0.5, 2);
+    expect(socialEnvironmentCalcResults.profitInPercentOfTurnover.isPresent()).toBeTruthy();
+    expect(socialEnvironmentCalcResults.profitInPercentOfTurnover.get()).toBeCloseTo(0.5, 2);
     done();
   })
 

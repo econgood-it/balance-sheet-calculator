@@ -34,9 +34,6 @@ export class CompanyFactsDTOCreate {
   public readonly financialAssetsAndCashBalance: number;
   @Min(0)
   @IsNumber({ maxDecimalPlaces: 2 })
-  public readonly totalSales: number;
-  @Min(0)
-  @IsNumber({ maxDecimalPlaces: 2 })
   public readonly numberOfEmployees: number;
   @IsBoolean()
   public readonly hasCanteen: boolean;
@@ -62,7 +59,6 @@ export class CompanyFactsDTOCreate {
     turnover: number,
     totalAssets: number,
     financialAssetsAndCashBalance: number,
-    totalSales: number,
     numberOfEmployees: number,
     hasCanteen: boolean,
     averageJourneyToWorkForStaffInKm: number,
@@ -83,7 +79,6 @@ export class CompanyFactsDTOCreate {
     this.employeesFractions = employeesFractions;
     this.industrySectors = industrySectors;
     this.financialAssetsAndCashBalance = financialAssetsAndCashBalance;
-    this.totalSales = totalSales;
     this.numberOfEmployees = numberOfEmployees;
     this.hasCanteen = hasCanteen;
     this.averageJourneyToWorkForStaffInKm = averageJourneyToWorkForStaffInKm;
@@ -102,7 +97,6 @@ export class CompanyFactsDTOCreate {
         accessor.get('turnover', expectNumber),
         accessor.get('totalAssets', expectNumber),
         accessor.get('financialAssetsAndCashBalance', expectNumber),
-        accessor.get('totalSales', expectNumber),
         accessor.get('numberOfEmployees', expectNumber),
         accessor.get('hasCanteen', expectBoolean),
         accessor.get('averageJourneyToWorkForStaffInKm', expectNumber),
@@ -116,7 +110,7 @@ export class CompanyFactsDTOCreate {
   public toCompanyFacts(): CompanyFacts {
     return new CompanyFacts(undefined, this.totalPurchaseFromSuppliers, this.totalStaffCosts,
       this.profit, this.financialCosts, this.incomeFromFinancialInvestments, this.additionsToFixedAssets, this.turnover,
-      this.totalAssets, this.financialAssetsAndCashBalance, this.totalSales,
+      this.totalAssets, this.financialAssetsAndCashBalance,
       this.numberOfEmployees, this.hasCanteen, this.averageJourneyToWorkForStaffInKm, this.isB2B,
       this.supplyFractions.map(sf => sf.toSupplyFraction()),
       this.employeesFractions.map(ef => ef.toEmployeesFraction()), this.industrySectors.map(is => is.toIndustrySector()));

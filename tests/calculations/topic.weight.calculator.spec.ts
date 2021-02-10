@@ -37,7 +37,7 @@ describe('Topic Weight Calculator', () => {
         sumOfEcologicalDesignOfProductsAndService: 0
       },
       socialEnvironmentCalcResults: {
-        profitInPercentOfTotalSales: some(0),
+        profitInPercentOfTurnover: some(0),
         companyIsActiveInMiningOrConstructionIndustry: false,
       }
     }
@@ -287,19 +287,19 @@ describe('Topic Weight Calculator', () => {
 
   it('should calculate topic weight of E2', async (done) => {
     const topicShortName = 'E2';
-    calcResults.socialEnvironmentCalcResults.profitInPercentOfTotalSales = some(0.11);
+    calcResults.socialEnvironmentCalcResults.profitInPercentOfTurnover = some(0.11);
     let result = await calc(topicShortName, calcResults, companyFacts);
     expect(result).toBeCloseTo(1.5, numDigits);
 
-    calcResults.socialEnvironmentCalcResults.profitInPercentOfTotalSales = none();
+    calcResults.socialEnvironmentCalcResults.profitInPercentOfTurnover = none();
     result = await calc(topicShortName, calcResults, companyFacts);
     expect(result).toBeCloseTo(1, numDigits);
 
-    calcResults.socialEnvironmentCalcResults.profitInPercentOfTotalSales = some(0.04);
+    calcResults.socialEnvironmentCalcResults.profitInPercentOfTurnover = some(0.04);
     result = await calc(topicShortName, calcResults, companyFacts);
     expect(result).toBeCloseTo(0.5, numDigits);
 
-    calcResults.socialEnvironmentCalcResults.profitInPercentOfTotalSales = some(0.09);
+    calcResults.socialEnvironmentCalcResults.profitInPercentOfTurnover = some(0.09);
     result = await calc(topicShortName, calcResults, companyFacts);
     expect(result).toBeCloseTo(1, numDigits);
     done();

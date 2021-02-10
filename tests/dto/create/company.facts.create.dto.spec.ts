@@ -15,7 +15,6 @@ describe('CompanyFactsCreateDTO', () => {
             turnover: 7,
             totalAssets: 8,
             financialAssetsAndCashBalance: 9,
-            totalSales: 10,
             numberOfEmployees: 11,
             hasCanteen: true,
             averageJourneyToWorkForStaffInKm: 12,

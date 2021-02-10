@@ -3,7 +3,7 @@ import {IndustryProvider} from "../providers/industry.provider";
 import {none, Option, some} from "./option";
 
 export interface SocialEnvironmentCalcResults {
-  profitInPercentOfTotalSales: Option<number>,
+  profitInPercentOfTurnover: Option<number>,
   companyIsActiveInMiningOrConstructionIndustry: boolean
 }
 
@@ -17,13 +17,13 @@ export class SocialEnvironmentCalc {
 
   public calculate(companyFacts: CompanyFacts): SocialEnvironmentCalcResults  {
     return {
-      profitInPercentOfTotalSales: this.calcProfitInPercentOfTotalSales(companyFacts),
+      profitInPercentOfTurnover: this.calcProfitInPercentOfTotalSales(companyFacts),
       companyIsActiveInMiningOrConstructionIndustry: this.checkCompanysActivityInMiningOrConstructionIndustry(companyFacts)
     };
   }
 
   private calcProfitInPercentOfTotalSales(companyFacts: CompanyFacts): Option<number> {
-    return companyFacts.totalSales === 0 ? none() : some(companyFacts.profit / companyFacts.totalSales);
+    return companyFacts.turnover === 0 ? none() : some(companyFacts.profit / companyFacts.turnover);
   }
 
   private checkCompanysActivityInMiningOrConstructionIndustry(companyFacts: CompanyFacts): boolean {

@@ -192,8 +192,8 @@ export class TopicWeightCalculator {
     }
 
     public calculateTopicWeightOfE2(calcResults: CalcResults): number {
-        if (calcResults.socialEnvironmentCalcResults.profitInPercentOfTotalSales.isPresent()) {
-            const profitInPercentOfTotalSales = calcResults.socialEnvironmentCalcResults.profitInPercentOfTotalSales.get() as number;
+        if (calcResults.socialEnvironmentCalcResults.profitInPercentOfTurnover.isPresent()) {
+            const profitInPercentOfTotalSales = calcResults.socialEnvironmentCalcResults.profitInPercentOfTurnover.get() as number;
             if (profitInPercentOfTotalSales < 0.05) {
                 return 0.5;
             } else if (profitInPercentOfTotalSales > 0.1) {

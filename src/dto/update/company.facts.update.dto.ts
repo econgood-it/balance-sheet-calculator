@@ -50,10 +50,6 @@ export class CompanyFactsDTOUpdate {
   @IsOptional()
   @Min(0)
   @IsNumber({ maxDecimalPlaces: 2 })
-  public readonly totalSales?: number;
-  @IsOptional()
-  @Min(0)
-  @IsNumber({ maxDecimalPlaces: 2 })
   public readonly numberOfEmployees?: number;
   @IsOptional()
   @IsBoolean()
@@ -85,7 +81,6 @@ export class CompanyFactsDTOUpdate {
     turnover?: number,
     totalAssets?: number,
     financialAssetsAndCashBalance?: number,
-    totalSales?: number,
     numberOfEmployees?: number,
     hasCanteen?: boolean,
     averageJourneyToWorkForStaffInKm?: number,
@@ -103,7 +98,6 @@ export class CompanyFactsDTOUpdate {
     this.turnover = turnover;
     this.totalAssets = totalAssets;
     this.financialAssetsAndCashBalance = financialAssetsAndCashBalance;
-    this.totalSales = totalSales;
     this.numberOfEmployees = numberOfEmployees;
     this.supplyFractions = supplyFractions;
     this.employeesFractions = employeesFractions;
@@ -125,7 +119,6 @@ export class CompanyFactsDTOUpdate {
         accessor.getOptional('turnover', expectNumber),
         accessor.getOptional('totalAssets', expectNumber),
         accessor.getOptional('financialAssetsAndCashBalance', expectNumber),
-        accessor.getOptional('totalSales', expectNumber),
         accessor.getOptional('numberOfEmployees', expectNumber),
         accessor.getOptional('hasCanteen', expectBoolean),
         accessor.getOptional('averageJourneyToWorkForStaffInKm', expectNumber),
