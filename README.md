@@ -53,3 +53,11 @@ npm run test
 ```
 The tests run in watch mode. That means, it automatically detects code changes and re-executes the tests.
 
+## Migrations
+The migrations for the database are located at the src/migrations folder.
+All migrations' file names are following the naming convention:
+EPOCHMILLISECONDS-DescriptionOfWhatTheMigrationDoes
+On linux systems you can retrieve the EPOCHMILLISECONDS via
+```shell script
+date +%s%3N
+```
