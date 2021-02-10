@@ -74,5 +74,17 @@ describe('Matrix Topic DTO', () => {
     expect(matrixTopicDTO.name).toBe('A1 name');
   })
 
+  it('is not applicable',  () => {
+    topic.weight = 0;
+    const matrixTopicDTO = MatrixTopicDTO.fromTopic(topic);
+    expect(matrixTopicDTO.notApplicable).toBeTruthy();
+  })
+
+  it('is applicable',  () => {
+    topic.weight = 0.5;
+    const matrixTopicDTO = MatrixTopicDTO.fromTopic(topic);
+    expect(matrixTopicDTO.notApplicable).toBeFalsy();
+  })
+
 
 })
