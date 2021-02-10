@@ -1,19 +1,22 @@
 import {Topic} from "../../entities/topic";
+import {none, Option, some} from "../../calculations/option";
+import {roundWithPrecision} from "../../math";
 
 export class MatrixTopicDTO {
 
   constructor(public readonly shortName: string,
               public readonly name: string,
-              public readonly pointsReached: string,
-              public readonly percentageReached: string,
+              public readonly points: number,
+              public readonly maxPoints: number,
+              public readonly percentageReached: number | undefined,
               public readonly notApplicable: boolean) {
   }
 
-  private static percentage(points: number, maxPoints: number): number {
-    if (maxPoints == 0) {
-      return 0;
+  private static percentage(points: number, maxPoints: number): Option<number>{
+    if (maxPoints == 0 || points < 0) {
+      return none();
     }
-    return points / maxPoints * 100;
+    return some(roundWithPrecision(points / maxPoints, 1) * 100);
   }
 
   private static notApplicable(weight: number): boolean {
@@ -21,10 +24,9 @@ export class MatrixTopicDTO {
   }
 
   public static fromTopic(topic: Topic): MatrixTopicDTO {
-    const pointsReached = `${topic.points} of ${topic.maxPoints}`;
     const percentage = MatrixTopicDTO.percentage(topic.points, topic.maxPoints);
-    const percentageReached = percentage >= 0 ? `${percentage.toFixed()} %` : '';
-    return new MatrixTopicDTO(topic.shortName, topic.name, pointsReached, percentageReached,
+    const percentageReached = percentage.isPresent() ? percentage.get() : undefined;
+    return new MatrixTopicDTO(topic.shortName, topic.name, topic.points, topic.maxPoints, percentageReached,
       this.notApplicable(topic.weight));
   }
 
