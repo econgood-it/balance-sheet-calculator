@@ -30,7 +30,8 @@ describe('Matrix DTO', () => {
     rating.topics[0].points = 30;
     rating.topics[0].maxPoints = 50;
     const matrixDTO = MatrixDTO.fromRating(rating);
-    expect(matrixDTO.topics[0].pointsReached).toBe('30 of 50');
+    expect(matrixDTO.topics[0].points).toBe(30);
+    expect(matrixDTO.topics[0].maxPoints).toBe(50);
     done()
   })
 
@@ -38,7 +39,8 @@ describe('Matrix DTO', () => {
     rating.topics[0].points = 20;
     rating.topics[0].maxPoints = 60;
     const matrixDTO = MatrixDTO.fromRating(rating);
-    expect(matrixDTO.topics[0].pointsReached).toBe('20 of 60');
+    expect(matrixDTO.topics[0].points).toBe(20);
+    expect(matrixDTO.topics[0].maxPoints).toBe(60);
     done()
   })
 
