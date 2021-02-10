@@ -26,7 +26,8 @@ export class MatrixTopicDTO {
   public static fromTopic(topic: Topic): MatrixTopicDTO {
     const percentage = MatrixTopicDTO.percentage(topic.points, topic.maxPoints);
     const percentageReached = percentage.isPresent() ? percentage.get() : undefined;
-    return new MatrixTopicDTO(topic.shortName, topic.name, topic.points, topic.maxPoints, percentageReached,
+    return new MatrixTopicDTO(topic.shortName, topic.name, roundWithPrecision(topic.points),
+      roundWithPrecision(topic.maxPoints), percentageReached,
       this.notApplicable(topic.weight));
   }
 

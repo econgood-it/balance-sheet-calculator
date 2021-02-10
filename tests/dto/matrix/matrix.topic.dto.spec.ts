@@ -23,6 +23,14 @@ describe('Matrix Topic DTO', () => {
     expect(matrixTopicDTO.maxPoints).toBe(50);
   })
 
+  it('has reached points are 31 of 50 (round 30.5982934 of 50.08990)',  () => {
+    topic.points = 30.5982934;
+    topic.maxPoints = 50.08990;
+    const matrixTopicDTO = MatrixTopicDTO.fromTopic(topic);
+    expect(matrixTopicDTO.points).toBe(31);
+    expect(matrixTopicDTO.maxPoints).toBe(50);
+  })
+
   it('has reached points are -100 of 60',  () => {
     topic.points = -100;
     topic.maxPoints = 60;
