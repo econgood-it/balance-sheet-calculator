@@ -42,14 +42,6 @@ describe('Company Facts entity', () => {
             done();
         })
 
-        it('totalSales', async (done) => {
-            companyFacts.totalSales = 300;
-            const result = await companyFactsRepository.save(companyFacts);
-            expect(result.totalSales).toBe(300);
-            await companyFactsRepository.remove(result);
-            done();
-        })
-
         it('numberOfEmployees', async (done) => {
             companyFacts.numberOfEmployees = 300;
             const result = await companyFactsRepository.save(companyFacts);

@@ -77,9 +77,9 @@ describe('Employees Calculator', () => {
       done();
     })
 
-    describe('when totalSales and totalAssets are 2mio ', () => {
+    describe('when turnover and totalAssets are 2mio ', () => {
       beforeEach( ()=> {
-        companyFacts.totalSales = 2*mio;
+        companyFacts.turnover = 2*mio;
         companyFacts.totalAssets = 2*mio;
       })
 
@@ -114,35 +114,35 @@ describe('Employees Calculator', () => {
         companyFacts.totalAssets = 2*mio;
       })
 
-      it('and totalSales = 2 Mio -> micro', async (done) => {
-        companyFacts.totalSales = 2*mio;
+      it('and turnover = 2 Mio -> micro', async (done) => {
+        companyFacts.turnover = 2*mio;
         companySizeIs(CompanySize.micro);
         done();
       })
 
-      it('and totalSales = 10 Mio -> micro', async (done) => {
-        companyFacts.totalSales = 10*mio;
+      it('and turnover = 10 Mio -> micro', async (done) => {
+        companyFacts.turnover = 10*mio;
         companySizeIs(CompanySize.micro);
         done();
       })
 
-      it('and totalSales = 50 Mio -> micro', async (done) => {
-        companyFacts.totalSales = 50*mio;
+      it('and turnover = 50 Mio -> micro', async (done) => {
+        companyFacts.turnover = 50*mio;
         companySizeIs(CompanySize.micro);
         done();
       })
 
-      it('and totalSales = 51 Mio -> micro', async (done) => {
-        companyFacts.totalSales = 51*mio;
+      it('and turnover = 51 Mio -> micro', async (done) => {
+        companyFacts.turnover = 51*mio;
         companySizeIs(CompanySize.micro);
         done();
       })
     });
 
-    describe('when FTE = 9 and totalSales = 2 Mio', () => {
+    describe('when FTE = 9 and turnover = 2 Mio', () => {
       beforeEach( ()=> {
         companyFacts.numberOfEmployees = 9;
-        companyFacts.totalSales = 2*mio;
+        companyFacts.turnover = 2*mio;
       })
 
       it('and totalAssets = 2 Mio -> micro', async (done) => {
@@ -175,30 +175,30 @@ describe('Employees Calculator', () => {
         companyFacts.numberOfEmployees = 9;
       })
 
-      it('and both totalAssets and totalSales are 2 Mio -> micro', async (done) => {
+      it('and both totalAssets and turnover are 2 Mio -> micro', async (done) => {
         companyFacts.totalAssets = 2*mio;
-        companyFacts.totalSales = 2*mio;
+        companyFacts.turnover = 2*mio;
         companySizeIs(CompanySize.micro);
         done();
       })
 
-      it('and both totalAssets and totalSales are 10 Mio -> small', async (done) => {
+      it('and both totalAssets and turnover are 10 Mio -> small', async (done) => {
         companyFacts.totalAssets = 10*mio;
-        companyFacts.totalSales = 10*mio;
+        companyFacts.turnover = 10*mio;
         companySizeIs(CompanySize.small);
         done();
       })
 
-      it('and both totalAssets and totalSales >= 43 Mio -> middle', async (done) => {
+      it('and both totalAssets and turnover >= 43 Mio -> middle', async (done) => {
         companyFacts.totalAssets = 43*mio;
-        companyFacts.totalSales = 50*mio;
+        companyFacts.turnover = 50*mio;
         companySizeIs(CompanySize.middle);
         done();
       })
 
-      it('and both totalAssets and totalSales > 50 Mio -> large', async (done) => {
+      it('and both totalAssets and turnover > 50 Mio -> large', async (done) => {
         companyFacts.totalAssets = 51*mio;
-        companyFacts.totalSales = 51*mio;
+        companyFacts.turnover = 51*mio;
         companySizeIs(CompanySize.large);
         done();
       })

@@ -41,20 +41,6 @@ describe('EntityWithDTOMerger', () => {
         const merge = async (json: any) => await entityWithDtoMerger.mergeCompanyFacts(
           companyFacts, CompanyFactsDTOUpdate.fromJSON(json));
 
-        it('using totalSales from db', async (done) => {
-            companyFacts.totalSales = 200;
-            await merge({});
-            expect(companyFacts.totalSales).toBeCloseTo(200);
-            done();
-        });
-
-        it('using totalSales from dto', async (done) => {
-            companyFacts.totalSales = 200;
-            await merge({totalSales: 300});
-            expect(companyFacts.totalSales).toBeCloseTo(300);
-            done();
-        });
-
         it('using profit from db', async (done) => {
             companyFacts.profit = 200;
             await merge({});

@@ -27,8 +27,6 @@ export class CompanyFacts {
   @Column("double precision")
   public financialAssetsAndCashBalance: number;
   @Column("double precision")
-  public totalSales: number;
-  @Column("double precision")
   public numberOfEmployees: number;
   @Column()
   public hasCanteen: boolean;
@@ -54,7 +52,6 @@ export class CompanyFacts {
     turnover: number,
     totalAssets: number,
     financialAssetsAndCashBalance: number,
-    totalSales: number,
     numberOfEmployees: number,
     hasCanteen: boolean,
     averageJourneyToWorkForStaffInKm: number,
@@ -76,7 +73,6 @@ export class CompanyFacts {
     this.supplyFractions = supplyFractions;
     this.employeesFractions = employeesFractions;
     this.industrySectors = industrySectors;
-    this.totalSales = totalSales;
     this.numberOfEmployees = numberOfEmployees;
     this.hasCanteen = hasCanteen;
     this.isB2B = isB2B;

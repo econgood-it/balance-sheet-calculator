@@ -13,7 +13,6 @@ describe('CompanyFactsUpdateDTO', () => {
         turnover: 7,
         totalAssets: 8,
         financialAssetsAndCashBalance: 9,
-        totalSales: 10,
         numberOfEmployees: 11,
         hasCanteen: true,
         averageJourneyToWorkForStaffInKm: 12,
@@ -46,11 +45,6 @@ describe('CompanyFactsUpdateDTO', () => {
             expect(companyFactsDTOUpdate.profit).toBeUndefined();
         })
 
-        it('totalSales',  () => {
-            delete json.totalSales;
-            const companyFactsDTOUpdate: CompanyFactsDTOUpdate = CompanyFactsDTOUpdate.fromJSON(json);
-            expect(companyFactsDTOUpdate.totalSales).toBeUndefined();
-        })
 
         it('numberOfEmployees',  () => {
             delete json.numberOfEmployees;

@@ -62,13 +62,13 @@ export class EmployeesCalc {
     const mio2 = 2*mio;
     const mio10 = 10*mio;
     if (companyFacts.numberOfEmployees < 10 &&
-      (companyFacts.totalSales <= mio2 || companyFacts.totalAssets <= mio2)) {
+      (companyFacts.turnover <= mio2 || companyFacts.totalAssets <= mio2)) {
       return CompanySize.micro;
     } else if (companyFacts.numberOfEmployees < 50 &&
-      (companyFacts.totalSales <= mio10 || companyFacts.totalAssets <= mio10)) {
+      (companyFacts.turnover <= mio10 || companyFacts.totalAssets <= mio10)) {
       return CompanySize.small;
     } else if (companyFacts.numberOfEmployees < 250 &&
-      (companyFacts.totalSales <= 50*mio || companyFacts.totalAssets <= 43*mio)) {
+      (companyFacts.turnover <= 50*mio || companyFacts.totalAssets <= 43*mio)) {
       return CompanySize.middle;
     } else {
       return CompanySize.large;

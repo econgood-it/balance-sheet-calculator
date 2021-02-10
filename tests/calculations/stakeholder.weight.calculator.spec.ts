@@ -3,7 +3,7 @@ import { CompanyFacts } from "../../src/entities/companyFacts";
 import { SupplyFraction } from "../../src/entities/supplyFraction";
 import { EmployeesFraction } from "../../src/entities/employeesFraction";
 import { DatabaseConnectionCreator } from '../../src/database.connection.creator';
-import { Connection, Repository } from "typeorm";
+import { Connection} from "typeorm";
 import { Region } from "../../src/entities/region";
 import { ConfigurationReader } from "../../src/configuration.reader";
 import {CalcResults, Calculator} from "../../src/calculations/calculator";
@@ -27,10 +27,11 @@ describe('Stakeholder Weight Calculator', () => {
         connection = await DatabaseConnectionCreator.createConnectionAndRunMigrations(ConfigurationReader.read());
         const supplyFractions: SupplyFraction[] = [new SupplyFraction(undefined, agricultureCode,
           arabEmiratesCode, 300), new SupplyFraction(undefined, pharmaceuticCode, afghanistanCode, 20)];
-        const employeesFractions: EmployeesFraction[] = [new EmployeesFraction(undefined, arabEmiratesCode, 0.3), new EmployeesFraction(undefined, afghanistanCode, 1)];
+        const employeesFractions: EmployeesFraction[] = [new EmployeesFraction(undefined, arabEmiratesCode, 0.3),
+            new EmployeesFraction(undefined, afghanistanCode, 1)];
         companyFacts = new CompanyFacts(undefined, 0, 2345, 238,
           473, 342, 234, 30, 40,
-          0, 0, 0, false, 0, false,
+          0,  0, false, 0, false,
           supplyFractions, employeesFractions, []);
         regionProvider = await RegionProvider.createFromCompanyFacts(companyFacts, connection.getRepository(Region));
         industryProvider = await IndustryProvider.createFromCompanyFacts(companyFacts, connection.getRepository(Industry));
