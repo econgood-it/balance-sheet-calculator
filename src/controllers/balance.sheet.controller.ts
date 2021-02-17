@@ -14,5 +14,6 @@ export class BalanceSheetController {
       this.balanceSheetService));
     this.app.post("/v1/balancesheets", this.balanceSheetService.createBalanceSheet.bind(this.balanceSheetService));
     this.app.patch("/v1/balancesheets/:id", this.balanceSheetService.updateBalanceSheet.bind(this.balanceSheetService));
+    this.app.delete("/v1/balancesheets/:id", this.balanceSheetService.deleteBalanceSheet.bind(this.balanceSheetService));
   }
 }
