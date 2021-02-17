@@ -20,6 +20,8 @@ import {IndustryProvider} from "../providers/industry.provider";
 import {MatrixTopicDTO} from "../dto/matrix/matrix.topic.dto";
 import {MatrixDTO} from "../dto/matrix/matrix.dto";
 import NotFoundException from "../exceptions/not.found.exception";
+import {CompanyFacts} from "../entities/companyFacts";
+import {Rating} from "../entities/rating";
 
 
 
@@ -103,10 +105,15 @@ export class BalanceSheetService {
     this.connection.manager.transaction(async entityManager => {
       const balanceSheetId: number = Number(req.params.id);
       const balanceSheetRepository = entityManager.getRepository(BalanceSheet);
+      const companyFactsRepository = entityManager.getRepository(CompanyFacts);
+      const ratingRepository = entityManager.getRepository(Rating);
       const balanceSheet = await balanceSheetRepository.findOneOrFail(balanceSheetId, {
         relations: BalanceSheetService.BALANCE_SHEET_RELATIONS
       });
+      await companyFactsRepository.remove(balanceSheet.companyFacts);
+      await ratingRepository.remove(balanceSheet.rating);
       await balanceSheetRepository.remove(balanceSheet);
+
       res.json({'message': `Deleted balance sheet with id ${balanceSheetId}`});
     }).catch(error => {
       this.handleError(error, next);

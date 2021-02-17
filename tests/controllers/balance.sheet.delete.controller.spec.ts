@@ -7,6 +7,12 @@ import {EmptyCompanyFacts} from "../testData/company.facts";
 import {Connection} from "typeorm";
 import supertest = require("supertest");
 import {Application} from "express";
+import {Rating} from "../../src/entities/rating";
+import {CompanyFacts} from "../../src/entities/companyFacts";
+import {Aspect} from "../../src/entities/aspect";
+import {SupplyFraction} from "../../src/entities/supplyFraction";
+import {IndustrySector} from "../../src/entities/industry.sector";
+import {EmployeesFraction} from "../../src/entities/employeesFraction";
 
 describe('Balance Sheet Controller', () => {
     let connection: Connection;
@@ -48,6 +54,59 @@ describe('Balance Sheet Controller', () => {
         expect(responseGet.status).toEqual(404);
         done();
     })
+
+    it(' deletes balance sheet with its rating, topics and aspects', async (done) => {
+        const testApp = supertest(app);
+        const postResponse = await testApp.post(endpointPath).auth(configuration.appUsername,
+          configuration.appPassword).send(balanceSheetJson);
+
+        const response = await testApp.delete(`${endpointPath}/${postResponse.body.id}`).auth(
+          configuration.appUsername, configuration.appPassword).send();
+        expect(response.status).toEqual(200);
+
+        // Test if all relations marked with cascade true are deleted as well
+        const expectZeroCount = 0;
+        // Rating
+        expect(await connection.getRepository(Rating).count({id: postResponse.body.rating.id})).toBe(
+          expectZeroCount);
+        expect(await connection.getRepository(Topic).count({rating: postResponse.body.rating})).toBe(
+          expectZeroCount);
+        for(const topic of postResponse.body.rating.topics) {
+            expect(await connection.getRepository(Aspect).count({topic: topic})).toBe(
+              expectZeroCount);
+        }
+        done();
+    })
+
+    it(' deletes balance sheet with its companyFacts, supplyFractions, industrySectors, employeesFractions',
+      async (done) => {
+        const testApp = supertest(app);
+        balanceSheetJson.companyFacts.industrySectors = [{industryCode: "A", amountOfTotalTurnover: 0.8,
+            description: "My description"}]
+        balanceSheetJson.companyFacts.supplyFractions = [{countryCode: "DEU", industryCode: "A", costs: 300 }]
+        balanceSheetJson.companyFacts.employeesFractions = [{countryCode: "DEU", percentage: 0.8 }]
+        const postResponse = await testApp.post(endpointPath).auth(configuration.appUsername,
+          configuration.appPassword).send(balanceSheetJson);
+
+        const response = await testApp.delete(`${endpointPath}/${postResponse.body.id}`).auth(
+          configuration.appUsername, configuration.appPassword).send();
+        expect(response.status).toEqual(200);
+
+        // Test if all relations marked with cascade true are deleted as well
+        const expectZeroCount = 0;
+        expect(await connection.getRepository(IndustrySector).count({companyFacts:
+          postResponse.body.companyFacts})).toBe(expectZeroCount);
+        expect(await connection.getRepository(SupplyFraction).count({companyFacts:
+          postResponse.body.companyFacts})).toBe(expectZeroCount);
+        expect(await connection.getRepository(EmployeesFraction).count({companyFacts:
+          postResponse.body.companyFacts})).toBe(expectZeroCount);
+        done();
+    })
+
+
+
+
+
 
 
 
