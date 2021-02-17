@@ -29,6 +29,7 @@ class App {
     const balanceSheetService = new BalanceSheetService(connection);
     this.balanceSheetController = new BalanceSheetController(this.app, balanceSheetService);
     this.healthCheckController = new HealthCheckController(this.app, new HealthCheckService());
+    this.app.use(errorMiddleware);
   }
 
   public start() {
@@ -42,10 +43,6 @@ class App {
 
     //Allows us to receive requests with data in x-www-form-urlencoded format
     this.app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
-    this.app.use(errorMiddleware);
-
-    //Enables cors   
-
   }
 }
 

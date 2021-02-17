@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { BalanceSheetDTOCreate } from "../dto/create/balance.sheet.create.dto";
 import { BalanceSheet } from "../entities/balanceSheet";
 import InternalServerException from "../exceptions/internal.server.exception";
-import {Connection, EntityManager} from "typeorm";
+import {Connection, EntityManager, EntityNotFoundError} from "typeorm";
 import { BalanceSheetDTOUpdate } from "../dto/update/balance.sheet.update.dto";
 import { TopicUpdater } from "../calculations/topic.updater";
 import { SupplyFraction } from "../entities/supplyFraction";
@@ -19,6 +19,9 @@ import {RegionProvider} from "../providers/region.provider";
 import {IndustryProvider} from "../providers/industry.provider";
 import {MatrixTopicDTO} from "../dto/matrix/matrix.topic.dto";
 import {MatrixDTO} from "../dto/matrix/matrix.dto";
+import NotFoundException from "../exceptions/not.found.exception";
+import {CompanyFacts} from "../entities/companyFacts";
+import {Rating} from "../entities/rating";
 
 
 
@@ -98,12 +101,34 @@ export class BalanceSheetService {
     });
   }
 
+  public async deleteBalanceSheet(req: Request, res: Response, next: NextFunction) {
+    this.connection.manager.transaction(async entityManager => {
+      const balanceSheetId: number = Number(req.params.id);
+      const balanceSheetRepository = entityManager.getRepository(BalanceSheet);
+      const companyFactsRepository = entityManager.getRepository(CompanyFacts);
+      const ratingRepository = entityManager.getRepository(Rating);
+      const balanceSheet = await balanceSheetRepository.findOneOrFail(balanceSheetId, {
+        relations: BalanceSheetService.BALANCE_SHEET_RELATIONS
+      });
+      await companyFactsRepository.remove(balanceSheet.companyFacts);
+      await ratingRepository.remove(balanceSheet.rating);
+      await balanceSheetRepository.remove(balanceSheet);
+
+      res.json({'message': `Deleted balance sheet with id ${balanceSheetId}`});
+    }).catch(error => {
+      this.handleError(error, next);
+    });
+  }
+
   private handleError(error: Error, next: NextFunction) {
     if (error instanceof JsonMappingError) {
       next(new BadRequestException(error.message));
     }
     if (Array.isArray(error) && error.every(item => item instanceof ValidationError)) {
       next(new BadRequestException(error.toString()));
+    }
+    if (error instanceof EntityNotFoundError) {
+      next(new NotFoundException(error.message));
     }
     next(new InternalServerException(error.message));
   }
