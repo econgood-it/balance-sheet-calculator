@@ -26,13 +26,13 @@ export class AddForeignKeyConstraints1594223075374 implements MigrationInterface
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         const queries = [
-            `ALTER TABLE industry_sector DROP CONSTRAINT FK_industry_sector_company_facts`,
-            `ALTER TABLE employees_fraction DROP CONSTRAINT FK_employees_fraction_company_facts`,
-            `ALTER TABLE supply_fraction DROP CONSTRAINT FK_supply_fraction_company_facts`,
-            `ALTER TABLE topic DROP CONSTRAINT FK_topic_rating`,
-            `ALTER TABLE aspect DROP CONSTRAINT FK_aspect_topic`,
-            `ALTER TABLE balance_sheet DROP CONSTRAINT FK_balance_sheet_company_facts`,
-            `ALTER TABLE balance_sheet DROP CONSTRAINT FK_balance_sheet_rating`,
+            `ALTER TABLE "industry_sector" DROP CONSTRAINT "FK_industry_sector_company_facts"`,
+            `ALTER TABLE "employees_fraction" DROP CONSTRAINT "FK_employees_fraction_company_facts"`,
+            `ALTER TABLE "supply_fraction" DROP CONSTRAINT "FK_supply_fraction_company_facts"`,
+            `ALTER TABLE "topic" DROP CONSTRAINT "FK_topic_rating"`,
+            `ALTER TABLE "aspect" DROP CONSTRAINT "FK_aspect_topic"`,
+            `ALTER TABLE "balance_sheet" DROP CONSTRAINT "FK_balance_sheet_company_facts"`,
+            `ALTER TABLE "balance_sheet" DROP CONSTRAINT "FK_balance_sheet_rating"`,
         ]
         for (const query of queries) {
             await queryRunner.query(query);
