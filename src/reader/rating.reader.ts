@@ -1,4 +1,4 @@
-import { Workbook, Row, Cell, Worksheet } from 'exceljs';
+import { Workbook, Row, Worksheet } from 'exceljs';
 import { Rating } from '../entities/rating';
 import { Topic } from '../entities/topic';
 import { Aspect } from '../entities/aspect';
@@ -11,6 +11,7 @@ interface Headers {
     pointsIndex: number;
     maxPointsIndex: number;
     isWeightSelectedByUserIndex: number;
+    isPositive: number
 }
 
 export class RatingReader {
@@ -23,6 +24,7 @@ export class RatingReader {
         estimationIndex: 5,
         pointsIndex: 6,
         maxPointsIndex: 7,
+        isPositive: 8
     }
 
     public async readRatingFromCsv(path: string, headers: Headers = RatingReader.DEFAULT_HEADERS): Promise<Rating> {
@@ -48,7 +50,7 @@ export class RatingReader {
 
     private readTopic(row: Row, headers: Headers): Topic {
         const shortName = row.getCell(headers.shortNameIndex).text;
-        const name = row.getCell(headers.nameIndex).text;
+        let name = row.getCell(headers.nameIndex).text;
         const estimations = Number(row.getCell(headers.estimationIndex).text);
         const weightAsStr = row.getCell(headers.weightIndex).text;
         const isWeightSelectedByUser = row.getCell(headers.isWeightSelectedByUserIndex).text.toLowerCase() == 'true' ?
@@ -64,13 +66,16 @@ export class RatingReader {
         const shortName = row.getCell(headers.shortNameIndex).text;
         const name = row.getCell(headers.nameIndex).text;
         const estimations = Number(row.getCell(headers.estimationIndex).text);
-        const isPositive = !name.startsWith('Negative');
+        const isPositive = this.stringToBool(row.getCell(headers.isPositive).text);
         const weightAsStr = row.getCell(headers.weightIndex).text;
-        const isWeightSelectedByUser = row.getCell(headers.isWeightSelectedByUserIndex).text.toLowerCase() == 'true' ?
-            true : false;
+        const isWeightSelectedByUser = this.stringToBool(row.getCell(headers.isWeightSelectedByUserIndex).text);
         return new Aspect(undefined, shortName, name, estimations,
             Number(row.getCell(headers.pointsIndex).text),
             Number(row.getCell(headers.maxPointsIndex).text),
             Number(weightAsStr), isWeightSelectedByUser, isPositive);
+    }
+
+    private stringToBool(str: string) {
+        return str.toLowerCase() == 'true' ? true : false;
     }
 }

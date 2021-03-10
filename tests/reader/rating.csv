@@ -1,86 +1,86 @@
-No.,Stakeholders/ Themes/ Aspects,Weight,IsWeightSelectedByUser,Estimations,Points,MaxPoints
-A,Suppliers,1,FALSE,0,0,148.936170212766
-A1,Human dignity in the supply chain,1,FALSE,4,20.4,51
-A1.1,Working conditions and social impact in the supply chain,1,FALSE,2,10.2,51
-A1.2,Negative aspect: violation of human dignity in the supply chain,1,FALSE,-3,-30.4,-170.212765957447
-A2,Solidarity and social justice in the supply chain,1,FALSE,0,0,42.5531914893617
-A2.1,Fair business practices towards direct suppliers,1,FALSE,0,0,21.2765957446808
-A2.2,Exercising a positive influence on solidarity and social justice in the supply chain,1,FALSE,0,0,21.2765957446808
-A2.3,Negative aspect: abuse of market power against suppliers,1,FALSE,0,0,-170.212765957447
-A3,Environmental sustainability in the supply chain,2,TRUE,5,50,100
-A3.1,Environmental impact throughout the supply chain,1.5,TRUE,7,30,51
-A3.2,Negative aspect: disproportionate environmental impact throughout the supply chain,1,FALSE,-5,-150,-200
-A4,Transparency & co-determination in the supply chain,1,FALSE,0,0,21.2765957446808
-A4.1,Transparency towards suppliers and their right to co-determination,1,FALSE,0,0,10.6382978723404
-A4.2,Positive influence on transparency and co-determination throughout the supply chain,1,FALSE,0,0,10.6382978723404
-B,"Owners, equity- and financial service providers",1,FALSE,0,0,255.31914893617
-B1,Ethical position in relation to financial resources,1,FALSE,0,0,63.8297872340426
-B1.1,Financial independence through equity financing,1,FALSE,0,0,21.2765957446808
-B1.2,Common Good-orientated borrowing,1,FALSE,0,0,21.2765957446808
-B1.3,Ethical position of external financial partners,1,FALSE,0,0,21.2765957446808
-B2,Social position in relation to financial resources,1,FALSE,0,0,63.8297872340426
-B2.1,Solidarity and Common Good-orientated use of funds,1,FALSE,0,0,63.8297872340426
-B2.2,Negative aspect: unfair distribution of funds,1,FALSE,0,0,-255.31914893617
-B3,Use of funds in relation to social and environmental impacts,1,FALSE,0,0,63.8297872340426
-B3.1,Environmental quality of investments,1,FALSE,0,0,31.9148936170213
-B3.2,Common Good-orientated investment,1,FALSE,0,0,31.9148936170213
-B3.3,Negative aspect: reliance on environmentally unsafe resources,1,FALSE,0,0,-255.31914893617
-B4,Ownership and co-determination,1,FALSE,0,0,63.8297872340426
-B4.1,Common Good-orientated ownership structure,1,FALSE,0,0,63.8297872340426
-B4.2,Negative aspect: hostile takeover,1,FALSE,0,0,-255.31914893617
-C,Employees,1,FALSE,0,0,255.31914893617
-C1,Human dignity in the workplace and working environment,1,FALSE,0,0,63.8297872340426
-C1.1,Employee-focused organisational culture,1,FALSE,0,0,21.2765957446808
-C1.2,Health promotion and occupational health and safety,1,FALSE,0,0,21.2765957446808
-C1.3,Diversity and equal opportunities,1,FALSE,0,0,21.2765957446808
-C1.4,Negative aspect: unfit working conditions,1,FALSE,0,0,-255.31914893617
-C2,Self-determined working arrangements,1,FALSE,0,0,63.8297872340426
-C2.1,Pay structure,1,FALSE,0,0,21.2765957446808
-C2.2,Structuring working time,1,FALSE,0,0,21.2765957446808
-C2.3,Employment structure and work-life balance,1,FALSE,0,0,21.2765957446808
-C2.4,Negative aspect: unfair employment contracts,1,FALSE,0,0,-255.31914893617
-C3,Environmentally-friendly behaviour of staff,1,FALSE,0,0,63.8297872340426
-C3.1,Food during working hours,1,FALSE,0,0,21.2765957446808
-C3.2,Travel to work,1,FALSE,0,0,21.2765957446808
-C3.3,"Organisational culture, cultivating awareness for an environmentally-friendly approach",1,FALSE,0,0,21.2765957446808
-C3.4,Negative aspect: guidance on waste/ environmentally damaging practices,1,FALSE,0,0,-255.31914893617
-C4,Co-determination and transparency within the organisation,1,FALSE,0,0,63.8297872340426
-C4.1,Transparency within the organisation,1,FALSE,0,0,21.2765957446808
-C4.2,Legitimation of the management,1,FALSE,0,0,21.2765957446808
-C4.3,Employee co-determination,1,FALSE,0,0,21.2765957446808
-C4.4,Negative aspect: obstruction of works councils,1,FALSE,0,0,-255.31914893617
-D,Customers and other companies,1,FALSE,0,0,170.212765957447
-D1,Ethical customer relations,1,FALSE,0,0,42.5531914893617
-D1.1,Respect for human dignity in communication with customers,1,FALSE,0,0,21.2765957446808
-D1.2,Barrier-free access,1,FALSE,0,0,21.2765957446808
-D1.3,Negative aspect: unethical advertising,1,FALSE,0,0,-170.212765957447
-D2,Cooperation and solidarity with other companies,1,FALSE,0,0,42.5531914893617
-D2.1,Cooperation with other companies,1,FALSE,0,0,21.2765957446808
-D2.2,Solidarity with other companies,1,FALSE,0,0,21.2765957446808
-D2.3,Negative aspect: abuse of market power to the detriment of other companies,1,FALSE,0,0,-170.212765957447
-D3,Impact on the environment of the use and disposal of products and services,1,FALSE,0,0,42.5531914893617
-D3.1,Environmental cost-benefit ration of products and services (efficiency and consistency) ,1,FALSE,0,0,21.2765957446808
-D3.2,Moderate use of products and services (sufficiency),1,FALSE,0,0,21.2765957446808
-D3.3,Negative aspect: wilful disregard of disproportionate environmental impacts,1,FALSE,0,0,-170.212765957447
-D4,Customer participation and product transparency,1,FALSE,0,0,42.5531914893617
-D4.1,"Customer participation, joint product development and market research",1,FALSE,0,0,21.2765957446808
-D4.2,Product transparency,1,FALSE,0,0,21.2765957446808
-D4.2,Negative aspect: non-disclosure of hazardous substances,1,FALSE,0,0,-170.212765957447
-E,Social environment,1,FALSE,0,0,170.212765957447
-E1,Purpose of products and services and their effects on society,1,FALSE,0,0,42.5531914893617
-E1.1,Products and services should cover basic needs and contribute to a good life,1,FALSE,0,0,21.2765957446808
-E1.2,Social impact of products and services,1,FALSE,0,0,21.2765957446808
-E1.3,Negative aspect: unethical and unfit products and services,1,FALSE,0,0,-170.212765957447
-E2,Contribution to the community,1,FALSE,0,0,42.5531914893617
-E2.1,Taxes and social security contributions,1,FALSE,0,0,21.2765957446808
-E2.2,Voluntary contributions that strengthen society,1,FALSE,0,0,21.2765957446808
-E2.3,Negative aspect: inappropriate non-payment of tax,1,FALSE,0,0,-170.212765957447
-E2.4,Negative aspect: no anti-corruption policy,1,FALSE,0,0,-170.212765957447
-E3,Reduction of environmental impact,1,FALSE,0,0,42.5531914893617
-E3.1,Absolute impact and management strategy,1,FALSE,0,0,21.2765957446808
-E3.2,Relative impact,1,FALSE,0,0,21.2765957446808
-E3.3,Negative aspect: infringement of environmental regulations and disproportionate environmental pollution,1,FALSE,0,0,-170.212765957447
-E4,Social co-determination and transparency,1,FALSE,0,0,42.5531914893617
-E4.1,Transparency,1,FALSE,0,0,21.2765957446808
-E4.2,Social participation,1,FALSE,0,0,21.2765957446808
-E4.3,Negative aspect: lack of transparency and wilful misinformation,1,FALSE,0,0,-170.212765957447
+No.,Stakeholders/ Themes/ Aspects,Weight,IsWeightSelectedByUser,Estimations,Points,MaxPoints,IsPositive
+A,Suppliers,1,FALSE,0,0,148.936170212766,TRUE
+A1,Human dignity in the supply chain,1,FALSE,4,20.4,51,TRUE
+A1.1,Working conditions and social impact in the supply chain,1,FALSE,2,10.2,51,TRUE
+A1.2,Negative aspect: violation of human dignity in the supply chain,1,FALSE,-3,-30.4,-170.212765957447,FALSE
+A2,Solidarity and social justice in the supply chain,1,FALSE,0,0,42.5531914893617,TRUE
+A2.1,Fair business practices towards direct suppliers,1,FALSE,0,0,21.2765957446808,TRUE
+A2.2,Exercising a positive influence on solidarity and social justice in the supply chain,1,FALSE,0,0,21.2765957446808,TRUE
+A2.3,Negative aspect: abuse of market power against suppliers,1,FALSE,0,0,-170.212765957447,FALSE
+A3,Environmental sustainability in the supply chain,2,TRUE,5,50,100,TRUE
+A3.1,Environmental impact throughout the supply chain,1.5,TRUE,7,30,51,TRUE
+A3.2,Negative aspect: disproportionate environmental impact throughout the supply chain,1,FALSE,-5,-150,-200,FALSE
+A4,Transparency & co-determination in the supply chain,1,FALSE,0,0,21.2765957446808,TRUE
+A4.1,Transparency towards suppliers and their right to co-determination,1,FALSE,0,0,10.6382978723404,TRUE
+A4.2,Positive influence on transparency and co-determination throughout the supply chain,1,FALSE,0,0,10.6382978723404,TRUE
+B,"Owners, equity- and financial service providers",1,FALSE,0,0,255.31914893617,TRUE
+B1,Ethical position in relation to financial resources,1,FALSE,0,0,63.8297872340426,TRUE
+B1.1,Financial independence through equity financing,1,FALSE,0,0,21.2765957446808,TRUE
+B1.2,Common Good-orientated borrowing,1,FALSE,0,0,21.2765957446808,TRUE
+B1.3,Ethical position of external financial partners,1,FALSE,0,0,21.2765957446808,TRUE
+B2,Social position in relation to financial resources,1,FALSE,0,0,63.8297872340426,TRUE
+B2.1,Solidarity and Common Good-orientated use of funds,1,FALSE,0,0,63.8297872340426,TRUE
+B2.2,Negative aspect: unfair distribution of funds,1,FALSE,0,0,-255.31914893617,FALSE
+B3,Use of funds in relation to social and environmental impacts,1,FALSE,0,0,63.8297872340426,TRUE
+B3.1,Environmental quality of investments,1,FALSE,0,0,31.9148936170213,TRUE
+B3.2,Common Good-orientated investment,1,FALSE,0,0,31.9148936170213,TRUE
+B3.3,Negative aspect: reliance on environmentally unsafe resources,1,FALSE,0,0,-255.31914893617,FALSE
+B4,Ownership and co-determination,1,FALSE,0,0,63.8297872340426,TRUE
+B4.1,Common Good-orientated ownership structure,1,FALSE,0,0,63.8297872340426,TRUE
+B4.2,Negative aspect: hostile takeover,1,FALSE,0,0,-255.31914893617,FALSE
+C,Employees,1,FALSE,0,0,255.31914893617,TRUE
+C1,Human dignity in the workplace and working environment,1,FALSE,0,0,63.8297872340426,TRUE
+C1.1,Employee-focused organisational culture,1,FALSE,0,0,21.2765957446808,TRUE
+C1.2,Health promotion and occupational health and safety,1,FALSE,0,0,21.2765957446808,TRUE
+C1.3,Diversity and equal opportunities,1,FALSE,0,0,21.2765957446808,TRUE
+C1.4,Negative aspect: unfit working conditions,1,FALSE,0,0,-255.31914893617,FALSE
+C2,Self-determined working arrangements,1,FALSE,0,0,63.8297872340426,TRUE
+C2.1,Pay structure,1,FALSE,0,0,21.2765957446808,TRUE
+C2.2,Structuring working time,1,FALSE,0,0,21.2765957446808,TRUE
+C2.3,Employment structure and work-life balance,1,FALSE,0,0,21.2765957446808,TRUE
+C2.4,Negative aspect: unfair employment contracts,1,FALSE,0,0,-255.31914893617,FALSE
+C3,Environmentally-friendly behaviour of staff,1,FALSE,0,0,63.8297872340426,TRUE
+C3.1,Food during working hours,1,FALSE,0,0,21.2765957446808,TRUE
+C3.2,Travel to work,1,FALSE,0,0,21.2765957446808,TRUE
+C3.3,"Organisational culture, cultivating awareness for an environmentally-friendly approach",1,FALSE,0,0,21.2765957446808,TRUE
+C3.4,Negative aspect: guidance on waste/ environmentally damaging practices,1,FALSE,0,0,-255.31914893617,FALSE
+C4,Co-determination and transparency within the organisation,1,FALSE,0,0,63.8297872340426,TRUE
+C4.1,Transparency within the organisation,1,FALSE,0,0,21.2765957446808,TRUE
+C4.2,Legitimation of the management,1,FALSE,0,0,21.2765957446808,TRUE
+C4.3,Employee co-determination,1,FALSE,0,0,21.2765957446808,TRUE
+C4.4,Negative aspect: obstruction of works councils,1,FALSE,0,0,-255.31914893617,FALSE
+D,Customers and other companies,1,FALSE,0,0,170.212765957447,TRUE
+D1,Ethical customer relations,1,FALSE,0,0,42.5531914893617,TRUE
+D1.1,Respect for human dignity in communication with customers,1,FALSE,0,0,21.2765957446808,TRUE
+D1.2,Barrier-free access,1,FALSE,0,0,21.2765957446808,TRUE
+D1.3,Negative aspect: unethical advertising,1,FALSE,0,0,-170.212765957447,FALSE
+D2,Cooperation and solidarity with other companies,1,FALSE,0,0,42.5531914893617,TRUE
+D2.1,Cooperation with other companies,1,FALSE,0,0,21.2765957446808,TRUE
+D2.2,Solidarity with other companies,1,FALSE,0,0,21.2765957446808,TRUE
+D2.3,Negative aspect: abuse of market power to the detriment of other companies,1,FALSE,0,0,-170.212765957447,FALSE
+D3,Impact on the environment of the use and disposal of products and services,1,FALSE,0,0,42.5531914893617,TRUE
+D3.1,Environmental cost-benefit ration of products and services (efficiency and consistency) ,1,FALSE,0,0,21.2765957446808,TRUE
+D3.2,Moderate use of products and services (sufficiency),1,FALSE,0,0,21.2765957446808,TRUE
+D3.3,Negative aspect: wilful disregard of disproportionate environmental impacts,1,FALSE,0,0,-170.212765957447,FALSE
+D4,Customer participation and product transparency,1,FALSE,0,0,42.5531914893617,TRUE
+D4.1,"Customer participation, joint product development and market research",1,FALSE,0,0,21.2765957446808,TRUE
+D4.2,Product transparency,1,FALSE,0,0,21.2765957446808,TRUE
+D4.2,Negative aspect: non-disclosure of hazardous substances,1,FALSE,0,0,-170.212765957447,FALSE
+E,Social environment,1,FALSE,0,0,170.212765957447,TRUE
+E1,Purpose of products and services and their effects on society,1,FALSE,0,0,42.5531914893617,TRUE
+E1.1,Products and services should cover basic needs and contribute to a good life,1,FALSE,0,0,21.2765957446808,TRUE
+E1.2,Social impact of products and services,1,FALSE,0,0,21.2765957446808,TRUE
+E1.3,Negative aspect: unethical and unfit products and services,1,FALSE,0,0,-170.212765957447,FALSE
+E2,Contribution to the community,1,FALSE,0,0,42.5531914893617,TRUE
+E2.1,Taxes and social security contributions,1,FALSE,0,0,21.2765957446808,TRUE
+E2.2,Voluntary contributions that strengthen society,1,FALSE,0,0,21.2765957446808,TRUE
+E2.3,Negative aspect: inappropriate non-payment of tax,1,FALSE,0,0,-170.212765957447,FALSE
+E2.4,Negative aspect: no anti-corruption policy,1,FALSE,0,0,-170.212765957447,FALSE
+E3,Reduction of environmental impact,1,FALSE,0,0,42.5531914893617,TRUE
+E3.1,Absolute impact and management strategy,1,FALSE,0,0,21.2765957446808,TRUE
+E3.2,Relative impact,1,FALSE,0,0,21.2765957446808,TRUE
+E3.3,Negative aspect: infringement of environmental regulations and disproportionate environmental pollution,1,FALSE,0,0,-170.212765957447,FALSE
+E4,Social co-determination and transparency,1,FALSE,0,0,42.5531914893617,TRUE
+E4.1,Transparency,1,FALSE,0,0,21.2765957446808,TRUE
+E4.2,Social participation,1,FALSE,0,0,21.2765957446808,TRUE
+E4.3,Negative aspect: lack of transparency and wilful misinformation,1,FALSE,0,0,-170.212765957447,FALSE
