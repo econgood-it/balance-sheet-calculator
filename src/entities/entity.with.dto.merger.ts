@@ -15,6 +15,7 @@ import { TopicDTOUpdate } from "../dto/update/topic.update.dto";
 import { Aspect } from "./aspect";
 import {IndustrySectorDtoUpdate} from "../dto/update/industry.sector.update.dto";
 import {IndustrySector} from "./industry.sector";
+import {createTranslations, Translations, updateTranslationOfLanguage} from "./Translations";
 
 export class EntityWithDtoMerger {
 
@@ -23,16 +24,18 @@ export class EntityWithDtoMerger {
                        private industrySectorRepository: Repository<IndustrySector>) {
     }
 
-    public async mergeBalanceSheet(balanceSheet: BalanceSheet, balanceSheetDTOUpdate: BalanceSheetDTOUpdate): Promise<void> {
+    public async mergeBalanceSheet(balanceSheet: BalanceSheet, balanceSheetDTOUpdate: BalanceSheetDTOUpdate,
+                                   language: keyof Translations): Promise<void> {
         if (balanceSheetDTOUpdate.companyFacts) {
-            await this.mergeCompanyFacts(balanceSheet.companyFacts, balanceSheetDTOUpdate.companyFacts);
+            await this.mergeCompanyFacts(balanceSheet.companyFacts, balanceSheetDTOUpdate.companyFacts, language);
         }
         if (balanceSheetDTOUpdate.rating) {
             this.mergeRating(balanceSheet.rating, balanceSheetDTOUpdate.rating, balanceSheet.type);
         }
     }
 
-    public async mergeCompanyFacts(companyFacts: CompanyFacts, companyFactsDTOUpdate: CompanyFactsDTOUpdate): Promise<void> {
+    public async mergeCompanyFacts(companyFacts: CompanyFacts, companyFactsDTOUpdate: CompanyFactsDTOUpdate,
+                                   language: keyof Translations): Promise<void> {
         companyFacts.totalPurchaseFromSuppliers = this.mergeVal(companyFacts.totalPurchaseFromSuppliers, companyFactsDTOUpdate.totalPurchaseFromSuppliers);
         companyFacts.totalStaffCosts = this.mergeVal(companyFacts.totalStaffCosts, companyFactsDTOUpdate.totalStaffCosts);
         companyFacts.profit = this.mergeVal(companyFacts.profit, companyFactsDTOUpdate.profit);
@@ -51,7 +54,7 @@ export class EntityWithDtoMerger {
           companyFactsDTOUpdate.averageJourneyToWorkForStaffInKm);
         companyFacts.isB2B = this.mergeVal(companyFacts.isB2B, companyFactsDTOUpdate.isB2B);
         if (companyFactsDTOUpdate.industrySectors) {
-            await this.replaceIndustrySectors(companyFacts, companyFactsDTOUpdate.industrySectors);
+            await this.replaceIndustrySectors(companyFacts, companyFactsDTOUpdate.industrySectors, language);
         }
         if (companyFactsDTOUpdate.supplyFractions) {
             await this.replaceSupplyFractions(companyFacts, companyFactsDTOUpdate.supplyFractions);
@@ -92,10 +95,21 @@ export class EntityWithDtoMerger {
     }
 
     public async replaceIndustrySectors(companyFacts: CompanyFacts,
-                                        industrySectorDTOUpdates: IndustrySectorDtoUpdate[]): Promise<void> {
+                                        industrySectorDTOUpdates: IndustrySectorDtoUpdate[],
+                                        language: keyof Translations): Promise<void> {
+        let industrySectors: IndustrySector[] = [];
+        for(const industrySectorDTOUpdate of industrySectorDTOUpdates) {
+            const industrySector = companyFacts.industrySectors.find(
+              is => is.industryCode === industrySectorDTOUpdate.industryCode);
+            const description = industrySector ?
+              updateTranslationOfLanguage(industrySector.description, language, industrySectorDTOUpdate.description) :
+              createTranslations(language, industrySectorDTOUpdate.description);
+
+            industrySectors.push(new IndustrySector(undefined, industrySectorDTOUpdate.industryCode,
+                industrySectorDTOUpdate.amountOfTotalTurnover, description));
+        }
         await this.industrySectorRepository.remove(companyFacts.industrySectors);
-        companyFacts.industrySectors = industrySectorDTOUpdates.map(is => new IndustrySector(undefined,
-          is.industryCode, is.amountOfTotalTurnover, is.description));
+        companyFacts.industrySectors = industrySectors;
     }
 
     public async replaceSupplyFractions(companyFacts: CompanyFacts, supplyFractionDTOUpdates: SupplyFractionDTOUpdate[]): Promise<void> {

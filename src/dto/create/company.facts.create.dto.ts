@@ -113,6 +113,6 @@ export class CompanyFactsDTOCreate {
       this.totalAssets, this.financialAssetsAndCashBalance,
       this.numberOfEmployees, this.hasCanteen, this.averageJourneyToWorkForStaffInKm, this.isB2B,
       this.supplyFractions.map(sf => sf.toSupplyFraction()),
-      this.employeesFractions.map(ef => ef.toEmployeesFraction()), this.industrySectors.map(is => is.toIndustrySector()));
+      this.employeesFractions.map(ef => ef.toEmployeesFraction()), this.industrySectors.map(is => is.toIndustrySector('en')));
   }
 }

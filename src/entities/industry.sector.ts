@@ -1,5 +1,6 @@
 import {PrimaryGeneratedColumn, Column, Entity, ManyToOne} from 'typeorm';
 import {CompanyFacts} from "./companyFacts";
+import {Translations} from "./Translations";
 
 @Entity()
 export class IndustrySector {
@@ -9,12 +10,14 @@ export class IndustrySector {
   public industryCode: string;
   @Column("double precision")
   public amountOfTotalTurnover: number;
-  @Column()
-  public description: string;
+  @Column({
+    type: 'jsonb'
+  })
+  public description: Translations;
   @ManyToOne(type => CompanyFacts, companyFacts => companyFacts.industrySectors)
   public companyFacts!: CompanyFacts;
 
-  constructor(id: number | undefined, industryCode: string, amountOfTotalTurnover: number, description: string) {
+  constructor(id: number | undefined, industryCode: string, amountOfTotalTurnover: number, description: Translations) {
     this.id = id;
     this.industryCode = industryCode;
     this.amountOfTotalTurnover = amountOfTotalTurnover;
