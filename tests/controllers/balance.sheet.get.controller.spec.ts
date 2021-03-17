@@ -59,6 +59,4 @@ describe('Balance Sheet Controller', () => {
         done();
     })
 
-
-
 })

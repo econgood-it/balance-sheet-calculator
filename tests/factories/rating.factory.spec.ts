@@ -9,7 +9,7 @@ describe('Rating factory', () => {
                 {
                     "estimations": 0, "isWeightSelectedByUser": false,
                     "isPositive": true,
-                    "name": "Human dignity in the supply chain",
+                    "name": "v5:compact.A1.1",
                     "shortName": "A1.1", "weight": 1
                 },
                 {
@@ -19,7 +19,7 @@ describe('Rating factory', () => {
                     "shortName": "A1.2", "weight": 1
                 }
             ],
-            "estimations": 0, "isWeightSelectedByUser": false, "name": "Human dignity in the supply chain", "shortName": "A1", "weight": 1
+            "estimations": 0, "isWeightSelectedByUser": false, "name": "v5:compact.A1", "shortName": "A1", "weight": 1
         })
         done();
     })

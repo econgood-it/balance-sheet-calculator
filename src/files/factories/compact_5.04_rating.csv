@@ -1,7 +1,7 @@
 No.,Stakeholders/ Themes/ Aspects,Weight,IsWeightSelectedByUser,Estimations,Points,Max. Points,IsPositive
-A,Suppliers,1,FALSE,0,0,200,TRUE
-A1,Human dignity in the supply chain,1,FALSE,0,0,50,TRUE
-A1.1,Human dignity in the supply chain,1,FALSE,0,0,50,TRUE
+A,v5:compact.A,1,FALSE,0,0,200,TRUE
+A1,v5:compact.A1,1,FALSE,0,0,50,TRUE
+A1.1,v5:compact.A1.1,1,FALSE,0,0,50,TRUE
 A1.2,Negative aspect: violation of human dignity in the supply chain,1,FALSE,0,0,-200,FALSE
 A2,Solidarity and social justice in the supply chain,1,FALSE,0,0,50,TRUE
 A2.1,Solidarity and social justice in the supply chain,1,FALSE,0,0,50,TRUE

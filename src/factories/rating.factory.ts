@@ -4,8 +4,6 @@ import { RatingReader } from "../reader/rating.reader";
 import { Rating } from "../entities/rating";
 
 export class RatingFactory {
-    private static readonly DEFAULT_WEIGHT = undefined;
-    private static readonly DEFAULT_ESTIMATION = 0;
 
     public static async createDefaultRating(balanceSheetType: BalanceSheetType,
         balanceSheetVersion: BalanceSheetVersion): Promise<Rating> {

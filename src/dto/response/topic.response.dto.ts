@@ -1,6 +1,6 @@
 import {Topic} from "../../entities/topic";
 import {AspectDTOResponse} from "./aspect.response.dto";
-import {Translations} from "../../entities/Translations";
+import {staticTranslate, Translations} from "../../entities/Translations";
 
 export class TopicDTOResponse {
 
@@ -18,8 +18,8 @@ export class TopicDTOResponse {
   }
 
   public static fromTopic(topic: Topic, language: keyof Translations): TopicDTOResponse {
-    return new TopicDTOResponse(topic.id, topic.shortName, topic.name, topic.estimations,
-      topic.points, topic.maxPoints, topic.isWeightSelectedByUser, topic.weight,
+    return new TopicDTOResponse(topic.id, topic.shortName, staticTranslate(language, topic.name),
+      topic.estimations, topic.points, topic.maxPoints, topic.isWeightSelectedByUser, topic.weight,
       topic.aspects.map(a => AspectDTOResponse.fromAspect(a, language)));
   }
 }
