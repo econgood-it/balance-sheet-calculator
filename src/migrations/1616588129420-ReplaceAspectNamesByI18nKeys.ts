@@ -110,7 +110,7 @@ export class ReplaceAspectNamesByI18nKeys1616588129420 implements MigrationInter
       ['D3.3','Negative aspect: wilful disregard of disproportionate environmental impacts'],
       ['D4.1','Customer participation, joint product development and market research'],
       ['D4.2','Product transparency'],
-      ['D4.2','Negative aspect: non-disclosure of hazardous substances'],
+      ['D4.3','Negative aspect: non-disclosure of hazardous substances'],
       ['E1.1','Products and services should cover basic needs and contribute to a good life'],
       ['E1.2','Social impact of products and services'],
       ['E1.3','Negative aspect: unethical and unfit products and services'],
