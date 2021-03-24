@@ -65,7 +65,7 @@ D3.3,Negative aspect: wilful disregard of disproportionate environmental impacts
 D4,Customer participation and product transparency,1,FALSE,0,0,0,TRUE
 D4.1,"Customer participation, joint product development and market research",1,FALSE,0,0,0,TRUE
 D4.2,Product transparency,1,FALSE,0,0,0,TRUE
-D4.2,Negative aspect: non-disclosure of hazardous substances,1,FALSE,0,0,0,FALSE
+D4.3,Negative aspect: non-disclosure of hazardous substances,1,FALSE,0,0,0,FALSE
 E,Social environment,1,FALSE,0,0,0,TRUE
 E1,Purpose of products and services and their effects on society,1,FALSE,0,0,0,TRUE
 E1.1,Products and services should cover basic needs and contribute to a good life,1,FALSE,0,0,0,TRUE
