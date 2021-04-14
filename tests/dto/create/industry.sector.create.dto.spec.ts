@@ -10,7 +10,7 @@ describe('Industry Sector DTO', () => {
         expect(result.industryCode).toBe('A');
         expect(result.amountOfTotalTurnover).toBe(0.8);
         const expectedTranslations = createTranslations('en', 'My description');
-        expect(result.description).toBe(expectedTranslations);
+        expect(result.description).toMatchObject(expectedTranslations);
     })
 
 })
