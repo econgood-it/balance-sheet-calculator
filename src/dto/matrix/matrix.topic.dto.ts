@@ -1,6 +1,8 @@
 import {Topic} from "../../entities/topic";
 import {none, Option, some} from "../../calculations/option";
 import {roundWithPrecision} from "../../math";
+import {BalanceSheet} from "../../entities/balanceSheet";
+import {staticTranslate, Translations} from "../../entities/Translations";
 
 export class MatrixTopicDTO {
 
@@ -23,10 +25,10 @@ export class MatrixTopicDTO {
     return weight === 0 ? true : false;
   }
 
-  public static fromTopic(topic: Topic): MatrixTopicDTO {
+  public static fromTopic(topic: Topic, language: keyof Translations): MatrixTopicDTO {
     const percentage = MatrixTopicDTO.percentage(topic.points, topic.maxPoints);
     const percentageReached = percentage.isPresent() ? percentage.get() : undefined;
-    return new MatrixTopicDTO(topic.shortName, topic.name, roundWithPrecision(topic.points),
+    return new MatrixTopicDTO(topic.shortName, staticTranslate(language, topic.name), roundWithPrecision(topic.points),
       roundWithPrecision(topic.maxPoints), percentageReached,
       this.notApplicable(topic.weight));
   }

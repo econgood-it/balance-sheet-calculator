@@ -4,6 +4,7 @@ import { EmployeesFractionDTOCreate } from './employees.fraction.create.dto';
 import { CompanyFacts } from '../../entities/companyFacts';
 import {IsBoolean, IsNumber, Min, ValidateNested} from "class-validator";
 import {IndustrySectorCreateDtoCreate} from "./industry.sector.create.dto";
+import {Translations} from "../../entities/Translations";
 
 export class CompanyFactsDTOCreate {
   @Min(0)
@@ -107,12 +108,12 @@ export class CompanyFactsDTOCreate {
       )
   );
 
-  public toCompanyFacts(): CompanyFacts {
+  public toCompanyFacts(language: keyof Translations): CompanyFacts {
     return new CompanyFacts(undefined, this.totalPurchaseFromSuppliers, this.totalStaffCosts,
       this.profit, this.financialCosts, this.incomeFromFinancialInvestments, this.additionsToFixedAssets, this.turnover,
       this.totalAssets, this.financialAssetsAndCashBalance,
       this.numberOfEmployees, this.hasCanteen, this.averageJourneyToWorkForStaffInKm, this.isB2B,
       this.supplyFractions.map(sf => sf.toSupplyFraction()),
-      this.employeesFractions.map(ef => ef.toEmployeesFraction()), this.industrySectors.map(is => is.toIndustrySector()));
+      this.employeesFractions.map(ef => ef.toEmployeesFraction()), this.industrySectors.map(is => is.toIndustrySector(language)));
   }
 }

@@ -3,11 +3,12 @@ import * as path from 'path';
 import { Topic } from '../../src/entities/topic';
 import { RatingReader } from '../../src/reader/rating.reader';
 
+
 describe('Rating Reader', () => {
     it('should read rating from csv', async (done) => {
         const ratingReader = new RatingReader();
         const pathToCsv = path.join(__dirname, "rating.csv");
-        const topics: Topic[] = await (await ratingReader.readRatingFromCsv(pathToCsv)).topics;
+        const topics: Topic[] = (await ratingReader.readRatingFromCsv(pathToCsv)).topics;
         // Topic	A1	Human dignity in the supply chain	1	0 %	0	83
         expect(topics[0]).toMatchObject(
             {

@@ -1,17 +1,11 @@
 import { CompanyFacts } from "../../src/entities/companyFacts";
-import { SupplyFraction } from "../../src/entities/supplyFraction";
 import { DatabaseConnectionCreator } from '../../src/database.connection.creator';
 import { Connection, Repository } from "typeorm";
-import { Region } from "../../src/entities/region";
 import { ConfigurationReader } from "../../src/configuration.reader";
-import {Industry} from "../../src/entities/industry";
-import {SupplierCalc,  SupplyCalcResults} from "../../src/calculations/supplier.calc";
-import {RegionProvider} from "../../src/providers/region.provider";
-import {IndustryProvider} from "../../src/providers/industry.provider";
 import {EmptyCompanyFacts} from "../testData/company.facts";
-import {CustomerCalc} from "../../src/calculations/customer.calc";
 import {IndustrySector} from "../../src/entities/industry.sector";
 import {SocialEnvironmentCalc} from "../../src/calculations/social.environment.calc";
+import {createTranslations} from "../../src/entities/Translations";
 
 
 describe('Social Environment Calculator', () => {
@@ -48,22 +42,25 @@ describe('Social Environment Calculator', () => {
   })
 
   it('should return that company is active in mining', async (done) => {
-    companyFacts.industrySectors = [new IndustrySector(undefined, 'B', 0, "")]
+    companyFacts.industrySectors = [
+      new IndustrySector(undefined, 'B', 0, createTranslations('en', ""))]
     const socialEnvironmentCalcResults = await new SocialEnvironmentCalc().calculate(companyFacts);
     expect(socialEnvironmentCalcResults.companyIsActiveInMiningOrConstructionIndustry).toBeTruthy();
     done();
   })
 
   it('should return that company is active in construction industry', async (done) => {
-    companyFacts.industrySectors = [new IndustrySector(undefined, 'F', 0, "")]
+    companyFacts.industrySectors = [
+      new IndustrySector(undefined, 'F', 0, createTranslations('en', ""))]
     const socialEnvironmentCalcResults = await new SocialEnvironmentCalc().calculate(companyFacts);
     expect(socialEnvironmentCalcResults.companyIsActiveInMiningOrConstructionIndustry).toBeTruthy();
     done();
   })
 
   it('should return that company is not active in mining or construction industry', async (done) => {
-    companyFacts.industrySectors = [new IndustrySector(undefined, 'A', 0, ""),
-      new IndustrySector(undefined, 'Ce', 0, "")]
+    companyFacts.industrySectors = [
+      new IndustrySector(undefined, 'A', 0, createTranslations('en', "")),
+      new IndustrySector(undefined, 'Ce', 0, createTranslations('en', ""))]
     const socialEnvironmentCalcResults = await new SocialEnvironmentCalc().calculate(companyFacts);
     expect(socialEnvironmentCalcResults.companyIsActiveInMiningOrConstructionIndustry).toBeFalsy();
     done();

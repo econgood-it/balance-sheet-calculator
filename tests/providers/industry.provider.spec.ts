@@ -7,6 +7,7 @@ import {SupplyFraction} from "../../src/entities/supplyFraction";
 import {Industry} from "../../src/entities/industry";
 import {IndustryProvider} from "../../src/providers/industry.provider";
 import {IndustrySector} from "../../src/entities/industry.sector";
+import {createTranslations} from "../../src/entities/Translations";
 
 describe('Industry Provider', () => {
 
@@ -36,8 +37,8 @@ describe('Industry Provider', () => {
     })
 
     it('should contain industries of industry sectors', async (done) => {
-        companyFacts.industrySectors = [new IndustrySector(undefined, 'A',  0.6, "Desc"),
-            new IndustrySector(undefined, 'Ce',  0.9, "Desc")]
+        companyFacts.industrySectors = [new IndustrySector(undefined, 'A',  0.6, createTranslations('en',"Desc")),
+            new IndustrySector(undefined, 'Ce',  0.9, createTranslations('en',"Desc"))]
         const industryProvider = await IndustryProvider.createFromCompanyFacts(companyFacts, industryRepo);
         expect(industryProvider.getOrFail('Ce').industryCode).toBe('Ce');
         expect(industryProvider.getOrFail('A').industryCode).toBe('A');

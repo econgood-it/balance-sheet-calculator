@@ -17,13 +17,12 @@ import {Industry} from "../entities/industry";
 import {IndustrySector} from "../entities/industry.sector";
 import {RegionProvider} from "../providers/region.provider";
 import {IndustryProvider} from "../providers/industry.provider";
-import {MatrixTopicDTO} from "../dto/matrix/matrix.topic.dto";
 import {MatrixDTO} from "../dto/matrix/matrix.dto";
 import NotFoundException from "../exceptions/not.found.exception";
 import {CompanyFacts} from "../entities/companyFacts";
 import {Rating} from "../entities/rating";
-
-
+import {BalanceSheetDTOResponse} from "../dto/response/balance.sheet.response.dto";
+import {parseLanguageParameter} from "../entities/Translations";
 
 export class BalanceSheetService {
   private static readonly BALANCE_SHEET_RELATIONS = ['rating', 'companyFacts',
@@ -39,18 +38,20 @@ export class BalanceSheetService {
   }
 
   public async createBalanceSheet(req: Request, res: Response, next: NextFunction) {
+    const language = parseLanguageParameter(req.query.lng);
     this.connection.manager.transaction(async entityManager => {
       const balanceSheetDTOCreate: BalanceSheetDTOCreate = BalanceSheetDTOCreate.fromJSON(req.body);
       await this.validateOrFail(balanceSheetDTOCreate);
-      const balanceSheet: BalanceSheet = await balanceSheetDTOCreate.toBalanceSheet();
+      const balanceSheet: BalanceSheet = await balanceSheetDTOCreate.toBalanceSheet(language);
       const balanceSheetResponse: BalanceSheet = await this.calculateAndSave(balanceSheet, entityManager);
-      res.json(balanceSheetResponse);
+      res.json(BalanceSheetDTOResponse.fromBalanceSheet(balanceSheetResponse, language));
     }).catch(error => {
       this.handleError(error, next);
     });
   }
 
   public async updateBalanceSheet(req: Request, res: Response, next: NextFunction) {
+    const language = parseLanguageParameter(req.query.lng);
     this.connection.manager.transaction(async entityManager => {
       const balanceSheetRepository = entityManager.getRepository(BalanceSheet);
       const entityWithDTOMerger = new EntityWithDtoMerger(entityManager.getRepository(SupplyFraction),
@@ -64,15 +65,16 @@ export class BalanceSheetService {
         next(new BadRequestException(`Balance sheet id in request body and url parameter has to be the same`));
       }
       await this.validateOrFail(balanceSheetDTOUpdate);
-      await entityWithDTOMerger.mergeBalanceSheet(balanceSheet, balanceSheetDTOUpdate);
+      await entityWithDTOMerger.mergeBalanceSheet(balanceSheet, balanceSheetDTOUpdate, language);
       const balanceSheetResponse: BalanceSheet = await this.calculateAndSave(balanceSheet, entityManager);
-      res.json(balanceSheetResponse);
+      res.json(BalanceSheetDTOResponse.fromBalanceSheet(balanceSheetResponse, language));
     }).catch(error => {
       this.handleError(error, next);
     });
   }
 
   public async getBalanceSheet(req: Request, res: Response, next: NextFunction) {
+    const language = parseLanguageParameter(req.query.lng);
     this.connection.manager.transaction(async entityManager => {
       const balanceSheetRepository = entityManager.getRepository(BalanceSheet);
       const balanceSheetId: number = Number(req.params.id);
@@ -80,14 +82,15 @@ export class BalanceSheetService {
         relations: BalanceSheetService.BALANCE_SHEET_RELATIONS
       });
       this.sortArraysOfBalanceSheet(balanceSheet);
-      res.json(balanceSheet);
+      res.json(BalanceSheetDTOResponse.fromBalanceSheet(balanceSheet, language));
     }).catch(error => {
       this.handleError(error, next);
     });
   }
 
 
-  public getMatrixRepresentationOfBalanceSheet(req: Request, res: Response, next: NextFunction) {
+  public async getMatrixRepresentationOfBalanceSheet(req: Request, res: Response, next: NextFunction) {
+    const language = parseLanguageParameter(req.query.lng);
     this.connection.manager.transaction(async entityManager => {
       const balanceSheetRepository = entityManager.getRepository(BalanceSheet);
       const balanceSheetId: number = Number(req.params.id);
@@ -95,7 +98,7 @@ export class BalanceSheetService {
         relations: BalanceSheetService.RATING_RELATIONS
       });
       this.sortArraysOfBalanceSheet(balanceSheet);
-      res.json(MatrixDTO.fromRating(balanceSheet.rating));
+      res.json(MatrixDTO.fromRating(balanceSheet.rating, language));
     }).catch(error => {
       this.handleError(error, next);
     });

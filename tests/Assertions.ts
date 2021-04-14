@@ -11,6 +11,7 @@ export class Assertions {
                 expect(received[i].maxPoints).toBeCloseTo(expected[i].maxPoints, numDigits);
                 expect(received[i].points).toBeCloseTo(expected[i].points, numDigits);
                 expect(received[i].weight).toBeCloseTo(expected[i].weight, numDigits);
+                expect(received[i].name).toBe(expected[i].name);
                 expect(received[i].isWeightSelectedByUser).toBe(expected[i].isWeightSelectedByUser);
             } catch (e) {
                 throw new Error(Assertions.errorMsg(e, received[i], expected[i]));
@@ -28,6 +29,7 @@ export class Assertions {
                 expect(received[i].maxPoints).toBeCloseTo(expected[i].maxPoints, numDigits);
                 expect(received[i].points).toBeCloseTo(expected[i].points, numDigits);
                 expect(received[i].weight).toBeCloseTo(expected[i].weight, numDigits);
+                expect(received[i].name).toBe(expected[i].name);
                 expect(received[i].isWeightSelectedByUser).toBe(expected[i].isWeightSelectedByUser);
             } catch (e) {
                 throw new Error(Assertions.errorMsg(e, received[i], expected[i]));

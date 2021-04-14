@@ -15,13 +15,13 @@ describe('Matrix DTO', () => {
   });
 
   it('is created from rating',  async (done) => {
-    const matrixDTO = MatrixDTO.fromRating(rating);
+    const matrixDTO = MatrixDTO.fromRating(rating, 'en');
     expect(matrixDTO).toBeDefined();
     done()
   })
 
   it('has a topics array of 20',  async (done) => {
-    const matrixDTO = MatrixDTO.fromRating(rating);
+    const matrixDTO = MatrixDTO.fromRating(rating, 'en');
     expect(matrixDTO.topics).toHaveLength(20);
     done()
   })
@@ -29,7 +29,7 @@ describe('Matrix DTO', () => {
   it('has topic A1 with 30 of 50 reached points',  async (done) => {
     rating.topics[0].points = 30;
     rating.topics[0].maxPoints = 50;
-    const matrixDTO = MatrixDTO.fromRating(rating);
+    const matrixDTO = MatrixDTO.fromRating(rating, 'en');
     expect(matrixDTO.topics[0].points).toBe(30);
     expect(matrixDTO.topics[0].maxPoints).toBe(50);
     done()
@@ -38,7 +38,7 @@ describe('Matrix DTO', () => {
   it('has topic E4 with 20 of 60 reached points',  async (done) => {
     rating.topics[0].points = 20;
     rating.topics[0].maxPoints = 60;
-    const matrixDTO = MatrixDTO.fromRating(rating);
+    const matrixDTO = MatrixDTO.fromRating(rating, 'en');
     expect(matrixDTO.topics[0].points).toBe(20);
     expect(matrixDTO.topics[0].maxPoints).toBe(60);
     done()

@@ -2,6 +2,7 @@ import { DatabaseConnectionCreator } from '../../src/database.connection.creator
 import { Connection, Repository } from "typeorm";
 import { ConfigurationReader } from "../../src/configuration.reader";
 import {IndustrySector} from "../../src/entities/industry.sector";
+import {createTranslations} from "../../src/entities/Translations";
 
 describe('Industry Sector', () => {
 
@@ -22,11 +23,11 @@ describe('Industry Sector', () => {
 
     it('should save and delete industry sector', async (done) => {
         const industrySector: IndustrySector = new IndustrySector(undefined, 'A', 3.44,
-          'My description');
+          createTranslations('en', 'My description'));
         const result = await industrySectorRepository.save(industrySector);
         expect(result.industryCode).toBe('A');
         expect(result.amountOfTotalTurnover).toBe(3.44);
-        expect(result.description).toBe('My description');
+        expect(result.description).toBe(createTranslations('en', 'My description'));
         await industrySectorRepository.remove(result);
         done();
     })

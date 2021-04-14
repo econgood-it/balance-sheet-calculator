@@ -12,7 +12,8 @@ import {IndustrySector} from "../../src/entities/industry.sector";
 import {FinanceCalc} from "../../src/calculations/finance.calc";
 import {Rating} from "../../src/entities/rating";
 import {CompanyFacts} from "../../src/entities/companyFacts";
-import {EmptyCompanyFacts} from "../testData/company.facts";
+import {EmptyCompanyFacts, EmptyCompanyFactsJson} from "../testData/company.facts";
+import {createTranslations} from "../../src/entities/Translations";
 
 
 describe('Balance Sheet Controller', () => {
@@ -42,7 +43,7 @@ describe('Balance Sheet Controller', () => {
         balanceSheetJson = {
             type: BalanceSheetType.Full,
             version: BalanceSheetVersion.v5_0_4,
-            companyFacts: EmptyCompanyFacts
+            companyFacts: EmptyCompanyFactsJson
         }
     })
 
@@ -60,8 +61,11 @@ describe('Balance Sheet Controller', () => {
 
     it('creates BalanceSheet where B1 weight is very high', async (done) => {
         const testApp = supertest(app);
-        balanceSheetJson.companyFacts.industrySectors = [new IndustrySector(undefined,
-          FinanceCalc.INDUSTRY_CODE_FOR_FINANCIAL_SERVICES, 1, 'desc')]
+        balanceSheetJson.companyFacts.industrySectors = [{
+            industryCode: FinanceCalc.INDUSTRY_CODE_FOR_FINANCIAL_SERVICES,
+            amountOfTotalTurnover: 1,
+            description: 'desc'
+        }]
         const response = await testApp.post(endpointPath).auth(configuration.appUsername,
           configuration.appPassword).send(balanceSheetJson);
         expect(response.status).toEqual(200);

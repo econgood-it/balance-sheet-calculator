@@ -1,16 +1,14 @@
-import { CompanyFacts } from "../../src/entities/companyFacts";
-import { SupplyFraction } from "../../src/entities/supplyFraction";
-import { DatabaseConnectionCreator } from '../../src/database.connection.creator';
-import { Connection, Repository } from "typeorm";
-import { Region } from "../../src/entities/region";
-import { ConfigurationReader } from "../../src/configuration.reader";
+import {CompanyFacts} from "../../src/entities/companyFacts";
+import {DatabaseConnectionCreator} from '../../src/database.connection.creator';
+import {Connection} from "typeorm";
+import {ConfigurationReader} from "../../src/configuration.reader";
 import {Industry} from "../../src/entities/industry";
-import {SupplierCalc,  SupplyCalcResults} from "../../src/calculations/supplier.calc";
 import {RegionProvider} from "../../src/providers/region.provider";
 import {IndustryProvider} from "../../src/providers/industry.provider";
 import {EmptyCompanyFacts} from "../testData/company.facts";
 import {CustomerCalc} from "../../src/calculations/customer.calc";
 import {IndustrySector} from "../../src/entities/industry.sector";
+import {createTranslations} from "../../src/entities/Translations";
 
 
 describe('Customer Calculator', () => {
@@ -42,8 +40,8 @@ describe('Customer Calculator', () => {
 
   it('should calculate when industry sectors non empty', async (done) => {
     companyFacts.industrySectors = [
-      new IndustrySector(undefined, "F", 3, ""),
-      new IndustrySector(undefined, "A", 4, ""),
+      new IndustrySector(undefined, "F", 3, createTranslations('en', "")),
+      new IndustrySector(undefined, "A", 4, createTranslations('en', "")),
     ];
     industryProvider = await IndustryProvider.createFromCompanyFacts(companyFacts, connection.getRepository(Industry));
     const customerCalcResults = await new CustomerCalc(industryProvider).calculate(companyFacts);

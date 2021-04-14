@@ -1,4 +1,4 @@
-import { PrimaryGeneratedColumn, Column, Entity, ManyToOne, OneToMany } from 'typeorm';
+import {PrimaryGeneratedColumn, Column, Entity, ManyToOne, OneToMany} from 'typeorm';
 import { Rating } from './rating';
 import { Aspect } from './aspect';
 
@@ -9,7 +9,8 @@ export class Topic {
     @Column()
     public readonly shortName: string;
     @Column()
-    public readonly name: string;
+    public name: string;
+
     @Column("double precision")
     public estimations: number;
     @Column("double precision")
@@ -46,4 +47,5 @@ export class Topic {
         this.isWeightSelectedByUser = isWeightSelectedByUser;
         this.aspects = aspects;
     }
+
 }

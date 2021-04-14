@@ -1,6 +1,7 @@
 import { strictObjectMapper, expectString, expectNumber } from '@daniel-faber/json-ts';
 import {IsAlpha, IsNumber, IsString, Length, Max, Min} from "class-validator";
 import {IndustrySector} from "../../entities/industry.sector";
+import {createTranslations,  Translations} from "../../entities/Translations";
 
 export class IndustrySectorCreateDtoCreate {
 
@@ -27,7 +28,8 @@ export class IndustrySectorCreateDtoCreate {
         accessor.getOptional('description', expectString, ""),
       )
   );
-  public toIndustrySector(): IndustrySector {
-    return new IndustrySector(undefined, this.industryCode, this.amountOfTotalTurnover, this.description);
+  public toIndustrySector(lng: keyof Translations): IndustrySector {
+    return new IndustrySector(undefined, this.industryCode, this.amountOfTotalTurnover,
+      createTranslations(lng, this.description));
   }
 }
