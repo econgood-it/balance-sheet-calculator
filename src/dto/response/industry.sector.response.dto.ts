@@ -1,10 +1,5 @@
-import { strictObjectMapper, expectString, expectNumber } from '@daniel-faber/json-ts';
-import {IsAlpha, IsNumber, IsOptional, IsString, Length, Max, Min} from "class-validator";
 import {IndustrySector} from "../../entities/industry.sector";
-import {Aspect} from "../../entities/aspect";
-import {Translations} from "../../entities/Translations";
-import {Column, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
-import {CompanyFacts} from "../../entities/companyFacts";
+import {getTranslationOfLanguage, Translations} from "../../entities/Translations";
 
 export class IndustrySectorDtoResponse {
 
@@ -19,6 +14,6 @@ export class IndustrySectorDtoResponse {
   public static fromIndustrySector(industrySector: IndustrySector, language: keyof Translations): IndustrySectorDtoResponse {
     return new IndustrySectorDtoResponse(industrySector.id,
       industrySector.industryCode, industrySector.amountOfTotalTurnover,
-      industrySector.description[language]);
+      getTranslationOfLanguage(industrySector.description, language));
   }
 }

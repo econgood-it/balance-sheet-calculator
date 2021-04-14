@@ -24,6 +24,11 @@ export const updateTranslationOfLanguage = (translations: Translations,
   return translations;
 }
 
+export const getTranslationOfLanguage = (translations: Translations,
+                                         lng: keyof Translations): string => {
+  return translations[lng] ? translations[lng] : '';
+}
+
 export const parseLanguageParameter = (lngParam: any): keyof Translations => {
   if(DefaultTranslations[lngParam as ValidLanguage] === '') {
     return lngParam as ValidLanguage;
