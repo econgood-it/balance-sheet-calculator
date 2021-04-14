@@ -1,65 +1,65 @@
 No.,Stakeholders/ Themes/ Aspects,Weight,IsWeightSelectedByUser,Estimations,Points,Max. Points,IsPositive
 A,v5:compact.A,1,FALSE,0,0,200,TRUE
 A1,v5:compact.A1,1,FALSE,0,0,50,TRUE
-A1.1,v5:compact.A1.1,1,FALSE,0,0,50,TRUE
-A1.2,Negative aspect: violation of human dignity in the supply chain,1,FALSE,0,0,-200,FALSE
-A2,Solidarity and social justice in the supply chain,1,FALSE,0,0,50,TRUE
-A2.1,Solidarity and social justice in the supply chain,1,FALSE,0,0,50,TRUE
-A2.2,Negative aspect: abuse of market power against suppliers,1,FALSE,0,0,-200,FALSE
-A3,Environmental sustainability in the supply chain,1,FALSE,0,0,50,TRUE
-A3.1,Environmental sustainability in the supply chain,1,FALSE,0,0,50,TRUE
-A3.2,Negative aspect: disproportionate environmental impact throughout the supply chain,1,FALSE,0,0,-200,FALSE
-A4,Transparency & co-determination in the supply chain,1,FALSE,0,0,50,TRUE
-A4.1,Transparency & co-determination in the supply chain,1,FALSE,0,0,50,TRUE
-B,"Owners, equity- and financial service providers",1,FALSE,0,0,200,TRUE
-B1,Ethical position in relation to financial resources,1,FALSE,0,0,50,TRUE
-B1.1,Ethical position in relation to financial resources,1,FALSE,0,0,50,TRUE
-B2,Social position in relation to financial resources,1,FALSE,0,0,50,TRUE
-B2.1,Social position in relation to financial resources,1,FALSE,0,0,50,TRUE
-B2.2,Negative aspect: unfair distribution of funds,1,FALSE,0,0,-200,FALSE
-B3,Use of funds in relation to social and environmental impacts,1,FALSE,0,0,50,TRUE
-B3.1,Use of funds in relation to social and environmental impacts,1,FALSE,0,0,50,TRUE
-B3.2,Negative aspect: reliance on environmentally unsafe resources,1,FALSE,0,0,-200,FALSE
-B4,Ownership and co-determination,1,FALSE,0,0,50,TRUE
-B4.1,Ownership and co-determination,1,FALSE,0,0,50,TRUE
-B4.2,Negative aspect: hostile takeover,1,FALSE,0,0,-200,FALSE
-C,Employees,1,FALSE,0,0,200,TRUE
-C1,Human dignity in the workplace and working environment,1,FALSE,0,0,50,TRUE
-C1.1,Human dignity in the workplace and working environment,1,FALSE,0,0,50,TRUE
-C1.2,Negative aspect: unfit working conditions,1,FALSE,0,0,-200,FALSE
-C2,Self-determined working arrangements,1,FALSE,0,0,50,TRUE
-C2.1,Self-determined working arrangements,1,FALSE,0,0,50,TRUE
-C2.2,Negative aspect: unfair employment contracts,1,FALSE,0,0,-200,FALSE
-C3,Environmentally-friendly behaviour of staff,1,FALSE,0,0,50,TRUE
-C3.1,Environmentally-friendly behaviour of staff,1,FALSE,0,0,50,TRUE
-C3.2,Negative aspect: guidance on waste/ environmentally damaging practices,1,FALSE,0,0,-200,FALSE
-C4,Co-determination and transparency within the organisation,1,FALSE,0,0,50,TRUE
-C4.1,Co-determination and transparency within the organisation,1,FALSE,0,0,50,TRUE
-C4.2,Negative aspect: obstruction of works councils,1,FALSE,0,0,-200,FALSE
-D,Customers and other companies,1,FALSE,0,0,200,TRUE
-D1,Ethical customer relations,1,FALSE,0,0,50,TRUE
-D1.1,Ethical customer relations,1,FALSE,0,0,50,TRUE
-D1.2,Negative aspect: unethical advertising,1,FALSE,0,0,-200,FALSE
-D2,Cooperation and solidarity with other companies,1,FALSE,0,0,50,TRUE
-D2.1,Cooperation and solidarity with other companies,1,FALSE,0,0,50,TRUE
-D2.2,Negative aspect: abuse of market power to the detriment of other companies,1,FALSE,0,0,-200,FALSE
-D3,Impact on the environment of the use and disposal of products and services,1,FALSE,0,0,50,TRUE
-D3.1,Impact on the environment of the use and disposal of products and services,1,FALSE,0,0,50,TRUE
-D3.2,Negative aspect: wilful disregard of disproportionate environmental impacts,1,FALSE,0,0,-200,FALSE
-D4,Customer participation and product transparency,1,FALSE,0,0,50,TRUE
-D4.1,Customer participation and product transparency,1,FALSE,0,0,50,TRUE
-D4.2,Negative aspect: non-disclosure of hazardous substances,1,FALSE,0,0,-200,FALSE
-E,Social environment,1,FALSE,0,0,200,TRUE
-E1,Purpose of products and services and their effects on society,1,FALSE,0,0,50,TRUE
-E1.1,Purpose of products and services and their effects on society,1,FALSE,0,0,50,TRUE
-E1.2,Negative aspect: unethical and unfit products and services,1,FALSE,0,0,-200,FALSE
-E2,Contribution to the community,1,FALSE,0,0,50,TRUE
-E2.1,Contribution to the community,1,FALSE,0,0,50,TRUE
-E2.2,Negative aspect: inappropriate non-payment of tax,1,FALSE,0,0,-200,FALSE
-E2.3,Negative aspect: no anti-corruption policy,1,FALSE,0,0,-200,FALSE
-E3,Reduction of environmental impact,1,FALSE,0,0,50,TRUE
-E3.1,Reduction of environmental impact,1,FALSE,0,0,50,TRUE
-E3.2,Negative aspect: infringement of environmental regulations and disproportionate environmental pollution,1,FALSE,0,0,-200,FALSE
-E4,Social co-determination and transparency,1,FALSE,0,0,50,TRUE
-E4.1,Social co-determination and transparency,1,FALSE,0,0,50,TRUE
-E4.2,Negative aspect: lack of transparency and wilful misinformation,1,FALSE,0,0,-200,FALSE
+A1.1,v5:compact.A11,1,FALSE,0,0,50,TRUE
+A1.2,v5:compact.A12,1,FALSE,0,0,-200,FALSE
+A2,v5:compact.A2,1,FALSE,0,0,50,TRUE
+A2.1,v5:compact.A21,1,FALSE,0,0,50,TRUE
+A2.2,v5:compact.A22,1,FALSE,0,0,-200,FALSE
+A3,v5:compact.A3,1,FALSE,0,0,50,TRUE
+A3.1,v5:compact.A31,1,FALSE,0,0,50,TRUE
+A3.2,v5:compact.A32,1,FALSE,0,0,-200,FALSE
+A4,v5:compact.A4,1,FALSE,0,0,50,TRUE
+A4.1,v5:compact.A41,1,FALSE,0,0,50,TRUE
+B,v5:compact.B,1,FALSE,0,0,200,TRUE
+B1,v5:compact.B1,1,FALSE,0,0,50,TRUE
+B1.1,v5:compact.B11,1,FALSE,0,0,50,TRUE
+B2,v5:compact.B2,1,FALSE,0,0,50,TRUE
+B2.1,v5:compact.B21,1,FALSE,0,0,50,TRUE
+B2.2,v5:compact.B22,1,FALSE,0,0,-200,FALSE
+B3,v5:compact.B3,1,FALSE,0,0,50,TRUE
+B3.1,v5:compact.B31,1,FALSE,0,0,50,TRUE
+B3.2,v5:compact.B32,1,FALSE,0,0,-200,FALSE
+B4,v5:compact.B4,1,FALSE,0,0,50,TRUE
+B4.1,v5:compact.B41,1,FALSE,0,0,50,TRUE
+B4.2,v5:compact.B42,1,FALSE,0,0,-200,FALSE
+C,v5:compact.C,1,FALSE,0,0,200,TRUE
+C1,v5:compact.C1,1,FALSE,0,0,50,TRUE
+C1.1,v5:compact.C11,1,FALSE,0,0,50,TRUE
+C1.2,v5:compact.C12,1,FALSE,0,0,-200,FALSE
+C2,v5:compact.C2,1,FALSE,0,0,50,TRUE
+C2.1,v5:compact.C21,1,FALSE,0,0,50,TRUE
+C2.2,v5:compact.C22,1,FALSE,0,0,-200,FALSE
+C3,v5:compact.C3,1,FALSE,0,0,50,TRUE
+C3.1,v5:compact.C31,1,FALSE,0,0,50,TRUE
+C3.2,v5:compact.C32,1,FALSE,0,0,-200,FALSE
+C4,v5:compact.C4,1,FALSE,0,0,50,TRUE
+C4.1,v5:compact.C41,1,FALSE,0,0,50,TRUE
+C4.2,v5:compact.C42,1,FALSE,0,0,-200,FALSE
+D,v5:compact.D,1,FALSE,0,0,200,TRUE
+D1,v5:compact.D1,1,FALSE,0,0,50,TRUE
+D1.1,v5:compact.D11,1,FALSE,0,0,50,TRUE
+D1.2,v5:compact.D12,1,FALSE,0,0,-200,FALSE
+D2,v5:compact.D2,1,FALSE,0,0,50,TRUE
+D2.1,v5:compact.D21,1,FALSE,0,0,50,TRUE
+D2.2,v5:compact.D22,1,FALSE,0,0,-200,FALSE
+D3,v5:compact.D3,1,FALSE,0,0,50,TRUE
+D3.1,v5:compact.D31,1,FALSE,0,0,50,TRUE
+D3.2,v5:compact.D32,1,FALSE,0,0,-200,FALSE
+D4,v5:compact.D4,1,FALSE,0,0,50,TRUE
+D4.1,v5:compact.D41,1,FALSE,0,0,50,TRUE
+D4.2,v5:compact.D42,1,FALSE,0,0,-200,FALSE
+E,v5:compact.E,1,FALSE,0,0,200,TRUE
+E1,v5:compact.E1,1,FALSE,0,0,50,TRUE
+E1.1,v5:compact.E11,1,FALSE,0,0,50,TRUE
+E1.2,v5:compact.E12,1,FALSE,0,0,-200,FALSE
+E2,v5:compact.E2,1,FALSE,0,0,50,TRUE
+E2.1,v5:compact.E21,1,FALSE,0,0,50,TRUE
+E2.2,v5:compact.E22,1,FALSE,0,0,-200,FALSE
+E2.3,v5:compact.E23,1,FALSE,0,0,-200,FALSE
+E3,v5:compact.E3,1,FALSE,0,0,50,TRUE
+E3.1,v5:compact.E31,1,FALSE,0,0,50,TRUE
+E3.2,v5:compact.E32,1,FALSE,0,0,-200,FALSE
+E4,v5:compact.E4,1,FALSE,0,0,50,TRUE
+E4.1,v5:compact.E41,1,FALSE,0,0,50,TRUE
+E4.2,v5:compact.E42,1,FALSE,0,0,-200,FALSE

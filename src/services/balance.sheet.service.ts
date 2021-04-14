@@ -90,7 +90,7 @@ export class BalanceSheetService {
 
 
   public async getMatrixRepresentationOfBalanceSheet(req: Request, res: Response, next: NextFunction) {
-
+    const language = parseLanguageParameter(req.query.lng);
     this.connection.manager.transaction(async entityManager => {
       const balanceSheetRepository = entityManager.getRepository(BalanceSheet);
       const balanceSheetId: number = Number(req.params.id);
@@ -98,7 +98,7 @@ export class BalanceSheetService {
         relations: BalanceSheetService.RATING_RELATIONS
       });
       this.sortArraysOfBalanceSheet(balanceSheet);
-      res.json(MatrixDTO.fromRating(balanceSheet.rating));
+      res.json(MatrixDTO.fromRating(balanceSheet.rating, language));
     }).catch(error => {
       this.handleError(error, next);
     });

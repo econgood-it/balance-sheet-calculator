@@ -9,13 +9,13 @@ describe('Rating factory', () => {
                 {
                     "estimations": 0, "isWeightSelectedByUser": false,
                     "isPositive": true,
-                    "name": "v5:compact.A1.1",
+                    "name": "v5:compact.A11",
                     "shortName": "A1.1", "weight": 1
                 },
                 {
                     "estimations": 0, "isWeightSelectedByUser": false,
                     "isPositive": false,
-                    "name": "Negative aspect: violation of human dignity in the supply chain",
+                    "name": "v5:compact.A12",
                     "shortName": "A1.2", "weight": 1
                 }
             ],
@@ -30,16 +30,16 @@ describe('Rating factory', () => {
             "aspects": [
                 {
                     "estimations": 0, "isPositive": true, "isWeightSelectedByUser": false,
-                    "name": "Working conditions and social impact in the supply chain",
+                    "name": "v5:full.A11",
                     "shortName": "A1.1", "weight": 1
                 },
                 {
                     "estimations": 0, "isPositive": false, "isWeightSelectedByUser": false,
-                    "name": "Negative aspect: violation of human dignity in the supply chain",
+                    "name": "v5:full.A12",
                     "shortName": "A1.2", "weight": 1
                 }
             ],
-            "estimations": 0, "isWeightSelectedByUser": false, "name": "Human dignity in the supply chain", "shortName": "A1", "weight": 1
+            "estimations": 0, "isWeightSelectedByUser": false, "name": "v5:full.A1", "shortName": "A1", "weight": 1
         })
         done();
     })

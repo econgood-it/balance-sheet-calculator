@@ -1,5 +1,5 @@
 import {Aspect} from "../../entities/aspect";
-import {Translations} from "../../entities/Translations";
+import {staticTranslate, Translations} from "../../entities/Translations";
 
 export class AspectDTOResponse {
 
@@ -18,7 +18,7 @@ export class AspectDTOResponse {
 
   public static fromAspect(aspect: Aspect, language: keyof Translations): AspectDTOResponse {
     return new AspectDTOResponse(aspect.id, aspect.shortName,
-      aspect.name, aspect.points, aspect.maxPoints, aspect.isWeightSelectedByUser,
+      staticTranslate(language, aspect.name), aspect.points, aspect.maxPoints, aspect.isWeightSelectedByUser,
       aspect.isPositive, aspect.estimations, aspect.weight);
   }
 }

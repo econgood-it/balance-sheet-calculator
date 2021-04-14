@@ -1,86 +1,86 @@
 No.,Stakeholders/ Themes/ Aspects,Weight,IsWeightSelectedByUser,Estimations,Points,MaxPoints,IsPositive
-A,Suppliers,1,FALSE,0,0,0,TRUE
-A1,Human dignity in the supply chain,1,FALSE,0,0,0,TRUE
-A1.1,Working conditions and social impact in the supply chain,1,FALSE,0,0,0,TRUE
-A1.2,Negative aspect: violation of human dignity in the supply chain,1,FALSE,0,0,0,FALSE
-A2,Solidarity and social justice in the supply chain,1,FALSE,0,0,0,TRUE
-A2.1,Fair business practices towards direct suppliers,1,FALSE,0,0,0,TRUE
-A2.2,Exercising a positive influence on solidarity and social justice in the supply chain,1,FALSE,0,0,0,TRUE
-A2.3,Negative aspect: abuse of market power against suppliers,1,FALSE,0,0,0,FALSE
-A3,Environmental sustainability in the supply chain,1,FALSE,0,0,0,TRUE
-A3.1,Environmental impact throughout the supply chain,1,FALSE,0,0,0,TRUE
-A3.2,Negative aspect: disproportionate environmental impact throughout the supply chain,1,FALSE,0,0,0,FALSE
-A4,Transparency & co-determination in the supply chain,1,FALSE,0,0,0,TRUE
-A4.1,Transparency towards suppliers and their right to co-determination,1,FALSE,0,0,0,TRUE
-A4.2,Positive influence on transparency and co-determination throughout the supply chain,1,FALSE,0,0,0,TRUE
-B,"Owners, equity- and financial service providers",1,FALSE,0,0,0,TRUE
-B1,Ethical position in relation to financial resources,1,FALSE,0,0,0,TRUE
-B1.1,Financial independence through equity financing,1,FALSE,0,0,0,TRUE
-B1.2,Common Good-orientated borrowing,1,FALSE,0,0,0,TRUE
-B1.3,Ethical position of external financial partners,1,FALSE,0,0,0,TRUE
-B2,Social position in relation to financial resources,1,FALSE,0,0,0,TRUE
-B2.1,Solidarity and Common Good-orientated use of funds,1,FALSE,0,0,0,TRUE
-B2.2,Negative aspect: unfair distribution of funds,1,FALSE,0,0,0,FALSE
-B3,Use of funds in relation to social and environmental impacts,1,FALSE,0,0,0,TRUE
-B3.1,Environmental quality of investments,1,FALSE,0,0,0,TRUE
-B3.2,Common Good-orientated investment,1,FALSE,0,0,0,TRUE
-B3.3,Negative aspect: reliance on environmentally unsafe resources,1,FALSE,0,0,0,FALSE
-B4,Ownership and co-determination,1,FALSE,0,0,0,TRUE
-B4.1,Common Good-orientated ownership structure,1,FALSE,0,0,0,TRUE
-B4.2,Negative aspect: hostile takeover,1,FALSE,0,0,0,FALSE
-C,Employees,1,FALSE,0,0,0,TRUE
-C1,Human dignity in the workplace and working environment,1,FALSE,0,0,0,TRUE
-C1.1,Employee-focused organisational culture,1,FALSE,0,0,0,TRUE
-C1.2,Health promotion and occupational health and safety,1,FALSE,0,0,0,TRUE
-C1.3,Diversity and equal opportunities,1,FALSE,0,0,0,TRUE
-C1.4,Negative aspect: unfit working conditions,1,FALSE,0,0,0,FALSE
-C2,Self-determined working arrangements,1,FALSE,0,0,0,TRUE
-C2.1,Pay structure,1,FALSE,0,0,0,TRUE
-C2.2,Structuring working time,1,FALSE,0,0,0,TRUE
-C2.3,Employment structure and work-life balance,1,FALSE,0,0,0,TRUE
-C2.4,Negative aspect: unfair employment contracts,1,FALSE,0,0,0,FALSE
-C3,Environmentally-friendly behaviour of staff,1,FALSE,0,0,0,TRUE
-C3.1,Food during working hours,1,FALSE,0,0,0,TRUE
-C3.2,Travel to work,1,FALSE,0,0,0,TRUE
-C3.3,"Organisational culture, cultivating awareness for an environmentally-friendly approach",1,FALSE,0,0,0,TRUE
-C3.4,Negative aspect: guidance on waste/ environmentally damaging practices,1,FALSE,0,0,0,FALSE
-C4,Co-determination and transparency within the organisation,1,FALSE,0,0,0,TRUE
-C4.1,Transparency within the organisation,1,FALSE,0,0,0,TRUE
-C4.2,Legitimation of the management,1,FALSE,0,0,0,TRUE
-C4.3,Employee co-determination,1,FALSE,0,0,0,TRUE
-C4.4,Negative aspect: obstruction of works councils,1,FALSE,0,0,0,FALSE
-D,Customers and other companies,1,FALSE,0,0,0,TRUE
-D1,Ethical customer relations,1,FALSE,0,0,0,TRUE
-D1.1,Respect for human dignity in communication with customers,1,FALSE,0,0,0,TRUE
-D1.2,Barrier-free access,1,FALSE,0,0,0,TRUE
-D1.3,Negative aspect: unethical advertising,1,FALSE,0,0,0,FALSE
-D2,Cooperation and solidarity with other companies,1,FALSE,0,0,0,TRUE
-D2.1,Cooperation with other companies,1,FALSE,0,0,0,TRUE
-D2.2,Solidarity with other companies,1,FALSE,0,0,0,TRUE
-D2.3,Negative aspect: abuse of market power to the detriment of other companies,1,FALSE,0,0,0,FALSE
-D3,Impact on the environment of the use and disposal of products and services,1,FALSE,0,0,0,TRUE
-D3.1,Environmental cost-benefit ration of products and services (efficiency and consistency) ,1,FALSE,0,0,0,TRUE
-D3.2,Moderate use of products and services (sufficiency),1,FALSE,0,0,0,TRUE
-D3.3,Negative aspect: wilful disregard of disproportionate environmental impacts,1,FALSE,0,0,0,FALSE
-D4,Customer participation and product transparency,1,FALSE,0,0,0,TRUE
-D4.1,"Customer participation, joint product development and market research",1,FALSE,0,0,0,TRUE
-D4.2,Product transparency,1,FALSE,0,0,0,TRUE
-D4.3,Negative aspect: non-disclosure of hazardous substances,1,FALSE,0,0,0,FALSE
-E,Social environment,1,FALSE,0,0,0,TRUE
-E1,Purpose of products and services and their effects on society,1,FALSE,0,0,0,TRUE
-E1.1,Products and services should cover basic needs and contribute to a good life,1,FALSE,0,0,0,TRUE
-E1.2,Social impact of products and services,1,FALSE,0,0,0,TRUE
-E1.3,Negative aspect: unethical and unfit products and services,1,FALSE,0,0,0,FALSE
-E2,Contribution to the community,1,FALSE,0,0,0,TRUE
-E2.1,Taxes and social security contributions,1,FALSE,0,0,0,TRUE
-E2.2,Voluntary contributions that strengthen society,1,FALSE,0,0,0,TRUE
-E2.3,Negative aspect: inappropriate non-payment of tax,1,FALSE,0,0,0,FALSE
-E2.4,Negative aspect: no anti-corruption policy,1,FALSE,0,0,0,FALSE
-E3,Reduction of environmental impact,1,FALSE,0,0,0,TRUE
-E3.1,Absolute impact and management strategy,1,FALSE,0,0,0,TRUE
-E3.2,Relative impact,1,FALSE,0,0,0,TRUE
-E3.3,Negative aspect: infringement of environmental regulations and disproportionate environmental pollution,1,FALSE,0,0,0,FALSE
-E4,Social co-determination and transparency,1,FALSE,0,0,0,TRUE
-E4.1,Transparency,1,FALSE,0,0,0,TRUE
-E4.2,Social participation,1,FALSE,0,0,0,TRUE
-E4.3,Negative aspect: lack of transparency and wilful misinformation,1,FALSE,0,0,0,FALSE
+A,v5:full.A,1,FALSE,0,0,0,TRUE
+A1,v5:full.A1,1,FALSE,0,0,0,TRUE
+A1.1,v5:full.A11,1,FALSE,0,0,0,TRUE
+A1.2,v5:full.A12,1,FALSE,0,0,0,FALSE
+A2,v5:full.A2,1,FALSE,0,0,0,TRUE
+A2.1,v5:full.A21,1,FALSE,0,0,0,TRUE
+A2.2,v5:full.A22,1,FALSE,0,0,0,TRUE
+A2.3,v5:full.A23,1,FALSE,0,0,0,FALSE
+A3,v5:full.A3,1,FALSE,0,0,0,TRUE
+A3.1,v5:full.A31,1,FALSE,0,0,0,TRUE
+A3.2,v5:full.A32,1,FALSE,0,0,0,FALSE
+A4,v5:full.A4,1,FALSE,0,0,0,TRUE
+A4.1,v5:full.A41,1,FALSE,0,0,0,TRUE
+A4.2,v5:full.A42,1,FALSE,0,0,0,TRUE
+B,v5:full.B,1,FALSE,0,0,0,TRUE
+B1,v5:full.B1,1,FALSE,0,0,0,TRUE
+B1.1,v5:full.B11,1,FALSE,0,0,0,TRUE
+B1.2,v5:full.B12,1,FALSE,0,0,0,TRUE
+B1.3,v5:full.B13,1,FALSE,0,0,0,TRUE
+B2,v5:full.B2,1,FALSE,0,0,0,TRUE
+B2.1,v5:full.B21,1,FALSE,0,0,0,TRUE
+B2.2,v5:full.B22,1,FALSE,0,0,0,FALSE
+B3,v5:full.B3,1,FALSE,0,0,0,TRUE
+B3.1,v5:full.B31,1,FALSE,0,0,0,TRUE
+B3.2,v5:full.B32,1,FALSE,0,0,0,TRUE
+B3.3,v5:full.B33,1,FALSE,0,0,0,FALSE
+B4,v5:full.B4,1,FALSE,0,0,0,TRUE
+B4.1,v5:full.B41,1,FALSE,0,0,0,TRUE
+B4.2,v5:full.B42,1,FALSE,0,0,0,FALSE
+C,v5:full.C,1,FALSE,0,0,0,TRUE
+C1,v5:full.C1,1,FALSE,0,0,0,TRUE
+C1.1,v5:full.C11,1,FALSE,0,0,0,TRUE
+C1.2,v5:full.C12,1,FALSE,0,0,0,TRUE
+C1.3,v5:full.C13,1,FALSE,0,0,0,TRUE
+C1.4,v5:full.C14,1,FALSE,0,0,0,FALSE
+C2,v5:full.C2,1,FALSE,0,0,0,TRUE
+C2.1,v5:full.C21,1,FALSE,0,0,0,TRUE
+C2.2,v5:full.C22,1,FALSE,0,0,0,TRUE
+C2.3,v5:full.C23,1,FALSE,0,0,0,TRUE
+C2.4,v5:full.C24,1,FALSE,0,0,0,FALSE
+C3,v5:full.C3,1,FALSE,0,0,0,TRUE
+C3.1,v5:full.C31,1,FALSE,0,0,0,TRUE
+C3.2,v5:full.C32,1,FALSE,0,0,0,TRUE
+C3.3,v5:full.C33, cultivating awareness for an environmentally-friendly approach",1,FALSE,0,0,0,TRUE
+C3.4,v5:full.C34,1,FALSE,0,0,0,FALSE
+C4,v5:full.C4,1,FALSE,0,0,0,TRUE
+C4.1,v5:full.C41,1,FALSE,0,0,0,TRUE
+C4.2,v5:full.C42,1,FALSE,0,0,0,TRUE
+C4.3,v5:full.C43,1,FALSE,0,0,0,TRUE
+C4.4,v5:full.C44,1,FALSE,0,0,0,FALSE
+D,v5:full.D,1,FALSE,0,0,0,TRUE
+D1,v5:full.D1,1,FALSE,0,0,0,TRUE
+D1.1,v5:full.D11,1,FALSE,0,0,0,TRUE
+D1.2,v5:full.D12,1,FALSE,0,0,0,TRUE
+D1.3,v5:full.D13,1,FALSE,0,0,0,FALSE
+D2,v5:full.D2,1,FALSE,0,0,0,TRUE
+D2.1,v5:full.D21,1,FALSE,0,0,0,TRUE
+D2.2,v5:full.D22,1,FALSE,0,0,0,TRUE
+D2.3,v5:full.D23,1,FALSE,0,0,0,FALSE
+D3,v5:full.D3,1,FALSE,0,0,0,TRUE
+D3.1,v5:full.D31,1,FALSE,0,0,0,TRUE
+D3.2,v5:full.D32,1,FALSE,0,0,0,TRUE
+D3.3,v5:full.D33,1,FALSE,0,0,0,FALSE
+D4,v5:full.D4,1,FALSE,0,0,0,TRUE
+D4.1,v5:full.D41, joint product development and market research",1,FALSE,0,0,0,TRUE
+D4.2,v5:full.D42,1,FALSE,0,0,0,TRUE
+D4.3,v5:full.D43,1,FALSE,0,0,0,FALSE
+E,v5:full.E,1,FALSE,0,0,0,TRUE
+E1,v5:full.E1,1,FALSE,0,0,0,TRUE
+E1.1,v5:full.E11,1,FALSE,0,0,0,TRUE
+E1.2,v5:full.E12,1,FALSE,0,0,0,TRUE
+E1.3,v5:full.E13,1,FALSE,0,0,0,FALSE
+E2,v5:full.E2,1,FALSE,0,0,0,TRUE
+E2.1,v5:full.E21,1,FALSE,0,0,0,TRUE
+E2.2,v5:full.E22,1,FALSE,0,0,0,TRUE
+E2.3,v5:full.E23,1,FALSE,0,0,0,FALSE
+E2.4,v5:full.E24,1,FALSE,0,0,0,FALSE
+E3,v5:full.E3,1,FALSE,0,0,0,TRUE
+E3.1,v5:full.E31,1,FALSE,0,0,0,TRUE
+E3.2,v5:full.E32,1,FALSE,0,0,0,TRUE
+E3.3,v5:full.E33,1,FALSE,0,0,0,FALSE
+E4,v5:full.E4,1,FALSE,0,0,0,TRUE
+E4.1,v5:full.E41,1,FALSE,0,0,0,TRUE
+E4.2,v5:full.E42,1,FALSE,0,0,0,TRUE
+E4.3,v5:full.E43,1,FALSE,0,0,0,FALSE
