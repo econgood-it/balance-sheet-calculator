@@ -42,7 +42,7 @@ C2.4,v5:full.C24,1,FALSE,0,0,0,FALSE
 C3,v5:full.C3,1,FALSE,0,0,0,TRUE
 C3.1,v5:full.C31,1,FALSE,0,0,0,TRUE
 C3.2,v5:full.C32,1,FALSE,0,0,0,TRUE
-C3.3,v5:full.C33, cultivating awareness for an environmentally-friendly approach",1,FALSE,0,0,0,TRUE
+C3.3,v5:full.C33,1,FALSE,0,0,0,TRUE
 C3.4,v5:full.C34,1,FALSE,0,0,0,FALSE
 C4,v5:full.C4,1,FALSE,0,0,0,TRUE
 C4.1,v5:full.C41,1,FALSE,0,0,0,TRUE
@@ -63,7 +63,7 @@ D3.1,v5:full.D31,1,FALSE,0,0,0,TRUE
 D3.2,v5:full.D32,1,FALSE,0,0,0,TRUE
 D3.3,v5:full.D33,1,FALSE,0,0,0,FALSE
 D4,v5:full.D4,1,FALSE,0,0,0,TRUE
-D4.1,v5:full.D41, joint product development and market research",1,FALSE,0,0,0,TRUE
+D4.1,v5:full.D41,1,FALSE,0,0,0,TRUE
 D4.2,v5:full.D42,1,FALSE,0,0,0,TRUE
 D4.3,v5:full.D43,1,FALSE,0,0,0,FALSE
 E,v5:full.E,1,FALSE,0,0,0,TRUE
