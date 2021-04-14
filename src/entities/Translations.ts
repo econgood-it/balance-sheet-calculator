@@ -13,7 +13,7 @@ const DefaultTranslations = {
 type ValidLanguage = keyof Translations;
 
 export const createTranslations = (lng: keyof Translations, value: string): Translations => {
-  const defaultTranslations = DefaultTranslations;
+  const defaultTranslations = {...DefaultTranslations};
   defaultTranslations[lng] = value;
   return defaultTranslations;
 }

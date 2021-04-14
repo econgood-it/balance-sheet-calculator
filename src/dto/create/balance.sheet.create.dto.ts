@@ -4,6 +4,7 @@ import { RatingFactory } from '../../factories/rating.factory';
 import { BalanceSheet } from '../../entities/balanceSheet';
 import { BalanceSheetType, balanceSheetTypeFromJSON, BalanceSheetVersion, balanceSheetVersionFromJSON } from '../../entities/enums';
 import {ValidateNested} from "class-validator";
+import {Translations} from "../../entities/Translations";
 
 export class BalanceSheetDTOCreate {
   @ValidateNested()
@@ -26,9 +27,9 @@ export class BalanceSheetDTOCreate {
     }
   );
 
-  public async toBalanceSheet(): Promise<BalanceSheet> {
+  public async toBalanceSheet(language: keyof Translations): Promise<BalanceSheet> {
     const rating = await RatingFactory.createDefaultRating(this.type, this.version);
-    return new BalanceSheet(undefined, this.type, this.version, this.companyFacts.toCompanyFacts(),
+    return new BalanceSheet(undefined, this.type, this.version, this.companyFacts.toCompanyFacts(language),
       rating);
   }
 }

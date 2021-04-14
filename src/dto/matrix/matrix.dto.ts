@@ -12,7 +12,7 @@ export class MatrixDTO {
   public static fromRating(rating: Rating, language: keyof Translations): MatrixDTO {
     const topics: MatrixTopicDTO[] = [];
     for (const topic of rating.topics) {
-      topics.push(MatrixTopicDTO.fromTopic(topic));
+      topics.push(MatrixTopicDTO.fromTopic(topic, language));
     }
     return new MatrixDTO(topics);
   }

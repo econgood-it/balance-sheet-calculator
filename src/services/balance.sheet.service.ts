@@ -42,7 +42,7 @@ export class BalanceSheetService {
     this.connection.manager.transaction(async entityManager => {
       const balanceSheetDTOCreate: BalanceSheetDTOCreate = BalanceSheetDTOCreate.fromJSON(req.body);
       await this.validateOrFail(balanceSheetDTOCreate);
-      const balanceSheet: BalanceSheet = await balanceSheetDTOCreate.toBalanceSheet();
+      const balanceSheet: BalanceSheet = await balanceSheetDTOCreate.toBalanceSheet(language);
       const balanceSheetResponse: BalanceSheet = await this.calculateAndSave(balanceSheet, entityManager);
       res.json(BalanceSheetDTOResponse.fromBalanceSheet(balanceSheetResponse, language));
     }).catch(error => {
