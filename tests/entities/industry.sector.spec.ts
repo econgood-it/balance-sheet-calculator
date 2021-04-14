@@ -27,7 +27,7 @@ describe('Industry Sector', () => {
         const result = await industrySectorRepository.save(industrySector);
         expect(result.industryCode).toBe('A');
         expect(result.amountOfTotalTurnover).toBe(3.44);
-        expect(result.description).toBe(createTranslations('en', 'My description'));
+        expect(result.description).toMatchObject(createTranslations('en', 'My description'));
         await industrySectorRepository.remove(result);
         done();
     })
