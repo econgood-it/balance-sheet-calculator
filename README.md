@@ -23,8 +23,7 @@ First you have to install all dependicies via:
 ```shell script
 npm install
 ```
-Afterwards you have to copy the .env-cmdrc.template.json file
- and rename it to *.env-cmdrc.json*. This file holds the configuration 
+Afterwards you have to create in the root directory a file *.env-cmdrc.json*. This file holds the configuration 
 for the application. Just replace the *applicationuser* and
 *applicationpwd* by your preferred user and password. 
 These credentials are used to secure the application. If you want to run the
@@ -32,7 +31,12 @@ application on a different port just replace the *4000* by the your port.
 ```json
 {
   "development": {
-    "USER": "applicationuser",
+    "DB_NAME": "balancesheet",
+    "DB_PORT": 5433,
+    "DB_USER": "postgres",
+    "DB_PASSWORD": "oKLyNUr2doEBlMup47ii",
+    "ENVIRONMENT": "DEV",
+    "USERNAME": "applicationuser",
     "PASSWORD": "applicationpwd",
     "PORT": 4000,
   }
