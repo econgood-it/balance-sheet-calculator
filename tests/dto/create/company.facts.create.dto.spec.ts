@@ -1,10 +1,9 @@
-import {IndustrySectorCreateDtoCreate} from "../../../src/dto/create/industry.sector.create.dto";
 import {CompanyFactsDTOCreate} from "../../../src/dto/create/company.facts.create.dto";
 
 describe('CompanyFactsCreateDTO', () => {
 
 
-    it('is created from json and returns a CompanyFacts entity',  () => {
+    it('is created from json and returns a CompanyFacts entity', () => {
         const json = {
             totalPurchaseFromSuppliers: 1,
             totalStaffCosts: 2,
@@ -24,7 +23,7 @@ describe('CompanyFactsCreateDTO', () => {
             industrySectors: [],
         }
         const companyFactsDTOCreate: CompanyFactsDTOCreate = CompanyFactsDTOCreate.fromJSON(json);
-        const result = companyFactsDTOCreate.toCompanyFacts();
+        const result = companyFactsDTOCreate.toCompanyFacts('en');
         expect(result).toMatchObject(json);
     })
 
