@@ -1,10 +1,9 @@
-import {SupplyFractionDTOResponse} from './supply.fraction.response.dto';
-import {EmployeesFractionDTOResponse} from './employees.fraction.response.dto';
-import {IndustrySectorDtoResponse} from "./industry.sector.response.dto";
-import {CompanyFacts} from "../../entities/companyFacts";
-import {Translations} from "../../entities/Translations";
+import { SupplyFractionDTOResponse } from './supply.fraction.response.dto';
+import { EmployeesFractionDTOResponse } from './employees.fraction.response.dto';
+import { IndustrySectorDtoResponse } from './industry.sector.response.dto';
+import { CompanyFacts } from '../../entities/companyFacts';
+import { Translations } from '../../entities/Translations';
 export class CompanyFactsDTOResponse {
-
   public constructor(
     public readonly id: number | undefined,
     public readonly totalPurchaseFromSuppliers: number,
@@ -22,22 +21,37 @@ export class CompanyFactsDTOResponse {
     public readonly isB2B: boolean,
     public readonly supplyFractions: SupplyFractionDTOResponse[],
     public readonly employeesFractions: EmployeesFractionDTOResponse[],
-    public readonly industrySectors: IndustrySectorDtoResponse[],
-  ) {
-  }
+    public readonly industrySectors: IndustrySectorDtoResponse[]
+  ) {}
 
-  public static fromCompanyFacts(companyFacts: CompanyFacts, language: keyof Translations): CompanyFactsDTOResponse {
+  public static fromCompanyFacts(
+    companyFacts: CompanyFacts,
+    language: keyof Translations
+  ): CompanyFactsDTOResponse {
     return new CompanyFactsDTOResponse(
       companyFacts.id,
-      companyFacts.totalPurchaseFromSuppliers, companyFacts.totalStaffCosts,
-      companyFacts.profit, companyFacts.financialCosts, companyFacts.incomeFromFinancialInvestments,
-      companyFacts.additionsToFixedAssets, companyFacts.turnover, companyFacts.totalAssets,
-      companyFacts.financialAssetsAndCashBalance, companyFacts.numberOfEmployees,
-      companyFacts.hasCanteen, companyFacts.averageJourneyToWorkForStaffInKm, companyFacts.isB2B,
-      companyFacts.supplyFractions.map(sf => SupplyFractionDTOResponse.fromSupplyFraction(sf, language)),
-      companyFacts.employeesFractions.map(ef => EmployeesFractionDTOResponse.fromEmployeesFraction(ef, language)),
-      companyFacts.industrySectors.map(is => IndustrySectorDtoResponse.fromIndustrySector(is, language))
+      companyFacts.totalPurchaseFromSuppliers,
+      companyFacts.totalStaffCosts,
+      companyFacts.profit,
+      companyFacts.financialCosts,
+      companyFacts.incomeFromFinancialInvestments,
+      companyFacts.additionsToFixedAssets,
+      companyFacts.turnover,
+      companyFacts.totalAssets,
+      companyFacts.financialAssetsAndCashBalance,
+      companyFacts.numberOfEmployees,
+      companyFacts.hasCanteen,
+      companyFacts.averageJourneyToWorkForStaffInKm,
+      companyFacts.isB2B,
+      companyFacts.supplyFractions.map((sf) =>
+        SupplyFractionDTOResponse.fromSupplyFraction(sf, language)
+      ),
+      companyFacts.employeesFractions.map((ef) =>
+        EmployeesFractionDTOResponse.fromEmployeesFraction(ef, language)
+      ),
+      companyFacts.industrySectors.map((is) =>
+        IndustrySectorDtoResponse.fromIndustrySector(is, language)
       )
+    );
   }
-
 }

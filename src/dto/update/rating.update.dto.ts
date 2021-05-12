@@ -4,19 +4,16 @@ import { ValidateNested } from 'class-validator';
 
 export class RatingDTOUpdate {
   @ValidateNested()
-  public readonly topics: TopicDTOUpdate[]
-  public constructor(
-    topics: TopicDTOUpdate[]
-  ) {
+  public readonly topics: TopicDTOUpdate[];
+
+  public constructor(topics: TopicDTOUpdate[]) {
     this.topics = topics;
   }
 
   public static readonly fromJSON = strictObjectMapper(
-    accessor =>
+    (accessor) =>
       new RatingDTOUpdate(
         accessor.getOptional('topics', arrayMapper(TopicDTOUpdate.fromJSON), [])
       )
-  )
-
-
+  );
 }

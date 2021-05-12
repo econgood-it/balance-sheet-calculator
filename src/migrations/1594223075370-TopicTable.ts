@@ -1,9 +1,8 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class TopicTable1594223075370 implements MigrationInterface {
-
-    public async up(queryRunner: QueryRunner): Promise<void> {
-        const query = `CREATE TABLE IF NOT EXISTS "topic" (
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    const query = `CREATE TABLE IF NOT EXISTS "topic" (
             "id" SERIAL NOT NULL, 
             "shortName" character varying NOT NULL, 
             "name" character varying NOT NULL, 
@@ -15,12 +14,11 @@ export class TopicTable1594223075370 implements MigrationInterface {
             "ratingId" integer, 
             CONSTRAINT "PK_topic" PRIMARY KEY ("id")
         )`;
-        await queryRunner.query(query);
-    }
+    await queryRunner.query(query);
+  }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        const query = `DROP TABLE IF EXISTS topic`
-        await queryRunner.query(query);
-    }
-
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    const query = 'DROP TABLE IF EXISTS topic';
+    await queryRunner.query(query);
+  }
 }

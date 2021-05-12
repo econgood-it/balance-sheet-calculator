@@ -1,6 +1,7 @@
-import {MigrationInterface, QueryRunner} from "typeorm";
-export class ReplaceTopicNamesByI18nKeys1616573753595 implements MigrationInterface {
-
+import { MigrationInterface, QueryRunner } from 'typeorm';
+export class ReplaceTopicNamesByI18nKeys1616573753595
+  implements MigrationInterface
+{
   public async up(queryRunner: QueryRunner): Promise<void> {
     await this.replaceTopicNameByI18Keys('v5:compact', 'Compact', queryRunner);
     await this.replaceTopicNameByI18Keys('v5:full', 'Full', queryRunner);
@@ -22,7 +23,10 @@ export class ReplaceTopicNamesByI18nKeys1616573753595 implements MigrationInterf
       ['C4', 'Co-determination and transparency within the organisation'],
       ['D1', 'Ethical customer relations'],
       ['D2', 'Cooperation and solidarity with other companies'],
-      ['D3', 'Impact on the environment of the use and disposal of products and service'],
+      [
+        'D3',
+        'Impact on the environment of the use and disposal of products and service',
+      ],
       ['D4', 'Customer participation and product transparency'],
       ['E1', 'Purpose of products and services and their effects on society'],
       ['E2', 'Contribution to the community'],
@@ -32,24 +36,25 @@ export class ReplaceTopicNamesByI18nKeys1616573753595 implements MigrationInterf
     for (const [shortName, oldName] of shortNameToOldName) {
       await queryRunner.query(this.rollbackName(shortName, oldName));
     }
-
   }
 
-
-  private rollbackName(shortName: string, oldName: string,) {
+  private rollbackName(shortName: string, oldName: string) {
     const from = 'FROM balance_sheet b, rating r';
-    const where = `where topic."shortName"='${shortName}'`
+    const where = `where topic."shortName"='${shortName}'`;
     return `UPDATE topic SET name='${oldName}' ${from} ${where};`;
   }
 
-  private async replaceTopicNameByI18Keys(i18nPrefix: string, balanceSheetType: string, queryRunner: QueryRunner) {
+  private async replaceTopicNameByI18Keys(
+    i18nPrefix: string,
+    balanceSheetType: string,
+    queryRunner: QueryRunner
+  ) {
     await queryRunner.query(this.updateQuery(i18nPrefix, balanceSheetType));
   }
 
   private updateQuery(i18nPrefix: string, balanceSheetType: string): string {
     const from = 'FROM balance_sheet b, rating r';
-    const where = `where b.type = '${balanceSheetType}' and b."ratingId" = r.id and topic."ratingId" = r.id`
+    const where = `where b.type = '${balanceSheetType}' and b."ratingId" = r.id and topic."ratingId" = r.id`;
     return `UPDATE topic SET name=concat('${i18nPrefix}.', topic."shortName") ${from} ${where};`;
   }
-
 }

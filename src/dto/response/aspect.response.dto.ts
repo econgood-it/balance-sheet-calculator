@@ -1,8 +1,7 @@
-import {Aspect} from "../../entities/aspect";
-import {staticTranslate, Translations} from "../../entities/Translations";
+import { Aspect } from '../../entities/aspect';
+import { staticTranslate, Translations } from '../../entities/Translations';
 
 export class AspectDTOResponse {
-
   public constructor(
     public readonly id: number | undefined,
     public readonly shortName: string,
@@ -12,13 +11,23 @@ export class AspectDTOResponse {
     public readonly isWeightSelectedByUser: boolean,
     public readonly isPositive: boolean,
     public readonly estimations: number,
-    public readonly weight: number,
-  ) {
-  }
+    public readonly weight: number
+  ) {}
 
-  public static fromAspect(aspect: Aspect, language: keyof Translations): AspectDTOResponse {
-    return new AspectDTOResponse(aspect.id, aspect.shortName,
-      staticTranslate(language, aspect.name), aspect.points, aspect.maxPoints, aspect.isWeightSelectedByUser,
-      aspect.isPositive, aspect.estimations, aspect.weight);
+  public static fromAspect(
+    aspect: Aspect,
+    language: keyof Translations
+  ): AspectDTOResponse {
+    return new AspectDTOResponse(
+      aspect.id,
+      aspect.shortName,
+      staticTranslate(language, aspect.name),
+      aspect.points,
+      aspect.maxPoints,
+      aspect.isWeightSelectedByUser,
+      aspect.isPositive,
+      aspect.estimations,
+      aspect.weight
+    );
   }
 }

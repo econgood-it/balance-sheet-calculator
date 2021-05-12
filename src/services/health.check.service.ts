@@ -1,15 +1,9 @@
-import { Request, Response } from "express";
-
-
-
+import { Request, Response } from 'express';
 
 export class HealthCheckService {
-
-
-  constructor() {
-  }
-
   public welcomeMessage(req: Request, res: Response) {
-    return res.status(200).send("The Balance Sheet Calculator API is up and running");
+    return res
+      .status(200)
+      .send('The Balance Sheet Calculator API is up and running');
   }
 }
