@@ -1,15 +1,18 @@
-import { enumMapperByValue } from "@daniel-faber/json-ts";
+import { enumMapperByValue } from '@daniel-faber/json-ts';
 
 export enum BalanceSheetType {
-    Compact = 'Compact',
-    Full = 'Full',
-    Other = 'other'
+  Compact = 'Compact',
+  Full = 'Full',
+  Other = 'other',
 }
 
-export const balanceSheetTypeFromJSON = enumMapperByValue<BalanceSheetType>(BalanceSheetType);
+export const balanceSheetTypeFromJSON =
+  enumMapperByValue<BalanceSheetType>(BalanceSheetType);
 
 export enum BalanceSheetVersion {
-    v5_0_4 = '5.04',
+  // eslint-disable-next-line camelcase
+  v5_0_4 = '5.04',
 }
 
-export const balanceSheetVersionFromJSON = enumMapperByValue<BalanceSheetVersion>(BalanceSheetVersion);
+export const balanceSheetVersionFromJSON =
+  enumMapperByValue<BalanceSheetVersion>(BalanceSheetVersion);

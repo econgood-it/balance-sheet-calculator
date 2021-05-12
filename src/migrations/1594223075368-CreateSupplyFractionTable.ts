@@ -1,9 +1,10 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class CreateSupplyFractionTable1594223075368 implements MigrationInterface {
-
-    public async up(queryRunner: QueryRunner): Promise<void> {
-        const query = `CREATE TABLE IF NOT EXISTS "supply_fraction" (
+export class CreateSupplyFractionTable1594223075368
+  implements MigrationInterface
+{
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    const query = `CREATE TABLE IF NOT EXISTS "supply_fraction" (
             "id" SERIAL NOT NULL, 
             "industryCode" character varying NOT NULL, 
             "countryCode" character varying NOT NULL, 
@@ -11,12 +12,11 @@ export class CreateSupplyFractionTable1594223075368 implements MigrationInterfac
             "companyFactsId" integer, 
             CONSTRAINT "PK_supply_fraction" PRIMARY KEY ("id")
         )`;
-        await queryRunner.query(query);
-    }
+    await queryRunner.query(query);
+  }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        const query = `DROP TABLE IF EXISTS supply_fraction`
-        await queryRunner.query(query);
-    }
-
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    const query = 'DROP TABLE IF EXISTS supply_fraction';
+    await queryRunner.query(query);
+  }
 }
