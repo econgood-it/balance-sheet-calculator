@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
-npm update
 npm install
-npm audit fix
+npm run lint
 docker-compose down
 docker-compose up -d
 npm run test:prod

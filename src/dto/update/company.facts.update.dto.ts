@@ -1,76 +1,91 @@
-import {strictObjectMapper, expectNumber, arrayMapper, expectBoolean} from '@daniel-faber/json-ts';
+import {
+  strictObjectMapper,
+  expectNumber,
+  arrayMapper,
+  expectBoolean,
+} from '@daniel-faber/json-ts';
 import { SupplyFractionDTOUpdate } from './supply.fraction.update.dto';
 import { EmployeesFractionDTOUpdate } from './employees.fraction.update.dto';
 import {
   IsOptional,
   IsNumber,
   Min,
-  ValidateNested, IsBoolean
+  ValidateNested,
+  IsBoolean,
 } from 'class-validator';
-import {IndustrySectorDtoUpdate} from "./industry.sector.update.dto";
-
+import { IndustrySectorDtoUpdate } from './industry.sector.update.dto';
 
 export class CompanyFactsDTOUpdate {
-
   @IsOptional()
   @Min(0)
   @IsNumber({ maxDecimalPlaces: 2 })
   public readonly totalPurchaseFromSuppliers?: number;
+
   @IsOptional()
   @Min(0)
   @IsNumber({ maxDecimalPlaces: 2 })
   public readonly totalStaffCosts?: number;
+
   @IsOptional()
   @IsNumber({ maxDecimalPlaces: 2 })
   public readonly profit?: number;
+
   @IsOptional()
   @Min(0)
   @IsNumber({ maxDecimalPlaces: 2 })
   public readonly financialCosts?: number;
+
   @IsOptional()
   @Min(0)
   @IsNumber({ maxDecimalPlaces: 2 })
   public readonly incomeFromFinancialInvestments?: number;
+
   @IsOptional()
   @Min(0)
   @IsNumber({ maxDecimalPlaces: 2 })
   public readonly additionsToFixedAssets?: number;
+
   @IsOptional()
   @Min(0)
   @IsNumber({ maxDecimalPlaces: 2 })
   public readonly turnover?: number;
+
   @IsOptional()
   @Min(0)
   @IsNumber({ maxDecimalPlaces: 2 })
   public readonly totalAssets?: number;
+
   @IsOptional()
   @Min(0)
   @IsNumber({ maxDecimalPlaces: 2 })
   public readonly financialAssetsAndCashBalance?: number;
-  @IsOptional()
-  @Min(0)
-  @IsNumber({ maxDecimalPlaces: 2 })
-  public readonly totalSales?: number;
+
   @IsOptional()
   @Min(0)
   @IsNumber({ maxDecimalPlaces: 2 })
   public readonly numberOfEmployees?: number;
+
   @IsOptional()
   @IsBoolean()
   public readonly hasCanteen?: boolean;
+
   @IsOptional()
   @Min(0)
   @IsNumber({ maxDecimalPlaces: 2 })
   public readonly averageJourneyToWorkForStaffInKm?: number;
+
   @IsOptional()
   @IsBoolean()
   public readonly isB2B?: boolean;
+
   @IsOptional()
   @ValidateNested()
   public readonly supplyFractions?: SupplyFractionDTOUpdate[];
+
   @IsOptional()
   @ValidateNested()
   public readonly employeesFractions?: EmployeesFractionDTOUpdate[];
+
   @IsOptional()
   @ValidateNested()
   public readonly industrySectors?: IndustrySectorDtoUpdate[];
@@ -85,7 +100,6 @@ export class CompanyFactsDTOUpdate {
     turnover?: number,
     totalAssets?: number,
     financialAssetsAndCashBalance?: number,
-    totalSales?: number,
     numberOfEmployees?: number,
     hasCanteen?: boolean,
     averageJourneyToWorkForStaffInKm?: number,
@@ -103,7 +117,6 @@ export class CompanyFactsDTOUpdate {
     this.turnover = turnover;
     this.totalAssets = totalAssets;
     this.financialAssetsAndCashBalance = financialAssetsAndCashBalance;
-    this.totalSales = totalSales;
     this.numberOfEmployees = numberOfEmployees;
     this.supplyFractions = supplyFractions;
     this.employeesFractions = employeesFractions;
@@ -114,7 +127,7 @@ export class CompanyFactsDTOUpdate {
   }
 
   public static readonly fromJSON = strictObjectMapper(
-    accessor =>
+    (accessor) =>
       new CompanyFactsDTOUpdate(
         accessor.getOptional('totalPurchaseFromSuppliers', expectNumber),
         accessor.getOptional('totalStaffCosts', expectNumber),
@@ -125,17 +138,22 @@ export class CompanyFactsDTOUpdate {
         accessor.getOptional('turnover', expectNumber),
         accessor.getOptional('totalAssets', expectNumber),
         accessor.getOptional('financialAssetsAndCashBalance', expectNumber),
-        accessor.getOptional('totalSales', expectNumber),
         accessor.getOptional('numberOfEmployees', expectNumber),
         accessor.getOptional('hasCanteen', expectBoolean),
         accessor.getOptional('averageJourneyToWorkForStaffInKm', expectNumber),
         accessor.getOptional('isB2B', expectBoolean),
-        accessor.getOptional('supplyFractions', arrayMapper(SupplyFractionDTOUpdate.fromJSON)),
-        accessor.getOptional('employeesFractions', arrayMapper(EmployeesFractionDTOUpdate.fromJSON)),
-        accessor.getOptional('industrySectors', arrayMapper(IndustrySectorDtoUpdate.fromJSON)),
+        accessor.getOptional(
+          'supplyFractions',
+          arrayMapper(SupplyFractionDTOUpdate.fromJSON)
+        ),
+        accessor.getOptional(
+          'employeesFractions',
+          arrayMapper(EmployeesFractionDTOUpdate.fromJSON)
+        ),
+        accessor.getOptional(
+          'industrySectors',
+          arrayMapper(IndustrySectorDtoUpdate.fromJSON)
+        )
       )
   );
-
-
-
 }

@@ -1,19 +1,25 @@
-import { strictObjectMapper, expectString, expectNumber } from '@daniel-faber/json-ts';
+import {
+  strictObjectMapper,
+  expectString,
+  expectNumber,
+} from '@daniel-faber/json-ts';
 import { SupplyFraction } from '../../entities/supplyFraction';
-import {IsAlpha, IsNumber, IsUppercase, Length, Min} from "class-validator";
+import { IsAlpha, IsNumber, IsUppercase, Length, Min } from 'class-validator';
 
 export class SupplyFractionDTOCreate {
-
   @IsAlpha()
   @Length(3, 3)
   @IsUppercase()
   public readonly countryCode: string;
+
   @IsAlpha()
   @Length(1, 4)
   public readonly industryCode: string;
+
   @Min(0)
   @IsNumber({ maxDecimalPlaces: 2 })
   public readonly costs: number;
+
   constructor(industryCode: string, countryCode: string, costs: number) {
     this.industryCode = industryCode;
     this.countryCode = countryCode;
@@ -21,14 +27,20 @@ export class SupplyFractionDTOCreate {
   }
 
   public static readonly fromJSON = strictObjectMapper(
-    accessor =>
+    (accessor) =>
       new SupplyFractionDTOCreate(
         accessor.get('industryCode', expectString),
         accessor.get('countryCode', expectString),
-        accessor.get('costs', expectNumber),
+        accessor.get('costs', expectNumber)
       )
   );
+
   public toSupplyFraction(): SupplyFraction {
-    return new SupplyFraction(undefined, this.industryCode, this.countryCode, this.costs);
+    return new SupplyFraction(
+      undefined,
+      this.industryCode,
+      this.countryCode,
+      this.costs
+    );
   }
 }

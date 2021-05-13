@@ -1,9 +1,10 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class CreateCompanyFactsTable1594223075366 implements MigrationInterface {
-
-    public async up(queryRunner: QueryRunner): Promise<void> {
-        const query = `CREATE TABLE IF NOT EXISTS "company_facts" (
+export class CreateCompanyFactsTable1594223075366
+  implements MigrationInterface
+{
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    const query = `CREATE TABLE IF NOT EXISTS "company_facts" (
             "id" SERIAL NOT NULL, 
             "totalPurchaseFromSuppliers" double precision NOT NULL, 
             "totalStaffCosts" double precision NOT NULL, 
@@ -21,12 +22,11 @@ export class CreateCompanyFactsTable1594223075366 implements MigrationInterface 
             "isB2B" boolean NOT NULL, 
             CONSTRAINT "PK_company_facts" PRIMARY KEY ("id")
         )`;
-        await queryRunner.query(query);
-    }
+    await queryRunner.query(query);
+  }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        const query = `DROP TABLE IF EXISTS company_facts`
-        await queryRunner.query(query);
-    }
-
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    const query = 'DROP TABLE IF EXISTS company_facts';
+    await queryRunner.query(query);
+  }
 }

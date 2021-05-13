@@ -88,15 +88,15 @@ A4Weight(itucAverage) = \begin{cases}
 \end{align*}
 
 \begin{align*}
-    companySize(FTE, totalSales, totalAssets) &= \begin{cases}
+    companySize(FTE, turnover, totalAssets) &= \begin{cases}
       micro &\mbox{if } FTE < 10 \ \wedge \\
-        & (totalSales <= 2 \ Mio \ \vee \\
+        & (turnover <= 2 \ Mio \ \vee \\
         &  totalAssets <= 2 \ Mio) \\
       small &\mbox{if } FTE < 50 \ \wedge \\
-        & (totalSales <= 10 \ Mio \ \vee \\
+        & (turnover <= 10 \ Mio \ \vee \\
         &  totalAssets <= 10 \ Mio) \\
       middle &\mbox{if } FTE < 250 \ \wedge \\
-        & (totalSales <= 50 \ Mio \ \vee \\
+        & (turnover <= 50 \ Mio \ \vee \\
         &  totalAssets <= 43 \ Mio) \\
       large  &\mbox{else } \\
     \end{cases}
@@ -167,18 +167,18 @@ A4Weight(itucAverage) = \begin{cases}
 \end{align*}
 
 \begin{align*}
-    profitInPercentOfTotalSales &= \begin{cases}
-        \frac{profit}{totalSales} &\mbox{if } no Error \\
+    profitInPercentOfTurnover&= \begin{cases}
+        \frac{profit}{turnover} &\mbox{if } no Error \\
         Error &\mbox{else } \\
     \end{cases}
 \end{align*}
 
 \begin{align*}
     E2Weight &= \begin{cases}
-       1 &\mbox{if } profitInPercentOfTotalSales \ is \ Error \\
-       0.5 &\mbox{if } profitInPercentOfTotalSales < 0.05 \\
-       1 &\mbox{if } profitInPercentOfTotalSales < 0.1 \\
-       1.5 &\mbox{if } profitInPercentOfTotalSales > 0.1 \\
+       1 &\mbox{if } profitInPercentOfTurnover \ is \ Error \\
+       0.5 &\mbox{if } profitInPercentOfTurnover < 0.05 \\
+       1 &\mbox{if } profitInPercentOfTurnover < 0.1 \\
+       1.5 &\mbox{if } profitInPercentOfTurnover > 0.1 \\
        1 &\mbox{else } \\
     \end{cases}
 \end{align*}

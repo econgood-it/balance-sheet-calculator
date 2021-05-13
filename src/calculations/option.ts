@@ -1,25 +1,26 @@
+// eslint-disable-next-line no-use-before-define
 export type Option<A> = Some<A> | None<A>;
 
 // 1. `abstract class` defines class that cannot be instantiated
 abstract class OptionBase<A> {
   getOrElse(this: Option<A>, defaultValue: A): A {
-    if (this.tag === "none") return defaultValue;
+    if (this.tag === 'none') return defaultValue;
     return this.value;
   }
 
   get(this: Option<A>): A | undefined {
-    if (this.tag === "none") return undefined;
+    if (this.tag === 'none') return undefined;
     return this.value;
   }
 
   isPresent(this: Option<A>): boolean {
-    return this.tag === "some";
+    return this.tag === 'some';
   }
 }
 
 // 5. `extends` keyword creating inheritance relationship
 export class Some<A> extends OptionBase<A> {
-  readonly tag: "some" = "some";
+  readonly tag: 'some' = 'some';
 
   // 6. classes must call `super()` if they extend other classes
   constructor(readonly value: A) {
@@ -32,7 +33,7 @@ export class None<A> extends OptionBase<A> {
   // 8. `static` creates "class" property
   static readonly NONE: Option<never> = new None();
 
-  readonly tag: "none" = "none";
+  readonly tag: 'none' = 'none';
 
   // 9. `private` prevents access by external code
   private constructor() {
