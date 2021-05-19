@@ -1,20 +1,20 @@
 import supertest from 'supertest';
 import { Connection } from 'typeorm';
-import { DatabaseConnectionCreator } from '../../src/database.connection.creator';
-import App from '../../src/app';
+import { DatabaseConnectionCreator } from '../../../src/database.connection.creator';
+import App from '../../../src/app';
 import { Application } from 'express';
-import { ConfigurationReader } from '../../src/configuration.reader';
+import { ConfigurationReader } from '../../../src/configuration.reader';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
-} from '../../src/entities/enums';
-import { Assertions } from '../Assertions';
-import { Topic } from '../../src/entities/topic';
-import { FinanceCalc } from '../../src/calculations/finance.calc';
-import { Rating } from '../../src/entities/rating';
-import { CompanyFacts } from '../../src/entities/companyFacts';
-import { EmptyCompanyFactsJson } from '../testData/company.facts';
-import { TokenProvider } from '../TokenProvider';
+} from '../../../src/entities/enums';
+import { Assertions } from '../../Assertions';
+import { Topic } from '../../../src/entities/topic';
+import { FinanceCalc } from '../../../src/calculations/finance.calc';
+import { Rating } from '../../../src/entities/rating';
+import { CompanyFacts } from '../../../src/entities/companyFacts';
+import { EmptyCompanyFactsJson } from '../../testData/company.facts';
+import { TokenProvider } from '../../TokenProvider';
 
 describe('Balance Sheet Controller', () => {
   let connection: Connection;
@@ -44,7 +44,7 @@ describe('Balance Sheet Controller', () => {
         configuration
       );
     app = new App(connection, configuration).app;
-    tokenHeader.value = `Bearer ${await TokenProvider.provideValidToken(
+    tokenHeader.value = `Bearer ${await TokenProvider.provideValidUserToken(
       app,
       connection
     )}`;

@@ -1,21 +1,21 @@
-import { DatabaseConnectionCreator } from '../../src/database.connection.creator';
-import App from '../../src/app';
-import { ConfigurationReader } from '../../src/configuration.reader';
+import { DatabaseConnectionCreator } from '../../../src/database.connection.creator';
+import App from '../../../src/app';
+import { ConfigurationReader } from '../../../src/configuration.reader';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
-} from '../../src/entities/enums';
-import { Topic } from '../../src/entities/topic';
-import { EmptyCompanyFacts } from '../testData/company.facts';
+} from '../../../src/entities/enums';
+import { Topic } from '../../../src/entities/topic';
+import { EmptyCompanyFacts } from '../../testData/company.facts';
 import { Connection } from 'typeorm';
 import { Application } from 'express';
-import { Rating } from '../../src/entities/rating';
-import { CompanyFacts } from '../../src/entities/companyFacts';
-import { Aspect } from '../../src/entities/aspect';
-import { SupplyFraction } from '../../src/entities/supplyFraction';
-import { IndustrySector } from '../../src/entities/industry.sector';
-import { EmployeesFraction } from '../../src/entities/employeesFraction';
-import { TokenProvider } from '../TokenProvider';
+import { Rating } from '../../../src/entities/rating';
+import { CompanyFacts } from '../../../src/entities/companyFacts';
+import { Aspect } from '../../../src/entities/aspect';
+import { SupplyFraction } from '../../../src/entities/supplyFraction';
+import { IndustrySector } from '../../../src/entities/industry.sector';
+import { EmployeesFraction } from '../../../src/entities/employeesFraction';
+import { TokenProvider } from '../../TokenProvider';
 import supertest = require('supertest');
 
 describe('Balance Sheet Controller', () => {
@@ -35,7 +35,7 @@ describe('Balance Sheet Controller', () => {
         configuration
       );
     app = new App(connection, configuration).app;
-    tokenHeader.value = `Bearer ${await TokenProvider.provideValidToken(
+    tokenHeader.value = `Bearer ${await TokenProvider.provideValidUserToken(
       app,
       connection
     )}`;

@@ -1,16 +1,16 @@
 import supertest from 'supertest';
 import { Connection } from 'typeorm';
-import { DatabaseConnectionCreator } from '../../src/database.connection.creator';
-import App from '../../src/app';
+import { DatabaseConnectionCreator } from '../../../src/database.connection.creator';
+import App from '../../../src/app';
 import { Application } from 'express';
-import { ConfigurationReader } from '../../src/configuration.reader';
+import { ConfigurationReader } from '../../../src/configuration.reader';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
-} from '../../src/entities/enums';
-import { CompanyFacts1 } from '../testData/company.facts';
-import { Topic } from '../../src/entities/topic';
-import { TokenProvider } from '../TokenProvider';
+} from '../../../src/entities/enums';
+import { CompanyFacts1 } from '../../testData/company.facts';
+import { Topic } from '../../../src/entities/topic';
+import { TokenProvider } from '../../TokenProvider';
 
 describe('Update endpoint of Balance Sheet Controller', () => {
   let connection: Connection;
@@ -27,7 +27,7 @@ describe('Update endpoint of Balance Sheet Controller', () => {
         configuration
       );
     app = new App(connection, configuration).app;
-    tokenHeader.value = `Bearer ${await TokenProvider.provideValidToken(
+    tokenHeader.value = `Bearer ${await TokenProvider.provideValidUserToken(
       app,
       connection
     )}`;

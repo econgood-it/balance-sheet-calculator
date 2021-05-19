@@ -88,7 +88,7 @@ export class UserService {
           throw new Error('User already exists');
         }
         await userRepository.save(user);
-        res.json({ message: 'User created' });
+        res.status(201).json({ message: 'User created' });
       })
       .catch((error) => {
         handle(error, next);
