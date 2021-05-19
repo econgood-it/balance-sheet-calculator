@@ -8,9 +8,9 @@ export const allowAdminOnly = async (
   next: NextFunction
 ) => {
   if (req.user && req.user.role && req.user.role === Role.Admin) {
-    next();
+    return next();
   } else {
-    next(new ForbiddenException('No access'));
+    return next(new ForbiddenException('No access'));
   }
 };
 

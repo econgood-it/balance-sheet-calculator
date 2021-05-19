@@ -3,6 +3,7 @@ import passport from 'passport';
 import { Strategy, ExtractJwt } from 'passport-jwt';
 import { User } from './entities/user';
 import { Connection } from 'typeorm';
+import UnauthorizedException from './exceptions/unauthorized.exception';
 
 export class Authentication {
   constructor(private connection: Connection) {}
@@ -15,7 +16,7 @@ export class Authentication {
 
       return this.authenticate((err: any, user: any, info: any) => {
         if (err) {
-          return next(err);
+          return next(new UnauthorizedException(err.message));
         }
 
         if (!user) {
@@ -60,21 +61,9 @@ export class Authentication {
             role: foundUser.role,
           });
         })
-        .catch((error) => {
-          done(error);
+        .catch(() => {
+          done(new Error('Invalid token'));
         });
-      // User.findOne({ "username": payload.username }, (err, user) => {
-      //     /* istanbul ignore next: passport response */
-      //     if (err) {
-      //         return done(err);
-      //     }
-      //     /* istanbul ignore next: passport response */
-      //     if (user === null) {
-      //         return done(null, false, { message: "The user in the token was not found" });
-      //     }
-      //
-      //     return done(null, { _id: user._id, username: user.username });
-      // });
     });
   };
 

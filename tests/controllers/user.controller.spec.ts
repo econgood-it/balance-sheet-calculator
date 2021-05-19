@@ -1,4 +1,4 @@
-import { Connection } from 'typeorm';
+import { Connection, Repository } from 'typeorm';
 import { Application } from 'express';
 import { ConfigurationReader } from '../../src/configuration.reader';
 import { DatabaseConnectionCreator } from '../../src/database.connection.creator';
@@ -6,11 +6,17 @@ import App from '../../src/app';
 import { TokenProvider } from '../TokenProvider';
 import supertest from 'supertest';
 import { User } from '../../src/entities/user';
+import { Role } from '../../src/entities/enums';
 
 describe('User Controller', () => {
   let connection: Connection;
   let app: Application;
   const configuration = ConfigurationReader.read();
+  let userRepository: Repository<User>;
+  const newUser = {
+    email: 'new@example.com',
+    password: 'newpass',
+  };
 
   const userTokenHeader = {
     key: 'Authorization',
@@ -28,6 +34,7 @@ describe('User Controller', () => {
         configuration
       );
     app = new App(connection, configuration).app;
+    userRepository = connection.getRepository(User);
     userTokenHeader.value = `Bearer ${await TokenProvider.provideValidUserToken(
       app,
       connection
@@ -44,11 +51,10 @@ describe('User Controller', () => {
     done();
   });
 
-  afterEach(async (done) => {
-    const repo = connection.getRepository(User);
-    const user = await repo.findOne({ email: 'new@example.com' });
+  beforeEach(async (done) => {
+    const user = await userRepository.findOne({ email: newUser.email });
     if (user) {
-      await repo.remove(user);
+      await userRepository.remove(user);
     }
     done();
   });
@@ -59,8 +65,8 @@ describe('User Controller', () => {
       .post('/v1/users')
       .set(userTokenHeader.key, userTokenHeader.value)
       .send({
-        email: 'new@example.com',
-        password: 'newpass',
+        email: newUser.email,
+        password: newUser.password,
       });
     expect(response.status).toBe(403);
     done();
@@ -72,10 +78,36 @@ describe('User Controller', () => {
       .post('/v1/users')
       .set(adminTokenHeader.key, adminTokenHeader.value)
       .send({
-        email: 'new@example.com',
-        password: 'newpass',
+        email: newUser.email,
+        password: newUser.password,
       });
     expect(response.status).toBe(201);
+    done();
+  });
+
+  it('should allow admins to delete users', async (done) => {
+    const testApp = supertest(app);
+    const newUser2 = {
+      ...newUser,
+      email: newUser.email + 2,
+    };
+    await userRepository.save(
+      new User(undefined, newUser2.email, newUser2.password, Role.User)
+    );
+    expect(
+      await userRepository.findOne({ email: newUser2.email })
+    ).toBeDefined();
+
+    const response = await testApp
+      .delete('/v1/users')
+      .set(adminTokenHeader.key, adminTokenHeader.value)
+      .send({
+        email: newUser2.email,
+      });
+    expect(response.status).toBe(200);
+    expect(
+      await userRepository.findOne({ email: newUser2.email })
+    ).toBeUndefined();
     done();
   });
 });

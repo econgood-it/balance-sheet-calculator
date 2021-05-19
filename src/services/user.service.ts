@@ -53,25 +53,6 @@ export class UserService {
       .catch((error) => {
         handle(error, next);
       });
-
-    // try {
-    //   req.checkBody("username", "Invalid username").notEmpty();
-    //   req.checkBody("password", "Invalid password").notEmpty();
-    //
-    //   let errors = req.validationErrors();
-    //   if (errors) throw errors;
-    //
-    //   let user = await User.findOne({ "username": req.body.username }).exec();
-    //
-    //   if (user === null) throw "User not found";
-    //
-    //   let success = await user.comparePassword(req.body.password);
-    //   if (success === false) throw "";
-    //
-    //   res.status(200).json(this.genToken(user));
-    // } catch (err) {
-    //   res.status(401).json({ "message": "Invalid credentials", "errors": err });
-    // }
   }
 
   public async createUser(req: Request, res: Response, next: NextFunction) {
@@ -89,6 +70,24 @@ export class UserService {
         }
         await userRepository.save(user);
         res.status(201).json({ message: 'User created' });
+      })
+      .catch((error) => {
+        handle(error, next);
+      });
+  }
+
+  public async deleteUser(req: Request, res: Response, next: NextFunction) {
+    this.connection.manager
+      .transaction(async (entityManager) => {
+        const email: string = req.body.email;
+        const userRepository = entityManager.getRepository(User);
+        const foundUser = await userRepository.findOne({
+          email: email,
+        });
+        if (foundUser) {
+          await userRepository.remove(foundUser);
+        }
+        res.status(200).json({ message: `Deleted user with email ${email}` });
       })
       .catch((error) => {
         handle(error, next);

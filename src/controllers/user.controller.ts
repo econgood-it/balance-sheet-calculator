@@ -17,5 +17,10 @@ export class UserController {
       allowAdminOnly,
       this.userService.createUser.bind(this.userService)
     );
+    this.app.delete(
+      '/v1/users',
+      allowAdminOnly,
+      this.userService.deleteUser.bind(this.userService)
+    );
   }
 }
