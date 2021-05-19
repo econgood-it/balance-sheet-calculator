@@ -13,6 +13,10 @@ export class UserController {
       this.userService.getToken.bind(this.userService)
     );
     this.app.post(
+      '/v1/users/actions/reset/password',
+      this.userService.resetPassword.bind(this.userService)
+    );
+    this.app.post(
       '/v1/users',
       allowAdminOnly,
       this.userService.createUser.bind(this.userService)

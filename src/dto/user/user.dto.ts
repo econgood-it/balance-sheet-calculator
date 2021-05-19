@@ -3,7 +3,7 @@ import { expectString, strictObjectMapper } from '@daniel-faber/json-ts';
 import { User } from '../../entities/user';
 import { Role } from '../../entities/enums';
 
-export class UserDTO {
+export class UserDto {
   @IsEmail()
   public readonly email: string;
 
@@ -17,7 +17,7 @@ export class UserDTO {
 
   public static readonly fromJSON = strictObjectMapper(
     (accessor) =>
-      new UserDTO(
+      new UserDto(
         accessor.get('email', expectString),
         accessor.get('password', expectString)
       )

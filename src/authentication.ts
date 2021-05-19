@@ -4,6 +4,7 @@ import { Strategy, ExtractJwt } from 'passport-jwt';
 import { User } from './entities/user';
 import { Connection } from 'typeorm';
 import UnauthorizedException from './exceptions/unauthorized.exception';
+import { Role } from './entities/enums';
 
 export class Authentication {
   constructor(private connection: Connection) {}
@@ -14,23 +15,29 @@ export class Authentication {
     app.all(apiBase + '*', (req, res, next) => {
       if (req.path.includes(apiBase + 'users/token')) return next();
 
-      return this.authenticate((err: any, user: any, info: any) => {
-        if (err) {
-          return next(new UnauthorizedException(err.message));
-        }
-
-        if (!user) {
-          if (info.name === 'TokenExpiredError') {
-            return res.status(401).json({
-              message: 'Your token has expired. Please generate a new one',
-            });
-          } else {
-            return res.status(401).json({ message: info.message });
+      return this.authenticate(
+        (
+          err: any,
+          user: { id: number; email: string; role: Role },
+          info: any
+        ) => {
+          if (err) {
+            return next(new UnauthorizedException(err.message));
           }
+
+          if (!user) {
+            if (info.name === 'TokenExpiredError') {
+              return res.status(401).json({
+                message: 'Your token has expired. Please generate a new one',
+              });
+            } else {
+              return res.status(401).json({ message: info.message });
+            }
+          }
+          req.user = user;
+          return next();
         }
-        req.user = user;
-        return next();
-      })(req, res, next);
+      )(req, res, next);
     });
   }
 

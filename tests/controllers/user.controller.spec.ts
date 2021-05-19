@@ -59,6 +59,30 @@ describe('User Controller', () => {
     done();
   });
 
+  it('should allow users to reset their own password', async (done) => {
+    const testApp = supertest(app);
+    await userRepository.save(
+      new User(undefined, newUser.email, newUser.password, Role.User)
+    );
+    const tokenResponse = await testApp
+      .post('/v1/users/token')
+      .send({ email: newUser.email, password: newUser.password });
+    // Reset password
+    const newPassword = newUser.password + '_RESET';
+    const response = await testApp
+      .post('/v1/users/actions/reset/password')
+      .set('Authorization', `Bearer ${tokenResponse.body.token}`)
+      .send({
+        newPassword: newPassword,
+      });
+    expect(response.status).toBe(200);
+    const user = await userRepository.findOneOrFail({
+      email: newUser.email,
+    });
+    expect(user.comparePassword(newPassword)).toBeTruthy();
+    done();
+  });
+
   it('should deny the right to create users for the role User', async (done) => {
     const testApp = supertest(app);
     const response = await testApp
