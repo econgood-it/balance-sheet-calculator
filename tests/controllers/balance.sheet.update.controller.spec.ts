@@ -10,18 +10,27 @@ import {
 } from '../../src/entities/enums';
 import { CompanyFacts1 } from '../testData/company.facts';
 import { Topic } from '../../src/entities/topic';
+import { TokenProvider } from '../TokenProvider';
 
 describe('Update endpoint of Balance Sheet Controller', () => {
   let connection: Connection;
   let app: Application;
   const configuration = ConfigurationReader.read();
   const endpointPath = '/v1/balancesheets';
+  const tokenHeader = {
+    key: 'Authorization',
+    value: '',
+  };
   beforeAll(async (done) => {
     connection =
       await DatabaseConnectionCreator.createConnectionAndRunMigrations(
         configuration
       );
     app = new App(connection, configuration).app;
+    tokenHeader.value = `Bearer ${await TokenProvider.provideValidToken(
+      app,
+      connection
+    )}`;
     done();
   });
 
@@ -35,7 +44,7 @@ describe('Update endpoint of Balance Sheet Controller', () => {
 
     let response = await testApp
       .post(endpointPath)
-      .auth(configuration.appUsername, configuration.appPassword)
+      .set(tokenHeader.key, tokenHeader.value)
       .send({
         type: BalanceSheetType.Compact,
         version: BalanceSheetVersion.v5_0_4,
@@ -66,7 +75,7 @@ describe('Update endpoint of Balance Sheet Controller', () => {
     };
     response = await testApp
       .patch(`${endpointPath}/${response.body.id}`)
-      .auth(configuration.appUsername, configuration.appPassword)
+      .set(tokenHeader.key, tokenHeader.value)
       .send({ ...balanceSheetUpdate });
     expect(response.status).toEqual(200);
     expect(response.body.companyFacts).toMatchObject(
@@ -92,7 +101,7 @@ describe('Update endpoint of Balance Sheet Controller', () => {
 
     let response = await testApp
       .post(endpointPath)
-      .auth(configuration.appUsername, configuration.appPassword)
+      .set(tokenHeader.key, tokenHeader.value)
       .send({
         type: balanceSheetType,
         version: BalanceSheetVersion.v5_0_4,
@@ -120,7 +129,7 @@ describe('Update endpoint of Balance Sheet Controller', () => {
     };
     response = await testApp
       .patch(`${endpointPath}/${response.body.id}`)
-      .auth(configuration.appUsername, configuration.appPassword)
+      .set(tokenHeader.key, tokenHeader.value)
       .send({ ...balanceSheetUpdate });
     expect(response.status).toEqual(200);
     const aspectA11 = findAspect('A1.1', response);

@@ -9,6 +9,7 @@ import { Topic } from '../../src/entities/topic';
 import { EmptyCompanyFacts } from '../testData/company.facts';
 import { Connection } from 'typeorm';
 import { Application } from 'express';
+import { TokenProvider } from '../TokenProvider';
 import supertest = require('supertest');
 
 describe('Balance Sheet Controller', () => {
@@ -17,6 +18,10 @@ describe('Balance Sheet Controller', () => {
   const configuration = ConfigurationReader.read();
   let balanceSheetJson: any;
   const endpointPath = '/v1/balancesheets';
+  const tokenHeader = {
+    key: 'Authorization',
+    value: '',
+  };
 
   beforeAll(async (done) => {
     connection =
@@ -24,6 +29,10 @@ describe('Balance Sheet Controller', () => {
         configuration
       );
     app = new App(connection, configuration).app;
+    tokenHeader.value = `Bearer ${await TokenProvider.provideValidToken(
+      app,
+      connection
+    )}`;
     done();
   });
 
@@ -44,11 +53,11 @@ describe('Balance Sheet Controller', () => {
     const testApp = supertest(app);
     const postResponse = await testApp
       .post(endpointPath)
-      .auth(configuration.appUsername, configuration.appPassword)
+      .set(tokenHeader.key, tokenHeader.value)
       .send(balanceSheetJson);
     const response = await testApp
       .get(`${endpointPath}/${postResponse.body.id}`)
-      .auth(configuration.appUsername, configuration.appPassword)
+      .set(tokenHeader.key, tokenHeader.value)
       .send();
     expect(response.status).toEqual(200);
     expect(response.body.companyFacts).toMatchObject(
@@ -68,11 +77,11 @@ describe('Balance Sheet Controller', () => {
     const testApp = supertest(app);
     const postResponse = await testApp
       .post(endpointPath)
-      .auth(configuration.appUsername, configuration.appPassword)
+      .set(tokenHeader.key, tokenHeader.value)
       .send(balanceSheetJson);
     const response = await testApp
       .get(`${endpointPath}/${postResponse.body.id}/matrix`)
-      .auth(configuration.appUsername, configuration.appPassword)
+      .set(tokenHeader.key, tokenHeader.value)
       .send();
     expect(response.status).toEqual(200);
     expect(response.body.topics).toHaveLength(20);
