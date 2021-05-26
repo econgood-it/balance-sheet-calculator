@@ -1,28 +1,26 @@
 import { Request, Response, NextFunction } from 'express';
 import { BalanceSheetDTOCreate } from '../dto/create/balance.sheet.create.dto';
 import { BalanceSheet } from '../entities/balanceSheet';
-import InternalServerException from '../exceptions/internal.server.exception';
-import { Connection, EntityManager, EntityNotFoundError } from 'typeorm';
+import { Connection, EntityManager } from 'typeorm';
 import { BalanceSheetDTOUpdate } from '../dto/update/balance.sheet.update.dto';
 import { TopicUpdater } from '../calculations/topic.updater';
 import { SupplyFraction } from '../entities/supplyFraction';
 import { EmployeesFraction } from '../entities/employeesFraction';
 import { EntityWithDtoMerger } from '../entities/entity.with.dto.merger';
-import { JsonMappingError } from '@daniel-faber/json-ts';
 import BadRequestException from '../exceptions/bad.request.exception';
 import { Region } from '../entities/region';
-import { validateOrReject, ValidationError } from 'class-validator';
+import { validateOrReject } from 'class-validator';
 import { CalcResults, Calculator } from '../calculations/calculator';
 import { Industry } from '../entities/industry';
 import { IndustrySector } from '../entities/industry.sector';
 import { RegionProvider } from '../providers/region.provider';
 import { IndustryProvider } from '../providers/industry.provider';
 import { MatrixDTO } from '../dto/matrix/matrix.dto';
-import NotFoundException from '../exceptions/not.found.exception';
 import { CompanyFacts } from '../entities/companyFacts';
 import { Rating } from '../entities/rating';
 import { BalanceSheetDTOResponse } from '../dto/response/balance.sheet.response.dto';
 import { parseLanguageParameter } from '../entities/Translations';
+import { handle } from '../exceptions/ErrorHandler';
 
 export class BalanceSheetService {
   private static readonly BALANCE_SHEET_RELATIONS = [
@@ -42,12 +40,6 @@ export class BalanceSheetService {
   ];
 
   constructor(private connection: Connection) {}
-
-  public welcomeMessage(req: Request, res: Response) {
-    return res
-      .status(200)
-      .send('The Balance Sheet Calculator API is up and running');
-  }
 
   public async createBalanceSheet(
     req: Request,
@@ -74,7 +66,7 @@ export class BalanceSheetService {
         );
       })
       .catch((error) => {
-        this.handleError(error, next);
+        handle(error, next);
       });
   }
 
@@ -127,7 +119,7 @@ export class BalanceSheetService {
         );
       })
       .catch((error) => {
-        this.handleError(error, next);
+        handle(error, next);
       });
   }
 
@@ -154,7 +146,7 @@ export class BalanceSheetService {
         );
       })
       .catch((error) => {
-        this.handleError(error, next);
+        handle(error, next);
       });
   }
 
@@ -179,7 +171,7 @@ export class BalanceSheetService {
         res.json(MatrixDTO.fromRating(balanceSheet.rating, language));
       })
       .catch((error) => {
-        this.handleError(error, next);
+        handle(error, next);
       });
   }
 
@@ -211,24 +203,8 @@ export class BalanceSheetService {
         });
       })
       .catch((error) => {
-        this.handleError(error, next);
+        handle(error, next);
       });
-  }
-
-  private handleError(error: Error, next: NextFunction) {
-    if (error instanceof JsonMappingError) {
-      next(new BadRequestException(error.message));
-    }
-    if (
-      Array.isArray(error) &&
-      error.every((item) => item instanceof ValidationError)
-    ) {
-      next(new BadRequestException(error.toString()));
-    }
-    if (error instanceof EntityNotFoundError) {
-      next(new NotFoundException(error.message));
-    }
-    next(new InternalServerException(error.message));
   }
 
   private async validateOrFail(

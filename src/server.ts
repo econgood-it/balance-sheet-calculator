@@ -4,11 +4,13 @@ import { Connection } from 'typeorm';
 import App from './app';
 import { LoggingService } from './logging';
 import { ConfigurationReader } from './configuration.reader';
+import { AdminAccountCreator } from './admin.account.creator';
 
 const configuration = ConfigurationReader.read();
 
 DatabaseConnectionCreator.createConnectionAndRunMigrations(configuration)
   .then(async (connection: Connection) => {
+    await AdminAccountCreator.saveAdmin(connection, configuration);
     const app = new App(connection, configuration);
     app.start();
   })

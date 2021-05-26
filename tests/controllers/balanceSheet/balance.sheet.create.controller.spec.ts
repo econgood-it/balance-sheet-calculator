@@ -1,19 +1,20 @@
 import supertest from 'supertest';
 import { Connection } from 'typeorm';
-import { DatabaseConnectionCreator } from '../../src/database.connection.creator';
-import App from '../../src/app';
+import { DatabaseConnectionCreator } from '../../../src/database.connection.creator';
+import App from '../../../src/app';
 import { Application } from 'express';
-import { ConfigurationReader } from '../../src/configuration.reader';
+import { ConfigurationReader } from '../../../src/configuration.reader';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
-} from '../../src/entities/enums';
-import { Assertions } from '../Assertions';
-import { Topic } from '../../src/entities/topic';
-import { FinanceCalc } from '../../src/calculations/finance.calc';
-import { Rating } from '../../src/entities/rating';
-import { CompanyFacts } from '../../src/entities/companyFacts';
-import { EmptyCompanyFactsJson } from '../testData/company.facts';
+} from '../../../src/entities/enums';
+import { Assertions } from '../../Assertions';
+import { Topic } from '../../../src/entities/topic';
+import { FinanceCalc } from '../../../src/calculations/finance.calc';
+import { Rating } from '../../../src/entities/rating';
+import { CompanyFacts } from '../../../src/entities/companyFacts';
+import { EmptyCompanyFactsJson } from '../../testData/company.facts';
+import { TokenProvider } from '../../TokenProvider';
 
 describe('Balance Sheet Controller', () => {
   let connection: Connection;
@@ -21,6 +22,10 @@ describe('Balance Sheet Controller', () => {
   const configuration = ConfigurationReader.read();
   let balanceSheetJson: any;
   const endpointPath = '/v1/balancesheets';
+  const tokenHeader = {
+    key: 'Authorization',
+    value: '',
+  };
   const assertTopicWeight = (
     shortName: string,
     expectedWeight: number,
@@ -39,6 +44,10 @@ describe('Balance Sheet Controller', () => {
         configuration
       );
     app = new App(connection, configuration).app;
+    tokenHeader.value = `Bearer ${await TokenProvider.provideValidUserToken(
+      app,
+      connection
+    )}`;
     done();
   });
 
@@ -59,7 +68,7 @@ describe('Balance Sheet Controller', () => {
     const testApp = supertest(app);
     const response = await testApp
       .post(endpointPath)
-      .auth(configuration.appUsername, configuration.appPassword)
+      .set(tokenHeader.key, tokenHeader.value)
       .send(balanceSheetJson);
     expect(response.status).toEqual(200);
     const companyFacts = balanceSheetJson.companyFacts as CompanyFacts;
@@ -85,7 +94,7 @@ describe('Balance Sheet Controller', () => {
     ];
     const response = await testApp
       .post(endpointPath)
-      .auth(configuration.appUsername, configuration.appPassword)
+      .set(tokenHeader.key, tokenHeader.value)
       .send(balanceSheetJson);
     expect(response.status).toEqual(200);
     assertTopicWeight('B1', 2, response.body.rating as Rating);
@@ -97,7 +106,7 @@ describe('Balance Sheet Controller', () => {
     balanceSheetJson.companyFacts.financialCosts = 0.12;
     const response = await testApp
       .post(endpointPath)
-      .auth(configuration.appUsername, configuration.appPassword)
+      .set(tokenHeader.key, tokenHeader.value)
       .send(balanceSheetJson);
     expect(response.status).toEqual(200);
     assertTopicWeight('B2', 1.5, response.body.rating as Rating);
@@ -109,7 +118,7 @@ describe('Balance Sheet Controller', () => {
     balanceSheetJson.companyFacts.numberOfEmployees = 9;
     const response = await testApp
       .post(endpointPath)
-      .auth(configuration.appUsername, configuration.appPassword)
+      .set(tokenHeader.key, tokenHeader.value)
       .send(balanceSheetJson);
     expect(response.status).toEqual(200);
     assertTopicWeight('B4', 0.5, response.body.rating as Rating);
@@ -121,7 +130,7 @@ describe('Balance Sheet Controller', () => {
     balanceSheetJson.companyFacts.numberOfEmployees = 10;
     const response = await testApp
       .post(endpointPath)
-      .auth(configuration.appUsername, configuration.appPassword)
+      .set(tokenHeader.key, tokenHeader.value)
       .send(balanceSheetJson);
     expect(response.status).toEqual(200);
     assertTopicWeight('B4', 1, response.body.rating as Rating);
@@ -164,7 +173,7 @@ describe('Balance Sheet Controller', () => {
   ): Promise<void> {
     const response = await testApp
       .post(endpointPath)
-      .auth(configuration.appUsername, configuration.appPassword)
+      .set(tokenHeader.key, tokenHeader.value)
       .send({
         type: BalanceSheetType.Compact,
         version: BalanceSheetVersion.v5_0_4,

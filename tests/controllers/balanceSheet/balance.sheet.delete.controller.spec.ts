@@ -1,20 +1,21 @@
-import { DatabaseConnectionCreator } from '../../src/database.connection.creator';
-import App from '../../src/app';
-import { ConfigurationReader } from '../../src/configuration.reader';
+import { DatabaseConnectionCreator } from '../../../src/database.connection.creator';
+import App from '../../../src/app';
+import { ConfigurationReader } from '../../../src/configuration.reader';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
-} from '../../src/entities/enums';
-import { Topic } from '../../src/entities/topic';
-import { EmptyCompanyFacts } from '../testData/company.facts';
+} from '../../../src/entities/enums';
+import { Topic } from '../../../src/entities/topic';
+import { EmptyCompanyFacts } from '../../testData/company.facts';
 import { Connection } from 'typeorm';
 import { Application } from 'express';
-import { Rating } from '../../src/entities/rating';
-import { CompanyFacts } from '../../src/entities/companyFacts';
-import { Aspect } from '../../src/entities/aspect';
-import { SupplyFraction } from '../../src/entities/supplyFraction';
-import { IndustrySector } from '../../src/entities/industry.sector';
-import { EmployeesFraction } from '../../src/entities/employeesFraction';
+import { Rating } from '../../../src/entities/rating';
+import { CompanyFacts } from '../../../src/entities/companyFacts';
+import { Aspect } from '../../../src/entities/aspect';
+import { SupplyFraction } from '../../../src/entities/supplyFraction';
+import { IndustrySector } from '../../../src/entities/industry.sector';
+import { EmployeesFraction } from '../../../src/entities/employeesFraction';
+import { TokenProvider } from '../../TokenProvider';
 import supertest = require('supertest');
 
 describe('Balance Sheet Controller', () => {
@@ -23,6 +24,10 @@ describe('Balance Sheet Controller', () => {
   const configuration = ConfigurationReader.read();
   let balanceSheetJson: any;
   const endpointPath = '/v1/balancesheets';
+  const tokenHeader = {
+    key: 'Authorization',
+    value: '',
+  };
 
   beforeAll(async (done) => {
     connection =
@@ -30,6 +35,10 @@ describe('Balance Sheet Controller', () => {
         configuration
       );
     app = new App(connection, configuration).app;
+    tokenHeader.value = `Bearer ${await TokenProvider.provideValidUserToken(
+      app,
+      connection
+    )}`;
     done();
   });
 
@@ -63,18 +72,18 @@ describe('Balance Sheet Controller', () => {
     ];
     const postResponse = await testApp
       .post(endpointPath)
-      .auth(configuration.appUsername, configuration.appPassword)
+      .set(tokenHeader.key, tokenHeader.value)
       .send(balanceSheetJson);
 
     const response = await testApp
       .delete(`${endpointPath}/${postResponse.body.id}`)
-      .auth(configuration.appUsername, configuration.appPassword)
+      .set(tokenHeader.key, tokenHeader.value)
       .send();
     expect(response.status).toEqual(200);
 
     const responseGet = await testApp
       .get(`${endpointPath}/${postResponse.body.id}`)
-      .auth(configuration.appUsername, configuration.appPassword)
+      .set(tokenHeader.key, tokenHeader.value)
       .send();
     expect(responseGet.status).toEqual(404);
 

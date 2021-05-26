@@ -8,32 +8,32 @@ import { Connection } from 'typeorm';
 import { LoggingService } from './logging';
 import { BalanceSheetService } from './services/balance.sheet.service';
 import { Configuration } from './configuration.reader';
-import { HealthCheckController } from './controllers/health.check.controller';
-import { HealthCheckService } from './services/health.check.service';
+import { UserController } from './controllers/user.controller';
+import { UserService } from './services/user.service';
 
 class App {
   public readonly app: Application;
   // declaring our controllers
   private balanceSheetController: BalanceSheetController;
-  private healthCheckController: HealthCheckController;
+  private userController: UserController;
   private authentication: Authentication;
 
   constructor(connection: Connection, private configuration: Configuration) {
     this.app = express();
     this.setConfig();
-    this.authentication = new Authentication();
-    this.authentication.addBasicAuthToApplication(this.app, configuration);
-    // Creating and assigning a new instance of our controller
+    this.authentication = new Authentication(connection);
+    this.authentication.addJwtAuthToApplication(
+      this.app,
+      configuration.jwtSecret
+    );
+    // Creating controllers
     const balanceSheetService = new BalanceSheetService(connection);
     this.balanceSheetController = new BalanceSheetController(
       this.app,
       balanceSheetService
     );
-    this.healthCheckController = new HealthCheckController(
-      this.app,
-      new HealthCheckService()
-    );
-    this.app.use(errorMiddleware);
+    const userService = new UserService(connection, configuration.jwtSecret);
+    this.userController = new UserController(this.app, userService);
   }
 
   public start() {
@@ -49,6 +49,9 @@ class App {
 
     // Allows us to receive requests with data in x-www-form-urlencoded format
     this.app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+    this.app.use(errorMiddleware);
+
+    // Enables cors
   }
 }
 

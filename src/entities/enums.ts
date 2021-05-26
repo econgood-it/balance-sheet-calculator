@@ -16,3 +16,8 @@ export enum BalanceSheetVersion {
 
 export const balanceSheetVersionFromJSON =
   enumMapperByValue<BalanceSheetVersion>(BalanceSheetVersion);
+
+export enum Role {
+  Admin = 'Admin',
+  User = 'User',
+}

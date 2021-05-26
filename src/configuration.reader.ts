@@ -12,9 +12,10 @@ export class Configuration {
     public readonly dbUser: string,
     public readonly dbPassword: string,
     public readonly environment: Environment,
-    public readonly appUsername: string,
-    public readonly appPassword: string,
-    public readonly appPort: number
+    public readonly adminEmail: string,
+    public readonly adminPassword: string,
+    public readonly appPort: number,
+    public readonly jwtSecret: string
   ) {
     const basePath = environment === Environment.PROD ? 'dist/' : 'src/';
     const fileExtension = environment === Environment.PROD ? 'js' : 'ts';
@@ -31,8 +32,9 @@ export class ConfigurationReader {
     const dbPassword = process.env.DB_PASSWORD;
     const environment = process.env.ENVIRONMENT;
     const appPort = process.env.PORT;
-    const appUser = process.env.USERNAME;
-    const appPassword = process.env.PASSWORD;
+    const adminEmail = process.env.ADMIN_EMAIL;
+    const adminPassword = process.env.ADMIN_PASSWORD;
+    const jwtsecret = process.env.JWT_SECRET;
     ConfigurationReader.checkIfEnvironmentVariableIsSet('DB_NAME', dbName);
     ConfigurationReader.checkIfEnvironmentVariableIsSet('DB_PORT', dbPort);
     ConfigurationReader.checkIfEnvironmentVariableIsSet('DB_USER', dbUser);
@@ -44,10 +46,17 @@ export class ConfigurationReader {
       'ENVIRONMENT',
       environment
     );
-    ConfigurationReader.checkIfEnvironmentVariableIsSet('USERNAME', appUser);
     ConfigurationReader.checkIfEnvironmentVariableIsSet(
-      'PASSWORD',
-      appPassword
+      'ADMIN_EMAIL',
+      adminEmail
+    );
+    ConfigurationReader.checkIfEnvironmentVariableIsSet(
+      'ADMIN_PASSWORD',
+      adminPassword
+    );
+    ConfigurationReader.checkIfEnvironmentVariableIsSet(
+      'JWT_SECRET',
+      jwtsecret
     );
     ConfigurationReader.checkIfEnvironmentVariableIsSet('PORT', appPort);
     let environmentAsEnum: Environment;
@@ -66,9 +75,10 @@ export class ConfigurationReader {
       dbUser as string,
       dbPassword as string,
       environmentAsEnum,
-      appUser as string,
-      appPassword as string,
-      Number(appPort)
+      adminEmail as string,
+      adminPassword as string,
+      Number(appPort),
+      jwtsecret as string
     );
   }
 
