@@ -1,4 +1,4 @@
-import { IsEmail, IsString } from 'class-validator';
+import { IsEmail, MinLength } from 'class-validator';
 import { expectString, strictObjectMapper } from '@daniel-faber/json-ts';
 import { User } from '../../entities/user';
 import { Role } from '../../entities/enums';
@@ -7,7 +7,7 @@ export class UserDto {
   @IsEmail()
   public readonly email: string;
 
-  @IsString()
+  @MinLength(20)
   public readonly password: string;
 
   constructor(email: string, password: string) {

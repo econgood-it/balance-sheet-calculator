@@ -15,7 +15,7 @@ describe('User Controller', () => {
   let userRepository: Repository<User>;
   const newUser = {
     email: 'new@example.com',
-    password: 'newpass',
+    password: "qS-1G,h6:'J=^o(g4W8i",
   };
 
   const userTokenHeader = {

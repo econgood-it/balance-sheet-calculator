@@ -48,7 +48,7 @@ export class TokenProvider {
       app,
       connection,
       'user@example.com',
-      'mysecret',
+      'MGb3C7WO&=S}Q&R&=4cK',
       Role.User
     );
   }
@@ -61,7 +61,7 @@ export class TokenProvider {
       app,
       connection,
       'admin@example.com',
-      'myadminsecret',
+      '13z2AfZ|V~`?/nQyW0lj',
       Role.Admin
     );
   }

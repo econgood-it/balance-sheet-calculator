@@ -1,8 +1,8 @@
-import { IsString } from 'class-validator';
 import { expectString, strictObjectMapper } from '@daniel-faber/json-ts';
+import { MinLength } from 'class-validator';
 
 export class PasswordResetDto {
-  @IsString()
+  @MinLength(20)
   public readonly password: string;
 
   constructor(password: string) {
