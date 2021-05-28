@@ -1,0 +1,16 @@
+paths:
+  /v1/balancesheets:
+    post:
+      tags:
+        - "balancesheets"
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/BalanceSheet'
+        required: true
+      security: []
+      summary: Create a balance sheet
+      responses:
+        '200':    # status code
+          description: Token response

@@ -1,0 +1,31 @@
+components:
+  schemas:
+    CompanyFacts:
+      type: object
+      properties:
+        totalPurchaseFromSuppliers:
+          type: number
+          format: Postive monatary value
+          description: Total purchase from suppliers in €
+          default: 0
+        totalStaffCosts:
+          type: number
+          format: Postive monatary value
+          description: Total staff costs in €
+          default: 0
+    BalanceSheet:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [Full, Compact]
+          description: Balance Sheet type
+        version:
+          type: string
+          enum: ['5.04']
+          description: Balance Sheet version
+        companyFacts:
+          $ref: '#/components/schemas/CompanyFacts'
+      required:
+        - type
+        - version

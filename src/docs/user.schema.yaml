@@ -5,10 +5,10 @@ components:
       properties:
         email:
           type: string
-          description: Email of user
-          default: Some default
+          format: email
         password:
           type: string
+          format: password
       required:
         - email
         - password
