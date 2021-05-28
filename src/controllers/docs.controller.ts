@@ -17,8 +17,8 @@ export class DocsController {
       definition: {
         openapi: '3.0.0',
         info: {
-          title: 'Hello World',
-          version: '1.0.0',
+          title: 'ECG Balance Calculator',
+          version: '1.2.0',
         },
       },
       apis: [`${pathToDocs}/**/*.yaml`], // files containing annotations as above

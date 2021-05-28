@@ -1,0 +1,32 @@
+paths:
+  /v1/users/token:
+    post:
+      tags:
+        - "users"
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/User'
+            examples:
+              Example: # Example 1
+                value:
+                  email: "user@example.org"
+                  password: "example_pZZgAHj791VdLZlsB0xU"
+        required: true
+      security: []
+      summary: Get token for user
+      responses:
+        '200':    # status code
+          description: Token response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  expires:
+                    type: string
+                  user:
+                    type: integer
