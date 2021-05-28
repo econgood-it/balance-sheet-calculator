@@ -1,0 +1,29 @@
+paths:
+  /users/:                # path of the user from your endpoint
+    post:                 # endpoint request type (post request)
+      tags:               # Tag property
+        - User            # Value of the tag
+      summary: creates a new user
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/User'
+      produces:
+        - application/json
+      responses:          # server responses
+        201:
+          description: An object with user details
+definitions:        # Schema defination for request body
+  signUp:
+    type: object
+    properties:
+      user:
+        type: object
+        properties:
+          username:
+            type: string
+          email:
+            type: string
+          password:
+            type: string

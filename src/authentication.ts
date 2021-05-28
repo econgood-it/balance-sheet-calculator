@@ -11,10 +11,16 @@ export class Authentication {
 
   public addJwtAuthToApplication(app: Application, jwtSecret: string) {
     app.use(this.initialize(jwtSecret));
+    const pathsToExcludeFromAuthentication = ['users/token', 'check', 'docs'];
     const apiBase = '/';
     app.all(apiBase + '*', (req, res, next) => {
-      if (req.path.includes(apiBase + 'users/token')) return next();
-
+      if (
+        pathsToExcludeFromAuthentication.filter((pathToExclude) =>
+          req.path.includes(apiBase + pathToExclude)
+        ).length > 0
+      ) {
+        return next();
+      }
       return this.authenticate(
         (
           err: any,

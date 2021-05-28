@@ -22,6 +22,7 @@
   "license": "MIT",
   "dependencies": {
     "@daniel-faber/json-ts": "0.6.0",
+    "@types/swagger-jsdoc": "^6.0.0",
     "bcrypt": "^5.0.1",
     "class-transformer": "^0.4.0",
     "class-validator": "^0.13.1",
@@ -41,8 +42,11 @@
     "passport-jwt": "^4.0.0",
     "pg": "^8.6.0",
     "reflect-metadata": "^0.1.13",
+    "swagger-jsdoc": "^6.0.0",
+    "swagger-ui-express": "^4.1.6",
     "typeorm": "^0.2.32",
-    "winston": "^3.3.3"
+    "winston": "^3.3.3",
+    "yamljs": "^0.3.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",

@@ -10,12 +10,17 @@ import { BalanceSheetService } from './services/balance.sheet.service';
 import { Configuration } from './configuration.reader';
 import { UserController } from './controllers/user.controller';
 import { UserService } from './services/user.service';
+import { HealthCheckService } from './services/health.check.service';
+import { HealthCheckController } from './controllers/health.check.controller';
+import { DocsController } from './controllers/docs.controller';
 
 class App {
   public readonly app: Application;
   // declaring our controllers
   private balanceSheetController: BalanceSheetController;
   private userController: UserController;
+  private healthCheckController: HealthCheckController;
+  private docsController: DocsController;
   private authentication: Authentication;
 
   constructor(connection: Connection, private configuration: Configuration) {
@@ -34,6 +39,11 @@ class App {
     );
     const userService = new UserService(connection, configuration.jwtSecret);
     this.userController = new UserController(this.app, userService);
+    this.healthCheckController = new HealthCheckController(
+      this.app,
+      new HealthCheckService()
+    );
+    this.docsController = new DocsController(this.app);
   }
 
   public start() {
