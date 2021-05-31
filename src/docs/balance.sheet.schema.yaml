@@ -1,13 +1,22 @@
 components:
   schemas:
-    SupplyFractions:
+    BalanceSheet:
       type: object
       properties:
-        countryCode:
+        type:
           type: string
-          maxLength: 3
-          format: ISO\-3166 Alpha3 country code
-          description: The supplier's country of origin
+          enum: [Full, Compact]
+          description: Balance Sheet type
+        version:
+          type: string
+          enum: ['5.04']
+          description: Balance Sheet version
+        companyFacts:
+          $ref: '#/components/schemas/CompanyFacts'
+      required:
+        - type
+        - version
+
     CompanyFacts:
       type: object
       properties:
@@ -84,19 +93,19 @@ components:
         - averageJourneyToWorkForStaffInKm
         - isB2B
 
-    BalanceSheet:
+    SupplyFractions:
       type: object
       properties:
-        type:
+        countryCode:
           type: string
-          enum: [Full, Compact]
-          description: Balance Sheet type
-        version:
+          maxLength: 3
+          format: ISO\-3166 Alpha3 country code
+          description: The supplier's country of origin
+        costs:
+          type: number
+          format: Positive monetary value in €
+          description: The costs for the supplier
+        industryCode:
           type: string
-          enum: ['5.04']
-          description: Balance Sheet version
-        companyFacts:
-          $ref: '#/components/schemas/CompanyFacts'
-      required:
-        - type
-        - version
+          format: The industry code of the Excel sheet 10. Industry
+          description: Industry code in which the supplier is active
