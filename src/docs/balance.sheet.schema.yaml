@@ -1,5 +1,13 @@
 components:
   schemas:
+    SupplyFractions:
+      type: object
+      properties:
+        countryCode:
+          type: string
+          maxLength: 3
+          format: ISO\-3166 Alpha3 country code
+          description: The supplier's country of origin
     CompanyFacts:
       type: object
       properties:
@@ -12,7 +20,70 @@ components:
           type: number
           format: Postive monatary value
           description: Total staff costs in €
-          default: 0
+        profit:
+          type: number
+          format: Monatary value
+          description: Profit in €
+        financialCosts:
+          type: number
+          format: Positive monatary value
+          description: Financial costs in €
+        incomeFromFinancialInvestments:
+          type: number
+          format: Positive monatary value
+          description: Income from financial investments in €
+        additionsToFixedAssets:
+          type: number
+          format: Positive monatary value
+          description: Additions to fixed assets in €
+        turnover:
+          type: number
+          format: Positive monatary value
+          description: Turnover
+        totalAssets:
+          type: number
+          format: Positive monatary value
+          description: Total assets
+        financialAssetsAndCashBalance:
+          type: number
+          format: Positive monatary value
+          description: Financial assets and cash balance
+        numberOfEmployees:
+          type: number
+          format: Positive value
+          description: Number of employees
+        hasCanteen:
+          type: boolean
+          format: true or false
+          description: True, if company has its own canteen. Otherwise, false.
+        averageJourneyToWorkForStaffInKm:
+          type: number
+          format: Positive value
+          description: Average journey to work for staff in kilometers
+        isB2B:
+          type: boolean
+          format: true or false
+          description: True, if the company's customers are mainly other companies (=B2B).
+        supplyFractions:
+          type: array
+          items:
+            $ref: '#/components/schemas/SupplyFractions'
+
+      required:
+        - totalPurchaseFromSuppliers
+        - totalStaffCosts
+        - profit
+        - financialCosts
+        - incomeFromFinancialInvestments
+        - additionsToFixedAssets
+        - turnover
+        - totalAssets
+        - financialAssetsAndCashBalance
+        - numberOfEmployees
+        - hasCanteen
+        - averageJourneyToWorkForStaffInKm
+        - isB2B
+
     BalanceSheet:
       type: object
       properties:
