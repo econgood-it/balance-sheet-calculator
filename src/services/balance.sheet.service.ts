@@ -46,6 +46,7 @@ export class BalanceSheetService {
     res: Response,
     next: NextFunction
   ) {
+    const saveFlag = this.parseSaveFlag(req.query.save);
     const language = parseLanguageParameter(req.query.lng);
     this.connection.manager
       .transaction(async (entityManager) => {
@@ -54,9 +55,10 @@ export class BalanceSheetService {
         await this.validateOrFail(balanceSheetDTOCreate);
         const balanceSheet: BalanceSheet =
           await balanceSheetDTOCreate.toBalanceSheet(language);
-        const balanceSheetResponse: BalanceSheet = await this.calculateAndSave(
+        const balanceSheetResponse: BalanceSheet = await this.calculate(
           balanceSheet,
-          entityManager
+          entityManager,
+          saveFlag
         );
         res.json(
           BalanceSheetDTOResponse.fromBalanceSheet(
@@ -107,9 +109,10 @@ export class BalanceSheetService {
           balanceSheetDTOUpdate,
           language
         );
-        const balanceSheetResponse: BalanceSheet = await this.calculateAndSave(
+        const balanceSheetResponse: BalanceSheet = await this.calculate(
           balanceSheet,
-          entityManager
+          entityManager,
+          true
         );
         res.json(
           BalanceSheetDTOResponse.fromBalanceSheet(
@@ -215,9 +218,10 @@ export class BalanceSheetService {
     });
   }
 
-  private async calculateAndSave(
+  private async calculate(
     balanceSheet: BalanceSheet,
-    entityManager: EntityManager
+    entityManager: EntityManager,
+    saveCalcResults: boolean
   ): Promise<BalanceSheet> {
     const industryRepository = entityManager.getRepository(Industry);
     const regionProvider = await RegionProvider.createFromCompanyFacts(
@@ -238,11 +242,13 @@ export class BalanceSheetService {
       balanceSheet.companyFacts,
       calcResults
     );
-    const balanceSheetResponse: BalanceSheet = await entityManager
-      .getRepository(BalanceSheet)
-      .save(balanceSheet);
-    this.sortArraysOfBalanceSheet(balanceSheetResponse);
-    return balanceSheetResponse;
+    if (saveCalcResults) {
+      balanceSheet = await entityManager
+        .getRepository(BalanceSheet)
+        .save(balanceSheet);
+    }
+    this.sortArraysOfBalanceSheet(balanceSheet);
+    return balanceSheet;
   }
 
   private sortArraysOfBalanceSheet(balanceSheet: BalanceSheet) {
@@ -252,5 +258,9 @@ export class BalanceSheetService {
     balanceSheet.rating.topics.forEach((t) =>
       t.aspects.sort((a1, a2) => a1.shortName.localeCompare(a2.shortName))
     );
+  }
+
+  private parseSaveFlag(saveParam: any): boolean {
+    return !(saveParam !== undefined && saveParam === 'false');
   }
 }

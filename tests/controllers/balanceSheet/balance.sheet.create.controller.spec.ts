@@ -1,5 +1,5 @@
 import supertest from 'supertest';
-import { Connection } from 'typeorm';
+import { Connection, Repository } from 'typeorm';
 import { DatabaseConnectionCreator } from '../../../src/database.connection.creator';
 import App from '../../../src/app';
 import { Application } from 'express';
@@ -15,9 +15,11 @@ import { Rating } from '../../../src/entities/rating';
 import { CompanyFacts } from '../../../src/entities/companyFacts';
 import { EmptyCompanyFactsJson } from '../../testData/company.facts';
 import { TokenProvider } from '../../TokenProvider';
+import { BalanceSheet } from '../../../src/entities/balanceSheet';
 
 describe('Balance Sheet Controller', () => {
   let connection: Connection;
+  let balaneSheetRepository: Repository<BalanceSheet>;
   let app: Application;
   const configuration = ConfigurationReader.read();
   let balanceSheetJson: any;
@@ -43,6 +45,7 @@ describe('Balance Sheet Controller', () => {
       await DatabaseConnectionCreator.createConnectionAndRunMigrations(
         configuration
       );
+    balaneSheetRepository = connection.getRepository(BalanceSheet);
     app = new App(connection, configuration).app;
     tokenHeader.value = `Bearer ${await TokenProvider.provideValidUserToken(
       app,
@@ -80,6 +83,35 @@ describe('Balance Sheet Controller', () => {
         0
       )
     ).toBeCloseTo(999.9999999999998);
+    const foundBalanceSheet = await balaneSheetRepository.findOne({
+      id: response.body.id,
+    });
+    expect(foundBalanceSheet).toBeDefined();
+    done();
+  });
+
+  it('creates BalanceSheet from company facts without saving results', async (done) => {
+    const testApp = supertest(app);
+    const response = await testApp
+      .post(endpointPath)
+      .set(tokenHeader.key, tokenHeader.value)
+      .query({ save: 'false' })
+      .send(balanceSheetJson);
+    expect(response.status).toEqual(200);
+    const companyFacts = balanceSheetJson.companyFacts as CompanyFacts;
+    Assertions.rmIdFieldsOfCompanyFacts(companyFacts);
+    expect(response.body.companyFacts).toMatchObject(companyFacts);
+    expect(
+      response.body.rating.topics.reduce(
+        (sum: number, current: Topic) => sum + current.maxPoints,
+        0
+      )
+    ).toBeCloseTo(999.9999999999998);
+    // Save flag is false such that balance sheet should not be saved
+    const foundBalanceSheet = await balaneSheetRepository.findOne({
+      id: response.body.id,
+    });
+    expect(foundBalanceSheet).toBeUndefined();
     done();
   });
 

@@ -3,6 +3,12 @@ paths:
     post:
       tags:
         - "balancesheets"
+      parameters:
+        - in: query
+          name: save
+          description: "If true, the results of balance sheet calculations are saved in the database. Otherwise, not."
+          required: false
+          default: true
       requestBody:
         content:
           'application/json':
