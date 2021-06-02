@@ -1,0 +1,150 @@
+components:
+  schemas:
+    BalanceSheetResponse:
+      type: object
+      properties:
+        id:
+          type: number
+          description: Auto generated id
+        type:
+          type: string
+          enum: [Full, Compact]
+          description: Balance Sheet type
+        version:
+          type: string
+          enum: ['5.04']
+          description: Balance Sheet version
+        companyFacts:
+          $ref: '#/components/schemas/CompanyFactsResponse'
+      required:
+        - type
+        - version
+
+    CompanyFactsResponse:
+      type: object
+      properties:
+        totalPurchaseFromSuppliers:
+          type: number
+          format: Postive monatary value
+          description: Total purchase from suppliers in €
+          default: 0
+        totalStaffCosts:
+          type: number
+          format: Postive monatary value
+          description: Total staff costs in €
+        profit:
+          type: number
+          format: Monatary value
+          description: Profit in €
+        financialCosts:
+          type: number
+          format: Positive monatary value
+          description: Financial costs in €
+        incomeFromFinancialInvestments:
+          type: number
+          format: Positive monatary value
+          description: Income from financial investments in €
+        additionsToFixedAssets:
+          type: number
+          format: Positive monatary value
+          description: Additions to fixed assets in €
+        turnover:
+          type: number
+          format: Positive monatary value
+          description: Turnover
+        totalAssets:
+          type: number
+          format: Positive monatary value
+          description: Total assets
+        financialAssetsAndCashBalance:
+          type: number
+          format: Positive monatary value
+          description: Financial assets and cash balance
+        numberOfEmployees:
+          type: number
+          format: Positive value
+          description: Number of employees
+        hasCanteen:
+          type: boolean
+          format: true or false
+          description: True, if company has its own canteen. Otherwise, false.
+        averageJourneyToWorkForStaffInKm:
+          type: number
+          format: Positive value
+          description: Average journey to work for staff in kilometers
+        isB2B:
+          type: boolean
+          format: true or false
+          description: True, if the company's customers are mainly other companies (=B2B).
+        supplyFractions:
+          type: array
+          items:
+            $ref: '#/components/schemas/SupplyFractionsResponse'
+        employeesFractions:
+          type: array
+          items:
+            $ref: '#/components/schemas/EmployeesFractionsResponse'
+        industrySectors:
+          type: array
+          items:
+            $ref: '#/components/schemas/IndustrySectorResponse'
+
+      required:
+        - totalPurchaseFromSuppliers
+        - totalStaffCosts
+        - profit
+        - financialCosts
+        - incomeFromFinancialInvestments
+        - additionsToFixedAssets
+        - turnover
+        - totalAssets
+        - financialAssetsAndCashBalance
+        - numberOfEmployees
+        - hasCanteen
+        - averageJourneyToWorkForStaffInKm
+        - isB2B
+
+    SupplyFractionsResponse:
+      type: object
+      properties:
+        countryCode:
+          type: string
+          maxLength: 3
+          format: ISO\-3166 Alpha3 country code
+          description: The supplier's country of origin
+        costs:
+          type: number
+          format: Positive monetary value in €
+          description: The costs for the supplier
+        industryCode:
+          type: string
+          format: The industry code of the Excel sheet 10. Industry
+          description: Industry code in which the supplier is active
+    EmployeesFractionsResponse:
+      type: object
+      properties:
+        countryCode:
+          type: string
+          maxLength: 3
+          format: ISO\-3166 Alpha3 country code
+          description: The subsidiary's country of origin
+        percentage:
+          type: number
+          format: Valid percentage value within [0,1]
+          description: The subsidiary's percentage of employees
+
+    IndustrySectorResponse:
+      type: object
+      properties:
+        industryCode:
+          type: string
+          format: The industry code of the Excel sheet 10. Industry
+          description: The industry code of the industry sector
+        description:
+          type: string
+          description: Description of the industry
+        amountOfTotalTurnover:
+          type: number
+          format: Valid percentage value within [0,1]
+          description: Amount of total turnover of the industry sector
+

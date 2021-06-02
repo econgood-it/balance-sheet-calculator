@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "env-cmd -e development nodemon",
-    "build": "rm -rf dist && tsc && cp -R src/files dist",
+    "build": "rm -rf dist && tsc && cp -R src/files dist && cp -R src/docs dist",
     "lint": "eslint --ext .ts,.js .",
     "lint-fix": "eslint --ext .ts,.js . --fix",
     "format": "prettier --write .",
@@ -22,6 +22,7 @@
   "license": "MIT",
   "dependencies": {
     "@daniel-faber/json-ts": "0.6.0",
+    "@types/swagger-jsdoc": "^6.0.0",
     "bcrypt": "^5.0.1",
     "class-transformer": "^0.4.0",
     "class-validator": "^0.13.1",
@@ -41,6 +42,8 @@
     "passport-jwt": "^4.0.0",
     "pg": "^8.6.0",
     "reflect-metadata": "^0.1.13",
+    "swagger-jsdoc": "^6.0.0",
+    "swagger-ui-express": "^4.1.6",
     "typeorm": "^0.2.32",
     "winston": "^3.3.3"
   },

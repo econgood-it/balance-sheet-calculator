@@ -49,8 +49,10 @@ application on a different port just replace the _4000_ by the your port.
     "DB_USER": "postgres",
     "DB_PASSWORD": "oKLyNUr2doEBlMup47ii",
     "ENVIRONMENT": "DEV",
-    "USERNAME": "applicationuser",
-    "PASSWORD": "applicationpwd",
+    "ADMIN_EMAIL": "adminuser",
+    "ADMIN_PASSWORD": "adminpwd",
+    "DOCS_USER": "docsuser",
+    "DOCS_PASSWORD": "docspwd",
     "PORT": 4000
   }
 }
