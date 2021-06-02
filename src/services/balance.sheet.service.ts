@@ -261,6 +261,10 @@ export class BalanceSheetService {
   }
 
   private parseSaveFlag(saveParam: any): boolean {
-    return !(saveParam !== undefined && saveParam === 'false');
+    return !(
+      saveParam !== undefined &&
+      typeof saveParam === 'string' &&
+      saveParam.toLowerCase() === 'false'
+    );
   }
 }
