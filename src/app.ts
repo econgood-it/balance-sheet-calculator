@@ -27,6 +27,7 @@ class App {
     this.app = express();
     this.setConfig();
     this.authentication = new Authentication(connection);
+    this.authentication.addBasicAuthToDocsEndpoint(this.app, configuration);
     this.authentication.addJwtAuthToApplication(
       this.app,
       configuration.jwtSecret

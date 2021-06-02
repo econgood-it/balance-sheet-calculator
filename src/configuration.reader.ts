@@ -15,7 +15,9 @@ export class Configuration {
     public readonly adminEmail: string,
     public readonly adminPassword: string,
     public readonly appPort: number,
-    public readonly jwtSecret: string
+    public readonly jwtSecret: string,
+    public readonly docsUser: string,
+    public readonly docsPassword: string
   ) {
     const basePath = environment === Environment.PROD ? 'dist/' : 'src/';
     const fileExtension = environment === Environment.PROD ? 'js' : 'ts';
@@ -32,6 +34,8 @@ export class ConfigurationReader {
     const dbPassword = process.env.DB_PASSWORD;
     const environment = process.env.ENVIRONMENT;
     const appPort = process.env.PORT;
+    const docsUser = process.env.DOCS_USER;
+    const docsPassword = process.env.DOCS_PASSWORD;
     const adminEmail = process.env.ADMIN_EMAIL;
     const adminPassword = process.env.ADMIN_PASSWORD;
     const jwtsecret = process.env.JWT_SECRET;
@@ -53,6 +57,11 @@ export class ConfigurationReader {
     ConfigurationReader.checkIfEnvironmentVariableIsSet(
       'ADMIN_PASSWORD',
       adminPassword
+    );
+    ConfigurationReader.checkIfEnvironmentVariableIsSet('DOCS_USER', docsUser);
+    ConfigurationReader.checkIfEnvironmentVariableIsSet(
+      'DOCS_PASSWORD',
+      docsPassword
     );
     ConfigurationReader.checkIfEnvironmentVariableIsSet(
       'JWT_SECRET',
@@ -78,7 +87,9 @@ export class ConfigurationReader {
       adminEmail as string,
       adminPassword as string,
       Number(appPort),
-      jwtsecret as string
+      jwtsecret as string,
+      docsUser as string,
+      docsPassword as string
     );
   }
 
