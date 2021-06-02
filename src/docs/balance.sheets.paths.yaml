@@ -3,6 +3,19 @@ paths:
     post:
       tags:
         - "balancesheets"
+      parameters:
+        - in: query
+          name: save
+          description: "If true, the results of the balance sheet calculations are saved in the database. Otherwise, not."
+          required: false
+          default: true
+          examples:
+            saveResults:
+              summary: Execute the calculations and save the results in the database
+              value: true
+            avoidSavingOfResults:
+              summary: Execute the calculations without saving the results in the database
+              value: false
       requestBody:
         content:
           'application/json':
