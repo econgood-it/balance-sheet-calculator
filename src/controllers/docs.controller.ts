@@ -1,13 +1,15 @@
 import { Application } from 'express';
 import swaggerJSDoc from 'swagger-jsdoc';
 import path from 'path';
+import { DocsService } from '../services/docs.service';
 const swaggerUi = require('swagger-ui-express');
 
 export class DocsController {
   private swaggerDocument: any;
+  private docsService: DocsService;
   constructor(private app: Application) {
     this.swaggerDocument = this.buildSwaggerDoc();
-
+    this.docsService = new DocsService(this.swaggerDocument);
     this.routes();
   }
 
@@ -28,9 +30,13 @@ export class DocsController {
 
   public routes() {
     this.app.use(
-      '/v1/docs',
+      '/v1/docs/ui',
       swaggerUi.serve,
       swaggerUi.setup(this.swaggerDocument)
+    );
+    this.app.use(
+      '/v1/docs/download',
+      this.docsService.download.bind(this.docsService)
     );
   }
 }
