@@ -77,6 +77,14 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/SupplyFractions'
+        employeesFractions:
+          type: array
+          items:
+            $ref: '#/components/schemas/EmployeesFractions'
+        industrySectors:
+          type: array
+          items:
+            $ref: '#/components/schemas/IndustrySector'
 
       required:
         - totalPurchaseFromSuppliers
@@ -109,3 +117,31 @@ components:
           type: string
           format: The industry code of the Excel sheet 10. Industry
           description: Industry code in which the supplier is active
+    EmployeesFractions:
+      type: object
+      properties:
+        countryCode:
+          type: string
+          maxLength: 3
+          format: ISO\-3166 Alpha3 country code
+          description: The subsidiary's country of origin
+        percentage:
+          type: number
+          format: Valid percentage value within [0,1]
+          description: The subsidiary's percentage of employees
+
+    IndustrySector:
+      type: object
+      properties:
+        industryCode:
+          type: string
+          format: The industry code of the Excel sheet 10. Industry
+          description: The industry code of the industry sector
+        description:
+          type: string
+          description: Description of the industry
+        amountOfTotalTurnover:
+          type: number
+          format: Valid percentage value within [0,1]
+          description: Amount of total turnover of the industry sector
+

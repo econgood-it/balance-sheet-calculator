@@ -9,8 +9,13 @@ paths:
             schema:
               $ref: '#/components/schemas/BalanceSheet'
         required: true
-      security: []
+      security:
+        - bearerAuth: [ ]
       summary: Create a balance sheet
       responses:
         '200':    # status code
           description: Token response
+          content:
+            application/json":
+              schema:
+                $ref: "#/components/schemas/BalanceSheetResponse"

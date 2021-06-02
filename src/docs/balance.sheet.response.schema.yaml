@@ -1,8 +1,11 @@
 components:
   schemas:
-    BalanceSheet:
+    BalanceSheetResponse:
       type: object
       properties:
+        id:
+          type: number
+          description: Auto generated id
         type:
           type: string
           enum: [Full, Compact]
@@ -12,12 +15,12 @@ components:
           enum: ['5.04']
           description: Balance Sheet version
         companyFacts:
-          $ref: '#/components/schemas/CompanyFacts'
+          $ref: '#/components/schemas/CompanyFactsResponse'
       required:
         - type
         - version
 
-    CompanyFacts:
+    CompanyFactsResponse:
       type: object
       properties:
         totalPurchaseFromSuppliers:
@@ -76,15 +79,15 @@ components:
         supplyFractions:
           type: array
           items:
-            $ref: '#/components/schemas/SupplyFractions'
+            $ref: '#/components/schemas/SupplyFractionsResponse'
         employeesFractions:
           type: array
           items:
-            $ref: '#/components/schemas/EmployeesFractions'
+            $ref: '#/components/schemas/EmployeesFractionsResponse'
         industrySectors:
           type: array
           items:
-            $ref: '#/components/schemas/IndustrySector'
+            $ref: '#/components/schemas/IndustrySectorResponse'
 
       required:
         - totalPurchaseFromSuppliers
@@ -101,7 +104,7 @@ components:
         - averageJourneyToWorkForStaffInKm
         - isB2B
 
-    SupplyFractions:
+    SupplyFractionsResponse:
       type: object
       properties:
         countryCode:
@@ -117,7 +120,7 @@ components:
           type: string
           format: The industry code of the Excel sheet 10. Industry
           description: Industry code in which the supplier is active
-    EmployeesFractions:
+    EmployeesFractionsResponse:
       type: object
       properties:
         countryCode:
@@ -130,7 +133,7 @@ components:
           format: Valid percentage value within [0,1]
           description: The subsidiary's percentage of employees
 
-    IndustrySector:
+    IndustrySectorResponse:
       type: object
       properties:
         industryCode:
