@@ -34,7 +34,7 @@ export class IndustrySectorCreateDtoCreate {
     (accessor) =>
       new IndustrySectorCreateDtoCreate(
         accessor.get('industryCode', expectString),
-        accessor.get('amountOfTotalTurnover', expectNumber),
+        accessor.getOptional('amountOfTotalTurnover', expectNumber, 0),
         accessor.getOptional('description', expectString, '')
       )
   );
