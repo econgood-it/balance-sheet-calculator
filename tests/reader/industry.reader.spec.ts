@@ -2,7 +2,7 @@ import { IndustryReader } from '../../src/reader/industry.reader';
 import { Industry } from '../../src/entities/industry';
 
 describe('Industry Reader', () => {
-  it('should read industry.csv', async (done) => {
+  it('should read industry.csv', async () => {
     const regionReader = new IndustryReader();
     const industries: Industry[] = await regionReader.read();
 
@@ -18,6 +18,5 @@ describe('Industry Reader', () => {
       ecologicalDesignOfProductsAndServices: 1.5,
       id: undefined,
     });
-    done();
   });
 });

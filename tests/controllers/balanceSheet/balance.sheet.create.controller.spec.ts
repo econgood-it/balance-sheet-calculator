@@ -40,7 +40,7 @@ describe('Balance Sheet Controller', () => {
     expect((topic as Topic).weight).toBe(expectedWeight);
   };
 
-  beforeAll(async (done) => {
+  beforeAll(async () => {
     connection =
       await DatabaseConnectionCreator.createConnectionAndRunMigrations(
         configuration
@@ -51,12 +51,10 @@ describe('Balance Sheet Controller', () => {
       app,
       connection
     )}`;
-    done();
   });
 
-  afterAll(async (done) => {
+  afterAll(async () => {
     await connection.close();
-    done();
   });
 
   beforeEach(() => {
@@ -67,7 +65,7 @@ describe('Balance Sheet Controller', () => {
     };
   });
 
-  it('creates BalanceSheet from company facts', async (done) => {
+  it('creates BalanceSheet from company facts', async () => {
     const testApp = supertest(app);
     const response = await testApp
       .post(endpointPath)
@@ -87,10 +85,9 @@ describe('Balance Sheet Controller', () => {
       id: response.body.id,
     });
     expect(foundBalanceSheet).toBeDefined();
-    done();
   });
 
-  it('creates BalanceSheet from company facts without saving results', async (done) => {
+  it('creates BalanceSheet from company facts without saving results', async () => {
     const testApp = supertest(app);
     const response = await testApp
       .post(endpointPath)
@@ -112,10 +109,9 @@ describe('Balance Sheet Controller', () => {
       id: response.body.id,
     });
     expect(foundBalanceSheet).toBeUndefined();
-    done();
   });
 
-  it('creates BalanceSheet where B1 weight is very high', async (done) => {
+  it('creates BalanceSheet where B1 weight is very high', async () => {
     const testApp = supertest(app);
     balanceSheetJson.companyFacts.industrySectors = [
       {
@@ -130,10 +126,9 @@ describe('Balance Sheet Controller', () => {
       .send(balanceSheetJson);
     expect(response.status).toEqual(200);
     assertTopicWeight('B1', 2, response.body.rating as Rating);
-    done();
   });
 
-  it('creates BalanceSheet where B2 weight is high', async (done) => {
+  it('creates BalanceSheet where B2 weight is high', async () => {
     const testApp = supertest(app);
     balanceSheetJson.companyFacts.financialCosts = 0.12;
     const response = await testApp
@@ -142,10 +137,9 @@ describe('Balance Sheet Controller', () => {
       .send(balanceSheetJson);
     expect(response.status).toEqual(200);
     assertTopicWeight('B2', 1.5, response.body.rating as Rating);
-    done();
   });
 
-  it('creates BalanceSheet where B4 weight is 0.5', async (done) => {
+  it('creates BalanceSheet where B4 weight is 0.5', async () => {
     const testApp = supertest(app);
     balanceSheetJson.companyFacts.numberOfEmployees = 9;
     const response = await testApp
@@ -154,10 +148,9 @@ describe('Balance Sheet Controller', () => {
       .send(balanceSheetJson);
     expect(response.status).toEqual(200);
     assertTopicWeight('B4', 0.5, response.body.rating as Rating);
-    done();
   });
 
-  it('creates BalanceSheet where B4 weight is 1', async (done) => {
+  it('creates BalanceSheet where B4 weight is 1', async () => {
     const testApp = supertest(app);
     balanceSheetJson.companyFacts.numberOfEmployees = 10;
     const response = await testApp
@@ -166,10 +159,9 @@ describe('Balance Sheet Controller', () => {
       .send(balanceSheetJson);
     expect(response.status).toEqual(200);
     assertTopicWeight('B4', 1, response.body.rating as Rating);
-    done();
   });
 
-  it('success on missing properties in company facts', async (done) => {
+  it('success on missing properties in company facts', async () => {
     const testApp = supertest(app);
 
     const companyFacts = {
@@ -196,7 +188,6 @@ describe('Balance Sheet Controller', () => {
       employeesFractions: [],
     };
     await testMissingProperty(companyFacts2, testApp, 'financialCosts');
-    done();
   });
   async function testMissingProperty(
     companyFacts: any,

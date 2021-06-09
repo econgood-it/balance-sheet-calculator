@@ -18,24 +18,21 @@ import { IndustryProvider } from '../../src/providers/industry.provider';
 describe('Topic updater', () => {
   let connection: Connection;
 
-  beforeAll(async (done) => {
+  beforeAll(async () => {
     connection =
       await DatabaseConnectionCreator.createConnectionAndRunMigrations(
         ConfigurationReader.read()
       );
-    done();
   });
 
-  afterAll(async (done) => {
+  afterAll(async () => {
     await connection.close();
-    done();
   });
 
   async function testCalculation(
     fileNameOfRatingInputData: string,
     fileNameOfRatingExpectedData: string,
-    companyFacts: CompanyFacts,
-    done: any
+    companyFacts: CompanyFacts
   ) {
     const testDataReader = new RatingReader();
     const testDataDir = path.resolve(__dirname, '../testData');
@@ -61,10 +58,9 @@ describe('Topic updater', () => {
       await testDataReader.readRatingFromCsv(pathToCsv)
     ).topics;
     Assertions.assertTopics(topics, expected);
-    done();
   }
 
-  it('should not calculate automatic weight', async (done) => {
+  it('should not calculate automatic weight', async () => {
     const regionProvider = await RegionProvider.createFromCompanyFacts(
       CompanyFacts1,
       connection.getRepository(Region)
@@ -83,30 +79,26 @@ describe('Topic updater', () => {
     ]);
     await topicUpdater.update(rating.topics, CompanyFacts1, calcResults);
     expect(rating.topics[0].weight).toBeCloseTo(2, 2);
-    done();
   });
 
-  it('should calculate rating when the company facts values and the rating values are empty', async (done) =>
+  it('should calculate rating when the company facts values and the rating values are empty', async () =>
     testCalculation(
       'fullRating01Input.csv',
       'fullRating0Expected.csv',
-      EmptyCompanyFacts,
-      done
+      EmptyCompanyFacts
     ));
 
-  it('should calculate rating when the company facts values filled out but estimations, and weights are not set', async (done) =>
+  it('should calculate rating when the company facts values filled out but estimations, and weights are not set', async () =>
     testCalculation(
       'fullRating01Input.csv',
       'fullRating1Expected.csv',
-      CompanyFacts1,
-      done
+      CompanyFacts1
     ));
 
-  it('should calculate rating when the company facts values and rating values filled out', async (done) =>
+  it('should calculate rating when the company facts values and rating values filled out', async () =>
     testCalculation(
       'fullRating2Input.csv',
       'fullRating2Expected.csv',
-      CompanyFacts1,
-      done
+      CompanyFacts1
     ));
 });

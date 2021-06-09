@@ -8,18 +8,16 @@ describe('Company Facts entity', () => {
   let companyFactsRepository: Repository<CompanyFacts>;
   let connection: Connection;
 
-  beforeAll(async (done) => {
+  beforeAll(async () => {
     connection =
       await DatabaseConnectionCreator.createConnectionAndRunMigrations(
         ConfigurationReader.read()
       );
     companyFactsRepository = connection.getRepository(CompanyFacts);
-    done();
   });
 
-  afterAll(async (done) => {
+  afterAll(async () => {
     await connection.close();
-    done();
   });
 
   describe('is saved and has the property ', () => {
@@ -28,52 +26,46 @@ describe('Company Facts entity', () => {
       companyFacts = EmptyCompanyFacts;
     });
 
-    it('profit', async (done) => {
+    it('profit', async () => {
       companyFacts.profit = 200;
       const result = await companyFactsRepository.save(companyFacts);
       expect(result.profit).toBe(200);
       await companyFactsRepository.remove(result);
-      done();
     });
 
-    it('financialAssetsAndCashBalance', async (done) => {
+    it('financialAssetsAndCashBalance', async () => {
       companyFacts.financialAssetsAndCashBalance = 300;
       const result = await companyFactsRepository.save(companyFacts);
       expect(result.financialAssetsAndCashBalance).toBe(300);
       await companyFactsRepository.remove(result);
-      done();
     });
 
-    it('numberOfEmployees', async (done) => {
+    it('numberOfEmployees', async () => {
       companyFacts.numberOfEmployees = 300;
       const result = await companyFactsRepository.save(companyFacts);
       expect(result.numberOfEmployees).toBe(300);
       await companyFactsRepository.remove(result);
-      done();
     });
 
-    it('hasCanteen', async (done) => {
+    it('hasCanteen', async () => {
       companyFacts.hasCanteen = true;
       const result = await companyFactsRepository.save(companyFacts);
       expect(result.hasCanteen).toBeTruthy();
       await companyFactsRepository.remove(result);
-      done();
     });
 
-    it('averageJourneyToWorkForStaffInKm', async (done) => {
+    it('averageJourneyToWorkForStaffInKm', async () => {
       companyFacts.averageJourneyToWorkForStaffInKm = 200;
       const result = await companyFactsRepository.save(companyFacts);
       expect(result.averageJourneyToWorkForStaffInKm).toBeCloseTo(200);
       await companyFactsRepository.remove(result);
-      done();
     });
 
-    it('isB2B', async (done) => {
+    it('isB2B', async () => {
       companyFacts.isB2B = true;
       const result = await companyFactsRepository.save(companyFacts);
       expect(result.isB2B).toBeTruthy();
       await companyFactsRepository.remove(result);
-      done();
     });
   });
 });

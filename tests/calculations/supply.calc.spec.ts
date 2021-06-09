@@ -19,7 +19,7 @@ describe('Supply Calculator', () => {
   let regionProvider: RegionProvider;
   let industryProvider: IndustryProvider;
 
-  beforeAll(async (done) => {
+  beforeAll(async () => {
     connection =
       await DatabaseConnectionCreator.createConnectionAndRunMigrations(
         ConfigurationReader.read()
@@ -41,15 +41,13 @@ describe('Supply Calculator', () => {
       companyFacts,
       connection.getRepository(Industry)
     );
-    done();
   });
 
-  afterAll(async (done) => {
+  afterAll(async () => {
     await connection.close();
-    done();
   });
 
-  it('should calculate ', async (done) => {
+  it('should calculate ', async () => {
     const supplyCalcResults: SupplyCalcResults = await new SupplierCalc(
       regionProvider,
       industryProvider
@@ -60,6 +58,5 @@ describe('Supply Calculator', () => {
       13
     );
     expect(supplyCalcResults.itucAverage).toBeCloseTo(3.96945539178631, 13);
-    done();
   });
 });

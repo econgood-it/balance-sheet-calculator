@@ -8,21 +8,19 @@ describe('User', () => {
   let userRepository: Repository<User>;
   let connection: Connection;
 
-  beforeAll(async (done) => {
+  beforeAll(async () => {
     connection =
       await DatabaseConnectionCreator.createConnectionAndRunMigrations(
         ConfigurationReader.read()
       );
     userRepository = connection.getRepository(User);
-    done();
   });
 
-  afterAll(async (done) => {
+  afterAll(async () => {
     await connection.close();
-    done();
   });
 
-  it('should be saved and deleted', async (done) => {
+  it('should be saved and deleted', async () => {
     const user: User = new User(
       undefined,
       'mr@ecogood.org',
@@ -35,6 +33,5 @@ describe('User', () => {
     expect(result.role).toBe(Role.User);
     expect(result.comparePassword('takecare')).toBeTruthy();
     await userRepository.remove(result);
-    done();
   });
 });

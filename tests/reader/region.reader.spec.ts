@@ -1,7 +1,7 @@
 import { RegionReader } from '../../src/reader/region.reader';
 import { Region } from '../../src/entities/region';
 describe('Region reader', () => {
-  it('should read region.csv', async (done) => {
+  it('should read region.csv', async () => {
     const regionReader = new RegionReader();
     const regions: Region[] = await regionReader.read();
     expect(regions).toContainEqual({
@@ -22,6 +22,5 @@ describe('Region reader', () => {
       pppIndex: 3.0325616327831186,
       ituc: 5,
     });
-    done();
   });
 });

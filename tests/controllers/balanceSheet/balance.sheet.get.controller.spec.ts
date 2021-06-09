@@ -23,7 +23,7 @@ describe('Balance Sheet Controller', () => {
     value: '',
   };
 
-  beforeAll(async (done) => {
+  beforeAll(async () => {
     connection =
       await DatabaseConnectionCreator.createConnectionAndRunMigrations(
         configuration
@@ -33,12 +33,10 @@ describe('Balance Sheet Controller', () => {
       app,
       connection
     )}`;
-    done();
   });
 
-  afterAll(async (done) => {
+  afterAll(async () => {
     await connection.close();
-    done();
   });
 
   beforeEach(() => {
@@ -49,7 +47,7 @@ describe('Balance Sheet Controller', () => {
     };
   });
 
-  it('get balance sheet by id where company facts fields are empty', async (done) => {
+  it('get balance sheet by id where company facts fields are empty', async () => {
     const testApp = supertest(app);
     const postResponse = await testApp
       .post(endpointPath)
@@ -70,10 +68,9 @@ describe('Balance Sheet Controller', () => {
         0
       )
     ).toBeCloseTo(999.9999999999998);
-    done();
   });
 
-  it('get matrix representation of balance sheet by id', async (done) => {
+  it('get matrix representation of balance sheet by id', async () => {
     const testApp = supertest(app);
     const postResponse = await testApp
       .post(endpointPath)
@@ -85,6 +82,5 @@ describe('Balance Sheet Controller', () => {
       .send();
     expect(response.status).toEqual(200);
     expect(response.body.topics).toHaveLength(20);
-    done();
   });
 });

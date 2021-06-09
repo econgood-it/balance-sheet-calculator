@@ -21,7 +21,7 @@ describe('Update endpoint of Balance Sheet Controller', () => {
     key: 'Authorization',
     value: '',
   };
-  beforeAll(async (done) => {
+  beforeAll(async () => {
     connection =
       await DatabaseConnectionCreator.createConnectionAndRunMigrations(
         configuration
@@ -31,15 +31,13 @@ describe('Update endpoint of Balance Sheet Controller', () => {
       app,
       connection
     )}`;
-    done();
   });
 
-  afterAll(async (done) => {
+  afterAll(async () => {
     await connection.close();
-    done();
   });
 
-  it('should update company facts of balance sheet', async (done) => {
+  it('should update company facts of balance sheet', async () => {
     const testApp = supertest(app);
 
     let response = await testApp
@@ -81,17 +79,14 @@ describe('Update endpoint of Balance Sheet Controller', () => {
     expect(response.body.companyFacts).toMatchObject(
       balanceSheetUpdate.companyFacts
     );
-    done();
   });
 
-  it('should update rating of full balance sheet', async (done) => {
+  it('should update rating of full balance sheet', async () => {
     await testEstimationsUpdate(BalanceSheetType.Full);
-    done();
   });
 
-  it('should update rating of compact balance sheet', async (done) => {
+  it('should update rating of compact balance sheet', async () => {
     await testEstimationsUpdate(BalanceSheetType.Compact);
-    done();
   });
 
   async function testEstimationsUpdate(

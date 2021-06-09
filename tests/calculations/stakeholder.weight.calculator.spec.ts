@@ -21,7 +21,7 @@ describe('Stakeholder Weight Calculator', () => {
   const agricultureCode = 'A';
   const pharmaceuticCode = 'Ce';
 
-  beforeAll(async (done) => {
+  beforeAll(async () => {
     connection =
       await DatabaseConnectionCreator.createConnectionAndRunMigrations(
         ConfigurationReader.read()
@@ -61,15 +61,13 @@ describe('Stakeholder Weight Calculator', () => {
       companyFacts,
       connection.getRepository(Industry)
     );
-    done();
   });
 
-  afterAll(async (done) => {
+  afterAll(async () => {
     await connection.close();
-    done();
   });
 
-  it('should calculate supplier and employees risk ratio', async (done) => {
+  it('should calculate supplier and employees risk ratio', async () => {
     const precalculations: CalcResults = await new Calculator(
       regionProvider,
       industryProvider
@@ -80,10 +78,9 @@ describe('Stakeholder Weight Calculator', () => {
         precalculations
       );
     expect(result).toBeCloseTo(17.8789386768471, 13);
-    done();
   });
 
-  it('should calculate employees risk', async (done) => {
+  it('should calculate employees risk', async () => {
     const precalculations: CalcResults = await new Calculator(
       regionProvider,
       industryProvider
@@ -93,10 +90,9 @@ describe('Stakeholder Weight Calculator', () => {
       precalculations
     );
     expect(result).toBeCloseTo(497.599891781823, 12);
-    done();
   });
 
-  it('should calculate financial risk', async (done) => {
+  it('should calculate financial risk', async () => {
     const precalculations: CalcResults = await new Calculator(
       regionProvider,
       industryProvider
@@ -106,7 +102,6 @@ describe('Stakeholder Weight Calculator', () => {
       precalculations
     );
     expect(result).toBeCloseTo(66.6422308644823, 13);
-    done();
   });
 
   it('should map to value between 60 and 300', () => {
@@ -125,7 +120,7 @@ describe('Stakeholder Weight Calculator', () => {
     ).toBeCloseTo(299.999, 3);
   });
 
-  it('should calculate stakeholder weights', async (done) => {
+  it('should calculate stakeholder weights', async () => {
     const calcResults: CalcResults = await new Calculator(
       regionProvider,
       industryProvider
@@ -154,6 +149,5 @@ describe('Stakeholder Weight Calculator', () => {
       calcResults
     );
     expect(result).toBeCloseTo(1, 2);
-    done();
   });
 });

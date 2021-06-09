@@ -29,7 +29,7 @@ describe('Balance Sheet Controller', () => {
     value: '',
   };
 
-  beforeAll(async (done) => {
+  beforeAll(async () => {
     connection =
       await DatabaseConnectionCreator.createConnectionAndRunMigrations(
         configuration
@@ -39,12 +39,10 @@ describe('Balance Sheet Controller', () => {
       app,
       connection
     )}`;
-    done();
   });
 
-  afterAll(async (done) => {
+  afterAll(async () => {
     await connection.close();
-    done();
   });
 
   beforeEach(() => {
@@ -55,7 +53,7 @@ describe('Balance Sheet Controller', () => {
     };
   });
 
-  it(' deletes balance sheet by id', async (done) => {
+  it(' deletes balance sheet by id', async () => {
     const testApp = supertest(app);
     balanceSheetJson.companyFacts.industrySectors = [
       {
@@ -132,7 +130,5 @@ describe('Balance Sheet Controller', () => {
         companyFacts: postResponse.body.companyFacts,
       })
     ).toBe(expectZeroCount);
-
-    done();
   });
 });
