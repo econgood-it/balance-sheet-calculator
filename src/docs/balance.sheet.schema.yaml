@@ -113,10 +113,14 @@ components:
           type: number
           format: Positive monetary value in €
           description: The costs for the supplier
+          default: 0
         industryCode:
           type: string
           format: The industry code of the Excel sheet 10. Industry
           description: Industry code in which the supplier is active
+      required:
+        - industryCode
+        - countryCode
     EmployeesFractions:
       type: object
       properties:
