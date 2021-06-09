@@ -1,0 +1,6 @@
+components:
+  examples:
+    UserExample: # Example 1
+      value:
+        email: "user@example.org"
+        password: "example_pZZgAHj791VdLZlsB0xU"

@@ -1,0 +1,34 @@
+components:
+  examples:
+    Full_5_0_4: # Example 1
+      value:
+        type: 'Full'
+        version: '5.04'
+        companyFacts:
+          totalPurchaseFromSuppliers: 300
+          totalStaffCosts: 100
+          profit: 3070
+          financialCosts: 19
+          incomeFromFinancialInvestments: 201
+          additionsToFixedAssets: 102
+          turnover: 500
+          totalAssets: 200
+          financialAssetsAndCashBalance: 100
+          numberOfEmployees: 1
+          hasCanteen: true
+          averageJourneyToWorkForStaffInKm: 5.3
+          isB2B: true
+          supplyFractions:
+            - industryCode: "A"
+              countryCode: "DEU"
+              costs: 300
+            - industryCode: "Ce"
+              countryCode: "DEU"
+              costs: 300
+          employeesFractions:
+            - countryCode: "DEU"
+              percentage: 0.8
+          industrySectors:
+            - industryCode: "A"
+              description: "Beschreibung der Industrie"
+              amountOfTotalTurnover: 1
