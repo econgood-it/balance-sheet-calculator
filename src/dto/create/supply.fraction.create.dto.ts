@@ -31,7 +31,7 @@ export class SupplyFractionDTOCreate {
       new SupplyFractionDTOCreate(
         accessor.get('industryCode', expectString),
         accessor.get('countryCode', expectString),
-        accessor.get('costs', expectNumber)
+        accessor.getOptional('costs', expectNumber, 0)
       )
   );
 

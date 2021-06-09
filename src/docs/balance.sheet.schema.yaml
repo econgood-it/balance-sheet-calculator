@@ -29,77 +29,77 @@ components:
           type: number
           format: Postive monatary value
           description: Total staff costs in €
+          default: 0
         profit:
           type: number
           format: Monatary value
           description: Profit in €
+          default: 0
         financialCosts:
           type: number
           format: Positive monatary value
           description: Financial costs in €
+          default: 0
         incomeFromFinancialInvestments:
           type: number
           format: Positive monatary value
           description: Income from financial investments in €
+          default: 0
         additionsToFixedAssets:
           type: number
           format: Positive monatary value
           description: Additions to fixed assets in €
+          default: 0
         turnover:
           type: number
           format: Positive monatary value
           description: Turnover
+          default: 0
         totalAssets:
           type: number
           format: Positive monatary value
           description: Total assets
+          default: 0
         financialAssetsAndCashBalance:
           type: number
           format: Positive monatary value
           description: Financial assets and cash balance
+          default: 0
         numberOfEmployees:
           type: number
           format: Positive value
           description: Number of employees
+          default: 0
         hasCanteen:
           type: boolean
           format: true or false
           description: True, if company has its own canteen. Otherwise, false.
+          default: false
         averageJourneyToWorkForStaffInKm:
           type: number
           format: Positive value
           description: Average journey to work for staff in kilometers
+          default: 0
         isB2B:
           type: boolean
           format: true or false
           description: True, if the company's customers are mainly other companies (=B2B).
+          default: false
         supplyFractions:
           type: array
           items:
             $ref: '#/components/schemas/SupplyFractions'
+          default: []
         employeesFractions:
           type: array
           items:
             $ref: '#/components/schemas/EmployeesFractions'
+          default: []
         industrySectors:
           type: array
           items:
             $ref: '#/components/schemas/IndustrySector'
-
-      required:
-        - totalPurchaseFromSuppliers
-        - totalStaffCosts
-        - profit
-        - financialCosts
-        - incomeFromFinancialInvestments
-        - additionsToFixedAssets
-        - turnover
-        - totalAssets
-        - financialAssetsAndCashBalance
-        - numberOfEmployees
-        - hasCanteen
-        - averageJourneyToWorkForStaffInKm
-        - isB2B
+          default: []
 
     SupplyFractions:
       type: object
@@ -113,10 +113,14 @@ components:
           type: number
           format: Positive monetary value in €
           description: The costs for the supplier
+          default: 0
         industryCode:
           type: string
           format: The industry code of the Excel sheet 10. Industry
           description: Industry code in which the supplier is active
+      required:
+        - industryCode
+        - countryCode
     EmployeesFractions:
       type: object
       properties:
@@ -129,6 +133,9 @@ components:
           type: number
           format: Valid percentage value within [0,1]
           description: The subsidiary's percentage of employees
+          default: 0
+      required:
+        - countryCode
 
     IndustrySector:
       type: object
@@ -140,8 +147,11 @@ components:
         description:
           type: string
           description: Description of the industry
+          default: ''
         amountOfTotalTurnover:
           type: number
           format: Valid percentage value within [0,1]
           description: Amount of total turnover of the industry sector
+      required:
+        - industryCode
 

@@ -15,4 +15,16 @@ describe('Industry Sector DTO', () => {
     const expectedTranslations = createTranslations('en', 'My description');
     expect(result.description).toMatchObject(expectedTranslations);
   });
+
+  it('should create DTO using default values', () => {
+    const industrySectorCreateDtoCreate: IndustrySectorCreateDtoCreate =
+      IndustrySectorCreateDtoCreate.fromJSON({
+        industryCode: 'A',
+      });
+    const result = industrySectorCreateDtoCreate.toIndustrySector('en');
+    expect(result.industryCode).toBe('A');
+    expect(result.amountOfTotalTurnover).toBe(0);
+    const expectedTranslations = createTranslations('en', '');
+    expect(result.description).toMatchObject(expectedTranslations);
+  });
 });

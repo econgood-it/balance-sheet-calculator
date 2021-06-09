@@ -21,6 +21,11 @@ paths:
           'application/json':
             schema:
               $ref: '#/components/schemas/BalanceSheet'
+            examples:
+              Full 5.04:
+                $ref: '#/components/examples/Full_5_0_4'
+              Full 5.04 without optional fields:
+                $ref: '#/components/examples/Full_5_0_4_required'
         required: true
       security:
         - bearerAuth: [ ]

@@ -9,10 +9,8 @@ paths:
             schema:
               $ref: '#/components/schemas/User'
             examples:
-              Example: # Example 1
-                value:
-                  email: "user@example.org"
-                  password: "example_pZZgAHj791VdLZlsB0xU"
+              UserExample:
+                $ref: '#/components/examples/UserExample'
         required: true
       security: []
       summary: Get token for user

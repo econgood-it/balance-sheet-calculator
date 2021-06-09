@@ -109,30 +109,37 @@ export class CompanyFactsDTOCreate {
   public static readonly fromJSON = strictObjectMapper(
     (accessor) =>
       new CompanyFactsDTOCreate(
-        accessor.get('totalPurchaseFromSuppliers', expectNumber),
-        accessor.get('totalStaffCosts', expectNumber),
-        accessor.get('profit', expectNumber),
-        accessor.get('financialCosts', expectNumber),
-        accessor.get('incomeFromFinancialInvestments', expectNumber),
-        accessor.get('additionsToFixedAssets', expectNumber),
-        accessor.get('turnover', expectNumber),
-        accessor.get('totalAssets', expectNumber),
-        accessor.get('financialAssetsAndCashBalance', expectNumber),
-        accessor.get('numberOfEmployees', expectNumber),
-        accessor.get('hasCanteen', expectBoolean),
-        accessor.get('averageJourneyToWorkForStaffInKm', expectNumber),
-        accessor.get('isB2B', expectBoolean),
-        accessor.get(
+        accessor.getOptional('totalPurchaseFromSuppliers', expectNumber, 0),
+        accessor.getOptional('totalStaffCosts', expectNumber, 0),
+        accessor.getOptional('profit', expectNumber, 0),
+        accessor.getOptional('financialCosts', expectNumber, 0),
+        accessor.getOptional('incomeFromFinancialInvestments', expectNumber, 0),
+        accessor.getOptional('additionsToFixedAssets', expectNumber, 0),
+        accessor.getOptional('turnover', expectNumber, 0),
+        accessor.getOptional('totalAssets', expectNumber, 0),
+        accessor.getOptional('financialAssetsAndCashBalance', expectNumber, 0),
+        accessor.getOptional('numberOfEmployees', expectNumber, 0),
+        accessor.getOptional('hasCanteen', expectBoolean, false),
+        accessor.getOptional(
+          'averageJourneyToWorkForStaffInKm',
+          expectNumber,
+          0
+        ),
+        accessor.getOptional('isB2B', expectBoolean, false),
+        accessor.getOptional(
           'supplyFractions',
-          arrayMapper(SupplyFractionDTOCreate.fromJSON)
+          arrayMapper(SupplyFractionDTOCreate.fromJSON),
+          []
         ),
-        accessor.get(
+        accessor.getOptional(
           'employeesFractions',
-          arrayMapper(EmployeesFractionDTOCreate.fromJSON)
+          arrayMapper(EmployeesFractionDTOCreate.fromJSON),
+          []
         ),
-        accessor.get(
+        accessor.getOptional(
           'industrySectors',
-          arrayMapper(IndustrySectorCreateDtoCreate.fromJSON)
+          arrayMapper(IndustrySectorCreateDtoCreate.fromJSON),
+          []
         )
       )
   );

@@ -27,7 +27,11 @@ export class BalanceSheetDTOCreate {
     return new BalanceSheetDTOCreate(
       accessor.get('type', balanceSheetTypeFromJSON),
       accessor.get('version', balanceSheetVersionFromJSON),
-      accessor.get('companyFacts', CompanyFactsDTOCreate.fromJSON)
+      accessor.getOptional(
+        'companyFacts',
+        CompanyFactsDTOCreate.fromJSON,
+        CompanyFactsDTOCreate.fromJSON({})
+      )
     );
   });
 

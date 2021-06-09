@@ -169,7 +169,7 @@ describe('Balance Sheet Controller', () => {
     done();
   });
 
-  it('fails on missing properties in company facts', async (done) => {
+  it('success on missing properties in company facts', async (done) => {
     const testApp = supertest(app);
 
     const companyFacts = {
@@ -211,8 +211,6 @@ describe('Balance Sheet Controller', () => {
         version: BalanceSheetVersion.v5_0_4,
         companyFacts,
       });
-    const message = 'missing property ';
-    expect(response.status).toEqual(400);
-    expect(response.text).toMatch(message + missingProperty);
+    expect(response.status).toEqual(200);
   }
 });
