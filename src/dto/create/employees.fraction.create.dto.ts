@@ -33,7 +33,7 @@ export class EmployeesFractionDTOCreate {
     (accessor) =>
       new EmployeesFractionDTOCreate(
         accessor.get('countryCode', expectString),
-        accessor.get('percentage', expectNumber)
+        accessor.getOptional('percentage', expectNumber, 0)
       )
   );
 

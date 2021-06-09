@@ -132,6 +132,8 @@ components:
           type: number
           format: Valid percentage value within [0,1]
           description: The subsidiary's percentage of employees
+      required:
+        - countryCode
 
     IndustrySectorResponse:
       type: object
