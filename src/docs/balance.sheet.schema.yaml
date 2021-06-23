@@ -13,6 +13,12 @@ components:
           description: Balance Sheet version
         companyFacts:
           $ref: '#/components/schemas/CompanyFacts'
+        ratings:
+          type: array
+          items:
+            $ref: '#/components/schemas/RatingShortForm'
+          description: You can pass only a subset of the required topics/ aspects. For the rest default values are used.
+          default: Default rating is generated for given balance sheet type and version
       required:
         - type
         - version
@@ -154,4 +160,23 @@ components:
           description: Amount of total turnover of the industry sector
       required:
         - industryCode
+
+    RatingShortForm:
+      type: object
+      properties:
+        shortName:
+          type: string
+          description: The short name of the topic/ aspect
+        estimations:
+          type: number
+          format: Value within [-200, 10]
+          description: The estimations of the topic/ aspect
+          default: 0
+        weight:
+          type: number
+          format: Valid weight value within [0, 0.5, 1, 1.5, 2]
+          description: The weight of the topic/ aspect
+          default: Default weight for this topic/ aspect
+      required:
+        - shortName
 
