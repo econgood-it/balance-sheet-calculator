@@ -1,6 +1,6 @@
 components:
   examples:
-    Full_5_0_4: # Example 1
+    Full_5_0_4:
       value:
         type: 'Full'
         version: '5.04'
@@ -32,7 +32,19 @@ components:
             - industryCode: "A"
               description: "Beschreibung der Industrie"
               amountOfTotalTurnover: 1
-    Full_5_0_4_required: # Example 1
+    Full_5_0_4_required:
       value:
         type: 'Full'
         version: '5.04'
+    Full_5_0_4_with_ratings:
+      value:
+        type: 'Full'
+        version: '5.04'
+        ratings:
+          - shortName: 'A1.2'
+            estimations: 4
+          - shortName: 'B1.2'
+            estimations: 9
+            weight: 1.5
+          - shortName: 'D1'
+            weight: 2

@@ -4,22 +4,22 @@ import {
   expectNumber,
   arrayMapper,
 } from '@daniel-faber/json-ts';
-import { AspectDTOUpdate } from './aspect.update.dto';
+import { AspectDTO } from './aspect.dto';
 import { IsIn, IsOptional, ValidateNested } from 'class-validator';
 import { WEIGHT_VALUES } from '../validation.constants';
 
-export class TopicDTOUpdate {
+export class TopicDTO {
   @IsOptional()
   @IsIn(WEIGHT_VALUES)
   public weight: number | undefined;
 
   @ValidateNested()
-  public aspects: AspectDTOUpdate[];
+  public aspects: AspectDTO[];
 
   public constructor(
     public readonly shortName: string,
     weight: number | undefined,
-    aspects: AspectDTOUpdate[]
+    aspects: AspectDTO[]
   ) {
     this.aspects = aspects;
     this.weight = weight;
@@ -27,14 +27,10 @@ export class TopicDTOUpdate {
 
   public static readonly fromJSON = strictObjectMapper(
     (accessor) =>
-      new TopicDTOUpdate(
+      new TopicDTO(
         accessor.get('shortName', expectString),
         accessor.getOptional('weight', expectNumber),
-        accessor.getOptional(
-          'aspects',
-          arrayMapper(AspectDTOUpdate.fromJSON),
-          []
-        )
+        accessor.getOptional('aspects', arrayMapper(AspectDTO.fromJSON), [])
       )
   );
 }

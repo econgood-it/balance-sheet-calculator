@@ -13,22 +13,20 @@ describe('Region Provider', () => {
   let companyFacts: CompanyFacts;
   let regionRepo: Repository<Region>;
 
-  beforeAll(async (done) => {
+  beforeAll(async () => {
     connection =
       await DatabaseConnectionCreator.createConnectionAndRunMigrations(
         ConfigurationReader.read()
       );
     regionRepo = await connection.getRepository(Region);
     companyFacts = EmptyCompanyFacts;
-    done();
   });
 
-  afterAll(async (done) => {
+  afterAll(async () => {
     await connection.close();
-    done();
   });
 
-  it('should contain regions of supplyfractions', async (done) => {
+  it('should contain regions of supplyfractions', async () => {
     companyFacts.supplyFractions = [
       new SupplyFraction(undefined, 'A', 'CRI', 100),
       new SupplyFraction(undefined, 'B', 'DEU', 200),
@@ -39,10 +37,9 @@ describe('Region Provider', () => {
     );
     expect(regionProvider.getOrFail('CRI').countryCode).toBe('CRI');
     expect(regionProvider.getOrFail('DEU').countryCode).toBe('DEU');
-    done();
   });
 
-  it('should contain regions of employeesFraction', async (done) => {
+  it('should contain regions of employeesFraction', async () => {
     companyFacts.employeesFractions = [
       new EmployeesFraction(undefined, 'AFG', 3),
       new EmployeesFraction(undefined, 'CRI', 4),
@@ -53,6 +50,5 @@ describe('Region Provider', () => {
     );
     expect(regionProvider.getOrFail('CRI').countryCode).toBe('CRI');
     expect(regionProvider.getOrFail('AFG').countryCode).toBe('AFG');
-    done();
   });
 });

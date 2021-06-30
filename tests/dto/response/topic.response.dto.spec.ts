@@ -8,7 +8,7 @@ jest.mock('../../../src/i18n', () => ({
 }));
 
 describe('TopicResponseDTO', () => {
-  it('is created from topic', async (done) => {
+  it('is created from topic', async () => {
     const topic = new Topic(
       undefined,
       'A1',
@@ -23,6 +23,5 @@ describe('TopicResponseDTO', () => {
     const topicResponseDTO = TopicDTOResponse.fromTopic(topic, 'de');
     expect(topicResponseDTO).toBeDefined();
     expect(topicResponseDTO.name).toBe('Menschenwürde in der Zulieferkette');
-    done();
   });
 });

@@ -5,7 +5,7 @@ import {
 } from '../../src/entities/enums';
 
 describe('Rating factory', () => {
-  it('should create a default rating for a compact balance sheet', async (done) => {
+  it('should create a default rating for a compact balance sheet', async () => {
     const rating = await RatingFactory.createDefaultRating(
       BalanceSheetType.Compact,
       BalanceSheetVersion.v5_0_4
@@ -35,10 +35,9 @@ describe('Rating factory', () => {
       shortName: 'A1',
       weight: 1,
     });
-    done();
   });
 
-  it('should create a default rating for a full balance sheet', async (done) => {
+  it('should create a default rating for a full balance sheet', async () => {
     const rating = await RatingFactory.createDefaultRating(
       BalanceSheetType.Full,
       BalanceSheetVersion.v5_0_4
@@ -68,6 +67,5 @@ describe('Rating factory', () => {
       shortName: 'A1',
       weight: 1,
     });
-    done();
   });
 });

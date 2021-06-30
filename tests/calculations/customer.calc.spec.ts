@@ -14,21 +14,19 @@ describe('Customer Calculator', () => {
   let connection: Connection;
   let industryProvider: IndustryProvider;
 
-  beforeAll(async (done) => {
+  beforeAll(async () => {
     connection =
       await DatabaseConnectionCreator.createConnectionAndRunMigrations(
         ConfigurationReader.read()
       );
     companyFacts = EmptyCompanyFacts;
-    done();
   });
 
-  afterAll(async (done) => {
+  afterAll(async () => {
     await connection.close();
-    done();
   });
 
-  it('should calculate when industry sectors empty', async (done) => {
+  it('should calculate when industry sectors empty', async () => {
     companyFacts.industrySectors = [];
     industryProvider = await IndustryProvider.createFromCompanyFacts(
       companyFacts,
@@ -40,10 +38,9 @@ describe('Customer Calculator', () => {
     expect(
       customerCalcResults.sumOfEcologicalDesignOfProductsAndService
     ).toBeCloseTo(0, 1);
-    done();
   });
 
-  it('should calculate when industry sectors non empty', async (done) => {
+  it('should calculate when industry sectors non empty', async () => {
     companyFacts.industrySectors = [
       new IndustrySector(undefined, 'F', 3, createTranslations('en', '')),
       new IndustrySector(undefined, 'A', 4, createTranslations('en', '')),
@@ -58,6 +55,5 @@ describe('Customer Calculator', () => {
     expect(
       customerCalcResults.sumOfEcologicalDesignOfProductsAndService
     ).toBeCloseTo(10, 1);
-    done();
   });
 });

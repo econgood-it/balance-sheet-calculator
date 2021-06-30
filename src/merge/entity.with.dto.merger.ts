@@ -1,27 +1,24 @@
 import { BalanceSheetDTOUpdate } from '../dto/update/balance.sheet.update.dto';
-import { BalanceSheet } from './balanceSheet';
-import { CompanyFacts } from './companyFacts';
+import { BalanceSheet } from '../entities/balanceSheet';
+import { CompanyFacts } from '../entities/companyFacts';
 import { CompanyFactsDTOUpdate } from '../dto/update/company.facts.update.dto';
 import { SupplyFractionDTOUpdate } from '../dto/update/supply.fraction.update.dto';
 import { Repository } from 'typeorm';
-import { SupplyFraction } from './supplyFraction';
-import { EmployeesFraction } from './employeesFraction';
+import { SupplyFraction } from '../entities/supplyFraction';
+import { EmployeesFraction } from '../entities/employeesFraction';
 import { EmployeesFractionDTOUpdate } from '../dto/update/employees.fraction.update.dto';
-import { Rating } from './rating';
-import { RatingDTOUpdate } from '../dto/update/rating.update.dto';
-import { Topic } from './topic';
-import { BalanceSheetType } from './enums';
-import { TopicDTOUpdate } from '../dto/update/topic.update.dto';
-import { Aspect } from './aspect';
 import { IndustrySectorDtoUpdate } from '../dto/update/industry.sector.update.dto';
-import { IndustrySector } from './industry.sector';
+import { IndustrySector } from '../entities/industry.sector';
 import {
   createTranslations,
   Translations,
   updateTranslationOfLanguage,
-} from './Translations';
+} from '../entities/Translations';
+import { RatingWithDtoMerger } from './rating.with.dto.merger';
+import { mergeVal } from './merge.utils';
 
 export class EntityWithDtoMerger {
+  private ratingWithDtoMerger: RatingWithDtoMerger = new RatingWithDtoMerger();
   public constructor(
     private supplyFractionRepository: Repository<SupplyFraction>,
     private employeesFractionRepository: Repository<EmployeesFraction>,
@@ -41,7 +38,7 @@ export class EntityWithDtoMerger {
       );
     }
     if (balanceSheetDTOUpdate.rating) {
-      this.mergeRating(
+      this.ratingWithDtoMerger.mergeRating(
         balanceSheet.rating,
         balanceSheetDTOUpdate.rating,
         balanceSheet.type
@@ -54,55 +51,55 @@ export class EntityWithDtoMerger {
     companyFactsDTOUpdate: CompanyFactsDTOUpdate,
     language: keyof Translations
   ): Promise<void> {
-    companyFacts.totalPurchaseFromSuppliers = this.mergeVal(
+    companyFacts.totalPurchaseFromSuppliers = mergeVal(
       companyFacts.totalPurchaseFromSuppliers,
       companyFactsDTOUpdate.totalPurchaseFromSuppliers
     );
-    companyFacts.totalStaffCosts = this.mergeVal(
+    companyFacts.totalStaffCosts = mergeVal(
       companyFacts.totalStaffCosts,
       companyFactsDTOUpdate.totalStaffCosts
     );
-    companyFacts.profit = this.mergeVal(
+    companyFacts.profit = mergeVal(
       companyFacts.profit,
       companyFactsDTOUpdate.profit
     );
-    companyFacts.financialCosts = this.mergeVal(
+    companyFacts.financialCosts = mergeVal(
       companyFacts.financialCosts,
       companyFactsDTOUpdate.financialCosts
     );
-    companyFacts.incomeFromFinancialInvestments = this.mergeVal(
+    companyFacts.incomeFromFinancialInvestments = mergeVal(
       companyFacts.incomeFromFinancialInvestments,
       companyFactsDTOUpdate.incomeFromFinancialInvestments
     );
-    companyFacts.additionsToFixedAssets = this.mergeVal(
+    companyFacts.additionsToFixedAssets = mergeVal(
       companyFacts.additionsToFixedAssets,
       companyFactsDTOUpdate.additionsToFixedAssets
     );
-    companyFacts.turnover = this.mergeVal(
+    companyFacts.turnover = mergeVal(
       companyFacts.turnover,
       companyFactsDTOUpdate.turnover
     );
-    companyFacts.totalAssets = this.mergeVal(
+    companyFacts.totalAssets = mergeVal(
       companyFacts.totalAssets,
       companyFactsDTOUpdate.totalAssets
     );
-    companyFacts.financialAssetsAndCashBalance = this.mergeVal(
+    companyFacts.financialAssetsAndCashBalance = mergeVal(
       companyFacts.financialAssetsAndCashBalance,
       companyFactsDTOUpdate.financialAssetsAndCashBalance
     );
-    companyFacts.numberOfEmployees = this.mergeVal(
+    companyFacts.numberOfEmployees = mergeVal(
       companyFacts.numberOfEmployees,
       companyFactsDTOUpdate.numberOfEmployees
     );
-    companyFacts.hasCanteen = this.mergeVal(
+    companyFacts.hasCanteen = mergeVal(
       companyFacts.hasCanteen,
       companyFactsDTOUpdate.hasCanteen
     );
-    companyFacts.averageJourneyToWorkForStaffInKm = this.mergeVal(
+    companyFacts.averageJourneyToWorkForStaffInKm = mergeVal(
       companyFacts.averageJourneyToWorkForStaffInKm,
       companyFactsDTOUpdate.averageJourneyToWorkForStaffInKm
     );
-    companyFacts.isB2B = this.mergeVal(
+    companyFacts.isB2B = mergeVal(
       companyFacts.isB2B,
       companyFactsDTOUpdate.isB2B
     );
@@ -125,51 +122,6 @@ export class EntityWithDtoMerger {
         companyFactsDTOUpdate.employeesFractions
       );
     }
-  }
-
-  public mergeRating(
-    rating: Rating,
-    ratingDTOUpdate: RatingDTOUpdate,
-    balanceSheetType: BalanceSheetType
-  ) {
-    if (ratingDTOUpdate.topics) {
-      for (const topicDTOUpdate of ratingDTOUpdate.topics) {
-        const topic: Topic | undefined = rating.topics.find(
-          (t) => t.shortName === topicDTOUpdate.shortName
-        );
-        if (topic) {
-          this.mergeTopic(topic, topicDTOUpdate, balanceSheetType);
-        } else {
-          throw Error(`Cannot find topic ${topicDTOUpdate.shortName}`);
-        }
-      }
-    }
-  }
-
-  public mergeTopic(
-    topic: Topic,
-    topicDTOUpdate: TopicDTOUpdate,
-    balanceSheetType: BalanceSheetType
-  ) {
-    for (const aspectDTOUpdate of topicDTOUpdate.aspects) {
-      const aspect: Aspect | undefined = topic.aspects.find(
-        (a) => a.shortName === aspectDTOUpdate.shortName
-      );
-      if (aspect) {
-        aspect.estimations = this.mergeVal(
-          aspect.estimations,
-          aspectDTOUpdate.estimations
-        );
-        if (aspect.isPositive && aspectDTOUpdate.weight !== undefined) {
-          aspect.isWeightSelectedByUser = true;
-          aspect.weight = this.mergeVal(aspect.weight, aspectDTOUpdate.weight);
-        }
-      } else {
-        throw Error(`Cannot find aspect ${aspectDTOUpdate.shortName}`);
-      }
-    }
-    topic.isWeightSelectedByUser = !!topicDTOUpdate.weight;
-    topic.weight = this.mergeVal(topic.weight, topicDTOUpdate.weight);
   }
 
   public async replaceIndustrySectors(
@@ -224,9 +176,5 @@ export class EntityWithDtoMerger {
     companyFacts.employeesFractions = employeesFractionDTOUpdates.map(
       (ef) => new EmployeesFraction(undefined, ef.countryCode, ef.percentage)
     );
-  }
-
-  private mergeVal<T>(val: T, updatVal: T | undefined): T {
-    return updatVal !== undefined ? updatVal : val;
   }
 }

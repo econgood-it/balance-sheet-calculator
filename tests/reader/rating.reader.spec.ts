@@ -3,7 +3,7 @@ import { Topic } from '../../src/entities/topic';
 import { RatingReader } from '../../src/reader/rating.reader';
 
 describe('Rating Reader', () => {
-  it('should read rating from csv', async (done) => {
+  it('should read rating from csv', async () => {
     const ratingReader = new RatingReader();
     const pathToCsv = path.join(__dirname, 'rating.csv');
     const topics: Topic[] = (await ratingReader.readRatingFromCsv(pathToCsv))
@@ -76,6 +76,5 @@ describe('Rating Reader', () => {
         },
       ],
     });
-    done();
   });
 });

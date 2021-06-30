@@ -8,7 +8,7 @@ jest.mock('../../../src/i18n', () => ({
 }));
 
 describe('AspectResponseDTO', () => {
-  it('is created from topic', async (done) => {
+  it('is created from topic', async () => {
     const aspect = new Aspect(
       undefined,
       'A1.1',
@@ -32,6 +32,5 @@ describe('AspectResponseDTO', () => {
       isWeightSelectedByUser: true,
       isPositive: true,
     });
-    done();
   });
 });

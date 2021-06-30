@@ -6,7 +6,7 @@ import { BalanceSheetDTOUpdate } from '../dto/update/balance.sheet.update.dto';
 import { TopicUpdater } from '../calculations/topic.updater';
 import { SupplyFraction } from '../entities/supplyFraction';
 import { EmployeesFraction } from '../entities/employeesFraction';
-import { EntityWithDtoMerger } from '../entities/entity.with.dto.merger';
+import { EntityWithDtoMerger } from '../merge/entity.with.dto.merger';
 import BadRequestException from '../exceptions/bad.request.exception';
 import { Region } from '../entities/region';
 import { validateOrReject } from 'class-validator';

@@ -26,6 +26,8 @@ paths:
                 $ref: '#/components/examples/Full_5_0_4'
               Full 5.04 without optional fields:
                 $ref: '#/components/examples/Full_5_0_4_required'
+              Full 5.04 with some ratings:
+                $ref: '#/components/examples/Full_5_0_4_with_ratings'
         required: true
       security:
         - bearerAuth: [ ]

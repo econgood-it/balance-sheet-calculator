@@ -8,21 +8,19 @@ describe('Industry Sector', () => {
   let industrySectorRepository: Repository<IndustrySector>;
   let connection: Connection;
 
-  beforeAll(async (done) => {
+  beforeAll(async () => {
     connection =
       await DatabaseConnectionCreator.createConnectionAndRunMigrations(
         ConfigurationReader.read()
       );
     industrySectorRepository = connection.getRepository(IndustrySector);
-    done();
   });
 
-  afterAll(async (done) => {
+  afterAll(async () => {
     await connection.close();
-    done();
   });
 
-  it('should save and delete industry sector', async (done) => {
+  it('should save and delete industry sector', async () => {
     const industrySector: IndustrySector = new IndustrySector(
       undefined,
       'A',
@@ -36,6 +34,5 @@ describe('Industry Sector', () => {
       createTranslations('en', 'My description')
     );
     await industrySectorRepository.remove(result);
-    done();
   });
 });

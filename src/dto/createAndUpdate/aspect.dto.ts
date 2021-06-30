@@ -6,7 +6,7 @@ import {
 import { IsOptional, IsInt, Min, Max, IsIn } from 'class-validator';
 import { WEIGHT_VALUES } from '../validation.constants';
 
-export class AspectDTOUpdate {
+export class AspectDTO {
   @IsInt()
   @Min(-200)
   @Max(10)
@@ -28,7 +28,7 @@ export class AspectDTOUpdate {
 
   public static readonly fromJSON = strictObjectMapper(
     (accessor) =>
-      new AspectDTOUpdate(
+      new AspectDTO(
         accessor.get('shortName', expectString),
         accessor.getOptional('estimations', expectNumber),
         accessor.getOptional('weight', expectNumber)

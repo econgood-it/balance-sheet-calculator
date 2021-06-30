@@ -7,26 +7,23 @@ describe('Industry', () => {
   let industryRepository: Repository<Industry>;
   let connection: Connection;
 
-  beforeAll(async (done) => {
+  beforeAll(async () => {
     connection =
       await DatabaseConnectionCreator.createConnectionAndRunMigrations(
         ConfigurationReader.read()
       );
     industryRepository = connection.getRepository(Industry);
-    done();
   });
 
-  afterAll(async (done) => {
+  afterAll(async () => {
     await connection.close();
-    done();
   });
 
-  it('should be saved and deleted', async (done) => {
+  it('should be saved and deleted', async () => {
     const industry: Industry = new Industry(undefined, 2, 1, 'NEWCODE');
     const result = await industryRepository.save(industry);
     expect(result.industryCode).toBe('NEWCODE');
     expect(result.ecologicalSupplyChainRisk).toBe(2);
     await industryRepository.remove(result);
-    done();
   });
 });

@@ -11,21 +11,19 @@ describe('Social Environment Calculator', () => {
   let companyFacts: CompanyFacts;
   let connection: Connection;
 
-  beforeAll(async (done) => {
+  beforeAll(async () => {
     connection =
       await DatabaseConnectionCreator.createConnectionAndRunMigrations(
         ConfigurationReader.read()
       );
     companyFacts = EmptyCompanyFacts;
-    done();
   });
 
-  afterAll(async (done) => {
+  afterAll(async () => {
     await connection.close();
-    done();
   });
 
-  it('should return empty option if turnover is zero', async (done) => {
+  it('should return empty option if turnover is zero', async () => {
     companyFacts.profit = 0;
     companyFacts.turnover = 0;
     const socialEnvironmentCalcResults =
@@ -33,10 +31,9 @@ describe('Social Environment Calculator', () => {
     expect(
       socialEnvironmentCalcResults.profitInPercentOfTurnover.isPresent()
     ).toBeFalsy();
-    done();
   });
 
-  it('should return result if turnover is not zero', async (done) => {
+  it('should return result if turnover is not zero', async () => {
     companyFacts.profit = 4;
     companyFacts.turnover = 8;
     const socialEnvironmentCalcResults =
@@ -47,10 +44,9 @@ describe('Social Environment Calculator', () => {
     expect(
       socialEnvironmentCalcResults.profitInPercentOfTurnover.get()
     ).toBeCloseTo(0.5, 2);
-    done();
   });
 
-  it('should return that company is active in mining', async (done) => {
+  it('should return that company is active in mining', async () => {
     companyFacts.industrySectors = [
       new IndustrySector(undefined, 'B', 0, createTranslations('en', '')),
     ];
@@ -59,10 +55,9 @@ describe('Social Environment Calculator', () => {
     expect(
       socialEnvironmentCalcResults.companyIsActiveInMiningOrConstructionIndustry
     ).toBeTruthy();
-    done();
   });
 
-  it('should return that company is active in construction industry', async (done) => {
+  it('should return that company is active in construction industry', async () => {
     companyFacts.industrySectors = [
       new IndustrySector(undefined, 'F', 0, createTranslations('en', '')),
     ];
@@ -71,10 +66,9 @@ describe('Social Environment Calculator', () => {
     expect(
       socialEnvironmentCalcResults.companyIsActiveInMiningOrConstructionIndustry
     ).toBeTruthy();
-    done();
   });
 
-  it('should return that company is not active in mining or construction industry', async (done) => {
+  it('should return that company is not active in mining or construction industry', async () => {
     companyFacts.industrySectors = [
       new IndustrySector(undefined, 'A', 0, createTranslations('en', '')),
       new IndustrySector(undefined, 'Ce', 0, createTranslations('en', '')),
@@ -84,6 +78,5 @@ describe('Social Environment Calculator', () => {
     expect(
       socialEnvironmentCalcResults.companyIsActiveInMiningOrConstructionIndustry
     ).toBeFalsy();
-    done();
   });
 });

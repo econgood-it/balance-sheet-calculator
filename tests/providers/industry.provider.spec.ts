@@ -14,22 +14,20 @@ describe('Industry Provider', () => {
   let companyFacts: CompanyFacts;
   let industryRepo: Repository<Industry>;
 
-  beforeAll(async (done) => {
+  beforeAll(async () => {
     connection =
       await DatabaseConnectionCreator.createConnectionAndRunMigrations(
         ConfigurationReader.read()
       );
     industryRepo = await connection.getRepository(Industry);
     companyFacts = EmptyCompanyFacts;
-    done();
   });
 
-  afterAll(async (done) => {
+  afterAll(async () => {
     await connection.close();
-    done();
   });
 
-  it('should contain industries of supplyfractions', async (done) => {
+  it('should contain industries of supplyfractions', async () => {
     companyFacts.supplyFractions = [
       new SupplyFraction(undefined, 'A', 'CRI', 100),
       new SupplyFraction(undefined, 'B', 'DEU', 200),
@@ -40,10 +38,9 @@ describe('Industry Provider', () => {
     );
     expect(industryProvider.getOrFail('B').industryCode).toBe('B');
     expect(industryProvider.getOrFail('A').industryCode).toBe('A');
-    done();
   });
 
-  it('should contain industries of industry sectors', async (done) => {
+  it('should contain industries of industry sectors', async () => {
     companyFacts.industrySectors = [
       new IndustrySector(undefined, 'A', 0.6, createTranslations('en', 'Desc')),
       new IndustrySector(
@@ -59,6 +56,5 @@ describe('Industry Provider', () => {
     );
     expect(industryProvider.getOrFail('Ce').industryCode).toBe('Ce');
     expect(industryProvider.getOrFail('A').industryCode).toBe('A');
-    done();
   });
 });

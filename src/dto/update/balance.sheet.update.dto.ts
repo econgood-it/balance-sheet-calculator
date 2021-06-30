@@ -1,12 +1,12 @@
 import { strictObjectMapper, expectNumber } from '@daniel-faber/json-ts';
 import { CompanyFactsDTOUpdate } from './company.facts.update.dto';
-import { RatingDTOUpdate } from './rating.update.dto';
+import { RatingDTO } from '../createAndUpdate/rating.dto';
 import { ValidateNested, IsOptional } from 'class-validator';
 
 export class BalanceSheetDTOUpdate {
   @IsOptional()
   @ValidateNested()
-  public readonly rating?: RatingDTOUpdate;
+  public readonly rating?: RatingDTO;
 
   @IsOptional()
   @ValidateNested()
@@ -15,7 +15,7 @@ export class BalanceSheetDTOUpdate {
   public constructor(
     public readonly id: number,
     companyFacts?: CompanyFactsDTOUpdate,
-    rating?: RatingDTOUpdate
+    rating?: RatingDTO
   ) {
     this.rating = rating;
     this.companyFacts = companyFacts;
@@ -26,7 +26,7 @@ export class BalanceSheetDTOUpdate {
       new BalanceSheetDTOUpdate(
         accessor.get('id', expectNumber),
         accessor.getOptional('companyFacts', CompanyFactsDTOUpdate.fromJSON),
-        accessor.getOptional('rating', RatingDTOUpdate.fromJSON)
+        accessor.getOptional('rating', RatingDTO.fromJSON)
       )
   );
 }

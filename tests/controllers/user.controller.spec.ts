@@ -28,7 +28,7 @@ describe('User Controller', () => {
     value: '',
   };
 
-  beforeAll(async (done) => {
+  beforeAll(async () => {
     connection =
       await DatabaseConnectionCreator.createConnectionAndRunMigrations(
         configuration
@@ -43,23 +43,20 @@ describe('User Controller', () => {
       app,
       connection
     )}`;
-    done();
   });
 
-  afterAll(async (done) => {
+  afterAll(async () => {
     await connection.close();
-    done();
   });
 
-  beforeEach(async (done) => {
+  beforeEach(async () => {
     const user = await userRepository.findOne({ email: newUser.email });
     if (user) {
       await userRepository.remove(user);
     }
-    done();
   });
 
-  it('should allow users to reset their own password', async (done) => {
+  it('should allow users to reset their own password', async () => {
     const testApp = supertest(app);
     await userRepository.save(
       new User(undefined, newUser.email, newUser.password, Role.User)
@@ -80,10 +77,9 @@ describe('User Controller', () => {
       email: newUser.email,
     });
     expect(user.comparePassword(newPassword)).toBeTruthy();
-    done();
   });
 
-  it('should deny the right to create users for the role User', async (done) => {
+  it('should deny the right to create users for the role User', async () => {
     const testApp = supertest(app);
     const response = await testApp
       .post('/v1/users')
@@ -93,10 +89,9 @@ describe('User Controller', () => {
         password: newUser.password,
       });
     expect(response.status).toBe(403);
-    done();
   });
 
-  it('should allow admins to create users', async (done) => {
+  it('should allow admins to create users', async () => {
     const testApp = supertest(app);
     const response = await testApp
       .post('/v1/users')
@@ -106,10 +101,9 @@ describe('User Controller', () => {
         password: newUser.password,
       });
     expect(response.status).toBe(201);
-    done();
   });
 
-  it('should allow admins to delete users', async (done) => {
+  it('should allow admins to delete users', async () => {
     const testApp = supertest(app);
     const newUser2 = {
       ...newUser,
@@ -132,6 +126,5 @@ describe('User Controller', () => {
     expect(
       await userRepository.findOne({ email: newUser2.email })
     ).toBeUndefined();
-    done();
   });
 });
