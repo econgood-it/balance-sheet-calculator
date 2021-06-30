@@ -46,6 +46,7 @@ class App {
       new HealthCheckService()
     );
     this.docsController = new DocsController(this.app);
+    this.app.use(errorMiddleware);
   }
 
   public start() {
@@ -62,7 +63,6 @@ class App {
     // Allows us to receive requests with data in x-www-form-urlencoded format
     this.app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
     this.app.use(correlationIdMiddleware);
-    this.app.use(errorMiddleware);
 
     // Enables cors
   }
