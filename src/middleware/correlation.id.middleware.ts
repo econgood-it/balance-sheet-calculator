@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from 'express';
-import errorMiddleware from "./error.middleware";
 const correlator = require('correlation-id');
 export const CORRELATION_HEADER_NAME = 'x-correlation-id';
 
@@ -9,11 +8,18 @@ function correlationIdMiddleware(
   next: NextFunction
 ) {
   request.correlationId = correlator.getId;
-  correlator.withId(() => {
-    const currentCorrelationId = correlator.getId();
-    response.set(CORRELATION_HEADER_NAME, currentCorrelationId);
-    next();
-  }, request.get(CORRELATION_HEADER_NAME));
+  const idProvidedByUser = request.get(CORRELATION_HEADER_NAME);
+  if (idProvidedByUser) {
+    correlator.withId(idProvidedByUser, () => {
+      response.set(CORRELATION_HEADER_NAME, correlator.getId());
+      next();
+    });
+  } else {
+    correlator.withId(() => {
+      response.set(CORRELATION_HEADER_NAME, correlator.getId());
+      next();
+    });
+  }
 }
 
-export default errorMiddleware;
+export default correlationIdMiddleware;
