@@ -6,6 +6,14 @@ import { LoggingService } from './logging';
 import { ConfigurationReader } from './configuration.reader';
 import { AdminAccountCreator } from './admin.account.creator';
 
+declare global {
+  namespace Express {
+    export interface Request {
+      correlationId(): string;
+    }
+  }
+}
+
 const configuration = ConfigurationReader.read();
 
 DatabaseConnectionCreator.createConnectionAndRunMigrations(configuration)
