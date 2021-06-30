@@ -16,6 +16,7 @@ import { CompanyFacts } from '../../../src/entities/companyFacts';
 import { EmptyCompanyFactsJson } from '../../testData/company.facts';
 import { TokenProvider } from '../../TokenProvider';
 import { BalanceSheet } from '../../../src/entities/balanceSheet';
+import { CORRELATION_HEADER_NAME } from '../../../src/middleware/correlation.id.middleware';
 
 describe('Balance Sheet Controller', () => {
   let connection: Connection;
@@ -204,4 +205,25 @@ describe('Balance Sheet Controller', () => {
       });
     expect(response.status).toEqual(200);
   }
+
+  it('creates correlation id on post request', async () => {
+    const testApp = supertest(app);
+    const response = await testApp
+      .post(endpointPath)
+      .set(tokenHeader.key, tokenHeader.value)
+      .send(balanceSheetJson);
+    expect(response.status).toEqual(200);
+    expect(response.headers[CORRELATION_HEADER_NAME]).toBeDefined();
+  });
+
+  it('returns given correlation id on post request', async () => {
+    const testApp = supertest(app);
+    const response = await testApp
+      .post(endpointPath)
+      .set(tokenHeader.key, tokenHeader.value)
+      .set(CORRELATION_HEADER_NAME, 'my-own-corr-id')
+      .send(balanceSheetJson);
+    expect(response.status).toEqual(200);
+    expect(response.headers[CORRELATION_HEADER_NAME]).toBe('my-own-corr-id');
+  });
 });

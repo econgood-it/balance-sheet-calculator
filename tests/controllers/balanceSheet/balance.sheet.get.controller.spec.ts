@@ -11,6 +11,7 @@ import { Connection } from 'typeorm';
 import { Application } from 'express';
 import { TokenProvider } from '../../TokenProvider';
 import supertest = require('supertest');
+import { CORRELATION_HEADER_NAME } from '../../../src/middleware/correlation.id.middleware';
 
 describe('Balance Sheet Controller', () => {
   let connection: Connection;
@@ -82,5 +83,26 @@ describe('Balance Sheet Controller', () => {
       .send();
     expect(response.status).toEqual(200);
     expect(response.body.topics).toHaveLength(20);
+  });
+
+  it('returns given correlation id on get request', async () => {
+    const testApp = supertest(app);
+    const response = await testApp
+      .get(`${endpointPath}/9999999`)
+      .set(tokenHeader.key, tokenHeader.value)
+      .set(CORRELATION_HEADER_NAME, 'my-own-corr-id')
+      .send();
+    expect(response.status).toEqual(404);
+    expect(response.headers[CORRELATION_HEADER_NAME]).toBe('my-own-corr-id');
+  });
+
+  it('creates correlation id on get request', async () => {
+    const testApp = supertest(app);
+    const response = await testApp
+      .get(`${endpointPath}/9999999`)
+      .set(tokenHeader.key, tokenHeader.value)
+      .send();
+    expect(response.status).toEqual(404);
+    expect(response.headers[CORRELATION_HEADER_NAME]).toBeDefined();
   });
 });

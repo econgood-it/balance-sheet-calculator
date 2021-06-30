@@ -11,6 +11,7 @@ import {
 import { CompanyFacts1 } from '../../testData/company.facts';
 import { Topic } from '../../../src/entities/topic';
 import { TokenProvider } from '../../TokenProvider';
+import { CORRELATION_HEADER_NAME } from '../../../src/middleware/correlation.id.middleware';
 
 describe('Update endpoint of Balance Sheet Controller', () => {
   let connection: Connection;
@@ -145,4 +146,25 @@ describe('Update endpoint of Balance Sheet Controller', () => {
       .find((t: { shortName: string }) => t.shortName === shortNameTopic)
       .aspects.find((a: { shortName: string }) => a.shortName === shortName);
   }
+
+  it('returns given correlation id on update request', async () => {
+    const testApp = supertest(app);
+    const response = await testApp
+      .put(`${endpointPath}/9999999`)
+      .set(tokenHeader.key, tokenHeader.value)
+      .set(CORRELATION_HEADER_NAME, 'my-own-corr-id')
+      .send();
+    expect(response.status).toEqual(404);
+    expect(response.headers[CORRELATION_HEADER_NAME]).toBe('my-own-corr-id');
+  });
+
+  it('creates correlation id on put request', async () => {
+    const testApp = supertest(app);
+    const response = await testApp
+      .put(`${endpointPath}/9999999`)
+      .set(tokenHeader.key, tokenHeader.value)
+      .send();
+    expect(response.status).toEqual(404);
+    expect(response.headers[CORRELATION_HEADER_NAME]).toBeDefined();
+  });
 });
