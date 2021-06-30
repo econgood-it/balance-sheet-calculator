@@ -22,20 +22,36 @@ export class LoggingService {
           filename: 'error.log',
           level: 'error',
         }),
+        new origWinston.transports.File({
+          filename: 'warn.log',
+          level: 'warn',
+        }),
         new origWinston.transports.File({ filename: 'combined.log' }),
       ],
     });
   }
 
-  public static info(msg: string): void {
-    this.logger.info(msg);
+  public static info(
+    msg: string,
+    meta?: any,
+    callback?: origWinston.LogCallback
+  ): void {
+    this.logger.info(msg, meta, callback);
   }
 
-  public static warn(msg: string): void {
-    this.logger.warn(msg);
+  public static warn(
+    msg: string,
+    meta?: any,
+    callback?: origWinston.LogCallback
+  ): void {
+    this.logger.warn(msg, meta, callback);
   }
 
-  public static error(msg: string, callback?: origWinston.LogCallback): void {
-    this.logger.error(msg, callback);
+  public static error(
+    msg: string,
+    meta?: any,
+    callback?: origWinston.LogCallback
+  ): void {
+    this.logger.error(msg, meta, callback);
   }
 }

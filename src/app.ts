@@ -13,6 +13,7 @@ import { UserService } from './services/user.service';
 import { HealthCheckService } from './services/health.check.service';
 import { HealthCheckController } from './controllers/health.check.controller';
 import { DocsController } from './controllers/docs.controller';
+import correlationIdMiddleware from './middleware/correlation.id.middleware';
 
 class App {
   public readonly app: Application;
@@ -45,6 +46,7 @@ class App {
       new HealthCheckService()
     );
     this.docsController = new DocsController(this.app);
+    this.app.use(errorMiddleware);
   }
 
   public start() {
@@ -60,7 +62,7 @@ class App {
 
     // Allows us to receive requests with data in x-www-form-urlencoded format
     this.app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
-    this.app.use(errorMiddleware);
+    this.app.use(correlationIdMiddleware);
 
     // Enables cors
   }

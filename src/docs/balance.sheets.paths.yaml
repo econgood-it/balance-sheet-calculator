@@ -16,6 +16,13 @@ paths:
             avoidSavingOfResults:
               summary: Execute the calculations without saving the results in the database
               value: false
+        - in: headers
+          name: x-correlation-id
+          description: "If x-correlation-id is set then it's value will be used as the id for this request, otherwise the id will be a new uuid."
+          required: false
+          default: A new uuid
+          type: string
+
       requestBody:
         content:
           'application/json':

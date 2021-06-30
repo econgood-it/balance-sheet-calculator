@@ -6,5 +6,6 @@ dist
 coverage/
 combined.log
 error.log
+warn.log
 *.csv#
 documentation

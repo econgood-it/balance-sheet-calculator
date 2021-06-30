@@ -17,6 +17,7 @@ import { IndustrySector } from '../../../src/entities/industry.sector';
 import { EmployeesFraction } from '../../../src/entities/employeesFraction';
 import { TokenProvider } from '../../TokenProvider';
 import supertest = require('supertest');
+import { CORRELATION_HEADER_NAME } from '../../../src/middleware/correlation.id.middleware';
 
 describe('Balance Sheet Controller', () => {
   let connection: Connection;
@@ -53,7 +54,7 @@ describe('Balance Sheet Controller', () => {
     };
   });
 
-  it(' deletes balance sheet by id', async () => {
+  it('deletes balance sheet by id', async () => {
     const testApp = supertest(app);
     balanceSheetJson.companyFacts.industrySectors = [
       {
@@ -130,5 +131,26 @@ describe('Balance Sheet Controller', () => {
         companyFacts: postResponse.body.companyFacts,
       })
     ).toBe(expectZeroCount);
+  });
+
+  it('returns given correlation id on delete request', async () => {
+    const testApp = supertest(app);
+    const response = await testApp
+      .delete(`${endpointPath}/9999999`)
+      .set(tokenHeader.key, tokenHeader.value)
+      .set(CORRELATION_HEADER_NAME, 'my-own-corr-id')
+      .send();
+    expect(response.status).toEqual(404);
+    expect(response.headers[CORRELATION_HEADER_NAME]).toBe('my-own-corr-id');
+  });
+
+  it('creates correlation id on delete request', async () => {
+    const testApp = supertest(app);
+    const response = await testApp
+      .delete(`${endpointPath}/9999999`)
+      .set(tokenHeader.key, tokenHeader.value)
+      .send();
+    expect(response.status).toEqual(404);
+    expect(response.headers[CORRELATION_HEADER_NAME]).toBeDefined();
   });
 });
