@@ -5,9 +5,11 @@ import {
   Index,
   BeforeUpdate,
   BeforeInsert,
+  ManyToMany,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Role } from './enums';
+import { BalanceSheet } from './balanceSheet';
 
 @Entity()
 export class User {
@@ -25,6 +27,9 @@ export class User {
 
   @Column('text')
   public role: Role;
+
+  @ManyToMany((type) => BalanceSheet, (balanceSheet) => balanceSheet.users)
+  balanceSheets!: BalanceSheet[];
 
   public constructor(
     id: number | undefined,
