@@ -1,44 +1,29 @@
 import { Request, Response, NextFunction } from 'express';
 import { BalanceSheetDTOCreate } from '../dto/create/balance.sheet.create.dto';
-import { BalanceSheet } from '../entities/balanceSheet';
-import { Connection, EntityManager } from 'typeorm';
+import {
+  BALANCE_SHEET_RELATIONS,
+  BalanceSheet,
+} from '../entities/balanceSheet';
+import { Connection } from 'typeorm';
 import { BalanceSheetDTOUpdate } from '../dto/update/balance.sheet.update.dto';
-import { TopicUpdater } from '../calculations/topic.updater';
 import { SupplyFraction } from '../entities/supplyFraction';
 import { EmployeesFraction } from '../entities/employeesFraction';
 import { EntityWithDtoMerger } from '../merge/entity.with.dto.merger';
 import BadRequestException from '../exceptions/bad.request.exception';
-import { Region } from '../entities/region';
 import { validateOrReject } from 'class-validator';
-import { CalcResults, Calculator } from '../calculations/calculator';
-import { Industry } from '../entities/industry';
 import { IndustrySector } from '../entities/industry.sector';
-import { RegionProvider } from '../providers/region.provider';
-import { IndustryProvider } from '../providers/industry.provider';
 import { MatrixDTO } from '../dto/matrix/matrix.dto';
 import { CompanyFacts } from '../entities/companyFacts';
 import { Rating } from '../entities/rating';
 import { BalanceSheetDTOResponse } from '../dto/response/balance.sheet.response.dto';
 import { parseLanguageParameter } from '../entities/Translations';
-import { handle } from '../exceptions/ErrorHandler';
+import { handle } from '../exceptions/error.handler';
+import { User } from '../entities/user';
+import { AccessCheckerService } from './access.checker.service';
+import { SortService } from './sort.service';
+import { CalculationService } from './calculation.service';
 
 export class BalanceSheetService {
-  private static readonly BALANCE_SHEET_RELATIONS = [
-    'rating',
-    'companyFacts',
-    'companyFacts.supplyFractions',
-    'companyFacts.employeesFractions',
-    'companyFacts.industrySectors',
-    'rating.topics',
-    'rating.topics.aspects',
-  ];
-
-  private static readonly RATING_RELATIONS = [
-    'rating',
-    'rating.topics',
-    'rating.topics.aspects',
-  ];
-
   constructor(private connection: Connection) {}
 
   public async createBalanceSheet(
@@ -53,13 +38,19 @@ export class BalanceSheetService {
         const balanceSheetDTOCreate: BalanceSheetDTOCreate =
           BalanceSheetDTOCreate.fromJSON(req.body);
         await this.validateOrFail(balanceSheetDTOCreate);
+        const userId = req.userInfo?.id;
+        const userRepository = entityManager.getRepository(User);
+        const foundUser = await userRepository.findOne(userId);
         const balanceSheet: BalanceSheet =
-          await balanceSheetDTOCreate.toBalanceSheet(language);
-        const balanceSheetResponse: BalanceSheet = await this.calculate(
-          balanceSheet,
-          entityManager,
-          saveFlag
-        );
+          await balanceSheetDTOCreate.toBalanceSheet(language, [
+            foundUser as User,
+          ]);
+        const balanceSheetResponse: BalanceSheet =
+          await CalculationService.calculate(
+            balanceSheet,
+            entityManager,
+            saveFlag
+          );
         res.json(
           BalanceSheetDTOResponse.fromBalanceSheet(
             balanceSheetResponse,
@@ -91,7 +82,7 @@ export class BalanceSheetService {
         const balanceSheet = await balanceSheetRepository.findOneOrFail(
           balanceSheetId,
           {
-            relations: BalanceSheetService.BALANCE_SHEET_RELATIONS,
+            relations: BALANCE_SHEET_RELATIONS,
           }
         );
         const balanceSheetDTOUpdate: BalanceSheetDTOUpdate =
@@ -109,11 +100,8 @@ export class BalanceSheetService {
           balanceSheetDTOUpdate,
           language
         );
-        const balanceSheetResponse: BalanceSheet = await this.calculate(
-          balanceSheet,
-          entityManager,
-          true
-        );
+        const balanceSheetResponse: BalanceSheet =
+          await CalculationService.calculate(balanceSheet, entityManager, true);
         res.json(
           BalanceSheetDTOResponse.fromBalanceSheet(
             balanceSheetResponse,
@@ -140,10 +128,11 @@ export class BalanceSheetService {
         const balanceSheet = await balanceSheetRepository.findOneOrFail(
           balanceSheetId,
           {
-            relations: BalanceSheetService.BALANCE_SHEET_RELATIONS,
+            relations: BALANCE_SHEET_RELATIONS,
           }
         );
-        this.sortArraysOfBalanceSheet(balanceSheet);
+        await AccessCheckerService.check(req, balanceSheet, entityManager);
+        SortService.sortArraysOfBalanceSheet(balanceSheet);
         res.json(
           BalanceSheetDTOResponse.fromBalanceSheet(balanceSheet, language)
         );
@@ -167,10 +156,11 @@ export class BalanceSheetService {
         const balanceSheet = await balanceSheetRepository.findOneOrFail(
           balanceSheetId,
           {
-            relations: BalanceSheetService.RATING_RELATIONS,
+            relations: BALANCE_SHEET_RELATIONS,
           }
         );
-        this.sortArraysOfBalanceSheet(balanceSheet);
+        await AccessCheckerService.check(req, balanceSheet, entityManager);
+        SortService.sortArraysOfBalanceSheet(balanceSheet);
         res.json(MatrixDTO.fromRating(balanceSheet.rating, language));
       })
       .catch((error) => {
@@ -194,7 +184,7 @@ export class BalanceSheetService {
         const balanceSheet = await balanceSheetRepository.findOneOrFail(
           balanceSheetId,
           {
-            relations: BalanceSheetService.BALANCE_SHEET_RELATIONS,
+            relations: BALANCE_SHEET_RELATIONS,
           }
         );
         await companyFactsRepository.remove(balanceSheet.companyFacts);
@@ -216,48 +206,6 @@ export class BalanceSheetService {
     await validateOrReject(balanceSheet, {
       validationError: { target: false },
     });
-  }
-
-  private async calculate(
-    balanceSheet: BalanceSheet,
-    entityManager: EntityManager,
-    saveCalcResults: boolean
-  ): Promise<BalanceSheet> {
-    const industryRepository = entityManager.getRepository(Industry);
-    const regionProvider = await RegionProvider.createFromCompanyFacts(
-      balanceSheet.companyFacts,
-      entityManager.getRepository(Region)
-    );
-    const industryProvider = await IndustryProvider.createFromCompanyFacts(
-      balanceSheet.companyFacts,
-      industryRepository
-    );
-    const calcResults: CalcResults = await new Calculator(
-      regionProvider,
-      industryProvider
-    ).calculate(balanceSheet.companyFacts);
-    const topicUpdater: TopicUpdater = new TopicUpdater();
-    await topicUpdater.update(
-      balanceSheet.rating.topics,
-      balanceSheet.companyFacts,
-      calcResults
-    );
-    if (saveCalcResults) {
-      balanceSheet = await entityManager
-        .getRepository(BalanceSheet)
-        .save(balanceSheet);
-    }
-    this.sortArraysOfBalanceSheet(balanceSheet);
-    return balanceSheet;
-  }
-
-  private sortArraysOfBalanceSheet(balanceSheet: BalanceSheet) {
-    balanceSheet.rating.topics.sort((t1, t2) =>
-      t1.shortName.localeCompare(t2.shortName)
-    );
-    balanceSheet.rating.topics.forEach((t) =>
-      t.aspects.sort((a1, a2) => a1.shortName.localeCompare(a2.shortName))
-    );
   }
 
   private parseSaveFlag(saveParam: any): boolean {
