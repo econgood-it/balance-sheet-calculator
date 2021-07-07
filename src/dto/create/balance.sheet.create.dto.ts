@@ -13,6 +13,7 @@ import { Translations } from '../../entities/Translations';
 import { RatingDTO } from '../createAndUpdate/rating.dto';
 import { RatingsDTO } from '../createAndUpdate/ratings.dto';
 import { RatingWithDtoMerger } from '../../merge/rating.with.dto.merger';
+import { User } from '../../entities/user';
 
 export class BalanceSheetDTOCreate {
   @ValidateNested()
@@ -54,7 +55,8 @@ export class BalanceSheetDTOCreate {
   };
 
   public async toBalanceSheet(
-    language: keyof Translations
+    language: keyof Translations,
+    users: User[]
   ): Promise<BalanceSheet> {
     const rating = await RatingFactory.createDefaultRating(
       this.type,
@@ -69,7 +71,8 @@ export class BalanceSheetDTOCreate {
       this.type,
       this.version,
       this.companyFacts.toCompanyFacts(language),
-      rating
+      rating,
+      users
     );
   }
 }
