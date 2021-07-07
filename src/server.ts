@@ -5,11 +5,13 @@ import App from './app';
 import { LoggingService } from './logging';
 import { ConfigurationReader } from './configuration.reader';
 import { AdminAccountCreator } from './admin.account.creator';
+import { Role } from './entities/enums';
 
 declare global {
   namespace Express {
     export interface Request {
       correlationId(): string;
+      userInfo?: { id: number; email: string; role: Role };
     }
   }
 }
