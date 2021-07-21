@@ -7,6 +7,7 @@ import NotFoundException from './not.found.exception';
 import InternalServerException from './internal.server.exception';
 import { NoAccessError } from './no.access.error';
 import ForbiddenException from './forbidden.exception';
+import UnauthorizedException from './unauthorized.exception';
 
 export const handle = (error: Error, next: NextFunction) => {
   if (error instanceof JsonMappingError) {
@@ -23,6 +24,14 @@ export const handle = (error: Error, next: NextFunction) => {
   }
   if (error instanceof NoAccessError) {
     return next(new ForbiddenException(error.message));
+  }
+  if (
+    error instanceof BadRequestException ||
+    error instanceof UnauthorizedException ||
+    error instanceof ForbiddenException ||
+    error instanceof NotFoundException
+  ) {
+    return next(error);
   }
   return next(new InternalServerException(error.message));
 };
