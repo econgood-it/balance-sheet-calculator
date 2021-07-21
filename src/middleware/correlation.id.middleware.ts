@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-const correlator = require('correlation-id');
+import correlator from 'correlation-id';
 export const CORRELATION_HEADER_NAME = 'x-correlation-id';
 
 function correlationIdMiddleware(
