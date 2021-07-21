@@ -91,10 +91,8 @@ export class BalanceSheetService {
         const balanceSheetDTOUpdate: BalanceSheetDTOUpdate =
           BalanceSheetDTOUpdate.fromJSON(req.body);
         if (balanceSheetDTOUpdate.id !== balanceSheetId) {
-          next(
-            new BadRequestException(
-              'Balance sheet id in request body and url parameter has to be the same'
-            )
+          throw new BadRequestException(
+            'Balance sheet id in request body and url parameter has to be the same'
           );
         }
         await this.validateOrFail(balanceSheetDTOUpdate);
