@@ -27,11 +27,9 @@ export class CompanyFactsDTOCreate {
   @IsNumber({ maxDecimalPlaces: 2 })
   public readonly financialCosts: number;
 
-  @Min(0)
   @IsNumber({ maxDecimalPlaces: 2 })
   public readonly incomeFromFinancialInvestments: number;
 
-  @Min(0)
   @IsNumber({ maxDecimalPlaces: 2 })
   public readonly additionsToFixedAssets: number;
 

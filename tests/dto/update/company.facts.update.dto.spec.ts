@@ -1,3 +1,4 @@
+import { validate } from 'class-validator';
 import { CompanyFactsDTOUpdate } from '../../../src/dto/update/company.facts.update.dto';
 
 describe('CompanyFactsUpdateDTO', () => {
@@ -24,6 +25,18 @@ describe('CompanyFactsUpdateDTO', () => {
     const companyFactsDTOUpdate: CompanyFactsDTOUpdate =
       CompanyFactsDTOUpdate.fromJSON(jsonConst);
     expect(companyFactsDTOUpdate).toMatchObject(jsonConst);
+  });
+
+  it('allows negative values for incomeFromFinancialInvestments and additionsToFixedAssets', async () => {
+    const companyFactsDTOUpdate: CompanyFactsDTOUpdate =
+      CompanyFactsDTOUpdate.fromJSON({
+        incomeFromFinancialInvestments: -20,
+        additionsToFixedAssets: -70,
+      });
+    const validationErrors = await validate(companyFactsDTOUpdate, {
+      validationError: { target: false },
+    });
+    expect(validationErrors).toHaveLength(0);
   });
 
   describe('is created from json where value is missing for field', () => {
