@@ -48,12 +48,12 @@ components:
           default: 0
         incomeFromFinancialInvestments:
           type: number
-          format: Positive monatary value
+          format: Monatary value
           description: Income from financial investments in €
           default: 0
         additionsToFixedAssets:
           type: number
-          format: Positive monatary value
+          format: Monatary value
           description: Additions to fixed assets in €
           default: 0
         turnover:

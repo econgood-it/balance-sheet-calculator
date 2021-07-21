@@ -36,12 +36,10 @@ export class CompanyFactsDTOUpdate {
   public readonly financialCosts?: number;
 
   @IsOptional()
-  @Min(0)
   @IsNumber({ maxDecimalPlaces: 2 })
   public readonly incomeFromFinancialInvestments?: number;
 
   @IsOptional()
-  @Min(0)
   @IsNumber({ maxDecimalPlaces: 2 })
   public readonly additionsToFixedAssets?: number;
 

@@ -1,3 +1,4 @@
+import { validate } from 'class-validator';
 import { CompanyFactsDTOCreate } from '../../../src/dto/create/company.facts.create.dto';
 
 describe('CompanyFactsCreateDTO', () => {
@@ -48,5 +49,17 @@ describe('CompanyFactsCreateDTO', () => {
       employeesFractions: [],
       industrySectors: [],
     });
+  });
+
+  it('allows negative values for incomeFromFinancialInvestments and additionsToFixedAssets', async () => {
+    const companyFactsDTOCreate: CompanyFactsDTOCreate =
+      CompanyFactsDTOCreate.fromJSON({
+        incomeFromFinancialInvestments: -20,
+        additionsToFixedAssets: -70,
+      });
+    const validationErrors = await validate(companyFactsDTOCreate, {
+      validationError: { target: false },
+    });
+    expect(validationErrors).toHaveLength(0);
   });
 });
