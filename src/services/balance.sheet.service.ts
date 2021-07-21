@@ -188,6 +188,7 @@ export class BalanceSheetService {
             relations: BALANCE_SHEET_RELATIONS,
           }
         );
+        await AccessCheckerService.check(req, balanceSheet, entityManager);
         await companyFactsRepository.remove(balanceSheet.companyFacts);
         await ratingRepository.remove(balanceSheet.rating);
         await balanceSheetRepository.remove(balanceSheet);
