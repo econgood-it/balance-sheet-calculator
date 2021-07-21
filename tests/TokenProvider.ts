@@ -42,12 +42,13 @@ export class TokenProvider {
 
   public static async provideValidUserToken(
     app: Application,
-    connection: Connection
+    connection: Connection,
+    email?: string
   ): Promise<string> {
     return await TokenProvider.provideValidToken(
       app,
       connection,
-      'user@example.com',
+      email || 'user@example.com',
       'MGb3C7WO&=S}Q&R&=4cK',
       Role.User
     );

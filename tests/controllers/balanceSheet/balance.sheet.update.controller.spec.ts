@@ -147,6 +147,45 @@ describe('Update endpoint of Balance Sheet Controller', () => {
       .aspects.find((a: { shortName: string }) => a.shortName === shortName);
   }
 
+  describe('block access to balance sheet ', () => {
+    let tokenOfUnauthorizedUser: string;
+    beforeAll(async () => {
+      tokenOfUnauthorizedUser = `Bearer ${await TokenProvider.provideValidUserToken(
+        app,
+        connection,
+        'unauthorizedUser@example.com'
+      )}`;
+    });
+
+    const postAndPatchWithDifferentUsers = async (): Promise<any> => {
+      const testApp = supertest(app);
+      const postResponse = await testApp
+        .post(endpointPath)
+        .set(tokenHeader.key, tokenHeader.value)
+        .send({
+          type: BalanceSheetType.Compact,
+          version: BalanceSheetVersion.v5_0_4,
+          companyFacts: CompanyFacts1,
+        });
+      const balanceSheetUpdate = {
+        id: postResponse.body.id,
+        companyFacts: {
+          totalPurchaseFromSuppliers: 30000,
+        },
+      };
+
+      return await testApp
+        .patch(`${endpointPath}/${postResponse.body.id}`)
+        .set(tokenHeader.key, tokenOfUnauthorizedUser)
+        .send({ ...balanceSheetUpdate });
+    };
+
+    it('when patch endpoint is called', async () => {
+      const response = await postAndPatchWithDifferentUsers();
+      expect(response.status).toEqual(403);
+    });
+  });
+
   it('returns given correlation id on update request', async () => {
     const testApp = supertest(app);
     const response = await testApp

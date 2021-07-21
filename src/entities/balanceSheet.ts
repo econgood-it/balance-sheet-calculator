@@ -6,8 +6,22 @@ import {
   OneToOne,
   JoinColumn,
   Column,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { BalanceSheetType, BalanceSheetVersion } from './enums';
+import { User } from './user';
+
+export const BALANCE_SHEET_RELATIONS = [
+  'rating',
+  'companyFacts',
+  'companyFacts.supplyFractions',
+  'companyFacts.employeesFractions',
+  'companyFacts.industrySectors',
+  'rating.topics',
+  'rating.topics.aspects',
+  'users',
+];
 
 @Entity()
 export class BalanceSheet {
@@ -28,17 +42,23 @@ export class BalanceSheet {
   @JoinColumn()
   public readonly rating: Rating;
 
+  @ManyToMany((type) => User, (user) => user.balanceSheets)
+  @JoinTable({ name: 'balance_sheets_users' })
+  public readonly users: User[];
+
   public constructor(
     id: number | undefined,
     type: BalanceSheetType,
     version: BalanceSheetVersion,
     companyFacts: CompanyFacts,
-    rating: Rating
+    rating: Rating,
+    users: User[]
   ) {
     this.id = id;
     this.type = type;
     this.version = version;
     this.companyFacts = companyFacts;
     this.rating = rating;
+    this.users = users;
   }
 }

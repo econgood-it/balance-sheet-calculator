@@ -6,7 +6,7 @@ import { UserDto } from '../dto/user/user.dto';
 import { validateOrReject } from 'class-validator';
 import { User } from '../entities/user';
 import BadRequestException from '../exceptions/bad.request.exception';
-import { handle } from '../exceptions/ErrorHandler';
+import { handle } from '../exceptions/error.handler';
 import { PasswordResetDto } from '../dto/user/password.reset.dto';
 
 export class UserService {
@@ -89,13 +89,13 @@ export class UserService {
       });
   }
 
-  public async resetPassword(req: any, res: Response, next: NextFunction) {
+  public async resetPassword(req: Request, res: Response, next: NextFunction) {
     this.connection.manager
       .transaction(async (entityManager) => {
-        if (req.user === undefined || req.user.id === undefined) {
+        if (req.userInfo === undefined || req.userInfo.id === undefined) {
           throw new Error('User undefined');
         }
-        const userId = req.user.id;
+        const userId = req.userInfo.id;
         const passwordResetDto = PasswordResetDto.fromJSON(req.body);
         await this.validateOrFail(passwordResetDto);
         const userRepository = entityManager.getRepository(User);

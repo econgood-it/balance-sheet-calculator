@@ -133,6 +133,35 @@ describe('Balance Sheet Controller', () => {
     ).toBe(expectZeroCount);
   });
 
+  describe('block access to balance sheet ', () => {
+    let tokenOfUnauthorizedUser: string;
+    beforeAll(async () => {
+      tokenOfUnauthorizedUser = `Bearer ${await TokenProvider.provideValidUserToken(
+        app,
+        connection,
+        'unauthorizedUser@example.com'
+      )}`;
+    });
+
+    const postAndDeleteWithDifferentUsers = async (): Promise<any> => {
+      const testApp = supertest(app);
+      const postResponse = await testApp
+        .post(endpointPath)
+        .set(tokenHeader.key, tokenHeader.value)
+        .send(balanceSheetJson);
+
+      return await testApp
+        .delete(`${endpointPath}/${postResponse.body.id}`)
+        .set(tokenHeader.key, tokenOfUnauthorizedUser)
+        .send();
+    };
+
+    it('when delete endpoint is called', async () => {
+      const response = await postAndDeleteWithDifferentUsers();
+      expect(response.status).toEqual(403);
+    });
+  });
+
   it('returns given correlation id on delete request', async () => {
     const testApp = supertest(app);
     const response = await testApp

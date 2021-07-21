@@ -19,10 +19,8 @@ describe('Balance Sheet Controller', () => {
   const configuration = ConfigurationReader.read();
   let balanceSheetJson: any;
   const endpointPath = '/v1/balancesheets';
-  const tokenHeader = {
-    key: 'Authorization',
-    value: '',
-  };
+  const authHeaderKey = 'Authorization';
+  let token = '';
 
   beforeAll(async () => {
     connection =
@@ -30,7 +28,7 @@ describe('Balance Sheet Controller', () => {
         configuration
       );
     app = new App(connection, configuration).app;
-    tokenHeader.value = `Bearer ${await TokenProvider.provideValidUserToken(
+    token = `Bearer ${await TokenProvider.provideValidUserToken(
       app,
       connection
     )}`;
@@ -52,11 +50,11 @@ describe('Balance Sheet Controller', () => {
     const testApp = supertest(app);
     const postResponse = await testApp
       .post(endpointPath)
-      .set(tokenHeader.key, tokenHeader.value)
+      .set(authHeaderKey, token)
       .send(balanceSheetJson);
     const response = await testApp
       .get(`${endpointPath}/${postResponse.body.id}`)
-      .set(tokenHeader.key, tokenHeader.value)
+      .set(authHeaderKey, token)
       .send();
     expect(response.status).toEqual(200);
     expect(response.body.companyFacts).toMatchObject(
@@ -75,21 +73,55 @@ describe('Balance Sheet Controller', () => {
     const testApp = supertest(app);
     const postResponse = await testApp
       .post(endpointPath)
-      .set(tokenHeader.key, tokenHeader.value)
+      .set(authHeaderKey, token)
       .send(balanceSheetJson);
     const response = await testApp
       .get(`${endpointPath}/${postResponse.body.id}/matrix`)
-      .set(tokenHeader.key, tokenHeader.value)
+      .set(authHeaderKey, token)
       .send();
     expect(response.status).toEqual(200);
     expect(response.body.topics).toHaveLength(20);
+  });
+
+  describe('block access to balance sheet ', () => {
+    let tokenOfUnauthorizedUser: string;
+    beforeAll(async () => {
+      tokenOfUnauthorizedUser = `Bearer ${await TokenProvider.provideValidUserToken(
+        app,
+        connection,
+        'unauthorizedUser@example.com'
+      )}`;
+    });
+
+    const postAndGetWithDifferentUsers = async (
+      endpoint: string
+    ): Promise<any> => {
+      const testApp = supertest(app);
+      const postResponse = await testApp
+        .post(endpointPath)
+        .set(authHeaderKey, token)
+        .send(balanceSheetJson);
+      return await testApp
+        .get(`${endpointPath}/${postResponse.body.id}${endpoint}`)
+        .set(authHeaderKey, tokenOfUnauthorizedUser)
+        .send();
+    };
+
+    it('when get endpoint is called', async () => {
+      const response = await postAndGetWithDifferentUsers('');
+      expect(response.status).toEqual(403);
+    });
+    it('when matrix endpoint is called', async () => {
+      const response = await postAndGetWithDifferentUsers('/matrix');
+      expect(response.status).toEqual(403);
+    });
   });
 
   it('returns given correlation id on get request', async () => {
     const testApp = supertest(app);
     const response = await testApp
       .get(`${endpointPath}/9999999`)
-      .set(tokenHeader.key, tokenHeader.value)
+      .set(authHeaderKey, token)
       .set(CORRELATION_HEADER_NAME, 'my-own-corr-id')
       .send();
     expect(response.status).toEqual(404);
@@ -100,7 +132,7 @@ describe('Balance Sheet Controller', () => {
     const testApp = supertest(app);
     const response = await testApp
       .get(`${endpointPath}/9999999`)
-      .set(tokenHeader.key, tokenHeader.value)
+      .set(authHeaderKey, token)
       .send();
     expect(response.status).toEqual(404);
     expect(response.headers[CORRELATION_HEADER_NAME]).toBeDefined();

@@ -64,7 +64,7 @@ export class Authentication {
               return res.status(401).json({ message: info.message });
             }
           }
-          req.user = user;
+          req.userInfo = user;
           return next();
         }
       )(req, res, next);

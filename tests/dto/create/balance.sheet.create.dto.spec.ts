@@ -2,12 +2,17 @@ import { BalanceSheetDTOCreate } from '../../../src/dto/create/balance.sheet.cre
 import {
   BalanceSheetType,
   BalanceSheetVersion,
+  Role,
 } from '../../../src/entities/enums';
 import { RatingFactory } from '../../../src/factories/rating.factory';
 import { modifyAspect, modifyTopic } from '../../rating.modification.utils';
 import { toJsObject } from '../../to.js.object';
+import { User } from '../../../src/entities/user';
 
 describe('BalanceSheetCreateDTO', () => {
+  const users = [
+    new User(undefined, 'test@example.com', 'test1234', Role.User),
+  ];
   it('is created from json with a merged rating entity', async () => {
     const json = {
       type: BalanceSheetType.Full,
@@ -22,7 +27,7 @@ describe('BalanceSheetCreateDTO', () => {
     const balanceSheetDTOCreate = BalanceSheetDTOCreate.fromJSON(
       toJsObject(json)
     );
-    const result = await balanceSheetDTOCreate.toBalanceSheet('en');
+    const result = await balanceSheetDTOCreate.toBalanceSheet('en', users);
 
     const expectedRating = await RatingFactory.createDefaultRating(
       json.type,
@@ -45,7 +50,7 @@ describe('BalanceSheetCreateDTO', () => {
     const balanceSheetDTOCreate = BalanceSheetDTOCreate.fromJSON(
       toJsObject(json)
     );
-    const result = await balanceSheetDTOCreate.toBalanceSheet('en');
+    const result = await balanceSheetDTOCreate.toBalanceSheet('en', users);
 
     const expectedRating = await RatingFactory.createDefaultRating(
       json.type,
