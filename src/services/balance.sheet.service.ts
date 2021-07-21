@@ -22,6 +22,7 @@ import { User } from '../entities/user';
 import { AccessCheckerService } from './access.checker.service';
 import { SortService } from './sort.service';
 import { CalculationService } from './calculation.service';
+import UnauthorizedException from '../exceptions/unauthorized.exception';
 
 export class BalanceSheetService {
   constructor(private connection: Connection) {}
@@ -38,13 +39,14 @@ export class BalanceSheetService {
         const balanceSheetDTOCreate: BalanceSheetDTOCreate =
           BalanceSheetDTOCreate.fromJSON(req.body);
         await this.validateOrFail(balanceSheetDTOCreate);
-        const userId = req.userInfo?.id;
+        if (req.userInfo === undefined) {
+          throw new UnauthorizedException('No user provided');
+        }
+        const userId = req.userInfo.id;
         const userRepository = entityManager.getRepository(User);
-        const foundUser = await userRepository.findOne(userId);
+        const foundUser = await userRepository.findOneOrFail(userId);
         const balanceSheet: BalanceSheet =
-          await balanceSheetDTOCreate.toBalanceSheet(language, [
-            foundUser as User,
-          ]);
+          await balanceSheetDTOCreate.toBalanceSheet(language, [foundUser]);
         const balanceSheetResponse: BalanceSheet =
           await CalculationService.calculate(
             balanceSheet,
