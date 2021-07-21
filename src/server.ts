@@ -10,7 +10,7 @@ import { Role } from './entities/enums';
 declare global {
   namespace Express {
     export interface Request {
-      correlationId(): string;
+      correlationId(): string | undefined;
       userInfo?: { id: number; email: string; role: Role };
     }
   }
