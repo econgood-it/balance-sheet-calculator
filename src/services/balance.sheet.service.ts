@@ -85,6 +85,7 @@ export class BalanceSheetService {
             relations: BALANCE_SHEET_RELATIONS,
           }
         );
+        await AccessCheckerService.check(req, balanceSheet, entityManager);
         const balanceSheetDTOUpdate: BalanceSheetDTOUpdate =
           BalanceSheetDTOUpdate.fromJSON(req.body);
         if (balanceSheetDTOUpdate.id !== balanceSheetId) {
