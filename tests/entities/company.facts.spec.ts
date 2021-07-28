@@ -3,6 +3,7 @@ import { Connection, Repository } from 'typeorm';
 import { ConfigurationReader } from '../../src/configuration.reader';
 import { CompanyFacts } from '../../src/entities/companyFacts';
 import { EmptyCompanyFacts } from '../testData/company.facts';
+import { MainOriginOfOtherSuppliers } from '../../src/entities/main.origin.of.other.suppliers';
 
 describe('Company Facts entity', () => {
   let companyFactsRepository: Repository<CompanyFacts>;
@@ -30,6 +31,20 @@ describe('Company Facts entity', () => {
       companyFacts.profit = 200;
       const result = await companyFactsRepository.save(companyFacts);
       expect(result.profit).toBe(200);
+      await companyFactsRepository.remove(result);
+    });
+
+    it('mainOriginOfOtherSuppliers', async () => {
+      companyFacts.mainOriginOfOtherSuppliers = new MainOriginOfOtherSuppliers(
+        undefined,
+        'DEU',
+        200
+      );
+      const result = await companyFactsRepository.save(companyFacts);
+      expect(result.mainOriginOfOtherSuppliers).toMatchObject({
+        countryCode: 'DEU',
+        costs: 200,
+      });
       await companyFactsRepository.remove(result);
     });
 

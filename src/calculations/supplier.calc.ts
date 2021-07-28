@@ -58,6 +58,7 @@ export class SupplierCalc {
     return result / sumOfSupplyRisk;
   }
 
+  // In excel this is equal to the cell $'11.Region'.I9
   public itucAverage(
     companyFacts: CompanyFacts,
     supplyRiskSum: number

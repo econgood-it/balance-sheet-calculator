@@ -10,6 +10,7 @@ import { CompanyFacts } from '../../entities/companyFacts';
 import { IsBoolean, IsNumber, Min, ValidateNested } from 'class-validator';
 import { IndustrySectorCreateDtoCreate } from './industry.sector.create.dto';
 import { Translations } from '../../entities/Translations';
+import { MainOriginOfOtherSuppliers } from '../../entities/main.origin.of.other.suppliers';
 
 export class CompanyFactsDTOCreate {
   @Min(0)
@@ -160,7 +161,8 @@ export class CompanyFactsDTOCreate {
       this.isB2B,
       this.supplyFractions.map((sf) => sf.toSupplyFraction()),
       this.employeesFractions.map((ef) => ef.toEmployeesFraction()),
-      this.industrySectors.map((is) => is.toIndustrySector(language))
+      this.industrySectors.map((is) => is.toIndustrySector(language)),
+      new MainOriginOfOtherSuppliers(undefined, 'DEFAULT_VALUE', 200)
     );
   }
 }
