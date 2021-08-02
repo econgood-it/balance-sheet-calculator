@@ -4,12 +4,13 @@ import { SupplyFraction } from '../../src/entities/supplyFraction';
 import { EmployeesFraction } from '../../src/entities/employeesFraction';
 import { DatabaseConnectionCreator } from '../../src/database.connection.creator';
 import { Connection } from 'typeorm';
-import { Region } from '../../src/entities/region';
+import { DEFAULT_COUNTRY_CODE, Region } from '../../src/entities/region';
 import { ConfigurationReader } from '../../src/configuration.reader';
 import { CalcResults, Calculator } from '../../src/calculations/calculator';
 import { Industry } from '../../src/entities/industry';
 import { RegionProvider } from '../../src/providers/region.provider';
 import { IndustryProvider } from '../../src/providers/industry.provider';
+import { MainOriginOfOtherSuppliers } from '../../src/entities/main.origin.of.other.suppliers';
 
 describe('Stakeholder Weight Calculator', () => {
   let companyFacts: CompanyFacts;
@@ -51,7 +52,8 @@ describe('Stakeholder Weight Calculator', () => {
       false,
       supplyFractions,
       employeesFractions,
-      []
+      [],
+      new MainOriginOfOtherSuppliers(undefined, DEFAULT_COUNTRY_CODE, 0)
     );
     regionProvider = await RegionProvider.createFromCompanyFacts(
       companyFacts,

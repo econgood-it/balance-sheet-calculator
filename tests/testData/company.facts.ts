@@ -1,6 +1,8 @@
 import { CompanyFacts } from '../../src/entities/companyFacts';
 import { SupplyFraction } from '../../src/entities/supplyFraction';
 import { EmployeesFraction } from '../../src/entities/employeesFraction';
+import { MainOriginOfOtherSuppliers } from '../../src/entities/main.origin.of.other.suppliers';
+import { DEFAULT_COUNTRY_CODE } from '../../src/entities/region';
 
 const arabEmiratesCode = 'ARE';
 const afghanistanCode = 'AFG';
@@ -33,7 +35,8 @@ export const EmptyCompanyFacts = new CompanyFacts(
   false,
   [],
   [],
-  []
+  [],
+  new MainOriginOfOtherSuppliers(undefined, DEFAULT_COUNTRY_CODE, 0)
 );
 
 export const EmptyCompanyFactsJson = {
@@ -72,5 +75,6 @@ export const CompanyFacts1 = new CompanyFacts(
   false,
   supplyFractions,
   employeesFractions,
-  []
+  [],
+  new MainOriginOfOtherSuppliers(undefined, DEFAULT_COUNTRY_CODE, 0)
 );
