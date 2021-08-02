@@ -11,6 +11,7 @@ import { IsBoolean, IsNumber, Min, ValidateNested } from 'class-validator';
 import { IndustrySectorCreateDtoCreate } from './industry.sector.create.dto';
 import { Translations } from '../../entities/Translations';
 import { MainOriginOfOtherSuppliers } from '../../entities/main.origin.of.other.suppliers';
+import { DEFAULT_COUNTRY_CODE } from '../../entities/region';
 
 export class CompanyFactsDTOCreate {
   @Min(0)
@@ -162,7 +163,16 @@ export class CompanyFactsDTOCreate {
       this.supplyFractions.map((sf) => sf.toSupplyFraction()),
       this.employeesFractions.map((ef) => ef.toEmployeesFraction()),
       this.industrySectors.map((is) => is.toIndustrySector(language)),
-      new MainOriginOfOtherSuppliers(undefined, 'DEFAULT_VALUE', 200)
+      new MainOriginOfOtherSuppliers(
+        undefined,
+        DEFAULT_COUNTRY_CODE,
+        this.totalPurchaseFromSuppliers -
+          this.supplyFractions.reduce(
+            (sum: number, currentValue: SupplyFractionDTOCreate) =>
+              (sum += currentValue.costs),
+            0
+          )
+      )
     );
   }
 }

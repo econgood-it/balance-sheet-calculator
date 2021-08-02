@@ -1,5 +1,6 @@
 import { validate } from 'class-validator';
 import { CompanyFactsDTOCreate } from '../../../src/dto/create/company.facts.create.dto';
+import { DEFAULT_COUNTRY_CODE } from '../../../src/entities/region';
 
 describe('CompanyFactsCreateDTO', () => {
   it('is created from json and returns a CompanyFacts entity', () => {
@@ -48,6 +49,42 @@ describe('CompanyFactsCreateDTO', () => {
       supplyFractions: [],
       employeesFractions: [],
       industrySectors: [],
+    });
+  });
+
+  it('is created with default main origin of other suppliers', () => {
+    const supplyFractions = [
+      { industryCode: 'A', countryCode: 'DEU', costs: 200 },
+      { industryCode: 'A', countryCode: 'DEU', costs: 100 },
+    ];
+    const companyFactsDTOCreate: CompanyFactsDTOCreate =
+      CompanyFactsDTOCreate.fromJSON({
+        totalPurchaseFromSuppliers: 500,
+        supplyFractions: supplyFractions,
+      });
+    const result = companyFactsDTOCreate.toCompanyFacts('en');
+    expect(result).toMatchObject({
+      totalPurchaseFromSuppliers: 500,
+      supplyFractions: supplyFractions,
+      mainOriginOfOtherSuppliers: {
+        countryCode: DEFAULT_COUNTRY_CODE,
+        costs: 200,
+      },
+    });
+  });
+
+  it('is created where mainOriginOfOtherSuppliers costs is equal to totalPurchaseFromSuppliers', () => {
+    const companyFactsDTOCreate: CompanyFactsDTOCreate =
+      CompanyFactsDTOCreate.fromJSON({
+        totalPurchaseFromSuppliers: 500,
+        supplyFractions: [],
+      });
+    const result = companyFactsDTOCreate.toCompanyFacts('en');
+    expect(result).toMatchObject({
+      mainOriginOfOtherSuppliers: {
+        countryCode: DEFAULT_COUNTRY_CODE,
+        costs: 500,
+      },
     });
   });
 
