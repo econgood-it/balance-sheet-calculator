@@ -88,6 +88,22 @@ describe('CompanyFactsCreateDTO', () => {
     });
   });
 
+  it('is created where country code of mainOriginOfOtherSuppliers is provided', () => {
+    const companyFactsDTOCreate: CompanyFactsDTOCreate =
+      CompanyFactsDTOCreate.fromJSON({
+        totalPurchaseFromSuppliers: 500,
+        supplyFractions: [],
+        mainOriginOfOtherSuppliers: 'DEU',
+      });
+    const result = companyFactsDTOCreate.toCompanyFacts('en');
+    expect(result).toMatchObject({
+      mainOriginOfOtherSuppliers: {
+        countryCode: 'DEU',
+        costs: 500,
+      },
+    });
+  });
+
   it('allows negative values for incomeFromFinancialInvestments and additionsToFixedAssets', async () => {
     const companyFactsDTOCreate: CompanyFactsDTOCreate =
       CompanyFactsDTOCreate.fromJSON({

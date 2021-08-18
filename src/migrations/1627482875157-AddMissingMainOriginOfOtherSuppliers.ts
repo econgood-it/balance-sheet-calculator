@@ -5,7 +5,7 @@ export class AddMissingMainOriginOfOtherSuppliers1627482875157
   implements MigrationInterface
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    const query = `SELECT * FROM "company_facts" WHERE "mainOriginOfOtherSuppliers" IS NULL`;
+    const query = `SELECT * FROM "company_facts" WHERE "mainOriginOfOtherSuppliersId" IS NULL`;
     const res = await queryRunner.query(query);
     for (const cf of res) {
       const sumOfSupplyFraction = await queryRunner.query(
@@ -16,7 +16,7 @@ export class AddMissingMainOriginOfOtherSuppliers1627482875157
       }) returning "id"`;
       const mainOriginOfOtherSuppliers = await queryRunner.query(insertQuery);
       await queryRunner.query(
-        `UPDATE "company_facts" SET "mainOriginOfOtherSuppliers" = ${mainOriginOfOtherSuppliers[0].id} WHERE "id"=${cf.id}`
+        `UPDATE "company_facts" SET "mainOriginOfOtherSuppliersId" = ${mainOriginOfOtherSuppliers[0].id} WHERE "id"=${cf.id}`
       );
     }
   }

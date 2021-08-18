@@ -35,12 +35,30 @@ describe('Company Facts entity', () => {
     });
 
     it('mainOriginOfOtherSuppliers', async () => {
-      companyFacts.mainOriginOfOtherSuppliers = new MainOriginOfOtherSuppliers(
-        undefined,
-        'DEU',
-        200
+      const companyFactsWithNonDefaultMainOriginOfOtherSuppliers =
+        new CompanyFacts(
+          undefined,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          false,
+          0,
+          false,
+          [],
+          [],
+          [],
+          new MainOriginOfOtherSuppliers(undefined, 'DEU', 200)
+        );
+      const result = await companyFactsRepository.save(
+        companyFactsWithNonDefaultMainOriginOfOtherSuppliers
       );
-      const result = await companyFactsRepository.save(companyFacts);
       expect(result.mainOriginOfOtherSuppliers).toMatchObject({
         countryCode: 'DEU',
         costs: 200,
