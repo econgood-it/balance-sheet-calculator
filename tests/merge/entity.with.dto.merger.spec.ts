@@ -197,5 +197,24 @@ describe('EntityWithDTOMerger', () => {
       await merge({ isB2B: false });
       expect(companyFacts.isB2B).toBeFalsy();
     });
+
+    it('using mainOriginOfOtherSuppliers from db', async () => {
+      await merge({});
+      expect(companyFacts.mainOriginOfOtherSuppliers).toMatchObject({
+        countryCode: companyFacts.mainOriginOfOtherSuppliers.countryCode,
+        costs: companyFacts.mainOriginOfOtherSuppliers.costs,
+      });
+    });
+
+    it('using mainOriginOfOtherSuppliers from dto', async () => {
+      await merge({
+        totalPurchaseFromSuppliers: 500,
+        mainOriginOfOtherSuppliers: 'DEU',
+      });
+      expect(companyFacts.mainOriginOfOtherSuppliers).toMatchObject({
+        countryCode: 'DEU',
+        costs: 500,
+      });
+    });
   });
 });
