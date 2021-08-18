@@ -1,4 +1,6 @@
 import { PrimaryGeneratedColumn, Column, Entity } from 'typeorm';
+import { SupplyFractionDTOCreate } from '../dto/create/supply.fraction.create.dto';
+import { SupplyFraction } from './supplyFraction';
 
 @Entity()
 export class MainOriginOfOtherSuppliers {
@@ -17,3 +19,32 @@ export class MainOriginOfOtherSuppliers {
     this.costs = costs;
   }
 }
+
+export const computeCostsOfMainOriginOfOtherSuppliers = (
+  totalPurchaseFromSuppliers: number,
+  supplyFractions: SupplyFractionDTOCreate[] | SupplyFraction[]
+): number => {
+  const costs = supplyFractions.map((sf) => sf.costs);
+  return (
+    totalPurchaseFromSuppliers -
+    costs.reduce(
+      (sum: number, currentValue: number) => (sum += currentValue),
+      0
+    )
+  );
+};
+
+export const computeCostsAndCreateMainOriginOfOtherSuppliers = (
+  countryCode: string,
+  totalPurchaseFromSuppliers: number,
+  supplyFractions: SupplyFractionDTOCreate[]
+): MainOriginOfOtherSuppliers => {
+  return new MainOriginOfOtherSuppliers(
+    undefined,
+    countryCode,
+    computeCostsOfMainOriginOfOtherSuppliers(
+      totalPurchaseFromSuppliers,
+      supplyFractions
+    )
+  );
+};

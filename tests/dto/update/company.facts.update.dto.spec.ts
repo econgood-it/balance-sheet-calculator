@@ -19,6 +19,7 @@ describe('CompanyFactsUpdateDTO', () => {
     supplyFractions: [],
     employeesFractions: [],
     industrySectors: [],
+    mainOriginOfOtherSuppliers: 'DEU',
   };
 
   it('is created from json', () => {
