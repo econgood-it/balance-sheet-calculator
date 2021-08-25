@@ -58,6 +58,42 @@ export const EmptyCompanyFactsJson = {
   industrySectors: [],
 };
 
+export const CompanyFacts1Json = {
+  id: undefined,
+  totalPurchaseFromSuppliers: 10000,
+  totalStaffCosts: 900,
+  profit: 500,
+  financialCosts: 600,
+  incomeFromFinancialInvestments: 700,
+  additionsToFixedAssets: 800,
+  turnover: 0,
+  totalAssets: 30,
+  financialAssetsAndCashBalance: 40,
+  numberOfEmployees: 0,
+  hasCanteen: false,
+  averageJourneyToWorkForStaffInKm: 0,
+  isB2B: false,
+  supplyFractions: [
+    {
+      id: undefined,
+      industryCode: agricultureCode,
+      countryCode: arabEmiratesCode,
+      costs: 500,
+    },
+    {
+      id: undefined,
+      industryCode: pharmaceuticCode,
+      countryCode: afghanistanCode,
+      costs: 600,
+    },
+  ],
+  employeesFractions: [
+    { id: undefined, countryCode: arabEmiratesCode, percentage: 0.5 },
+    { id: undefined, countryCode: afghanistanCode, percentage: 0.5 },
+  ],
+  industrySectors: [],
+};
+
 export const CompanyFacts1 = new CompanyFacts(
   undefined,
   10000,
