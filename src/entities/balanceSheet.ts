@@ -18,6 +18,7 @@ export const BALANCE_SHEET_RELATIONS = [
   'companyFacts.supplyFractions',
   'companyFacts.employeesFractions',
   'companyFacts.industrySectors',
+  'companyFacts.mainOriginOfOtherSuppliers',
   'rating.topics',
   'rating.topics.aspects',
   'users',
