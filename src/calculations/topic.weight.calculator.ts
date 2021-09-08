@@ -95,6 +95,12 @@ export class TopicWeightCalculator {
     }
   }
 
+  /**
+   * In excel this is equal to the cell $'9.Weighting'.P16
+   * Excel formula is:
+   * =IF(G69="empty",1,IF($'11.Region'.I9<1.5,$'3. Calc'.C105,IF($'11.Region'.I9<3.26,$'3. Calc'.C104,IF($'11.Region'.I9<4.5,$'3. Calc'.C103,$'3. Calc'.C102))))
+   * @param calcResults
+   */
   public calculateTopicWeightOfA4(calcResults: CalcResults): number {
     if (calcResults.supplyCalcResults.itucAverage < 1.5) {
       return 0.5;
