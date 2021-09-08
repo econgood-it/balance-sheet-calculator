@@ -11,7 +11,7 @@ export class AddMissingMainOriginOfOtherSuppliers1627482875157
       const sumOfSupplyFraction = await queryRunner.query(
         `SELECT SUM(costs) FROM "supply_fraction" WHERE "companyFactsId"=${cf.id}`
       );
-      const insertQuery = `INSERT INTO "main_origin_of_other_suppliers" ("countryCode", "costs") VALUES (${DEFAULT_COUNTRY_CODE}, ${
+      const insertQuery = `INSERT INTO "main_origin_of_other_suppliers" ("countryCode", "costs") VALUES ('${DEFAULT_COUNTRY_CODE}', ${
         cf.totalPurchaseFromSuppliers - sumOfSupplyFraction[0].sum
       }) returning "id"`;
       const mainOriginOfOtherSuppliers = await queryRunner.query(insertQuery);
