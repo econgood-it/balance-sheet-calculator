@@ -89,3 +89,12 @@ On linux systems you can retrieve the EPOCHMILLISECONDS via
 ```shell script
 date +%s%3N
 ```
+
+# Deployments
+
+To deploy the application use the python script *deploy_to_server.py* like explained below:
+
+```shell script
+python deploy_to_server [test|prod]
+```
+
