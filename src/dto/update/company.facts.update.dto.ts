@@ -3,6 +3,7 @@ import {
   expectNumber,
   arrayMapper,
   expectBoolean,
+  expectString,
 } from '@daniel-faber/json-ts';
 import { SupplyFractionDTOUpdate } from './supply.fraction.update.dto';
 import { EmployeesFractionDTOUpdate } from './employees.fraction.update.dto';
@@ -12,8 +13,10 @@ import {
   Min,
   ValidateNested,
   IsBoolean,
+  IsString,
 } from 'class-validator';
 import { IndustrySectorDtoUpdate } from './industry.sector.update.dto';
+import { DEFAULT_COUNTRY_CODE } from '../../entities/region';
 
 export class CompanyFactsDTOUpdate {
   @IsOptional()
@@ -88,6 +91,10 @@ export class CompanyFactsDTOUpdate {
   @ValidateNested()
   public readonly industrySectors?: IndustrySectorDtoUpdate[];
 
+  @IsOptional()
+  @IsString()
+  public readonly mainOriginOfOtherSuppliers?: string;
+
   public constructor(
     totalPurchaseFromSuppliers?: number,
     totalStaffCosts?: number,
@@ -104,7 +111,8 @@ export class CompanyFactsDTOUpdate {
     isB2B?: boolean,
     supplyFractions?: SupplyFractionDTOUpdate[],
     employeesFractions?: EmployeesFractionDTOUpdate[],
-    industrySectors?: IndustrySectorDtoUpdate[]
+    industrySectors?: IndustrySectorDtoUpdate[],
+    mainOriginOfOtherSuppliers?: string
   ) {
     this.totalPurchaseFromSuppliers = totalPurchaseFromSuppliers;
     this.totalStaffCosts = totalStaffCosts;
@@ -122,6 +130,7 @@ export class CompanyFactsDTOUpdate {
     this.hasCanteen = hasCanteen;
     this.averageJourneyToWorkForStaffInKm = averageJourneyToWorkForStaffInKm;
     this.isB2B = isB2B;
+    this.mainOriginOfOtherSuppliers = mainOriginOfOtherSuppliers;
   }
 
   public static readonly fromJSON = strictObjectMapper(
@@ -151,6 +160,11 @@ export class CompanyFactsDTOUpdate {
         accessor.getOptional(
           'industrySectors',
           arrayMapper(IndustrySectorDtoUpdate.fromJSON)
+        ),
+        accessor.getOptional(
+          'mainOriginOfOtherSuppliers',
+          expectString,
+          DEFAULT_COUNTRY_CODE
         )
       )
   );

@@ -16,6 +16,7 @@ import {
 } from '../entities/Translations';
 import { RatingWithDtoMerger } from './rating.with.dto.merger';
 import { mergeVal } from './merge.utils';
+import { computeCostsOfMainOriginOfOtherSuppliers } from '../entities/main.origin.of.other.suppliers';
 
 export class EntityWithDtoMerger {
   private ratingWithDtoMerger: RatingWithDtoMerger = new RatingWithDtoMerger();
@@ -103,6 +104,7 @@ export class EntityWithDtoMerger {
       companyFacts.isB2B,
       companyFactsDTOUpdate.isB2B
     );
+
     if (companyFactsDTOUpdate.industrySectors) {
       await this.replaceIndustrySectors(
         companyFacts,
@@ -122,6 +124,15 @@ export class EntityWithDtoMerger {
         companyFactsDTOUpdate.employeesFractions
       );
     }
+    companyFacts.mainOriginOfOtherSuppliers.costs =
+      computeCostsOfMainOriginOfOtherSuppliers(
+        companyFacts.totalPurchaseFromSuppliers,
+        companyFacts.supplyFractions
+      );
+    companyFacts.mainOriginOfOtherSuppliers.countryCode = mergeVal(
+      companyFacts.mainOriginOfOtherSuppliers.countryCode,
+      companyFactsDTOUpdate.mainOriginOfOtherSuppliers
+    );
   }
 
   public async replaceIndustrySectors(

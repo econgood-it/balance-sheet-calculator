@@ -4,6 +4,7 @@ import { SupplyFraction } from '../entities/supplyFraction';
 import { Industry } from '../entities/industry';
 import { RegionProvider } from '../providers/region.provider';
 import { IndustryProvider } from '../providers/industry.provider';
+import { MainOriginOfOtherSuppliers } from '../entities/main.origin.of.other.suppliers';
 
 export interface SupplyCalcResults {
   supplyRiskSum: number;
@@ -32,7 +33,10 @@ export class SupplierCalc {
     };
   }
 
-  // In excel this is equal to the cell $'11.Region'.G3
+  /**
+   * In excel this is equal to the cell $'11.Region'.G3
+   * @param companyFacts
+   */
   public supplyRiskSum(companyFacts: CompanyFacts): number {
     let result = 0;
     for (const supplyFraction of companyFacts.supplyFractions) {
@@ -41,6 +45,11 @@ export class SupplierCalc {
       );
       result += supplyFraction.costs * region.pppIndex;
     }
+    const region: Region = this.regionProvider.getOrFail(
+      companyFacts.mainOriginOfOtherSuppliers.countryCode
+    );
+    result += companyFacts.mainOriginOfOtherSuppliers.costs * region.pppIndex;
+
     return result;
   }
 
@@ -58,6 +67,11 @@ export class SupplierCalc {
     return result / sumOfSupplyRisk;
   }
 
+  /**
+   * In excel this is equal to the cell $'11.Region'.I9
+   * @param companyFacts
+   * @param supplyRiskSum
+   */
   public itucAverage(
     companyFacts: CompanyFacts,
     supplyRiskSum: number
@@ -67,12 +81,22 @@ export class SupplierCalc {
       const region = this.regionProvider.getOrFail(supplyFraction.countryCode);
       result += region.ituc * this.supplyRisk(supplyFraction, supplyRiskSum);
     }
+    const region: Region = this.regionProvider.getOrFail(
+      companyFacts.mainOriginOfOtherSuppliers.countryCode
+    );
+    result +=
+      region.ituc *
+      this.supplyRisk(companyFacts.mainOriginOfOtherSuppliers, supplyRiskSum);
     return result;
   }
 
-  // In excel this is equal to the cell $'11.Region'.H[3-8]
+  /**
+   * In excel this is equal to the cell $'11.Region'.H[3-8]
+   * @param supplyFraction
+   * @param supplyRiskSum
+   */
   public supplyRisk(
-    supplyFraction: SupplyFraction,
+    supplyFraction: SupplyFraction | MainOriginOfOtherSuppliers,
     supplyRiskSum: number
   ): number {
     const region: Region = this.regionProvider.getOrFail(
@@ -81,7 +105,10 @@ export class SupplierCalc {
     return (supplyFraction.costs * region.pppIndex) / supplyRiskSum;
   }
 
-  // In excel this is equal to the cell $'11.Region'.M[3-7]
+  /**
+   * In excel this is equal to the cell $'11.Region'.M[3-7]
+   * @param supplyFraction
+   */
   public ecologicalSupplyChainRisk(supplyFraction: SupplyFraction): number {
     const industry: Industry = this.industryProvider.getOrFail(
       supplyFraction.industryCode

@@ -1,5 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, Index } from 'typeorm';
 
+export const DEFAULT_COUNTRY_CODE = 'DEFAULT_COUNTRY_CODE';
+
 @Entity()
 export class Region {
   @PrimaryGeneratedColumn()

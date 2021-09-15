@@ -26,6 +26,12 @@ export class RegionProvider extends Provider<string, Region> {
         })
       );
     }
+    regionProvider.set(
+      companyFacts.mainOriginOfOtherSuppliers.countryCode,
+      await regionRepository.findOneOrFail({
+        countryCode: companyFacts.mainOriginOfOtherSuppliers.countryCode,
+      })
+    );
     return regionProvider;
   };
 }

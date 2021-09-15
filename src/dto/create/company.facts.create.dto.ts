@@ -3,13 +3,22 @@ import {
   expectNumber,
   arrayMapper,
   expectBoolean,
+  expectString,
 } from '@daniel-faber/json-ts';
 import { SupplyFractionDTOCreate } from './supply.fraction.create.dto';
 import { EmployeesFractionDTOCreate } from './employees.fraction.create.dto';
 import { CompanyFacts } from '../../entities/companyFacts';
-import { IsBoolean, IsNumber, Min, ValidateNested } from 'class-validator';
+import {
+  IsBoolean,
+  IsNumber,
+  IsString,
+  Min,
+  ValidateNested,
+} from 'class-validator';
 import { IndustrySectorCreateDtoCreate } from './industry.sector.create.dto';
 import { Translations } from '../../entities/Translations';
+import { computeCostsAndCreateMainOriginOfOtherSuppliers } from '../../entities/main.origin.of.other.suppliers';
+import { DEFAULT_COUNTRY_CODE } from '../../entities/region';
 
 export class CompanyFactsDTOCreate {
   @Min(0)
@@ -68,6 +77,9 @@ export class CompanyFactsDTOCreate {
   @ValidateNested()
   public readonly industrySectors: IndustrySectorCreateDtoCreate[];
 
+  @IsString()
+  public readonly mainOriginOfOtherSuppliers: string;
+
   public constructor(
     totalPurchaseFromSuppliers: number,
     totalStaffCosts: number,
@@ -84,7 +96,8 @@ export class CompanyFactsDTOCreate {
     isB2B: boolean,
     supplyFractions: SupplyFractionDTOCreate[],
     employeesFractions: EmployeesFractionDTOCreate[],
-    industrySectors: IndustrySectorCreateDtoCreate[]
+    industrySectors: IndustrySectorCreateDtoCreate[],
+    mainOriginOfOtherSuppliers: string
   ) {
     this.totalPurchaseFromSuppliers = totalPurchaseFromSuppliers;
     this.totalStaffCosts = totalStaffCosts;
@@ -102,6 +115,7 @@ export class CompanyFactsDTOCreate {
     this.hasCanteen = hasCanteen;
     this.averageJourneyToWorkForStaffInKm = averageJourneyToWorkForStaffInKm;
     this.isB2B = isB2B;
+    this.mainOriginOfOtherSuppliers = mainOriginOfOtherSuppliers;
   }
 
   public static readonly fromJSON = strictObjectMapper(
@@ -138,6 +152,11 @@ export class CompanyFactsDTOCreate {
           'industrySectors',
           arrayMapper(IndustrySectorCreateDtoCreate.fromJSON),
           []
+        ),
+        accessor.getOptional(
+          'mainOriginOfOtherSuppliers',
+          expectString,
+          DEFAULT_COUNTRY_CODE
         )
       )
   );
@@ -160,7 +179,12 @@ export class CompanyFactsDTOCreate {
       this.isB2B,
       this.supplyFractions.map((sf) => sf.toSupplyFraction()),
       this.employeesFractions.map((ef) => ef.toEmployeesFraction()),
-      this.industrySectors.map((is) => is.toIndustrySector(language))
+      this.industrySectors.map((is) => is.toIndustrySector(language)),
+      computeCostsAndCreateMainOriginOfOtherSuppliers(
+        this.mainOriginOfOtherSuppliers,
+        this.totalPurchaseFromSuppliers,
+        this.supplyFractions
+      )
     );
   }
 }

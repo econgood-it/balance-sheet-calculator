@@ -51,4 +51,13 @@ describe('Region Provider', () => {
     expect(regionProvider.getOrFail('CRI').countryCode).toBe('CRI');
     expect(regionProvider.getOrFail('AFG').countryCode).toBe('AFG');
   });
+
+  it('should contain regions of mainOriginOfOtherSuppliers', async () => {
+    companyFacts.mainOriginOfOtherSuppliers.countryCode = 'BRA';
+    const regionProvider = await RegionProvider.createFromCompanyFacts(
+      companyFacts,
+      regionRepo
+    );
+    expect(regionProvider.getOrFail('BRA').countryCode).toBe('BRA');
+  });
 });

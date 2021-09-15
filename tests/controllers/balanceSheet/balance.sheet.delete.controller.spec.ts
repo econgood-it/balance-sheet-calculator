@@ -6,7 +6,7 @@ import {
   BalanceSheetVersion,
 } from '../../../src/entities/enums';
 import { Topic } from '../../../src/entities/topic';
-import { EmptyCompanyFacts } from '../../testData/company.facts';
+import { EmptyCompanyFactsJson } from '../../testData/company.facts';
 import { Connection } from 'typeorm';
 import { Application } from 'express';
 import { Rating } from '../../../src/entities/rating';
@@ -50,7 +50,7 @@ describe('Balance Sheet Controller', () => {
     balanceSheetJson = {
       type: BalanceSheetType.Full,
       version: BalanceSheetVersion.v5_0_4,
-      companyFacts: EmptyCompanyFacts,
+      companyFacts: EmptyCompanyFactsJson,
     };
   });
 

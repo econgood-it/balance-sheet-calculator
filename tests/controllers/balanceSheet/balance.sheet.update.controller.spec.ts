@@ -8,7 +8,7 @@ import {
   BalanceSheetType,
   BalanceSheetVersion,
 } from '../../../src/entities/enums';
-import { CompanyFacts1 } from '../../testData/company.facts';
+import { CompanyFacts1Json } from '../../testData/company.facts';
 import { Topic } from '../../../src/entities/topic';
 import { TokenProvider } from '../../TokenProvider';
 import { CORRELATION_HEADER_NAME } from '../../../src/middleware/correlation.id.middleware';
@@ -47,7 +47,7 @@ describe('Update endpoint of Balance Sheet Controller', () => {
       .send({
         type: BalanceSheetType.Compact,
         version: BalanceSheetVersion.v5_0_4,
-        companyFacts: CompanyFacts1,
+        companyFacts: CompanyFacts1Json,
       });
     const balanceSheetUpdate = {
       id: response.body.id,
@@ -101,7 +101,7 @@ describe('Update endpoint of Balance Sheet Controller', () => {
       .send({
         type: balanceSheetType,
         version: BalanceSheetVersion.v5_0_4,
-        companyFacts: CompanyFacts1,
+        companyFacts: CompanyFacts1Json,
       });
     const balanceSheetUpdate = {
       id: response.body.id,
@@ -165,7 +165,7 @@ describe('Update endpoint of Balance Sheet Controller', () => {
         .send({
           type: BalanceSheetType.Compact,
           version: BalanceSheetVersion.v5_0_4,
-          companyFacts: CompanyFacts1,
+          companyFacts: CompanyFacts1Json,
         });
       const balanceSheetUpdate = {
         id: postResponse.body.id,

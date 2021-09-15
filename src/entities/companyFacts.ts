@@ -1,7 +1,15 @@
 import { SupplyFraction } from './supplyFraction';
 import { EmployeesFraction } from './employeesFraction';
-import { Entity, Column, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  OneToOne,
+  JoinColumn,
+} from 'typeorm';
 import { IndustrySector } from './industry.sector';
+import { MainOriginOfOtherSuppliers } from './main.origin.of.other.suppliers';
 
 @Entity()
 export class CompanyFacts {
@@ -47,6 +55,10 @@ export class CompanyFacts {
   @Column('double precision')
   public averageJourneyToWorkForStaffInKm: number;
 
+  @OneToOne((type) => MainOriginOfOtherSuppliers, { cascade: true })
+  @JoinColumn()
+  public readonly mainOriginOfOtherSuppliers: MainOriginOfOtherSuppliers;
+
   @OneToMany(
     (type) => SupplyFraction,
     (supplyFraction) => supplyFraction.companyFacts,
@@ -85,7 +97,8 @@ export class CompanyFacts {
     isB2B: boolean,
     supplyFractions: SupplyFraction[],
     employeesFractions: EmployeesFraction[],
-    industrySectors: IndustrySector[]
+    industrySectors: IndustrySector[],
+    mainOriginOfOtherSuppliers: MainOriginOfOtherSuppliers
   ) {
     this.id = id;
     this.totalPurchaseFromSuppliers = totalPurchaseFromSuppliers;
@@ -104,5 +117,6 @@ export class CompanyFacts {
     this.hasCanteen = hasCanteen;
     this.isB2B = isB2B;
     this.averageJourneyToWorkForStaffInKm = averageJourneyToWorkForStaffInKm;
+    this.mainOriginOfOtherSuppliers = mainOriginOfOtherSuppliers;
   }
 }
