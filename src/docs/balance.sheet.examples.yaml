@@ -18,6 +18,7 @@ components:
           hasCanteen: true
           averageJourneyToWorkForStaffInKm: 5.3
           isB2B: true
+          mainOriginOfOtherSuppliers: "DEU"
           supplyFractions:
             - industryCode: "A"
               countryCode: "DEU"
