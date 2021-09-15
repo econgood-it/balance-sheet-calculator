@@ -3,6 +3,7 @@ import { EmployeesFractionDTOResponse } from './employees.fraction.response.dto'
 import { IndustrySectorDtoResponse } from './industry.sector.response.dto';
 import { CompanyFacts } from '../../entities/companyFacts';
 import { Translations } from '../../entities/Translations';
+import { MainOriginOfOtherSuppliersDTOResponse } from './main.origin.of.other.suppliers.response.dto';
 export class CompanyFactsDTOResponse {
   public constructor(
     public readonly id: number | undefined,
@@ -21,7 +22,8 @@ export class CompanyFactsDTOResponse {
     public readonly isB2B: boolean,
     public readonly supplyFractions: SupplyFractionDTOResponse[],
     public readonly employeesFractions: EmployeesFractionDTOResponse[],
-    public readonly industrySectors: IndustrySectorDtoResponse[]
+    public readonly industrySectors: IndustrySectorDtoResponse[],
+    public readonly mainOriginOfOtherSuppliers: MainOriginOfOtherSuppliersDTOResponse
   ) {}
 
   public static fromCompanyFacts(
@@ -51,6 +53,10 @@ export class CompanyFactsDTOResponse {
       ),
       companyFacts.industrySectors.map((is) =>
         IndustrySectorDtoResponse.fromIndustrySector(is, language)
+      ),
+      MainOriginOfOtherSuppliersDTOResponse.fromMainOriginOfOtherSuppliers(
+        companyFacts.mainOriginOfOtherSuppliers,
+        language
       )
     );
   }
