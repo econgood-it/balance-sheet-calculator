@@ -96,6 +96,11 @@ components:
           items:
             $ref: '#/components/schemas/SupplyFractions'
           default: []
+        mainOriginOfOtherSuppliers:
+          type: string
+          format: ISO\-3166 Alpha3 country code
+          description: The country of origin of the other suppliers which are not explicetly defined.
+          default: World
         employeesFractions:
           type: array
           items:
