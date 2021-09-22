@@ -1,4 +1,3 @@
-import * as path from 'path';
 import { Workbook, Cell, Worksheet } from 'exceljs';
 import { Region } from '../entities/region';
 
@@ -18,19 +17,15 @@ export class RegionReader {
   };
 
   public async read(
+    pathToCsv: string,
     headers: Headers = RegionReader.DEFAULT_HEADERS
   ): Promise<Region[]> {
-    const pathToCsv = path.join(
-      path.resolve(__dirname, '../files/reader'),
-      'regions.csv'
-    );
     // create object for workbook
     const wb: Workbook = new Workbook();
     const sheet: Worksheet = await wb.csv.readFile(pathToCsv, {
       parserOptions: { delimiter: ',' },
     });
     // wb = await wb.xlsx.readFile(path);
-
     const regions: Region[] = [];
     // cell object
     for (let row = 6; row <= 226; row++) {
