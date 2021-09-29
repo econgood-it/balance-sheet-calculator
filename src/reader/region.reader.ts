@@ -1,5 +1,6 @@
 import { Workbook, Cell, Worksheet } from 'exceljs';
 import { Region } from '../entities/region';
+import { BalanceSheetVersion } from '../entities/enums';
 
 interface Headers {
   countryNameIndex: number;
@@ -18,7 +19,8 @@ export class RegionReader {
 
   public async read(
     pathToCsv: string,
-    rowRangeContainingRegions = [6, 226],
+    rowRangeContainingRegions: number[],
+    validFromVersion: BalanceSheetVersion,
     headers: Headers = RegionReader.DEFAULT_HEADERS
   ): Promise<Region[]> {
     // create object for workbook
@@ -50,7 +52,8 @@ export class RegionReader {
           Number(cellPPPIndex.text),
           cellCountryCode.text,
           cellCountryName.text,
-          Number(cellItuc.text)
+          Number(cellItuc.text),
+          validFromVersion
         )
       );
     }

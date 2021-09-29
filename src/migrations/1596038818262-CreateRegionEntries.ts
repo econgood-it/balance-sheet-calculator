@@ -2,6 +2,7 @@ import { MigrationInterface, QueryRunner, Repository } from 'typeorm';
 import { RegionReader } from '../reader/region.reader';
 import { Region } from '../entities/region';
 import path from 'path';
+import { BalanceSheetVersion } from '../entities/enums';
 
 export class CreateRegionEntries1596038818262 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -10,12 +11,19 @@ export class CreateRegionEntries1596038818262 implements MigrationInterface {
       path.resolve(__dirname, '../files/reader'),
       'regions_5_0_4.csv'
     );
-    const regions: Region[] = await regionReader.read(pathToCsv);
-    const regionRepository: Repository<Region> =
-      queryRunner.connection.getRepository(Region);
-
+    const regions: Region[] = await regionReader.read(
+      pathToCsv,
+      [6, 226],
+      BalanceSheetVersion.v5_0_4
+    );
     for (const region of regions) {
-      await regionRepository.insert(region);
+      const insertQuery = `INSERT INTO "region" ("countryCode", "pppIndex","countryName","ituc") VALUES ($1, $2, $3, $4);`;
+      await queryRunner.query(insertQuery, [
+        region.countryCode,
+        region.pppIndex,
+        region.countryName,
+        region.ituc,
+      ]);
     }
   }
 
@@ -25,7 +33,11 @@ export class CreateRegionEntries1596038818262 implements MigrationInterface {
       path.resolve(__dirname, '../files/reader'),
       'regions_5_0_4.csv'
     );
-    const regions: Region[] = await regionReader.read(pathToCsv);
+    const regions: Region[] = await regionReader.read(
+      pathToCsv,
+      [6, 226],
+      BalanceSheetVersion.v5_0_4
+    );
     const regionRepository: Repository<Region> =
       queryRunner.connection.getRepository(Region);
 
