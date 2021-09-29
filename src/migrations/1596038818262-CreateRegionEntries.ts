@@ -8,7 +8,7 @@ export class CreateRegionEntries1596038818262 implements MigrationInterface {
     const regionReader: RegionReader = new RegionReader();
     const pathToCsv = path.join(
       path.resolve(__dirname, '../files/reader'),
-      'regions.csv'
+      'regions_5_0_4.csv'
     );
     const regions: Region[] = await regionReader.read(pathToCsv);
     const regionRepository: Repository<Region> =
@@ -23,7 +23,7 @@ export class CreateRegionEntries1596038818262 implements MigrationInterface {
     const regionReader: RegionReader = new RegionReader();
     const pathToCsv = path.join(
       path.resolve(__dirname, '../files/reader'),
-      'regions.csv'
+      'regions_5_0_4.csv'
     );
     const regions: Region[] = await regionReader.read(pathToCsv);
     const regionRepository: Repository<Region> =
