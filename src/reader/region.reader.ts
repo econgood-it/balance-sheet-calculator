@@ -18,6 +18,7 @@ export class RegionReader {
 
   public async read(
     pathToCsv: string,
+    rowRangeContainingRegions = [6, 226],
     headers: Headers = RegionReader.DEFAULT_HEADERS
   ): Promise<Region[]> {
     // create object for workbook
@@ -28,7 +29,11 @@ export class RegionReader {
     // wb = await wb.xlsx.readFile(path);
     const regions: Region[] = [];
     // cell object
-    for (let row = 6; row <= 226; row++) {
+    for (
+      let row = rowRangeContainingRegions[0];
+      row <= rowRangeContainingRegions[1];
+      row++
+    ) {
       const cellCountryName: Cell = sheet.getCell(
         row,
         headers.countryNameIndex
