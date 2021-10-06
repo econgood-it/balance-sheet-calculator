@@ -1,5 +1,5 @@
 import { RegionReader } from '../../src/reader/region.reader';
-import { Region } from '../../src/entities/region';
+import { DEFAULT_COUNTRY_CODE, Region } from '../../src/entities/region';
 import path from 'path';
 import { BalanceSheetVersion } from '../../src/entities/enums';
 
@@ -39,37 +39,44 @@ describe('Region reader', () => {
     });
   });
 
-  it('should read region_5_0_6.csv', async () => {
+  it('should read region_5_0_5.csv', async () => {
     const regionReader = new RegionReader();
     const pathToCsv = path.join(
       path.resolve(__dirname, readerFolder),
-      'regions_5_0_6.csv'
+      'regions_5_0_5.csv'
     );
     const regions: Region[] = await regionReader.read(
       pathToCsv,
-      [22, 242],
-      BalanceSheetVersion.v5_0_4
+      [22, 243],
+      BalanceSheetVersion.v5_0_5
     );
     expect(regions).toContainEqual({
       countryCode: 'ABW',
       countryName: 'Aruba',
       pppIndex: 1.53937701809995,
       ituc: 3.52,
-      validFromVersion: BalanceSheetVersion.v5_0_4,
+      validFromVersion: BalanceSheetVersion.v5_0_5,
     });
     expect(regions).toContainEqual({
       countryCode: 'ISL',
       countryName: 'Iceland',
       pppIndex: 1.09979988644301,
       ituc: 1,
-      validFromVersion: BalanceSheetVersion.v5_0_4,
+      validFromVersion: BalanceSheetVersion.v5_0_5,
     });
     expect(regions).toContainEqual({
       countryCode: 'ZWE',
       countryName: 'Zimbabwe',
       pppIndex: 1.41117750678159,
       ituc: 5,
-      validFromVersion: BalanceSheetVersion.v5_0_4,
+      validFromVersion: BalanceSheetVersion.v5_0_5,
+    });
+    expect(regions).toContainEqual({
+      countryCode: DEFAULT_COUNTRY_CODE,
+      countryName: 'World',
+      pppIndex: 1.00304566871495,
+      ituc: 3.23809523809524,
+      validFromVersion: BalanceSheetVersion.v5_0_5,
     });
   });
 });
