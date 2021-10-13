@@ -11,6 +11,7 @@ import { Industry } from '../../src/entities/industry';
 import { RegionProvider } from '../../src/providers/region.provider';
 import { IndustryProvider } from '../../src/providers/industry.provider';
 import { MainOriginOfOtherSuppliers } from '../../src/entities/main.origin.of.other.suppliers';
+import { BalanceSheetVersion } from '../../src/entities/enums';
 
 describe('Stakeholder Weight Calculator', () => {
   let companyFacts: CompanyFacts;
@@ -57,7 +58,8 @@ describe('Stakeholder Weight Calculator', () => {
     );
     regionProvider = await RegionProvider.createFromCompanyFacts(
       companyFacts,
-      connection.getRepository(Region)
+      connection.getRepository(Region),
+      BalanceSheetVersion.v5_0_4
     );
     industryProvider = await IndustryProvider.createFromCompanyFacts(
       companyFacts,

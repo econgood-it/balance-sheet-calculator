@@ -8,12 +8,13 @@ import { ConfigurationReader } from '../../src/configuration.reader';
 import { Assertions } from '../Assertions';
 import * as path from 'path';
 import { RatingReader } from '../../src/reader/rating.reader';
-import { EmptyCompanyFacts, CompanyFacts1 } from '../testData/company.facts';
+import { CompanyFacts1, EmptyCompanyFacts } from '../testData/company.facts';
 import { CalcResults, Calculator } from '../../src/calculations/calculator';
 import { Industry } from '../../src/entities/industry';
 import { Rating } from '../../src/entities/rating';
 import { RegionProvider } from '../../src/providers/region.provider';
 import { IndustryProvider } from '../../src/providers/industry.provider';
+import { BalanceSheetVersion } from '../../src/entities/enums';
 
 describe('Topic updater', () => {
   let connection: Connection;
@@ -41,7 +42,8 @@ describe('Topic updater', () => {
       .topics;
     const regionProvider = await RegionProvider.createFromCompanyFacts(
       companyFacts,
-      connection.getRepository(Region)
+      connection.getRepository(Region),
+      BalanceSheetVersion.v5_0_4
     );
     const industryProvider = await IndustryProvider.createFromCompanyFacts(
       companyFacts,
@@ -63,7 +65,8 @@ describe('Topic updater', () => {
   it('should not calculate automatic weight', async () => {
     const regionProvider = await RegionProvider.createFromCompanyFacts(
       CompanyFacts1,
-      connection.getRepository(Region)
+      connection.getRepository(Region),
+      BalanceSheetVersion.v5_0_4
     );
     const industryProvider = await IndustryProvider.createFromCompanyFacts(
       CompanyFacts1,
