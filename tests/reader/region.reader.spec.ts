@@ -1,5 +1,5 @@
 import { RegionReader } from '../../src/reader/region.reader';
-import { DEFAULT_COUNTRY_CODE, Region } from '../../src/entities/region';
+import { Region } from '../../src/entities/region';
 import path from 'path';
 import { BalanceSheetVersion } from '../../src/entities/enums';
 
@@ -71,11 +71,47 @@ describe('Region reader', () => {
       ituc: 5,
       validFromVersion: BalanceSheetVersion.v5_0_5,
     });
+    // Check average regions
     expect(regions).toContainEqual({
-      countryCode: DEFAULT_COUNTRY_CODE,
+      countryCode: 'AWO',
       countryName: 'World',
       pppIndex: 1.00304566871495,
       ituc: 3.23809523809524,
+      validFromVersion: BalanceSheetVersion.v5_0_5,
+    });
+    expect(regions).toContainEqual({
+      countryCode: 'AOC',
+      countryName: 'Oceania',
+      pppIndex: 1.49858687129258,
+      ituc: 4.05,
+      validFromVersion: BalanceSheetVersion.v5_0_5,
+    });
+    expect(regions).toContainEqual({
+      countryCode: 'AAF',
+      countryName: 'Africa',
+      pppIndex: 2.51455039477944,
+      ituc: 3.79,
+      validFromVersion: BalanceSheetVersion.v5_0_5,
+    });
+    expect(regions).toContainEqual({
+      countryCode: 'AAM',
+      countryName: 'Americas',
+      pppIndex: 1.17486233777459,
+      ituc: 3.52,
+      validFromVersion: BalanceSheetVersion.v5_0_5,
+    });
+    expect(regions).toContainEqual({
+      countryCode: 'AAS',
+      countryName: 'Asia',
+      pppIndex: 2.57526049680317,
+      ituc: 4.47,
+      validFromVersion: BalanceSheetVersion.v5_0_5,
+    });
+    expect(regions).toContainEqual({
+      countryCode: 'AEU',
+      countryName: 'Europe',
+      pppIndex: 1.03314026740667,
+      ituc: 2.55,
       validFromVersion: BalanceSheetVersion.v5_0_5,
     });
   });

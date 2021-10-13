@@ -1,5 +1,5 @@
 import { Workbook, Cell, Worksheet } from 'exceljs';
-import { DEFAULT_COUNTRY_CODE, Region } from '../entities/region';
+import { AVERAGE_COUNTRY_CODE_MAPPING, Region } from '../entities/region';
 import { BalanceSheetVersion } from '../entities/enums';
 
 interface Headers {
@@ -46,29 +46,20 @@ export class RegionReader {
       );
       const cellPPPIndex: Cell = sheet.getCell(row, headers.pppIndexIndex);
       const cellItuc: Cell = sheet.getCell(row, headers.itucIndex);
-      if (cellCountryCode.text === 'World') {
-        regions.push(
-          new Region(
-            undefined,
-            Number(cellPPPIndex.text),
-            DEFAULT_COUNTRY_CODE,
-            'World',
-            Number(cellItuc.text),
-            validFromVersion
-          )
-        );
-      } else {
-        regions.push(
-          new Region(
-            undefined,
-            Number(cellPPPIndex.text),
-            cellCountryCode.text,
-            cellCountryName.text,
-            Number(cellItuc.text),
-            validFromVersion
-          )
-        );
-      }
+      const countryCode =
+        AVERAGE_COUNTRY_CODE_MAPPING.get(cellCountryCode.text) ||
+        cellCountryCode.text;
+
+      regions.push(
+        new Region(
+          undefined,
+          Number(cellPPPIndex.text),
+          countryCode,
+          cellCountryName.text !== '' ? cellCountryName.text : 'World',
+          Number(cellItuc.text),
+          validFromVersion
+        )
+      );
     }
     return regions;
   }
