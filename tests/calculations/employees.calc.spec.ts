@@ -11,6 +11,7 @@ import {
   EmployeesCalcResults,
 } from '../../src/calculations/employees.calc';
 import { EmployeesFraction } from '../../src/entities/employeesFraction';
+import { BalanceSheetVersion } from '../../src/entities/enums';
 
 describe('Employees Calculator', () => {
   let connection: Connection;
@@ -38,7 +39,8 @@ describe('Employees Calculator', () => {
     ): Promise<EmployeesCalcResults> => {
       regionProvider = await RegionProvider.createFromCompanyFacts(
         companyFacts,
-        connection.getRepository(Region)
+        connection.getRepository(Region),
+        BalanceSheetVersion.v5_0_4
       );
       return new EmployeesCalc(regionProvider).calculate(companyFacts);
     };
@@ -81,7 +83,8 @@ describe('Employees Calculator', () => {
       companyFacts = EmptyCompanyFacts;
       regionProvider = await RegionProvider.createFromCompanyFacts(
         companyFacts,
-        connection.getRepository(Region)
+        connection.getRepository(Region),
+        BalanceSheetVersion.v5_0_4
       );
     });
 
