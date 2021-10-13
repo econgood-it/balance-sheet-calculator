@@ -119,4 +119,13 @@ export class CompanyFacts {
     this.averageJourneyToWorkForStaffInKm = averageJourneyToWorkForStaffInKm;
     this.mainOriginOfOtherSuppliers = mainOriginOfOtherSuppliers;
   }
+
+  public getAllCountryCodes(removeDuplicates: boolean = false): string[] {
+    const allCountryCodes = [
+      ...this.supplyFractions.map((s) => s.countryCode),
+      ...this.employeesFractions.map((s) => s.countryCode),
+      this.mainOriginOfOtherSuppliers.countryCode,
+    ];
+    return !removeDuplicates ? allCountryCodes : [...new Set(allCountryCodes)];
+  }
 }
