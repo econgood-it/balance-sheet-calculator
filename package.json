@@ -22,7 +22,7 @@
   "license": "MIT",
   "dependencies": {
     "@daniel-faber/json-ts": "0.6.0",
-    "@types/swagger-jsdoc": "^6.0.1",
+    "@mr42/version-comparator": "^1.2.2",
     "bcrypt": "^5.0.1",
     "class-validator": "^0.13.1",
     "correlation-id": "^4.0.0",
@@ -48,6 +48,7 @@
     "winston": "^3.3.3"
   },
   "devDependencies": {
+    "@types/swagger-jsdoc": "^6.0.1",
     "@types/bcrypt": "^5.0.0",
     "@types/correlation-id": "^2.1.0",
     "@types/cors": "^2.8.12",
