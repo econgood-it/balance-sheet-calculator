@@ -24,18 +24,24 @@ describe('Region', () => {
     const region: Region = new Region(
       undefined,
       1.2,
-      'DEU',
+      'DEU_TEST',
       'Germany',
       3.4,
       BalanceSheetVersion.v5_0_4
     );
+    const alreadyExistingFromPreviousRuns = await regionRepository.findOne({
+      countryCode: 'DEU_TEST',
+    });
+    if (alreadyExistingFromPreviousRuns) {
+      await regionRepository.remove(alreadyExistingFromPreviousRuns);
+    }
     const result = await regionRepository.save(region);
     expect(result).toMatchObject({
       pppIndex: 1.2,
-      countryCode: 'DEU',
+      countryCode: 'DEU_TEST',
       countryName: 'Germany',
       ituc: 3.4,
-      validUntilVersion: BalanceSheetVersion.v5_0_4,
+      validFromVersion: BalanceSheetVersion.v5_0_4,
     });
     await regionRepository.remove(result);
   });
