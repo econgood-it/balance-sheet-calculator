@@ -1,16 +1,15 @@
 import { Entity, Column, PrimaryGeneratedColumn, Index } from 'typeorm';
 import { BalanceSheetVersion } from './enums';
 
+export const DEFAULT_COUNTRY_CODE = 'AWO';
 export const AVERAGE_COUNTRY_CODE_MAPPING = new Map([
-  ['Average Ozeania', 'AOC'],
-  ['World', 'AWO'],
-  ['Average Ozeania', 'AOC'],
+  ['World', DEFAULT_COUNTRY_CODE],
+  ['Average Oceania', 'AOC'],
   ['Average Europe', 'AEU'],
   ['Average Asia', 'AAS'],
-  ['Average America', 'AAM'],
+  ['Average Americas', 'AAM'],
   ['Average Africa', 'AAF'],
 ]);
-export const DEFAULT_COUNTRY_CODE = 'DEFAULT_COUNTRY_CODE';
 
 @Entity()
 export class Region {
