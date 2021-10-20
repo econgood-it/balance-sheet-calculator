@@ -1,6 +1,6 @@
-import * as path from 'path';
 import { Workbook, Cell, Worksheet } from 'exceljs';
-import { Region } from '../entities/region';
+import { AVERAGE_COUNTRY_CODE_MAPPING, Region } from '../entities/region';
+import { BalanceSheetVersion } from '../entities/enums';
 
 interface Headers {
   countryNameIndex: number;
@@ -18,22 +18,24 @@ export class RegionReader {
   };
 
   public async read(
+    pathToCsv: string,
+    rowRangeContainingRegions: number[],
+    validFromVersion: BalanceSheetVersion,
     headers: Headers = RegionReader.DEFAULT_HEADERS
   ): Promise<Region[]> {
-    const pathToCsv = path.join(
-      path.resolve(__dirname, '../files/reader'),
-      'regions.csv'
-    );
     // create object for workbook
     const wb: Workbook = new Workbook();
     const sheet: Worksheet = await wb.csv.readFile(pathToCsv, {
       parserOptions: { delimiter: ',' },
     });
     // wb = await wb.xlsx.readFile(path);
-
     const regions: Region[] = [];
     // cell object
-    for (let row = 6; row <= 226; row++) {
+    for (
+      let row = rowRangeContainingRegions[0];
+      row <= rowRangeContainingRegions[1];
+      row++
+    ) {
       const cellCountryName: Cell = sheet.getCell(
         row,
         headers.countryNameIndex
@@ -44,13 +46,18 @@ export class RegionReader {
       );
       const cellPPPIndex: Cell = sheet.getCell(row, headers.pppIndexIndex);
       const cellItuc: Cell = sheet.getCell(row, headers.itucIndex);
+      const countryCode =
+        AVERAGE_COUNTRY_CODE_MAPPING.get(cellCountryCode.text) ||
+        cellCountryCode.text;
+
       regions.push(
         new Region(
           undefined,
           Number(cellPPPIndex.text),
-          cellCountryCode.text,
-          cellCountryName.text,
-          Number(cellItuc.text)
+          countryCode,
+          cellCountryName.text !== '' ? cellCountryName.text : 'World',
+          Number(cellItuc.text),
+          validFromVersion
         )
       );
     }

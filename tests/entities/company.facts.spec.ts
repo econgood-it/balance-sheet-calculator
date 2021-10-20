@@ -4,6 +4,8 @@ import { ConfigurationReader } from '../../src/configuration.reader';
 import { CompanyFacts } from '../../src/entities/companyFacts';
 import { EmptyCompanyFacts } from '../testData/company.facts';
 import { MainOriginOfOtherSuppliers } from '../../src/entities/main.origin.of.other.suppliers';
+import { EmployeesFraction } from '../../src/entities/employeesFraction';
+import { SupplyFraction } from '../../src/entities/supplyFraction';
 
 describe('Company Facts entity', () => {
   let companyFactsRepository: Repository<CompanyFacts>;
@@ -100,5 +102,40 @@ describe('Company Facts entity', () => {
       expect(result.isB2B).toBeTruthy();
       await companyFactsRepository.remove(result);
     });
+  });
+
+  it('should return all countryCodes', async () => {
+    const companyFacts = new CompanyFacts(
+      undefined,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      false,
+      0,
+      false,
+      [
+        new SupplyFraction(undefined, 'A', 'CRI', 100),
+        new SupplyFraction(undefined, 'B', 'DEU', 200),
+      ],
+      [
+        new EmployeesFraction(undefined, 'AFG', 3),
+        new EmployeesFraction(undefined, 'CRI', 4),
+        new EmployeesFraction(undefined, 'DEU', 4),
+      ],
+      [],
+      new MainOriginOfOtherSuppliers(undefined, 'BRA', 200)
+    );
+    let result = companyFacts.getAllCountryCodes();
+    expect(result).toEqual(['CRI', 'DEU', 'AFG', 'CRI', 'DEU', 'BRA']);
+    // Without duplicates
+    result = companyFacts.getAllCountryCodes(true);
+    expect(result).toEqual(['CRI', 'DEU', 'AFG', 'BRA']);
   });
 });

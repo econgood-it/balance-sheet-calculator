@@ -13,6 +13,7 @@ import { RegionProvider } from '../../src/providers/region.provider';
 import { IndustryProvider } from '../../src/providers/industry.provider';
 import { EmptyCompanyFacts } from '../testData/company.facts';
 import { computeCostsOfMainOriginOfOtherSuppliers } from '../../src/entities/main.origin.of.other.suppliers';
+import { BalanceSheetVersion } from '../../src/entities/enums';
 
 describe('Supply Calculator', () => {
   let companyFacts: CompanyFacts;
@@ -42,10 +43,12 @@ describe('Supply Calculator', () => {
       new SupplyFraction(undefined, 'P', 'BHS', 500),
     ];
     companyFacts = EmptyCompanyFacts;
+
     companyFacts.supplyFractions = supplyFractions;
     regionProvider = await RegionProvider.createFromCompanyFacts(
       companyFacts,
-      connection.getRepository(Region)
+      connection.getRepository(Region),
+      BalanceSheetVersion.v5_0_4
     );
     industryProvider = await IndustryProvider.createFromCompanyFacts(
       companyFacts,
@@ -74,7 +77,8 @@ describe('Supply Calculator', () => {
     useNonDefaultMainOriginOfOtherSuppliers();
     regionProvider = await RegionProvider.createFromCompanyFacts(
       companyFacts,
-      connection.getRepository(Region)
+      connection.getRepository(Region),
+      BalanceSheetVersion.v5_0_4
     );
     const supplyCalcResults: SupplyCalcResults = await new SupplierCalc(
       regionProvider,
@@ -87,7 +91,8 @@ describe('Supply Calculator', () => {
     useNonDefaultMainOriginOfOtherSuppliers();
     regionProvider = await RegionProvider.createFromCompanyFacts(
       companyFacts,
-      connection.getRepository(Region)
+      connection.getRepository(Region),
+      BalanceSheetVersion.v5_0_4
     );
     const supplyRiskSum = new SupplierCalc(
       regionProvider,
@@ -103,7 +108,8 @@ describe('Supply Calculator', () => {
     useNonDefaultMainOriginOfOtherSuppliers();
     regionProvider = await RegionProvider.createFromCompanyFacts(
       companyFacts,
-      connection.getRepository(Region)
+      connection.getRepository(Region),
+      BalanceSheetVersion.v5_0_4
     );
     const supplyRiskSum = new SupplierCalc(
       regionProvider,

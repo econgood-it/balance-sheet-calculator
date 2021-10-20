@@ -17,7 +17,8 @@ export class CalculationService {
     const industryRepository = entityManager.getRepository(Industry);
     const regionProvider = await RegionProvider.createFromCompanyFacts(
       balanceSheet.companyFacts,
-      entityManager.getRepository(Region)
+      entityManager.getRepository(Region),
+      balanceSheet.version
     );
     const industryProvider = await IndustryProvider.createFromCompanyFacts(
       balanceSheet.companyFacts,

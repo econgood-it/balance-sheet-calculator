@@ -1,10 +1,12 @@
+import NotFoundException from '../exceptions/not.found.exception';
+
 class Provider<K, V> extends Map<K, V> {
   public getOrFail(key: K) {
     const value: V | undefined = this.get(key);
     if (value) {
       return value;
     } else {
-      throw Error('Map entry not found.');
+      throw new NotFoundException(`Entry ${key} not found.`);
     }
   }
 }

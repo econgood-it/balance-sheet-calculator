@@ -1,6 +1,15 @@
 import { Entity, Column, PrimaryGeneratedColumn, Index } from 'typeorm';
+import { BalanceSheetVersion } from './enums';
 
-export const DEFAULT_COUNTRY_CODE = 'DEFAULT_COUNTRY_CODE';
+export const DEFAULT_COUNTRY_CODE = 'AWO';
+export const AVERAGE_COUNTRY_CODE_MAPPING = new Map([
+  ['World', DEFAULT_COUNTRY_CODE],
+  ['Average Oceania', 'AOC'],
+  ['Average Europe', 'AEU'],
+  ['Average Asia', 'AAS'],
+  ['Average Americas', 'AAM'],
+  ['Average Africa', 'AAF'],
+]);
 
 @Entity()
 export class Region {
@@ -20,17 +29,22 @@ export class Region {
   @Column('double precision')
   public readonly ituc: number;
 
+  @Column('text')
+  public readonly validFromVersion: BalanceSheetVersion;
+
   constructor(
     id: number | undefined,
     pppIndex: number,
     countryCode: string,
     countryName: string,
-    ituc: number
+    ituc: number,
+    validFromVersion: BalanceSheetVersion
   ) {
     this.id = id;
     this.pppIndex = pppIndex;
     this.countryCode = countryCode;
     this.countryName = countryName;
     this.ituc = ituc;
+    this.validFromVersion = validFromVersion;
   }
 }
