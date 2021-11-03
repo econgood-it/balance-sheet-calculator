@@ -26,9 +26,7 @@ export class TopicWeightCalculator {
         weight = await this.calculateTopicWeightOfB1(calcResults);
         break;
       case 'B2':
-        weight = await this.calculateTopicWeightOfB2(
-          companyFacts.financialCosts
-        );
+        weight = await this.calculateTopicWeightOfB2(calcResults);
         break;
       case 'B3':
         weight = await this.calculateTopicWeightOfB3(calcResults);
@@ -125,18 +123,21 @@ export class TopicWeightCalculator {
     }
   }
 
-  public calculateTopicWeightOfB2(financialCosts: number): number {
-    if (financialCosts === 0) {
-      return 1;
-    } else if (financialCosts > 0.1) {
-      return 1.5;
-    } else if (financialCosts < 0.001) {
-      return 0;
-    } else if (financialCosts < 0.03) {
-      return 0.5;
-    } else {
-      return 1;
+  public calculateTopicWeightOfB2(calcResults: CalcResults): number {
+    if (
+      calcResults.socialEnvironmentCalcResults.profitInPercentOfTurnover.isPresent()
+    ) {
+      const profitInPercentOfTotalSales =
+        calcResults.socialEnvironmentCalcResults.profitInPercentOfTurnover.get() as number;
+      if (profitInPercentOfTotalSales > 0.1) {
+        return 1.5;
+      } else if (profitInPercentOfTotalSales < 0.001) {
+        return 0;
+      } else if (profitInPercentOfTotalSales < 0.03) {
+        return 0.5;
+      }
     }
+    return 1;
   }
 
   public calculateTopicWeightOfB3(calcResults: CalcResults): number {
