@@ -1,5 +1,4 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
-import { DEFAULT_COUNTRY_CODE } from '../entities/region';
 
 export class AddMissingMainOriginOfOtherSuppliers1627482875157
   implements MigrationInterface
@@ -11,10 +10,11 @@ export class AddMissingMainOriginOfOtherSuppliers1627482875157
       const sumOfSupplyFraction = await queryRunner.query(
         `SELECT SUM(costs) FROM "supply_fraction" WHERE "companyFactsId"=${cf.id}`
       );
-      const insertQuery = `INSERT INTO "main_origin_of_other_suppliers" ("countryCode", "costs") VALUES ('${DEFAULT_COUNTRY_CODE}', ${
-        cf.totalPurchaseFromSuppliers - sumOfSupplyFraction[0].sum
-      }) returning "id"`;
-      const mainOriginOfOtherSuppliers = await queryRunner.query(insertQuery);
+      const insertQuery = `INSERT INTO "main_origin_of_other_suppliers" ("countryCode", "costs") VALUES ($1, $2) returning "id"`;
+      const mainOriginOfOtherSuppliers = await queryRunner.query(insertQuery, [
+        'DEFAULT_COUNTRY_CODE',
+        cf.totalPurchaseFromSuppliers - sumOfSupplyFraction[0].sum,
+      ]);
       await queryRunner.query(
         `UPDATE "company_facts" SET "mainOriginOfOtherSuppliersId" = ${mainOriginOfOtherSuppliers[0].id} WHERE "id"=${cf.id}`
       );
