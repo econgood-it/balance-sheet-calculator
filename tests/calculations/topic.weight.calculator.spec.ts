@@ -106,7 +106,7 @@ describe('Topic Weight Calculator', () => {
     calcResults.socialEnvironmentCalcResults.profitInPercentOfTurnover =
       some(0);
     let result = await calc(topicShortName, calcResults, companyFacts);
-    expect(result).toBeCloseTo(1, numDigits);
+    expect(result).toBeCloseTo(0, numDigits);
 
     calcResults.socialEnvironmentCalcResults.profitInPercentOfTurnover =
       some(0.11);

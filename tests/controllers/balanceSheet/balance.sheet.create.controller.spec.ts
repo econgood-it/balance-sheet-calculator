@@ -131,7 +131,8 @@ describe('Balance Sheet Controller', () => {
 
   it('creates BalanceSheet where B2 weight is high', async () => {
     const testApp = supertest(app);
-    balanceSheetJson.companyFacts.financialCosts = 0.12;
+    balanceSheetJson.companyFacts.profit = 12;
+    balanceSheetJson.companyFacts.turnover = 100;
     const response = await testApp
       .post(endpointPath)
       .set(tokenHeader.key, tokenHeader.value)
