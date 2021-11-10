@@ -53,6 +53,11 @@ export class SupplierCalc {
     return result;
   }
 
+  /**
+   * In excel this is equal to the cell $'11.Region'.N8
+   * @param companyFacts
+   * @param supplyRiskSum
+   */
   public supplyChainWeight(
     companyFacts: CompanyFacts,
     supplyRiskSum: number
