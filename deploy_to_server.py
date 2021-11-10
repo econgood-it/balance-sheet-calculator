@@ -8,39 +8,39 @@ run = 'run'
 docker_compose = 'docker-compose'
 
 
-def install_dependencies(production: bool):
+def install_dependencies(production: bool,):
     cmd = [npm, 'install']
     if production:
         cmd.append('--production')
-    subprocess.run(cmd)
+    subprocess.run(cmd, check=True)
 
 
 def check_linting():
-    subprocess.run([npm, run, 'lint'])
+    subprocess.run([npm, run, 'lint'], check=True)
 
 
 def shutdown_test_database():
-    subprocess.run([docker_compose, 'down'])
+    subprocess.run([docker_compose, 'down'], check=True)
 
 
 def startup_test_database():
-    subprocess.run([docker_compose, 'up', '-d'])
+    subprocess.run([docker_compose, 'up', '-d'], check=True)
 
 
 def run_tests():
-    subprocess.run([npm, run, 'test:prod'])
+    subprocess.run([npm, run, 'test:prod'], check=True)
 
 
 def compile():
-    subprocess.run([npm, run, 'build'])
+    subprocess.run([npm, run, 'build'], check=True)
 
 
 def rsync(folder: str, server_domain: str):
-    subprocess.run(['rsync', '-a', folder, f"{server_domain}:", '--delete'])
+    subprocess.run(['rsync', '-a', folder, f"{server_domain}:", '--delete'], check=True)
 
 
 def restart_server(server_domain: str):
-    subprocess.run(['ssh', server_domain, 'bash bin/node-svc.sh restart'])
+    subprocess.run(['ssh', server_domain, 'bash bin/node-svc.sh restart'], check=True)
 
 
 def main(args):
