@@ -3,6 +3,14 @@ import { roundWithPrecision } from '../../src/math';
 describe('Math ', () => {
   const numberToRound = 12345.6789;
 
+  it('roundWithPrecision round negative value to nearest integer', async () => {
+    expect(roundWithPrecision(-12.5)).toBe(-13);
+  });
+
+  it('roundWithPrecision round negative value to 2 decimal place', async () => {
+    expect(roundWithPrecision(-12.005, 2)).toBe(-12.01);
+  });
+
   it('roundWithPrecision round to nearest integer', async () => {
     expect(roundWithPrecision(numberToRound)).toBe(12346);
   });
