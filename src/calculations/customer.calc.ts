@@ -17,10 +17,16 @@ export class CustomerCalc {
     };
   }
 
+  /**
+   * In excel this is equal to the cell $'10. Industry'.J38
+   * @param companyFacts
+   * @private
+   */
   private calcSumOfEcologicalDesignOfProductsAndService(
     companyFacts: CompanyFacts
   ) {
     let result = 0;
+    let sumAmountOfTotalTurnover = 0;
     for (const industrySector of companyFacts.industrySectors) {
       const industry = this.industryProvider.getOrFail(
         industrySector.industryCode
@@ -28,7 +34,8 @@ export class CustomerCalc {
       result +=
         industry.ecologicalDesignOfProductsAndServices *
         industrySector.amountOfTotalTurnover;
+      sumAmountOfTotalTurnover += industrySector.amountOfTotalTurnover;
     }
-    return result;
+    return result + (1 - sumAmountOfTotalTurnover);
   }
 }

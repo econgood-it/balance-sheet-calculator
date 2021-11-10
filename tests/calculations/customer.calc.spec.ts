@@ -37,13 +37,13 @@ describe('Customer Calculator', () => {
     ).calculate(companyFacts);
     expect(
       customerCalcResults.sumOfEcologicalDesignOfProductsAndService
-    ).toBeCloseTo(0, 1);
+    ).toBeCloseTo(1, 1);
   });
 
   it('should calculate when industry sectors non empty', async () => {
     companyFacts.industrySectors = [
-      new IndustrySector(undefined, 'F', 3, createTranslations('en', '')),
-      new IndustrySector(undefined, 'A', 4, createTranslations('en', '')),
+      new IndustrySector(undefined, 'F', 0.2, createTranslations('en', '')),
+      new IndustrySector(undefined, 'A', 0.4, createTranslations('en', '')),
     ];
     industryProvider = await IndustryProvider.createFromCompanyFacts(
       companyFacts,
@@ -54,6 +54,6 @@ describe('Customer Calculator', () => {
     ).calculate(companyFacts);
     expect(
       customerCalcResults.sumOfEcologicalDesignOfProductsAndService
-    ).toBeCloseTo(10, 1);
+    ).toBeCloseTo(1.2, 1);
   });
 });
