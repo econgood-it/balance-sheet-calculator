@@ -190,6 +190,10 @@ export class TopicWeightCalculator {
     }
   }
 
+  /**
+   * In excel this is equal to the cell $'10. Industry'.J39
+   * @param calcResults
+   */
   public calculateTopicWeightOfD3AndE3(calcResults: CalcResults): number {
     if (
       calcResults.customerCalcResults
