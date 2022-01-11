@@ -1,5 +1,31 @@
 paths:
   /v1/balancesheets:
+    get:
+      tags:
+        - "balancesheets"
+      parameters:
+        - in: headers
+          name: x-correlation-id
+          description: "If x-correlation-id is set then it's value will be used as the id for this request, otherwise the id will be a new uuid."
+          required: false
+          default: A new uuid
+          type: string
+      security:
+        - bearerAuth: [ ]
+      summary: Returns all balance sheets to which the current user has access
+      responses:
+        '200': # status code
+          description: An array of the user's balance sheets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                      description: Id of balance sheet
     post:
       tags:
         - "balancesheets"
@@ -41,8 +67,8 @@ paths:
       summary: Create a balance sheet
       responses:
         '200':    # status code
-          description: Token response
+          description: Created balance sheet
           content:
-            application/json":
+            "application/json":
               schema:
                 $ref: "#/components/schemas/BalanceSheetResponse"

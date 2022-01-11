@@ -13,6 +13,13 @@ export class BalanceSheetController {
 
   public routes() {
     this.app.get(
+      '/v1/balancesheets',
+      allowUserOnly,
+      this.balanceSheetService.getBalanceSheetsOfUser.bind(
+        this.balanceSheetService
+      )
+    );
+    this.app.get(
       '/v1/balancesheets/:id',
       allowUserOnly,
       this.balanceSheetService.getBalanceSheet.bind(this.balanceSheetService)
