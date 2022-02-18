@@ -1,4 +1,4 @@
-import { strictObjectMapper, expectNumber } from '@daniel-faber/json-ts';
+import { strictObjectMapper } from '@daniel-faber/json-ts';
 import { CompanyFactsDTOUpdate } from './company.facts.update.dto';
 import { RatingDTO } from '../createAndUpdate/rating.dto';
 import { ValidateNested, IsOptional } from 'class-validator';
@@ -13,11 +13,7 @@ export class BalanceSheetDTOUpdate {
   @ValidateNested()
   public readonly companyFacts?: CompanyFactsDTOUpdate;
 
-  public constructor(
-    public readonly id: number,
-    companyFacts?: CompanyFactsDTOUpdate,
-    rating?: RatingDTO
-  ) {
+  public constructor(companyFacts?: CompanyFactsDTOUpdate, rating?: RatingDTO) {
     this.rating = rating;
     this.companyFacts = companyFacts;
   }
@@ -30,7 +26,6 @@ export class BalanceSheetDTOUpdate {
     }
     const jsonParser = strictObjectMapper((accessor) => {
       return new BalanceSheetDTOUpdate(
-        accessor.get('id', expectNumber),
         accessor.getOptional('companyFacts', CompanyFactsDTOUpdate.fromJSON),
         rating || accessor.getOptional('rating', RatingDTO.fromJSON)
       );

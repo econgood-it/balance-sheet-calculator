@@ -50,7 +50,6 @@ describe('Update endpoint of Balance Sheet Controller', () => {
         companyFacts: CompanyFacts1Json,
       });
     const balanceSheetUpdate = {
-      id: response.body.id,
       companyFacts: {
         totalPurchaseFromSuppliers: 30000,
         totalStaffCosts: 1000,
@@ -94,7 +93,6 @@ describe('Update endpoint of Balance Sheet Controller', () => {
         companyFacts: CompanyFacts1Json,
       });
     const balanceSheetUpdate = {
-      id: response.body.id,
       ratings: [
         { shortName: 'A1.1', estimations: 2 },
         { shortName: 'A1.2', estimations: -100 },
@@ -137,7 +135,6 @@ describe('Update endpoint of Balance Sheet Controller', () => {
         companyFacts: CompanyFacts1Json,
       });
     const balanceSheetUpdate = {
-      id: response.body.id,
       rating: {
         topics: [
           {
