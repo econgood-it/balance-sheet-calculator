@@ -22,7 +22,7 @@ export class Assertions {
         expect(received[i].isWeightSelectedByUser).toBe(
           expected[i].isWeightSelectedByUser
         );
-      } catch (e) {
+      } catch (e: any) {
         throw new Error(Assertions.errorMsg(e, received[i], expected[i]));
       }
       if (withAspects) {
@@ -48,7 +48,7 @@ export class Assertions {
         expect(received[i].isWeightSelectedByUser).toBe(
           expected[i].isWeightSelectedByUser
         );
-      } catch (e) {
+      } catch (e: any) {
         throw new Error(Assertions.errorMsg(e, received[i], expected[i]));
       }
     }
