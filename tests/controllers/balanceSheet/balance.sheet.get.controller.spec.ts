@@ -21,6 +21,7 @@ describe('Balance Sheet Controller', () => {
   const endpointPath = '/v1/balancesheets';
   const authHeaderKey = 'Authorization';
   let token = '';
+  let tokenUser2 = '';
 
   beforeAll(async () => {
     connection =
@@ -31,6 +32,11 @@ describe('Balance Sheet Controller', () => {
     token = `Bearer ${await TokenProvider.provideValidUserToken(
       app,
       connection
+    )}`;
+    tokenUser2 = `Bearer ${await TokenProvider.provideValidUserToken(
+      app,
+      connection,
+      'user2@example.com'
     )}`;
   });
 
@@ -46,12 +52,17 @@ describe('Balance Sheet Controller', () => {
     };
   });
 
+  const createBalanceSheet = async (tokenOfUser: string) => {
+    const testApp = supertest(app);
+    return testApp
+      .post(endpointPath)
+      .set(authHeaderKey, tokenOfUser)
+      .send(balanceSheetJson);
+  };
+
   it('get balance sheet by id where company facts fields are empty', async () => {
     const testApp = supertest(app);
-    const postResponse = await testApp
-      .post(endpointPath)
-      .set(authHeaderKey, token)
-      .send(balanceSheetJson);
+    const postResponse = await createBalanceSheet(token);
     const response = await testApp
       .get(`${endpointPath}/${postResponse.body.id}`)
       .set(authHeaderKey, token)
@@ -69,12 +80,27 @@ describe('Balance Sheet Controller', () => {
     ).toBeCloseTo(999.9999999999998);
   });
 
+  it('get balance sheets of current user', async () => {
+    const testApp = supertest(app);
+    const expectedIds = [];
+    for (let i = 0; i < 2; i++) {
+      expectedIds.push((await createBalanceSheet(token)).body.id);
+    }
+    const balanceSheetIdOfUser2 = (await createBalanceSheet(tokenUser2)).body
+      .id;
+    const response = await testApp
+      .get(`${endpointPath}`)
+      .set(authHeaderKey, token)
+      .send();
+    for (const id of expectedIds) {
+      expect(response.body).toContainEqual({ id: id });
+    }
+    expect(response.body).not.toContainEqual({ id: balanceSheetIdOfUser2 });
+  });
+
   it('get matrix representation of balance sheet by id', async () => {
     const testApp = supertest(app);
-    const postResponse = await testApp
-      .post(endpointPath)
-      .set(authHeaderKey, token)
-      .send(balanceSheetJson);
+    const postResponse = await createBalanceSheet(token);
     const response = await testApp
       .get(`${endpointPath}/${postResponse.body.id}/matrix`)
       .set(authHeaderKey, token)
@@ -84,26 +110,14 @@ describe('Balance Sheet Controller', () => {
   });
 
   describe('block access to balance sheet ', () => {
-    let tokenOfUnauthorizedUser: string;
-    beforeAll(async () => {
-      tokenOfUnauthorizedUser = `Bearer ${await TokenProvider.provideValidUserToken(
-        app,
-        connection,
-        'unauthorizedUser@example.com'
-      )}`;
-    });
-
     const postAndGetWithDifferentUsers = async (
       endpoint: string
     ): Promise<any> => {
       const testApp = supertest(app);
-      const postResponse = await testApp
-        .post(endpointPath)
-        .set(authHeaderKey, token)
-        .send(balanceSheetJson);
+      const postResponse = await createBalanceSheet(token);
       return testApp
         .get(`${endpointPath}/${postResponse.body.id}${endpoint}`)
-        .set(authHeaderKey, tokenOfUnauthorizedUser)
+        .set(authHeaderKey, tokenUser2)
         .send();
     };
 

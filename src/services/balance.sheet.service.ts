@@ -23,6 +23,7 @@ import { AccessCheckerService } from './access.checker.service';
 import { SortService } from './sort.service';
 import { CalculationService } from './calculation.service';
 import UnauthorizedException from '../exceptions/unauthorized.exception';
+import { NoAccessError } from '../exceptions/no.access.error';
 
 export class BalanceSheetService {
   constructor(private connection: Connection) {}
@@ -108,6 +109,31 @@ export class BalanceSheetService {
             balanceSheetResponse,
             language
           )
+        );
+      })
+      .catch((error) => {
+        handle(error, next);
+      });
+  }
+
+  public async getBalanceSheetsOfUser(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    this.connection.manager
+      .transaction(async (entityManager) => {
+        if (!req.userInfo) {
+          throw new NoAccessError();
+        }
+        const userRepository = entityManager.getRepository(User);
+        const user = await userRepository.findOneOrFail(req.userInfo.id, {
+          relations: ['balanceSheets'],
+        });
+        res.json(
+          user.balanceSheets.map((b) => {
+            return { id: b.id };
+          })
         );
       })
       .catch((error) => {
