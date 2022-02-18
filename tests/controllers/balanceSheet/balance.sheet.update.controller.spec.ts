@@ -50,7 +50,6 @@ describe('Update endpoint of Balance Sheet Controller', () => {
         companyFacts: CompanyFacts1Json,
       });
     const balanceSheetUpdate = {
-      id: response.body.id,
       companyFacts: {
         totalPurchaseFromSuppliers: 30000,
         totalStaffCosts: 1000,
@@ -82,6 +81,38 @@ describe('Update endpoint of Balance Sheet Controller', () => {
     );
   });
 
+  it('should update ratings of balance sheet', async () => {
+    const testApp = supertest(app);
+
+    let response = await testApp
+      .post(endpointPath)
+      .set(tokenHeader.key, tokenHeader.value)
+      .send({
+        type: BalanceSheetType.Full,
+        version: BalanceSheetVersion.v5_0_6,
+        companyFacts: CompanyFacts1Json,
+      });
+    const balanceSheetUpdate = {
+      ratings: [
+        { shortName: 'A1.1', estimations: 2 },
+        { shortName: 'A1.2', estimations: -100 },
+        { shortName: 'A2.1', estimations: 4 },
+        { shortName: 'B1.1', estimations: 0 },
+        { shortName: 'B1.2', estimations: 5 },
+        { shortName: 'E3.3', estimations: -3 },
+      ],
+    };
+    response = await testApp
+      .patch(`${endpointPath}/${response.body.id}`)
+      .set(tokenHeader.key, tokenHeader.value)
+      .send({ ...balanceSheetUpdate });
+    expect(response.status).toEqual(200);
+    for (const rating of balanceSheetUpdate.ratings) {
+      const aspect = findAspect(rating.shortName, response);
+      expect(aspect).toMatchObject(rating);
+    }
+  });
+
   it('should update rating of full balance sheet', async () => {
     await testEstimationsUpdate(BalanceSheetType.Full);
   });
@@ -104,7 +135,6 @@ describe('Update endpoint of Balance Sheet Controller', () => {
         companyFacts: CompanyFacts1Json,
       });
     const balanceSheetUpdate = {
-      id: response.body.id,
       rating: {
         topics: [
           {

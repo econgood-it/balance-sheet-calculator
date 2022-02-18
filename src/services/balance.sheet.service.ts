@@ -9,7 +9,6 @@ import { BalanceSheetDTOUpdate } from '../dto/update/balance.sheet.update.dto';
 import { SupplyFraction } from '../entities/supplyFraction';
 import { EmployeesFraction } from '../entities/employeesFraction';
 import { EntityWithDtoMerger } from '../merge/entity.with.dto.merger';
-import BadRequestException from '../exceptions/bad.request.exception';
 import { validateOrReject } from 'class-validator';
 import { IndustrySector } from '../entities/industry.sector';
 import { MatrixDTO } from '../dto/matrix/matrix.dto';
@@ -91,11 +90,6 @@ export class BalanceSheetService {
         await AccessCheckerService.check(req, balanceSheet, entityManager);
         const balanceSheetDTOUpdate: BalanceSheetDTOUpdate =
           BalanceSheetDTOUpdate.fromJSON(req.body);
-        if (balanceSheetDTOUpdate.id !== balanceSheetId) {
-          throw new BadRequestException(
-            'Balance sheet id in request body and url parameter has to be the same'
-          );
-        }
         await this.validateOrFail(balanceSheetDTOUpdate);
         await entityWithDTOMerger.mergeBalanceSheet(
           balanceSheet,

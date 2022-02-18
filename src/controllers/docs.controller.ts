@@ -20,7 +20,7 @@ export class DocsController {
         openapi: '3.0.0',
         info: {
           title: 'ECG Balance Calculator',
-          version: '2.0.0',
+          version: '2.1.1',
         },
       },
       apis: [`${pathToDocs}/**/*.yaml`], // files containing annotations as above
