@@ -12,6 +12,7 @@ import { Application } from 'express';
 import { TokenProvider } from '../../TokenProvider';
 import supertest = require('supertest');
 import { CORRELATION_HEADER_NAME } from '../../../src/middleware/correlation.id.middleware';
+import objectContaining = jasmine.objectContaining;
 
 describe('Balance Sheet Controller', () => {
   let connection: Connection;
@@ -107,6 +108,38 @@ describe('Balance Sheet Controller', () => {
       .send();
     expect(response.status).toEqual(200);
     expect(response.body.topics).toHaveLength(20);
+  });
+
+  it('get balance sheet in a short format', async () => {
+    const testApp = supertest(app);
+    const postResponse = await createBalanceSheet(token);
+    const response = await testApp
+      .get(`${endpointPath}/${postResponse.body.id}?responseFormat=short`)
+      .set(authHeaderKey, token)
+      .send();
+    expect(response.status).toEqual(200);
+    expect(response.body.ratings).toEqual(
+      expect.arrayContaining([
+        {
+          shortName: 'A1',
+          estimations: 0,
+          name: 'Human dignity in the supply chain',
+          weight: 1,
+        },
+        {
+          estimations: 0,
+          name: 'Financial independence through equity financing',
+          shortName: 'B1.1',
+          weight: 1,
+        },
+        {
+          estimations: 0,
+          name: 'Social participation',
+          shortName: 'E4.2',
+          weight: 1,
+        },
+      ])
+    );
   });
 
   describe('block access to balance sheet ', () => {
