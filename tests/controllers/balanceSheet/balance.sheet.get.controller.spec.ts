@@ -130,12 +130,14 @@ describe('Balance Sheet Controller', () => {
           name: 'Financial independence through equity financing',
           shortName: 'B1.1',
           weight: 1,
+          isPositive: true,
         },
         {
           estimations: 0,
           name: 'Social participation',
           shortName: 'E4.2',
           weight: 1,
+          isPositive: true,
         },
       ])
     );
