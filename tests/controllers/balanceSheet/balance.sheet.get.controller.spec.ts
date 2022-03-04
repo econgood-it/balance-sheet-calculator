@@ -12,7 +12,6 @@ import { Application } from 'express';
 import { TokenProvider } from '../../TokenProvider';
 import supertest = require('supertest');
 import { CORRELATION_HEADER_NAME } from '../../../src/middleware/correlation.id.middleware';
-import objectContaining = jasmine.objectContaining;
 
 describe('Balance Sheet Controller', () => {
   let connection: Connection;
