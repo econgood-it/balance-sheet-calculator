@@ -12,6 +12,7 @@ import { Application } from 'express';
 import { TokenProvider } from '../../TokenProvider';
 import supertest = require('supertest');
 import { CORRELATION_HEADER_NAME } from '../../../src/middleware/correlation.id.middleware';
+import { TopicOrAspectResponseDTO } from '../../../src/dto/response/topic.or.aspect.dto';
 
 describe('Balance Sheet Controller', () => {
   let connection: Connection;
@@ -71,12 +72,11 @@ describe('Balance Sheet Controller', () => {
     expect(response.body.companyFacts).toMatchObject(
       postResponse.body.companyFacts
     );
-    expect(response.body.rating).toMatchObject(postResponse.body.rating);
+    expect(response.body.ratings).toMatchObject(postResponse.body.ratings);
     expect(
-      response.body.rating.topics.reduce(
-        (sum: number, current: Topic) => sum + current.maxPoints,
-        0
-      )
+      response.body.ratings
+        .filter((r: TopicOrAspectResponseDTO) => r.shortName.length === 2)
+        .reduce((sum: number, current: Topic) => sum + current.maxPoints, 0)
     ).toBeCloseTo(999.9999999999998);
   });
 
@@ -119,26 +119,26 @@ describe('Balance Sheet Controller', () => {
     expect(response.status).toEqual(200);
     expect(response.body.ratings).toEqual(
       expect.arrayContaining([
-        {
+        expect.objectContaining({
           shortName: 'A1',
           estimations: 0,
           name: 'Human dignity in the supply chain',
           weight: 1,
-        },
-        {
+        }),
+        expect.objectContaining({
           estimations: 0,
           name: 'Financial independence through equity financing',
           shortName: 'B1.1',
           weight: 1,
           isPositive: true,
-        },
-        {
-          estimations: 0,
-          name: 'Social participation',
+        }),
+        expect.objectContaining({
           shortName: 'E4.2',
+          name: 'Social participation',
           weight: 1,
+          estimations: 0,
           isPositive: true,
-        },
+        }),
       ])
     );
   });

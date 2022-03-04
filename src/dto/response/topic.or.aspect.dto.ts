@@ -8,6 +8,8 @@ export class TopicOrAspectResponseDTO {
     public readonly name: string,
     public readonly weight: number,
     public readonly estimations: number,
+    public readonly points: number,
+    public readonly maxPoints: number,
     public readonly isPositive: boolean | undefined
   ) {}
 
@@ -20,6 +22,8 @@ export class TopicOrAspectResponseDTO {
       staticTranslate(language, topicOrAspect.name),
       topicOrAspect.weight,
       topicOrAspect.estimations,
+      topicOrAspect.points,
+      topicOrAspect.maxPoints,
       topicOrAspect instanceof Aspect ? topicOrAspect.isPositive : undefined
     );
   }

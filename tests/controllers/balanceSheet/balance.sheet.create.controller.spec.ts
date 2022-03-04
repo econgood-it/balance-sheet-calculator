@@ -11,12 +11,12 @@ import {
 import { Assertions } from '../../Assertions';
 import { Topic } from '../../../src/entities/topic';
 import { FinanceCalc } from '../../../src/calculations/finance.calc';
-import { Rating } from '../../../src/entities/rating';
 import { CompanyFacts } from '../../../src/entities/companyFacts';
 import { EmptyCompanyFactsJson } from '../../testData/company.facts';
 import { TokenProvider } from '../../TokenProvider';
 import { BalanceSheet } from '../../../src/entities/balanceSheet';
 import { CORRELATION_HEADER_NAME } from '../../../src/middleware/correlation.id.middleware';
+import { TopicOrAspectResponseDTO } from '../../../src/dto/response/topic.or.aspect.dto';
 
 describe('Balance Sheet Controller', () => {
   let connection: Connection;
@@ -32,13 +32,13 @@ describe('Balance Sheet Controller', () => {
   const assertTopicWeight = (
     shortName: string,
     expectedWeight: number,
-    rating: Rating
+    ratings: TopicOrAspectResponseDTO[]
   ) => {
-    const topic: Topic | undefined = rating.topics.find(
-      (t: Topic) => t.shortName === shortName
+    const topic = ratings.find(
+      (t: TopicOrAspectResponseDTO) => t.shortName === shortName
     );
     expect(topic).toBeDefined();
-    expect((topic as Topic).weight).toBe(expectedWeight);
+    expect(topic && topic.weight).toBe(expectedWeight);
   };
 
   beforeAll(async () => {
@@ -77,10 +77,9 @@ describe('Balance Sheet Controller', () => {
     Assertions.rmIdFieldsOfCompanyFacts(companyFacts);
     expect(response.body.companyFacts).toMatchObject(companyFacts);
     expect(
-      response.body.rating.topics.reduce(
-        (sum: number, current: Topic) => sum + current.maxPoints,
-        0
-      )
+      response.body.ratings
+        .filter((r: TopicOrAspectResponseDTO) => r.shortName.length === 2)
+        .reduce((sum: number, current: Topic) => sum + current.maxPoints, 0)
     ).toBeCloseTo(999.9999999999998);
     const foundBalanceSheet = await balaneSheetRepository.findOne({
       id: response.body.id,
@@ -100,10 +99,9 @@ describe('Balance Sheet Controller', () => {
     Assertions.rmIdFieldsOfCompanyFacts(companyFacts);
     expect(response.body.companyFacts).toMatchObject(companyFacts);
     expect(
-      response.body.rating.topics.reduce(
-        (sum: number, current: Topic) => sum + current.maxPoints,
-        0
-      )
+      response.body.ratings
+        .filter((r: TopicOrAspectResponseDTO) => r.shortName.length === 2)
+        .reduce((sum: number, current: Topic) => sum + current.maxPoints, 0)
     ).toBeCloseTo(999.9999999999998);
     // Save flag is false such that balance sheet should not be saved
     const foundBalanceSheet = await balaneSheetRepository.findOne({
@@ -126,7 +124,7 @@ describe('Balance Sheet Controller', () => {
       .set(tokenHeader.key, tokenHeader.value)
       .send(balanceSheetJson);
     expect(response.status).toEqual(200);
-    assertTopicWeight('B1', 2, response.body.rating as Rating);
+    assertTopicWeight('B1', 2, response.body.ratings);
   });
 
   it('creates BalanceSheet where B2 weight is high', async () => {
@@ -138,7 +136,7 @@ describe('Balance Sheet Controller', () => {
       .set(tokenHeader.key, tokenHeader.value)
       .send(balanceSheetJson);
     expect(response.status).toEqual(200);
-    assertTopicWeight('B2', 1.5, response.body.rating as Rating);
+    assertTopicWeight('B2', 1.5, response.body.ratings);
   });
 
   it('creates BalanceSheet where B4 weight is 0.5', async () => {
@@ -149,7 +147,7 @@ describe('Balance Sheet Controller', () => {
       .set(tokenHeader.key, tokenHeader.value)
       .send(balanceSheetJson);
     expect(response.status).toEqual(200);
-    assertTopicWeight('B4', 0.5, response.body.rating as Rating);
+    assertTopicWeight('B4', 0.5, response.body.ratings);
   });
 
   it('creates BalanceSheet where B4 weight is 1', async () => {
@@ -160,7 +158,7 @@ describe('Balance Sheet Controller', () => {
       .set(tokenHeader.key, tokenHeader.value)
       .send(balanceSheetJson);
     expect(response.status).toEqual(200);
-    assertTopicWeight('B4', 1, response.body.rating as Rating);
+    assertTopicWeight('B4', 1, response.body.ratings);
   });
 
   it('success on missing properties in company facts', async () => {
