@@ -18,6 +18,10 @@ import { EmployeesFraction } from '../../../src/entities/employeesFraction';
 import { TokenProvider } from '../../TokenProvider';
 import supertest = require('supertest');
 import { CORRELATION_HEADER_NAME } from '../../../src/middleware/correlation.id.middleware';
+import {
+  BALANCE_SHEET_RELATIONS,
+  BalanceSheet,
+} from '../../../src/entities/balanceSheet';
 
 describe('Balance Sheet Controller', () => {
   let connection: Connection;
@@ -74,6 +78,13 @@ describe('Balance Sheet Controller', () => {
       .set(tokenHeader.key, tokenHeader.value)
       .send(balanceSheetJson);
 
+    const balanceSheet = await connection
+      .getRepository(BalanceSheet)
+      .findOneOrFail(postResponse.body.id, {
+        relations: BALANCE_SHEET_RELATIONS,
+      });
+    const rating = balanceSheet.rating;
+
     const response = await testApp
       .delete(`${endpointPath}/${postResponse.body.id}`)
       .set(tokenHeader.key, tokenHeader.value)
@@ -88,20 +99,17 @@ describe('Balance Sheet Controller', () => {
 
     // Test if all relations marked with cascade true are deleted as well
     const expectZeroCount = 0;
+
     // Rating
     expect(
-      await connection
-        .getRepository(Rating)
-        .count({ id: postResponse.body.rating.id })
+      await connection.getRepository(Rating).count({ id: rating.id })
     ).toBe(expectZeroCount);
     // Topics
     expect(
-      await connection
-        .getRepository(Topic)
-        .count({ rating: postResponse.body.rating })
+      await connection.getRepository(Topic).count({ rating: rating })
     ).toBe(expectZeroCount);
     // Aspects
-    for (const topic of postResponse.body.rating.topics) {
+    for (const topic of rating.topics) {
       expect(
         await connection.getRepository(Aspect).count({ topic: topic })
       ).toBe(expectZeroCount);

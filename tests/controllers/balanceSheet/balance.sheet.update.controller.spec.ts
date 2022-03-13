@@ -171,10 +171,9 @@ describe('Update endpoint of Balance Sheet Controller', () => {
   }
 
   function findAspect(shortName: string, response: any): Topic | undefined {
-    const shortNameTopic = shortName.split('.')[0];
-    return response.body.rating.topics
-      .find((t: { shortName: string }) => t.shortName === shortNameTopic)
-      .aspects.find((a: { shortName: string }) => a.shortName === shortName);
+    return response.body.ratings.find(
+      (r: { shortName: string }) => r.shortName === shortName
+    );
   }
 
   describe('block access to balance sheet ', () => {

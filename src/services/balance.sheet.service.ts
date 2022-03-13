@@ -154,15 +154,8 @@ export class BalanceSheetService {
         );
         await AccessCheckerService.check(req, balanceSheet, entityManager);
         SortService.sortArraysOfBalanceSheet(balanceSheet);
-        const format = req.query.responseFormat
-          ? (req.query.responseFormat as string)
-          : 'long';
         res.json(
-          BalanceSheetDTOResponse.fromBalanceSheet(
-            balanceSheet,
-            language,
-            format
-          )
+          BalanceSheetDTOResponse.fromBalanceSheet(balanceSheet, language)
         );
       })
       .catch((error) => {
