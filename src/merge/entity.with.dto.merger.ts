@@ -40,7 +40,7 @@ export class EntityWithDtoMerger {
         language
       );
     }
-    if (balanceSheetDTOUpdate.ratings) {
+    if (balanceSheetDTOUpdate.ratings.length > 0) {
       this.ratingWithDtoMerger.mergeRatings(
         balanceSheet.ratings,
         balanceSheetDTOUpdate.ratings,

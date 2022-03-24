@@ -64,14 +64,12 @@ export class BalanceSheet {
   }
 
   public getTopics(): Rating[] {
-    return this.ratings.filter((rating) => rating.shortName.length === 2);
+    return this.ratings.filter((rating) => rating.isTopic());
   }
 
   public getAspectsOfTopic(shortNameTopic: string): Rating[] {
-    return this.ratings.filter(
-      (rating) =>
-        rating.shortName.length > 2 &&
-        rating.shortName.startsWith(shortNameTopic)
+    return this.ratings.filter((rating) =>
+      rating.isAspectOfTopic(shortNameTopic)
     );
   }
 

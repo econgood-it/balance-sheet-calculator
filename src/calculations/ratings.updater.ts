@@ -1,8 +1,8 @@
 import { StakeholderWeightCalculator } from './stakeholder.weight.calculator';
-import { Rating } from '../entities/rating';
 import { CalcResults } from './calculator';
 import { TopicWeightCalculator } from './topic.weight.calculator';
 import { BalanceSheet } from '../entities/balanceSheet';
+import { Rating } from '../entities/rating';
 
 export class RatingsUpdater {
   private stakeholderWeightCalculator: StakeholderWeightCalculator =
@@ -55,7 +55,7 @@ export class RatingsUpdater {
         (sum, current) => sum + current.points,
         0
       );
-      ratings.push({ ...topic }, ...updatedAspects);
+      ratings.push(topic, ...updatedAspects);
     }
     return new BalanceSheet(
       balanceSheet.id,
@@ -71,11 +71,17 @@ export class RatingsUpdater {
     return aspects
       .filter((r) => r.isPositive === false)
       .map((a) => {
-        return {
-          ...a,
-          maxPoints: (-200 * topic.maxPoints) / 50,
-          points: (a.estimations * topic.maxPoints) / 50,
-        };
+        return new Rating(
+          a.id,
+          a.shortName,
+          a.name,
+          a.estimations,
+          (a.estimations * topic.maxPoints) / 50,
+          (-200 * topic.maxPoints) / 50,
+          a.weight,
+          a.isWeightSelectedByUser,
+          a.isPositive
+        );
       });
   }
 
@@ -90,11 +96,17 @@ export class RatingsUpdater {
         sumOfAspectWeights > 0
           ? (topic.maxPoints * a.weight) / sumOfAspectWeights
           : 0;
-      return {
-        ...a,
+      return new Rating(
+        a.id,
+        a.shortName,
+        a.name,
+        a.estimations,
+        (maxPoints * a.estimations) / 10.0,
         maxPoints,
-        points: (maxPoints * a.estimations) / 10.0,
-      };
+        a.weight,
+        a.isWeightSelectedByUser,
+        a.isPositive
+      );
     });
   }
 }

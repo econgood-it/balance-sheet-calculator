@@ -54,4 +54,16 @@ export class Rating {
     this.isWeightSelectedByUser = isWeightSelectedByUser;
     this.isPositive = isPositive;
   }
+
+  public isTopic(): boolean {
+    return this.shortName.length === 2;
+  }
+
+  public isAspectOfTopic(shortNameTopic: string): boolean {
+    return this.isAspect() && this.shortName.startsWith(shortNameTopic);
+  }
+
+  public isAspect(): boolean {
+    return this.shortName.length > 2;
+  }
 }
