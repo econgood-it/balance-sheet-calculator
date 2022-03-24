@@ -6,7 +6,6 @@ import { Region } from '../entities/region';
 import { IndustryProvider } from '../providers/industry.provider';
 import { CalcResults, Calculator } from '../calculations/calculator';
 import { RatingsUpdater } from '../calculations/ratings.updater';
-import { SortService } from './sort.service';
 
 export class CalculationService {
   public static async calculate(
@@ -38,7 +37,7 @@ export class CalculationService {
         .getRepository(BalanceSheet)
         .save(updatedBalanceSheet);
     }
-    SortService.sortArraysOfBalanceSheet(updatedBalanceSheet);
+    updatedBalanceSheet.sortRatings();
     return updatedBalanceSheet;
   }
 }

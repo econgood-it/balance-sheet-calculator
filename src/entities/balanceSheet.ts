@@ -74,4 +74,8 @@ export class BalanceSheet {
         rating.shortName.startsWith(shortNameTopic)
     );
   }
+
+  public sortRatings(): void {
+    this.ratings.sort((r1, r2) => r1.shortName.localeCompare(r2.shortName));
+  }
 }

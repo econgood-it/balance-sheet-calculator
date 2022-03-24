@@ -18,7 +18,6 @@ import { parseLanguageParameter } from '../entities/Translations';
 import { handle } from '../exceptions/error.handler';
 import { User } from '../entities/user';
 import { AccessCheckerService } from './access.checker.service';
-import { SortService } from './sort.service';
 import { CalculationService } from './calculation.service';
 import UnauthorizedException from '../exceptions/unauthorized.exception';
 import { NoAccessError } from '../exceptions/no.access.error';
@@ -152,7 +151,7 @@ export class BalanceSheetService {
           }
         );
         await AccessCheckerService.check(req, balanceSheet, entityManager);
-        SortService.sortArraysOfBalanceSheet(balanceSheet);
+        balanceSheet.sortRatings();
         res.json(
           BalanceSheetDTOResponse.fromBalanceSheet(balanceSheet, language)
         );
@@ -180,7 +179,7 @@ export class BalanceSheetService {
           }
         );
         await AccessCheckerService.check(req, balanceSheet, entityManager);
-        SortService.sortArraysOfBalanceSheet(balanceSheet);
+        balanceSheet.sortRatings();
         res.json(MatrixDTO.fromBalanceSheet(balanceSheet, language));
       })
       .catch((error) => {
