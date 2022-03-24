@@ -13,16 +13,17 @@ export class CreateRegionEntries1596038818262 implements MigrationInterface {
     );
     const regions: Region[] = await regionReader.read(
       pathToCsv,
-      [6, 226],
+      [6, 227],
       BalanceSheetVersion.v5_0_4
     );
     for (const region of regions) {
-      const insertQuery = `INSERT INTO "region" ("countryCode", "pppIndex","countryName","ituc") VALUES ($1, $2, $3, $4);`;
+      const insertQuery = `INSERT INTO "region" ("countryCode", "pppIndex","countryName","ituc", "validFromVersion") VALUES ($1, $2, $3, $4, $5);`;
       await queryRunner.query(insertQuery, [
         region.countryCode,
         region.pppIndex,
         region.countryName,
         region.ituc,
+        region.validFromVersion,
       ]);
     }
   }

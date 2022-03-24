@@ -61,7 +61,7 @@ describe('Balance Sheet Controller', () => {
       .send(balanceSheetJson);
   };
 
-  it('get balance sheet by id where company facts fields are empty', async () => {
+  it.only('get balance sheet by id where company facts fields are empty', async () => {
     const testApp = supertest(app);
     const postResponse = await createBalanceSheet(token);
     const response = await testApp
