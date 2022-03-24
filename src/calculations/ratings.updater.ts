@@ -1,10 +1,10 @@
 import { StakeholderWeightCalculator } from './stakeholder.weight.calculator';
-import { Topic } from '../entities/topic';
+import { Rating } from '../entities/rating';
 import { CalcResults } from './calculator';
 import { TopicWeightCalculator } from './topic.weight.calculator';
-import { CompanyFacts } from '../entities/companyFacts';
+import { BalanceSheet } from '../entities/balanceSheet';
 
-export class TopicUpdater {
+export class RatingsUpdater {
   private stakeholderWeightCalculator: StakeholderWeightCalculator =
     new StakeholderWeightCalculator();
 
@@ -12,12 +12,13 @@ export class TopicUpdater {
     new TopicWeightCalculator();
 
   public async update(
-    topics: Topic[],
-    companyFacts: CompanyFacts,
+    balanceSheet: BalanceSheet,
     calcResults: CalcResults
-  ): Promise<void> {
+  ): Promise<BalanceSheet> {
     let sumOfTopicWeights = 0;
     // Compute sum of topic weights
+    const topics = balanceSheet.getTopics();
+    const ratings: Rating[] = [];
     for (const topic of topics) {
       const stakeholderName: string = topic.shortName.substring(0, 1);
       const stakeholderWeight: number =
@@ -30,7 +31,7 @@ export class TopicUpdater {
         : await this.topicWeightCalculator.calcTopicWeight(
             topic.shortName,
             calcResults,
-            companyFacts
+            balanceSheet.companyFacts
           );
       sumOfTopicWeights += stakeholderWeight * topic.weight;
     }
@@ -45,34 +46,55 @@ export class TopicUpdater {
         );
       topic.maxPoints =
         ((stakeholderWeight * topic.weight) / sumOfTopicWeights) * 1000;
-      this.updatePositiveAspects(topic);
-      this.updateNegativeAspects(topic);
-      topic.points = topic.aspects.reduce(
+      const aspects = balanceSheet.getAspectsOfTopic(topic.shortName);
+      const updatedAspects = [
+        ...this.updatePositiveAspects(topic, aspects),
+        ...this.updateNegativeAspects(topic, aspects),
+      ];
+      topic.points = updatedAspects.reduce(
         (sum, current) => sum + current.points,
         0
       );
+      ratings.push({ ...topic }, ...updatedAspects);
     }
+    return new BalanceSheet(
+      balanceSheet.id,
+      balanceSheet.type,
+      balanceSheet.version,
+      balanceSheet.companyFacts,
+      ratings,
+      balanceSheet.users
+    );
   }
 
-  private updateNegativeAspects(topic: Topic) {
-    for (const aspect of topic.aspects.filter((t) => t.isPositive === false)) {
-      aspect.maxPoints = (-200 * topic.maxPoints) / 50;
-      aspect.points = (aspect.estimations * topic.maxPoints) / 50;
-    }
+  private updateNegativeAspects(topic: Rating, aspects: Rating[]): Rating[] {
+    return aspects
+      .filter((r) => r.isPositive === false)
+      .map((a) => {
+        return {
+          ...a,
+          maxPoints: (-200 * topic.maxPoints) / 50,
+          points: (a.estimations * topic.maxPoints) / 50,
+        };
+      });
   }
 
-  private updatePositiveAspects(topic: Topic) {
+  private updatePositiveAspects(topic: Rating, aspects: Rating[]): Rating[] {
     let sumOfAspectWeights = 0;
-    const positiveAspects = topic.aspects.filter((t) => t.isPositive === true);
+    const positiveAspects = aspects.filter((t) => t.isPositive === true);
     for (const aspect of positiveAspects) {
       sumOfAspectWeights += aspect.weight;
     }
-    for (const aspect of positiveAspects) {
-      aspect.maxPoints =
+    return positiveAspects.map((a) => {
+      const maxPoints =
         sumOfAspectWeights > 0
-          ? (topic.maxPoints * aspect.weight) / sumOfAspectWeights
+          ? (topic.maxPoints * a.weight) / sumOfAspectWeights
           : 0;
-      aspect.points = (aspect.maxPoints * aspect.estimations) / 10.0;
-    }
+      return {
+        ...a,
+        maxPoints,
+        points: (maxPoints * a.estimations) / 10.0,
+      };
+    });
   }
 }

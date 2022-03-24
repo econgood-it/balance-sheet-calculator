@@ -15,7 +15,6 @@ export class CreateCompanyFactsTable1594223075366
             "turnover" double precision NOT NULL, 
             "totalAssets" double precision NOT NULL, 
             "financialAssetsAndCashBalance" double precision NOT NULL, 
-            "totalSales" double precision NOT NULL, 
             "numberOfEmployees" double precision NOT NULL,
             "hasCanteen" boolean NOT NULL,
             "averageJourneyToWorkForStaffInKm" double precision NOT NULL, 

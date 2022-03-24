@@ -1,7 +1,5 @@
 import { Workbook, Row, Worksheet } from 'exceljs';
 import { Rating } from '../entities/rating';
-import { Topic } from '../entities/topic';
-import { Aspect } from '../entities/aspect';
 
 interface Headers {
   shortNameIndex: number;
@@ -14,7 +12,7 @@ interface Headers {
   isPositive: number;
 }
 
-export class RatingReader {
+export class RatingsReader {
   private static readonly DEFAULT_HEADERS: Headers = {
     shortNameIndex: 1,
     nameIndex: 2,
@@ -26,33 +24,31 @@ export class RatingReader {
     isPositive: 8,
   };
 
-  public async readRatingFromCsv(
+  public async readRatingsFromCsv(
     path: string,
-    headers: Headers = RatingReader.DEFAULT_HEADERS
-  ): Promise<Rating> {
+    headers: Headers = RatingsReader.DEFAULT_HEADERS
+  ): Promise<Rating[]> {
     const wb: Workbook = new Workbook();
     const sheet: Worksheet = await wb.csv.readFile(path, {
       parserOptions: { delimiter: ',' },
     });
 
-    const topics: Topic[] = [];
+    const ratings: Rating[] = [];
     let rowIndex = 2;
     while (true) {
       const row: Row = sheet.getRow(rowIndex);
       const shortName = row.getCell(headers.shortNameIndex).text;
       if (shortName === '') {
-        return new Rating(undefined, topics);
+        return ratings;
       }
-      if (shortName.length === 2) {
-        topics.push(this.readTopic(row, headers));
-      } else if (shortName.length > 2) {
-        topics[topics.length - 1].aspects.push(this.readAspect(row, headers));
+      if (shortName.length >= 2) {
+        ratings.push(this.readRating(row, headers));
       }
       rowIndex += 1;
     }
   }
 
-  private readTopic(row: Row, headers: Headers): Topic {
+  private readRating(row: Row, headers: Headers): Rating {
     const shortName = row.getCell(headers.shortNameIndex).text;
     const name = row.getCell(headers.nameIndex).text;
     const estimations = Number(row.getCell(headers.estimationIndex).text);
@@ -60,29 +56,8 @@ export class RatingReader {
     const isWeightSelectedByUser =
       row.getCell(headers.isWeightSelectedByUserIndex).text.toLowerCase() ===
       'true';
-    return new Topic(
-      undefined,
-      shortName,
-      name,
-      estimations,
-      Number(row.getCell(headers.pointsIndex).text),
-      Number(row.getCell(headers.maxPointsIndex).text),
-      Number(weightAsStr),
-      isWeightSelectedByUser,
-      []
-    );
-  }
-
-  private readAspect(row: Row, headers: Headers): Aspect {
-    const shortName = row.getCell(headers.shortNameIndex).text;
-    const name = row.getCell(headers.nameIndex).text;
-    const estimations = Number(row.getCell(headers.estimationIndex).text);
     const isPositive = this.stringToBool(row.getCell(headers.isPositive).text);
-    const weightAsStr = row.getCell(headers.weightIndex).text;
-    const isWeightSelectedByUser = this.stringToBool(
-      row.getCell(headers.isWeightSelectedByUserIndex).text
-    );
-    return new Aspect(
+    return new Rating(
       undefined,
       shortName,
       name,

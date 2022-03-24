@@ -4,8 +4,8 @@ import {
   BalanceSheetVersion,
   Role,
 } from '../../../src/entities/enums';
-import { RatingFactory } from '../../../src/factories/rating.factory';
-import { modifyAspect, modifyTopic } from '../../rating.modification.utils';
+import { RatingsFactory } from '../../../src/factories/ratings.factory';
+import { modifyRating } from '../../rating.modification.utils';
 import { toJsObject } from '../../to.js.object';
 import { User } from '../../../src/entities/user';
 
@@ -29,17 +29,17 @@ describe('BalanceSheetCreateDTO', () => {
     );
     const result = await balanceSheetDTOCreate.toBalanceSheet('en', users);
 
-    const expectedRating = await RatingFactory.createDefaultRating(
+    const expectedRatings = await RatingsFactory.createDefaultRatings(
       json.type,
       json.version
     );
 
-    modifyAspect(expectedRating, 'A1.1', 5, 1, true);
-    modifyAspect(expectedRating, 'D1.2', 3, 0.5, true);
-    modifyAspect(expectedRating, 'E2.1', 3, undefined, false);
-    modifyTopic(expectedRating, 'D1', undefined, 1.5, true);
+    modifyRating(expectedRatings, 'A1.1', 5, 1, true);
+    modifyRating(expectedRatings, 'D1.2', 3, 0.5, true);
+    modifyRating(expectedRatings, 'E2.1', 3, undefined, false);
+    modifyRating(expectedRatings, 'D1', undefined, 1.5, true);
 
-    expect(result.rating).toMatchObject(toJsObject(expectedRating));
+    expect(result.ratings).toMatchObject(toJsObject(expectedRatings));
   });
 
   it('is created from json with default rating entity', async () => {
@@ -52,10 +52,10 @@ describe('BalanceSheetCreateDTO', () => {
     );
     const result = await balanceSheetDTOCreate.toBalanceSheet('en', users);
 
-    const expectedRating = await RatingFactory.createDefaultRating(
+    const expectedRatings = await RatingsFactory.createDefaultRatings(
       json.type,
       json.version
     );
-    expect(result.rating).toMatchObject(toJsObject(expectedRating));
+    expect(result.ratings).toMatchObject(toJsObject(expectedRatings));
   });
 });

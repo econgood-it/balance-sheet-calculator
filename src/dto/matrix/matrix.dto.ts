@@ -1,18 +1,18 @@
-import { MatrixTopicDTO } from './matrix.topic.dto';
-import { Rating } from '../../entities/rating';
+import { MatrixRatingDto } from './matrix.rating.dto';
 import { Translations } from '../../entities/Translations';
+import { BalanceSheet } from '../../entities/balanceSheet';
 
 export class MatrixDTO {
-  constructor(public readonly topics: MatrixTopicDTO[]) {}
+  constructor(public readonly ratings: MatrixRatingDto[]) {}
 
-  public static fromRating(
-    rating: Rating,
+  public static fromBalanceSheet(
+    balanceSheet: BalanceSheet,
     language: keyof Translations
   ): MatrixDTO {
-    const topics: MatrixTopicDTO[] = [];
-    for (const topic of rating.topics) {
-      topics.push(MatrixTopicDTO.fromTopic(topic, language));
-    }
-    return new MatrixDTO(topics);
+    return new MatrixDTO(
+      balanceSheet
+        .getTopics()
+        .map((r) => MatrixRatingDto.fromRating(r, language))
+    );
   }
 }

@@ -13,7 +13,6 @@ import { validateOrReject } from 'class-validator';
 import { IndustrySector } from '../entities/industry.sector';
 import { MatrixDTO } from '../dto/matrix/matrix.dto';
 import { CompanyFacts } from '../entities/companyFacts';
-import { Rating } from '../entities/rating';
 import { BalanceSheetDTOResponse } from '../dto/response/balance.sheet.response.dto';
 import { parseLanguageParameter } from '../entities/Translations';
 import { handle } from '../exceptions/error.handler';
@@ -182,7 +181,7 @@ export class BalanceSheetService {
         );
         await AccessCheckerService.check(req, balanceSheet, entityManager);
         SortService.sortArraysOfBalanceSheet(balanceSheet);
-        res.json(MatrixDTO.fromRating(balanceSheet.rating, language));
+        res.json(MatrixDTO.fromBalanceSheet(balanceSheet, language));
       })
       .catch((error) => {
         handle(error, next);
@@ -201,7 +200,6 @@ export class BalanceSheetService {
           entityManager.getRepository(BalanceSheet);
         const companyFactsRepository =
           entityManager.getRepository(CompanyFacts);
-        const ratingRepository = entityManager.getRepository(Rating);
         const balanceSheet = await balanceSheetRepository.findOneOrFail(
           balanceSheetId,
           {
@@ -210,7 +208,6 @@ export class BalanceSheetService {
         );
         await AccessCheckerService.check(req, balanceSheet, entityManager);
         await companyFactsRepository.remove(balanceSheet.companyFacts);
-        await ratingRepository.remove(balanceSheet.rating);
         await balanceSheetRepository.remove(balanceSheet);
 
         res.json({

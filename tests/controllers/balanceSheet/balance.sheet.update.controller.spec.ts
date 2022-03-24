@@ -9,7 +9,7 @@ import {
   BalanceSheetVersion,
 } from '../../../src/entities/enums';
 import { CompanyFacts1Json } from '../../testData/company.facts';
-import { Topic } from '../../../src/entities/topic';
+import { Rating } from '../../../src/entities/rating';
 import { TokenProvider } from '../../TokenProvider';
 import { CORRELATION_HEADER_NAME } from '../../../src/middleware/correlation.id.middleware';
 
@@ -135,23 +135,19 @@ describe('Update endpoint of Balance Sheet Controller', () => {
         companyFacts: CompanyFacts1Json,
       });
     const balanceSheetUpdate = {
-      rating: {
-        topics: [
-          {
-            shortName: 'A1',
-            aspects: [
-              {
-                shortName: 'A1.1',
-                estimations: 6,
-              },
-              {
-                shortName: 'A1.2',
-                estimations: -200,
-              },
-            ],
-          },
-        ],
-      },
+      ratings: [
+        {
+          shortName: 'A1',
+        },
+        {
+          shortName: 'A1.1',
+          estimations: 6,
+        },
+        {
+          shortName: 'A1.2',
+          estimations: -200,
+        },
+      ],
     };
     response = await testApp
       .patch(`${endpointPath}/${response.body.id}`)
@@ -170,7 +166,7 @@ describe('Update endpoint of Balance Sheet Controller', () => {
     });
   }
 
-  function findAspect(shortName: string, response: any): Topic | undefined {
+  function findAspect(shortName: string, response: any): Rating | undefined {
     return response.body.ratings.find(
       (r: { shortName: string }) => r.shortName === shortName
     );

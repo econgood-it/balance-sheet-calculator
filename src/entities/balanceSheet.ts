@@ -8,19 +8,18 @@ import {
   Column,
   ManyToMany,
   JoinTable,
+  OneToMany,
 } from 'typeorm';
 import { BalanceSheetType, BalanceSheetVersion } from './enums';
 import { User } from './user';
 
 export const BALANCE_SHEET_RELATIONS = [
-  'rating',
   'companyFacts',
   'companyFacts.supplyFractions',
   'companyFacts.employeesFractions',
   'companyFacts.industrySectors',
   'companyFacts.mainOriginOfOtherSuppliers',
-  'rating.topics',
-  'rating.topics.aspects',
+  'ratings',
   'users',
 ];
 
@@ -39,9 +38,10 @@ export class BalanceSheet {
   @JoinColumn()
   public readonly companyFacts: CompanyFacts;
 
-  @OneToOne((type) => Rating, { cascade: true })
-  @JoinColumn()
-  public readonly rating: Rating;
+  @OneToMany((type) => Rating, (rating) => rating.balanceSheet, {
+    cascade: true,
+  })
+  public readonly ratings: Rating[];
 
   @ManyToMany((type) => User, (user) => user.balanceSheets)
   @JoinTable({ name: 'balance_sheets_users' })
@@ -52,14 +52,26 @@ export class BalanceSheet {
     type: BalanceSheetType,
     version: BalanceSheetVersion,
     companyFacts: CompanyFacts,
-    rating: Rating,
+    ratings: Rating[],
     users: User[]
   ) {
     this.id = id;
     this.type = type;
     this.version = version;
     this.companyFacts = companyFacts;
-    this.rating = rating;
+    this.ratings = ratings;
     this.users = users;
+  }
+
+  public getTopics(): Rating[] {
+    return this.ratings.filter((rating) => rating.shortName.length === 2);
+  }
+
+  public getAspectsOfTopic(shortNameTopic: string): Rating[] {
+    return this.ratings.filter(
+      (rating) =>
+        rating.shortName.length > 2 &&
+        rating.shortName.startsWith(shortNameTopic)
+    );
   }
 }

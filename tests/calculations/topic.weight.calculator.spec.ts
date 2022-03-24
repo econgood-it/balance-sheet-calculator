@@ -5,7 +5,7 @@ import { EmptyCompanyFacts } from '../testData/company.facts';
 import { CompanySize } from '../../src/calculations/employees.calc';
 import { none, some } from '../../src/calculations/option';
 
-describe('Topic Weight Calculator', () => {
+describe('Rating Weight Calculator', () => {
   let calcResults: CalcResults;
   let companyFacts: CompanyFacts;
   const topicWeihgtCalculator = new TopicWeightCalculator();

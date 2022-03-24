@@ -1,6 +1,5 @@
-import { Topic } from '../../../src/entities/topic';
-import { TopicOrAspectResponseDTO } from '../../../src/dto/response/topic.or.aspect.dto';
-import { Aspect } from '../../../src/entities/aspect';
+import { Rating } from '../../../src/entities/rating';
+import { RatingResponseDTO } from '../../../src/dto/response/rating.response.dto';
 
 jest.mock('../../../src/i18n', () => ({
   init: () => {},
@@ -8,9 +7,9 @@ jest.mock('../../../src/i18n', () => ({
   t: (k: string) => 'Menschenwürde in der Zulieferkette',
 }));
 
-describe('TopicsOrAspectsResponseDTO', () => {
+describe('RatingResponseDTO', () => {
   it('is created from topic', async () => {
-    const topic = new Topic(
+    const rating = new Rating(
       undefined,
       'A1',
       'v5:compact.A1',
@@ -19,12 +18,9 @@ describe('TopicsOrAspectsResponseDTO', () => {
       51,
       5,
       true,
-      []
+      true
     );
-    const topicOrAspectResponseDTO = TopicOrAspectResponseDTO.fromTopicOrAspect(
-      topic,
-      'de'
-    );
+    const topicOrAspectResponseDTO = RatingResponseDTO.fromRating(rating, 'de');
     expect(topicOrAspectResponseDTO).toBeDefined();
     expect(topicOrAspectResponseDTO).toMatchObject({
       shortName: 'A1',
@@ -33,7 +29,7 @@ describe('TopicsOrAspectsResponseDTO', () => {
   });
 
   it('is created from aspect', async () => {
-    const aspect = new Aspect(
+    const rating = new Rating(
       undefined,
       'A1.1',
       'v5:compact.A1',
@@ -44,10 +40,7 @@ describe('TopicsOrAspectsResponseDTO', () => {
       true,
       true
     );
-    const topicOrAspectResponseDTO = TopicOrAspectResponseDTO.fromTopicOrAspect(
-      aspect,
-      'de'
-    );
+    const topicOrAspectResponseDTO = RatingResponseDTO.fromRating(rating, 'de');
     expect(topicOrAspectResponseDTO).toBeDefined();
     expect(topicOrAspectResponseDTO).toMatchObject({
       shortName: 'A1.1',
