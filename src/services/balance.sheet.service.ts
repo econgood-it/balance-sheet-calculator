@@ -13,13 +13,11 @@ import { validateOrReject } from 'class-validator';
 import { IndustrySector } from '../entities/industry.sector';
 import { MatrixDTO } from '../dto/matrix/matrix.dto';
 import { CompanyFacts } from '../entities/companyFacts';
-import { Rating } from '../entities/rating';
 import { BalanceSheetDTOResponse } from '../dto/response/balance.sheet.response.dto';
 import { parseLanguageParameter } from '../entities/Translations';
 import { handle } from '../exceptions/error.handler';
 import { User } from '../entities/user';
 import { AccessCheckerService } from './access.checker.service';
-import { SortService } from './sort.service';
 import { CalculationService } from './calculation.service';
 import UnauthorizedException from '../exceptions/unauthorized.exception';
 import { NoAccessError } from '../exceptions/no.access.error';
@@ -153,7 +151,7 @@ export class BalanceSheetService {
           }
         );
         await AccessCheckerService.check(req, balanceSheet, entityManager);
-        SortService.sortArraysOfBalanceSheet(balanceSheet);
+        balanceSheet.sortRatings();
         res.json(
           BalanceSheetDTOResponse.fromBalanceSheet(balanceSheet, language)
         );
@@ -181,8 +179,8 @@ export class BalanceSheetService {
           }
         );
         await AccessCheckerService.check(req, balanceSheet, entityManager);
-        SortService.sortArraysOfBalanceSheet(balanceSheet);
-        res.json(MatrixDTO.fromRating(balanceSheet.rating, language));
+        balanceSheet.sortRatings();
+        res.json(MatrixDTO.fromBalanceSheet(balanceSheet, language));
       })
       .catch((error) => {
         handle(error, next);
@@ -201,7 +199,6 @@ export class BalanceSheetService {
           entityManager.getRepository(BalanceSheet);
         const companyFactsRepository =
           entityManager.getRepository(CompanyFacts);
-        const ratingRepository = entityManager.getRepository(Rating);
         const balanceSheet = await balanceSheetRepository.findOneOrFail(
           balanceSheetId,
           {
@@ -210,7 +207,6 @@ export class BalanceSheetService {
         );
         await AccessCheckerService.check(req, balanceSheet, entityManager);
         await companyFactsRepository.remove(balanceSheet.companyFacts);
-        await ratingRepository.remove(balanceSheet.rating);
         await balanceSheetRepository.remove(balanceSheet);
 
         res.json({

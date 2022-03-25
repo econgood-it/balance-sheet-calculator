@@ -9,14 +9,14 @@ import {
   BalanceSheetVersion,
 } from '../../../src/entities/enums';
 import { Assertions } from '../../Assertions';
-import { Topic } from '../../../src/entities/topic';
+import { Rating } from '../../../src/entities/rating';
 import { FinanceCalc } from '../../../src/calculations/finance.calc';
 import { CompanyFacts } from '../../../src/entities/companyFacts';
 import { EmptyCompanyFactsJson } from '../../testData/company.facts';
 import { TokenProvider } from '../../TokenProvider';
 import { BalanceSheet } from '../../../src/entities/balanceSheet';
 import { CORRELATION_HEADER_NAME } from '../../../src/middleware/correlation.id.middleware';
-import { TopicOrAspectResponseDTO } from '../../../src/dto/response/topic.or.aspect.dto';
+import { RatingResponseDTO } from '../../../src/dto/response/rating.response.dto';
 
 describe('Balance Sheet Controller', () => {
   let connection: Connection;
@@ -32,10 +32,10 @@ describe('Balance Sheet Controller', () => {
   const assertTopicWeight = (
     shortName: string,
     expectedWeight: number,
-    ratings: TopicOrAspectResponseDTO[]
+    ratings: RatingResponseDTO[]
   ) => {
     const topic = ratings.find(
-      (t: TopicOrAspectResponseDTO) => t.shortName === shortName
+      (t: RatingResponseDTO) => t.shortName === shortName
     );
     expect(topic).toBeDefined();
     expect(topic && topic.weight).toBe(expectedWeight);
@@ -78,8 +78,8 @@ describe('Balance Sheet Controller', () => {
     expect(response.body.companyFacts).toMatchObject(companyFacts);
     expect(
       response.body.ratings
-        .filter((r: TopicOrAspectResponseDTO) => r.shortName.length === 2)
-        .reduce((sum: number, current: Topic) => sum + current.maxPoints, 0)
+        .filter((r: RatingResponseDTO) => r.shortName.length === 2)
+        .reduce((sum: number, current: Rating) => sum + current.maxPoints, 0)
     ).toBeCloseTo(999.9999999999998);
     const foundBalanceSheet = await balaneSheetRepository.findOne({
       id: response.body.id,
@@ -100,8 +100,8 @@ describe('Balance Sheet Controller', () => {
     expect(response.body.companyFacts).toMatchObject(companyFacts);
     expect(
       response.body.ratings
-        .filter((r: TopicOrAspectResponseDTO) => r.shortName.length === 2)
-        .reduce((sum: number, current: Topic) => sum + current.maxPoints, 0)
+        .filter((r: RatingResponseDTO) => r.shortName.length === 2)
+        .reduce((sum: number, current: Rating) => sum + current.maxPoints, 0)
     ).toBeCloseTo(999.9999999999998);
     // Save flag is false such that balance sheet should not be saved
     const foundBalanceSheet = await balaneSheetRepository.findOne({

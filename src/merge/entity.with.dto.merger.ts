@@ -14,12 +14,14 @@ import {
   Translations,
   updateTranslationOfLanguage,
 } from '../entities/Translations';
-import { RatingWithDtoMerger } from './rating.with.dto.merger';
+import { RatingsWithDtoMerger } from './ratingsWithDtoMerger';
 import { mergeVal } from './merge.utils';
 import { computeCostsOfMainOriginOfOtherSuppliers } from '../entities/main.origin.of.other.suppliers';
 
 export class EntityWithDtoMerger {
-  private ratingWithDtoMerger: RatingWithDtoMerger = new RatingWithDtoMerger();
+  private ratingWithDtoMerger: RatingsWithDtoMerger =
+    new RatingsWithDtoMerger();
+
   public constructor(
     private supplyFractionRepository: Repository<SupplyFraction>,
     private employeesFractionRepository: Repository<EmployeesFraction>,
@@ -38,10 +40,10 @@ export class EntityWithDtoMerger {
         language
       );
     }
-    if (balanceSheetDTOUpdate.rating) {
-      this.ratingWithDtoMerger.mergeRating(
-        balanceSheet.rating,
-        balanceSheetDTOUpdate.rating,
+    if (balanceSheetDTOUpdate.ratings.length > 0) {
+      this.ratingWithDtoMerger.mergeRatings(
+        balanceSheet.ratings,
+        balanceSheetDTOUpdate.ratings,
         balanceSheet.type
       );
     }

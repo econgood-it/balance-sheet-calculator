@@ -1,9 +1,9 @@
-import { Topic } from '../../entities/topic';
+import { Rating } from '../../entities/rating';
 import { none, Option, some } from '../../calculations/option';
 import { roundWithPrecision } from '../../math';
 import { staticTranslate, Translations } from '../../entities/Translations';
 
-export class MatrixTopicDTO {
+export class MatrixRatingDto {
   constructor(
     public readonly shortName: string,
     public readonly name: string,
@@ -24,21 +24,24 @@ export class MatrixTopicDTO {
     return weight === 0;
   }
 
-  public static fromTopic(
-    topic: Topic,
+  public static fromRating(
+    rating: Rating,
     language: keyof Translations
-  ): MatrixTopicDTO {
-    const percentage = MatrixTopicDTO.percentage(topic.points, topic.maxPoints);
+  ): MatrixRatingDto {
+    const percentage = MatrixRatingDto.percentage(
+      rating.points,
+      rating.maxPoints
+    );
     const percentageReached = percentage.isPresent()
       ? percentage.get()
       : undefined;
-    return new MatrixTopicDTO(
-      topic.shortName,
-      staticTranslate(language, topic.name),
-      roundWithPrecision(topic.points),
-      roundWithPrecision(topic.maxPoints),
+    return new MatrixRatingDto(
+      rating.shortName,
+      staticTranslate(language, rating.name),
+      roundWithPrecision(rating.points),
+      roundWithPrecision(rating.maxPoints),
       percentageReached,
-      this.notApplicable(topic.weight)
+      this.notApplicable(rating.weight)
     );
   }
 }

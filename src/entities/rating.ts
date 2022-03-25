@@ -1,27 +1,69 @@
-import { Topic } from './topic';
-import { OneToMany, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { Aspect } from './aspect';
+import { PrimaryGeneratedColumn, Column, Entity, ManyToOne } from 'typeorm';
+import { BalanceSheet } from './balanceSheet';
 
 @Entity()
 export class Rating {
   @PrimaryGeneratedColumn()
   public readonly id: number | undefined;
 
-  @OneToMany((type) => Topic, (topic) => topic.rating, { cascade: true })
-  public readonly topics: Topic[];
+  @Column()
+  public readonly shortName: string;
 
-  public constructor(id: number | undefined, topics: Topic[]) {
-    this.topics = topics;
+  @Column()
+  public name: string;
+
+  @Column('double precision')
+  public estimations: number;
+
+  @Column('double precision')
+  public points: number = 0;
+
+  @Column('double precision')
+  public maxPoints: number = 0;
+
+  @Column('double precision')
+  public weight: number;
+
+  @Column('boolean')
+  public isWeightSelectedByUser: boolean;
+
+  @Column('boolean')
+  public isPositive: boolean;
+
+  @ManyToOne((type) => BalanceSheet, (balanceSheet) => balanceSheet.ratings)
+  public balanceSheet!: BalanceSheet;
+
+  public constructor(
+    id: number | undefined,
+    shortName: string,
+    name: string,
+    estimations: number,
+    points: number,
+    maxPoints: number,
+    weight: number,
+    isWeightSelectedByUser: boolean,
+    isPositive: boolean
+  ) {
+    this.id = id;
+    this.shortName = shortName;
+    this.name = name;
+    this.estimations = estimations;
+    this.points = points;
+    this.maxPoints = maxPoints;
+    this.weight = weight;
+    this.isWeightSelectedByUser = isWeightSelectedByUser;
+    this.isPositive = isPositive;
   }
 
-  public findAspect(shortName: string): Aspect | undefined {
-    const topic = this.findTopic(shortName.substring(0, 2));
-    return topic
-      ? topic.aspects.find((a) => a.shortName === shortName)
-      : undefined;
+  public isTopic(): boolean {
+    return this.shortName.length === 2;
   }
 
-  public findTopic(shortName: string): Topic | undefined {
-    return this.topics.find((t: Topic) => t.shortName === shortName);
+  public isAspectOfTopic(shortNameTopic: string): boolean {
+    return this.isAspect() && this.shortName.startsWith(shortNameTopic);
+  }
+
+  public isAspect(): boolean {
+    return this.shortName.length > 2;
   }
 }

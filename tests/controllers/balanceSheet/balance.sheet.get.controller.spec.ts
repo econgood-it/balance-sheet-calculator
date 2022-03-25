@@ -5,14 +5,14 @@ import {
   BalanceSheetType,
   BalanceSheetVersion,
 } from '../../../src/entities/enums';
-import { Topic } from '../../../src/entities/topic';
+import { Rating } from '../../../src/entities/rating';
 import { EmptyCompanyFactsJson } from '../../testData/company.facts';
 import { Connection } from 'typeorm';
 import { Application } from 'express';
 import { TokenProvider } from '../../TokenProvider';
 import supertest = require('supertest');
 import { CORRELATION_HEADER_NAME } from '../../../src/middleware/correlation.id.middleware';
-import { TopicOrAspectResponseDTO } from '../../../src/dto/response/topic.or.aspect.dto';
+import { RatingResponseDTO } from '../../../src/dto/response/rating.response.dto';
 
 describe('Balance Sheet Controller', () => {
   let connection: Connection;
@@ -61,7 +61,7 @@ describe('Balance Sheet Controller', () => {
       .send(balanceSheetJson);
   };
 
-  it('get balance sheet by id where company facts fields are empty', async () => {
+  it.only('get balance sheet by id where company facts fields are empty', async () => {
     const testApp = supertest(app);
     const postResponse = await createBalanceSheet(token);
     const response = await testApp
@@ -75,8 +75,8 @@ describe('Balance Sheet Controller', () => {
     expect(response.body.ratings).toMatchObject(postResponse.body.ratings);
     expect(
       response.body.ratings
-        .filter((r: TopicOrAspectResponseDTO) => r.shortName.length === 2)
-        .reduce((sum: number, current: Topic) => sum + current.maxPoints, 0)
+        .filter((r: RatingResponseDTO) => r.shortName.length === 2)
+        .reduce((sum: number, current: Rating) => sum + current.maxPoints, 0)
     ).toBeCloseTo(999.9999999999998);
   });
 
@@ -106,7 +106,7 @@ describe('Balance Sheet Controller', () => {
       .set(authHeaderKey, token)
       .send();
     expect(response.status).toEqual(200);
-    expect(response.body.topics).toHaveLength(20);
+    expect(response.body.ratings).toHaveLength(20);
   });
 
   it('get balance sheet in a short format', async () => {

@@ -5,13 +5,11 @@ import {
   BalanceSheetType,
   BalanceSheetVersion,
 } from '../../../src/entities/enums';
-import { Topic } from '../../../src/entities/topic';
+import { Rating } from '../../../src/entities/rating';
 import { EmptyCompanyFactsJson } from '../../testData/company.facts';
 import { Connection } from 'typeorm';
 import { Application } from 'express';
-import { Rating } from '../../../src/entities/rating';
 import { CompanyFacts } from '../../../src/entities/companyFacts';
-import { Aspect } from '../../../src/entities/aspect';
 import { SupplyFraction } from '../../../src/entities/supplyFraction';
 import { IndustrySector } from '../../../src/entities/industry.sector';
 import { EmployeesFraction } from '../../../src/entities/employeesFraction';
@@ -83,7 +81,6 @@ describe('Balance Sheet Controller', () => {
       .findOneOrFail(postResponse.body.id, {
         relations: BALANCE_SHEET_RELATIONS,
       });
-    const rating = balanceSheet.rating;
 
     const response = await testApp
       .delete(`${endpointPath}/${postResponse.body.id}`)
@@ -96,24 +93,14 @@ describe('Balance Sheet Controller', () => {
       .set(tokenHeader.key, tokenHeader.value)
       .send();
     expect(responseGet.status).toEqual(404);
-
     // Test if all relations marked with cascade true are deleted as well
     const expectZeroCount = 0;
-
-    // Rating
+    // Ratings
     expect(
-      await connection.getRepository(Rating).count({ id: rating.id })
+      await connection
+        .getRepository(Rating)
+        .count({ balanceSheet: balanceSheet })
     ).toBe(expectZeroCount);
-    // Topics
-    expect(
-      await connection.getRepository(Topic).count({ rating: rating })
-    ).toBe(expectZeroCount);
-    // Aspects
-    for (const topic of rating.topics) {
-      expect(
-        await connection.getRepository(Aspect).count({ topic: topic })
-      ).toBe(expectZeroCount);
-    }
 
     // Company Facts
     expect(

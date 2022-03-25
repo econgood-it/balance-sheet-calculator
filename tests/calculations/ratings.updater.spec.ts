@@ -1,5 +1,5 @@
-import { TopicUpdater } from '../../src/calculations/topic.updater';
-import { Topic } from '../../src/entities/topic';
+import { RatingsUpdater } from '../../src/calculations/ratings.updater';
+import { Rating } from '../../src/entities/rating';
 import { CompanyFacts } from '../../src/entities/companyFacts';
 import { Connection } from 'typeorm';
 import { Region } from '../../src/entities/region';
@@ -7,16 +7,19 @@ import { DatabaseConnectionCreator } from '../../src/database.connection.creator
 import { ConfigurationReader } from '../../src/configuration.reader';
 import { Assertions } from '../Assertions';
 import * as path from 'path';
-import { RatingReader } from '../../src/reader/rating.reader';
+import { RatingsReader } from '../../src/reader/ratings.reader';
 import { CompanyFacts1, EmptyCompanyFacts } from '../testData/company.facts';
 import { CalcResults, Calculator } from '../../src/calculations/calculator';
 import { Industry } from '../../src/entities/industry';
-import { Rating } from '../../src/entities/rating';
 import { RegionProvider } from '../../src/providers/region.provider';
 import { IndustryProvider } from '../../src/providers/industry.provider';
-import { BalanceSheetVersion } from '../../src/entities/enums';
+import {
+  BalanceSheetType,
+  BalanceSheetVersion,
+} from '../../src/entities/enums';
+import { BalanceSheet } from '../../src/entities/balanceSheet';
 
-describe('Topic updater', () => {
+describe('Ratings updater', () => {
   let connection: Connection;
 
   beforeAll(async () => {
@@ -35,11 +38,12 @@ describe('Topic updater', () => {
     fileNameOfRatingExpectedData: string,
     companyFacts: CompanyFacts
   ) {
-    const testDataReader = new RatingReader();
+    const testDataReader = new RatingsReader();
     const testDataDir = path.resolve(__dirname, '../testData');
     let pathToCsv = path.join(testDataDir, fileNameOfRatingInputData);
-    const topics: Topic[] = (await testDataReader.readRatingFromCsv(pathToCsv))
-      .topics;
+    const ratings: Rating[] = await testDataReader.readRatingsFromCsv(
+      pathToCsv
+    );
     const regionProvider = await RegionProvider.createFromCompanyFacts(
       companyFacts,
       connection.getRepository(Region),
@@ -53,13 +57,24 @@ describe('Topic updater', () => {
       regionProvider,
       industryProvider
     ).calculate(companyFacts);
-    const topicUpdater: TopicUpdater = new TopicUpdater();
-    await topicUpdater.update(topics, companyFacts, calcResults);
+    const balanceSheet = new BalanceSheet(
+      undefined,
+      BalanceSheetType.Full,
+      BalanceSheetVersion.v5_0_4,
+      companyFacts,
+      ratings,
+      []
+    );
+    const ratingsUpdater: RatingsUpdater = new RatingsUpdater();
+    const updatedBalanceSheet = await ratingsUpdater.update(
+      balanceSheet,
+      calcResults
+    );
     pathToCsv = path.join(testDataDir, fileNameOfRatingExpectedData);
-    const expected: Topic[] = (
-      await testDataReader.readRatingFromCsv(pathToCsv)
-    ).topics;
-    Assertions.assertTopics(topics, expected);
+    const expected: Rating[] = await testDataReader.readRatingsFromCsv(
+      pathToCsv
+    );
+    Assertions.assertRatings(updatedBalanceSheet.ratings, expected);
   }
 
   it('should not calculate automatic weight', async () => {
@@ -76,12 +91,23 @@ describe('Topic updater', () => {
       regionProvider,
       industryProvider
     ).calculate(CompanyFacts1);
-    const topicUpdater: TopicUpdater = new TopicUpdater();
-    const rating = new Rating(undefined, [
-      new Topic(undefined, 'A1', 'A1 name', 0, 0, 0, 2, true, []),
-    ]);
-    await topicUpdater.update(rating.topics, CompanyFacts1, calcResults);
-    expect(rating.topics[0].weight).toBeCloseTo(2, 2);
+    const ratings = [
+      new Rating(undefined, 'A1', 'A1 name', 0, 0, 0, 2, true, true),
+    ];
+    const balanceSheet = new BalanceSheet(
+      undefined,
+      BalanceSheetType.Full,
+      BalanceSheetVersion.v5_0_4,
+      CompanyFacts1,
+      ratings,
+      []
+    );
+    const ratingsUpdater: RatingsUpdater = new RatingsUpdater();
+    const updatedBalanceSheet = await ratingsUpdater.update(
+      balanceSheet,
+      calcResults
+    );
+    expect(updatedBalanceSheet.ratings[0].weight).toBeCloseTo(2, 2);
   });
 
   it('should calculate rating when the company facts values and the rating values are empty', async () =>

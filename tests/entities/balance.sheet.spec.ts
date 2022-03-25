@@ -11,7 +11,7 @@ import {
   Role,
 } from '../../src/entities/enums';
 import { EmptyCompanyFactsJson } from '../testData/company.facts';
-import { RatingFactory } from '../../src/factories/rating.factory';
+import { RatingsFactory } from '../../src/factories/ratings.factory';
 import { User } from '../../src/entities/user';
 import { CompanyFactsDTOCreate } from '../../src/dto/create/company.facts.create.dto';
 
@@ -35,13 +35,13 @@ describe('Balance Sheet', () => {
     const balanceSheet = new BalanceSheet(
       undefined,
       BalanceSheetType.Full,
-      BalanceSheetVersion.v5_0_4,
+      BalanceSheetVersion.v5_0_6,
       CompanyFactsDTOCreate.fromJSON(EmptyCompanyFactsJson).toCompanyFacts(
         'en'
       ),
-      await RatingFactory.createDefaultRating(
+      await RatingsFactory.createDefaultRatings(
         BalanceSheetType.Full,
-        BalanceSheetVersion.v5_0_4
+        BalanceSheetVersion.v5_0_6
       ),
       [new User(undefined, 'test@example.com', 'test1234', Role.User)]
     );
@@ -59,13 +59,13 @@ describe('Balance Sheet', () => {
     const balanceSheet = new BalanceSheet(
       undefined,
       BalanceSheetType.Full,
-      BalanceSheetVersion.v5_0_4,
+      BalanceSheetVersion.v5_0_6,
       CompanyFactsDTOCreate.fromJSON(EmptyCompanyFactsJson).toCompanyFacts(
         'en'
       ),
-      await RatingFactory.createDefaultRating(
+      await RatingsFactory.createDefaultRatings(
         BalanceSheetType.Full,
-        BalanceSheetVersion.v5_0_4
+        BalanceSheetVersion.v5_0_6
       ),
       [user]
     );
@@ -101,7 +101,7 @@ describe('Balance Sheet', () => {
       CompanyFactsDTOCreate.fromJSON(EmptyCompanyFactsJson).toCompanyFacts(
         'en'
       ),
-      await RatingFactory.createDefaultRating(
+      await RatingsFactory.createDefaultRatings(
         BalanceSheetType.Full,
         BalanceSheetVersion.v5_0_4
       ),

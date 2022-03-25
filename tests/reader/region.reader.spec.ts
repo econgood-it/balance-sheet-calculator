@@ -13,7 +13,7 @@ describe('Region reader', () => {
     );
     const regions: Region[] = await regionReader.read(
       pathToCsv,
-      [6, 226],
+      [6, 227],
       BalanceSheetVersion.v5_0_4
     );
     expect(regions).toContainEqual({
@@ -21,6 +21,13 @@ describe('Region reader', () => {
       countryName: 'Aruba',
       pppIndex: 1.9628994497935313,
       ituc: 3.4210526315789473,
+      validFromVersion: BalanceSheetVersion.v5_0_4,
+    });
+    expect(regions).toContainEqual({
+      countryCode: 'AWO',
+      countryName: 'World',
+      pppIndex: 0.97803586258736475,
+      ituc: 3.2380952380952381,
       validFromVersion: BalanceSheetVersion.v5_0_4,
     });
     expect(regions).toContainEqual({

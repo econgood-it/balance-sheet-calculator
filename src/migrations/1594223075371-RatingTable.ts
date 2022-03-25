@@ -2,7 +2,7 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class AspectTable1594223075371 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    const query = `CREATE TABLE IF NOT EXISTS "aspect" (
+    const query = `CREATE TABLE IF NOT EXISTS "rating" (
             "id" SERIAL NOT NULL, 
             "shortName" character varying NOT NULL, 
             "name" character varying NOT NULL, 
@@ -12,14 +12,14 @@ export class AspectTable1594223075371 implements MigrationInterface {
             "weight" double precision NOT NULL,
             "isWeightSelectedByUser" boolean NOT NULL, 
             "isPositive" boolean NOT NULL, 
-            "topicId" integer, 
-            CONSTRAINT "PK_aspect" PRIMARY KEY ("id")
+            "balanceSheetId" integer, 
+            CONSTRAINT "PK_rating" PRIMARY KEY ("id")
         )`;
     await queryRunner.query(query);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    const query = 'DROP TABLE IF EXISTS aspect';
+    const query = 'DROP TABLE IF EXISTS rating';
     await queryRunner.query(query);
   }
 }

@@ -7,7 +7,7 @@ export class CreateIndustrySectorTable1594223075363
     const query = `CREATE TABLE IF NOT EXISTS "industry_sector" (
             "id" SERIAL NOT NULL, 
             "industryCode" character varying NOT NULL, 
-            "description" character varying NOT NULL, 
+            "description" jsonb NOT NULL, 
             "amountOfTotalTurnover" double precision NOT NULL, 
             "companyFactsId" integer, 
             CONSTRAINT "PK_industry_sector" PRIMARY KEY ("id")

@@ -5,8 +5,7 @@ import { RegionProvider } from '../providers/region.provider';
 import { Region } from '../entities/region';
 import { IndustryProvider } from '../providers/industry.provider';
 import { CalcResults, Calculator } from '../calculations/calculator';
-import { TopicUpdater } from '../calculations/topic.updater';
-import { SortService } from './sort.service';
+import { RatingsUpdater } from '../calculations/ratings.updater';
 
 export class CalculationService {
   public static async calculate(
@@ -28,18 +27,17 @@ export class CalculationService {
       regionProvider,
       industryProvider
     ).calculate(balanceSheet.companyFacts);
-    const topicUpdater: TopicUpdater = new TopicUpdater();
-    await topicUpdater.update(
-      balanceSheet.rating.topics,
-      balanceSheet.companyFacts,
+    const ratingsUpdater: RatingsUpdater = new RatingsUpdater();
+    let updatedBalanceSheet = await ratingsUpdater.update(
+      balanceSheet,
       calcResults
     );
     if (saveCalcResults) {
-      balanceSheet = await entityManager
+      updatedBalanceSheet = await entityManager
         .getRepository(BalanceSheet)
-        .save(balanceSheet);
+        .save(updatedBalanceSheet);
     }
-    SortService.sortArraysOfBalanceSheet(balanceSheet);
-    return balanceSheet;
+    updatedBalanceSheet.sortRatings();
+    return updatedBalanceSheet;
   }
 }

@@ -1,6 +1,6 @@
-import { strictObjectMapper } from '@daniel-faber/json-ts';
+import { arrayMapper, strictObjectMapper } from '@daniel-faber/json-ts';
 import { CompanyFactsDTOCreate } from './company.facts.create.dto';
-import { RatingFactory } from '../../factories/rating.factory';
+import { RatingsFactory } from '../../factories/ratings.factory';
 import { BalanceSheet } from '../../entities/balanceSheet';
 import {
   BalanceSheetType,
@@ -10,37 +10,30 @@ import {
 } from '../../entities/enums';
 import { ValidateNested } from 'class-validator';
 import { Translations } from '../../entities/Translations';
-import { RatingDTO } from '../createAndUpdate/rating.dto';
-import { RatingsDTO } from '../createAndUpdate/ratings.dto';
-import { RatingWithDtoMerger } from '../../merge/rating.with.dto.merger';
+import { RatingsWithDtoMerger } from '../../merge/ratingsWithDtoMerger';
 import { User } from '../../entities/user';
+import { RatingDTO } from '../createAndUpdate/ratingDTO';
 
 export class BalanceSheetDTOCreate {
   @ValidateNested()
   public readonly companyFacts: CompanyFactsDTOCreate;
 
   @ValidateNested()
-  public readonly rating: RatingDTO | undefined;
+  public readonly ratings: RatingDTO[];
 
   public constructor(
     public readonly type: BalanceSheetType,
     public readonly version: BalanceSheetVersion,
     companyFacts: CompanyFactsDTOCreate,
-    rating: RatingDTO | undefined
+    ratings: RatingDTO[]
   ) {
     this.companyFacts = companyFacts;
-    this.rating = rating;
+    this.ratings = ratings;
   }
 
-  public static readonly fromJSON = (json: any) => {
-    let rating: RatingDTO | undefined;
-    if ('ratings' in json) {
-      rating = RatingsDTO.fromJSON({ ratings: json.ratings }).toRatingDTO();
-      delete json.ratings;
-    }
-    // 'ratings' in json ? RatingsDTO.fromJSON(json).toRatingDTO() : undefined;
-    const jsonParser = strictObjectMapper((accessor) => {
-      return new BalanceSheetDTOCreate(
+  public static readonly fromJSON = strictObjectMapper(
+    (accessor) =>
+      new BalanceSheetDTOCreate(
         accessor.get('type', balanceSheetTypeFromJSON),
         accessor.get('version', balanceSheetVersionFromJSON),
         accessor.getOptional(
@@ -48,30 +41,27 @@ export class BalanceSheetDTOCreate {
           CompanyFactsDTOCreate.fromJSON,
           CompanyFactsDTOCreate.fromJSON({})
         ),
-        rating
-      );
-    });
-    return jsonParser(json);
-  };
+        accessor.getOptional('ratings', arrayMapper(RatingDTO.fromJSON), [])
+      )
+  );
 
   public async toBalanceSheet(
     language: keyof Translations,
     users: User[]
   ): Promise<BalanceSheet> {
-    const rating = await RatingFactory.createDefaultRating(
+    const mergedRatings = await RatingsFactory.createDefaultRatings(
       this.type,
       this.version
     );
-    if (this.rating !== undefined) {
-      const ratingWithDtoMerger = new RatingWithDtoMerger();
-      ratingWithDtoMerger.mergeRating(rating, this.rating, this.type);
-    }
+    const ratingWithDtoMerger = new RatingsWithDtoMerger();
+    ratingWithDtoMerger.mergeRatings(mergedRatings, this.ratings, this.type);
+
     return new BalanceSheet(
       undefined,
       this.type,
       this.version,
       this.companyFacts.toCompanyFacts(language),
-      rating,
+      mergedRatings,
       users
     );
   }
