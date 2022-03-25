@@ -3,7 +3,6 @@ import { Translations } from '../../entities/Translations';
 
 export class SupplyFractionDTOResponse {
   constructor(
-    public readonly id: number | undefined,
     public readonly countryCode: string,
     public readonly industryCode: string,
     public readonly costs: number
@@ -14,7 +13,6 @@ export class SupplyFractionDTOResponse {
     language: keyof Translations
   ): SupplyFractionDTOResponse {
     return new SupplyFractionDTOResponse(
-      supplyFraction.id,
       supplyFraction.countryCode,
       supplyFraction.industryCode,
       supplyFraction.costs

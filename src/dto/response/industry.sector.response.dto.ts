@@ -6,7 +6,6 @@ import {
 
 export class IndustrySectorDtoResponse {
   constructor(
-    public readonly id: number | undefined,
     public readonly industryCode: string,
     public readonly amountOfTotalTurnover: number,
     public readonly description: string
@@ -17,7 +16,6 @@ export class IndustrySectorDtoResponse {
     language: keyof Translations
   ): IndustrySectorDtoResponse {
     return new IndustrySectorDtoResponse(
-      industrySector.id,
       industrySector.industryCode,
       industrySector.amountOfTotalTurnover,
       getTranslationOfLanguage(industrySector.description, language)
