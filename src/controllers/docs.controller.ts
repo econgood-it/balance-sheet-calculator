@@ -14,13 +14,13 @@ export class DocsController {
   }
 
   private buildSwaggerDoc() {
-    const pathToDocs = path.resolve(__dirname, '../docs');
+    const pathToDocs = path.resolve(__dirname, '../openapi');
     const options = {
       definition: {
         openapi: '3.0.0',
         info: {
           title: 'ECG Balance Calculator',
-          version: '2.1.1',
+          version: '3.0.0',
         },
       },
       apis: [`${pathToDocs}/**/*.yaml`], // files containing annotations as above

@@ -25,6 +25,8 @@ describe('RatingResponseDTO', () => {
     expect(topicOrAspectResponseDTO).toMatchObject({
       shortName: 'A1',
       name: 'Menschenwürde in der Zulieferkette',
+      type: 'topic',
+      isPositive: true,
     });
   });
 
@@ -46,6 +48,7 @@ describe('RatingResponseDTO', () => {
       shortName: 'A1.1',
       name: 'Menschenwürde in der Zulieferkette',
       isPositive: true,
+      type: 'aspect',
     });
   });
 });

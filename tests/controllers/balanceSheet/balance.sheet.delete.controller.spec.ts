@@ -106,24 +106,24 @@ describe('Balance Sheet Controller', () => {
     expect(
       await connection
         .getRepository(CompanyFacts)
-        .count({ id: postResponse.body.companyFacts.id })
+        .count({ id: balanceSheet.companyFacts.id })
     ).toBe(expectZeroCount);
     // Industry Sectors
     expect(
       await connection.getRepository(IndustrySector).count({
-        companyFacts: postResponse.body.companyFacts,
+        companyFacts: balanceSheet.companyFacts,
       })
     ).toBe(expectZeroCount);
     // Supply Fractions
     expect(
       await connection.getRepository(SupplyFraction).count({
-        companyFacts: postResponse.body.companyFacts,
+        companyFacts: balanceSheet.companyFacts,
       })
     ).toBe(expectZeroCount);
     // EmployeesFractions
     expect(
       await connection.getRepository(EmployeesFraction).count({
-        companyFacts: postResponse.body.companyFacts,
+        companyFacts: balanceSheet.companyFacts,
       })
     ).toBe(expectZeroCount);
   });

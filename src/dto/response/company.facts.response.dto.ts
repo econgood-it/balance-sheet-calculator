@@ -6,7 +6,6 @@ import { Translations } from '../../entities/Translations';
 import { MainOriginOfOtherSuppliersDTOResponse } from './main.origin.of.other.suppliers.response.dto';
 export class CompanyFactsDTOResponse {
   public constructor(
-    public readonly id: number | undefined,
     public readonly totalPurchaseFromSuppliers: number,
     public readonly totalStaffCosts: number,
     public readonly profit: number,
@@ -31,7 +30,6 @@ export class CompanyFactsDTOResponse {
     language: keyof Translations
   ): CompanyFactsDTOResponse {
     return new CompanyFactsDTOResponse(
-      companyFacts.id,
       companyFacts.totalPurchaseFromSuppliers,
       companyFacts.totalStaffCosts,
       companyFacts.profit,

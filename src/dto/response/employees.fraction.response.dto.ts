@@ -3,7 +3,6 @@ import { Translations } from '../../entities/Translations';
 
 export class EmployeesFractionDTOResponse {
   public constructor(
-    public readonly id: number | undefined,
     public readonly countryCode: string,
     public readonly percentage: number
   ) {}
@@ -13,7 +12,6 @@ export class EmployeesFractionDTOResponse {
     language: keyof Translations
   ): EmployeesFractionDTOResponse {
     return new EmployeesFractionDTOResponse(
-      employeesFraction.id,
       employeesFraction.countryCode,
       employeesFraction.percentage
     );

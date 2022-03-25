@@ -9,7 +9,8 @@ export class RatingResponseDTO {
     public readonly estimations: number,
     public readonly points: number,
     public readonly maxPoints: number,
-    public readonly isPositive: boolean
+    public readonly isPositive: boolean,
+    public readonly type: string
   ) {}
 
   public static fromRating(
@@ -23,7 +24,8 @@ export class RatingResponseDTO {
       rating.estimations,
       rating.points,
       rating.maxPoints,
-      rating.isPositive
+      rating.isPositive,
+      rating.isTopic() ? 'topic' : 'aspect'
     );
   }
 }
