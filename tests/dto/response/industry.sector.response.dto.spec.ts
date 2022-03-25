@@ -17,7 +17,6 @@ describe('IndustrySectorResponseDTO', () => {
       IndustrySectorDtoResponse.fromIndustrySector(industrySector, 'de');
     expect(industrySectorDtoResponse).toBeDefined();
     expect(industrySectorDtoResponse).toMatchObject({
-      id: undefined,
       industryCode: 'A',
       amountOfTotalTurnover: 1,
       description: 'desc',
@@ -32,7 +31,6 @@ describe('IndustrySectorResponseDTO', () => {
       IndustrySectorDtoResponse.fromIndustrySector(industrySector, 'en');
     expect(industrySectorDtoResponse).toBeDefined();
     expect(industrySectorDtoResponse).toMatchObject({
-      id: undefined,
       industryCode: 'A',
       amountOfTotalTurnover: 1,
       description: '',
