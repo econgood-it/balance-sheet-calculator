@@ -10,7 +10,7 @@ export class CreateUserTable1620894033594 implements MigrationInterface {
             CONSTRAINT "PK_user" PRIMARY KEY ("id")
         )`;
     await queryRunner.query(query);
-    query = `CREATE UNIQUE INDEX "IDX_user_email" ON "user" ("email")`;
+    query = `CREATE UNIQUE INDEX IF NOT EXISTS "IDX_user_email" ON "user" ("email")`;
     await queryRunner.query(query);
   }
 
