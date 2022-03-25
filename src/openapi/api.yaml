@@ -324,11 +324,46 @@ components:
           type: string
           enum: [ '5.04' ]
           description: Balance Sheet version
+        ratings:
+          $ref: '#/components/schemas/RatingsResponse'
         companyFacts:
           $ref: '#/components/schemas/CompanyFactsResponse'
       required:
         - type
         - version
+
+    RatingsResponse:
+      type: array
+      items:
+        type: object
+        properties:
+          shortName:
+            type: string
+            description: Short name of the rating (e.g. A1 or A1.2)
+          name:
+            type: string
+            description: Name of the rating
+          weight:
+            type: number
+            description: The weight of the rating
+          estimations:
+            type: number
+            description: The estimations of the rating
+          points:
+            type: number
+            description: The points of the rating
+          maxPoints:
+            type: number
+            description: The max points of the rating
+          type:
+            type: string
+            description: The type of the rating
+            enum:
+              - topic
+              - aspect
+          isPositive:
+            type: boolean
+            description: True if it is a positive aspect. False otherwise.
 
     CompanyFactsResponse:
       type: object
@@ -529,6 +564,7 @@ components:
             points: 4.938271604938271
             maxPoints: 24.691358024691358
             isPositive: true
+            type: "topic"
           - shortName: "A1.1"
             name: "Working conditions and social impact in the supply chain"
             weight: 1
@@ -536,6 +572,7 @@ components:
             points: 4.938271604938271
             maxPoints: 24.691358024691358
             isPositive: true
+            type: "aspect"
           - shortName: "A1.2"
             name: "Negative aspect: violation of human dignity in the supply chain"
             weight: 1
@@ -543,6 +580,7 @@ components:
             points: 0
             maxPoints: -98.76543209876543
             isPositive: false
+            type: "aspect"
           - shortName: "E4.3"
             name: "Negative aspect: lack of transparency and wilful misinformation"
             weight: 1
@@ -550,6 +588,7 @@ components:
             points: 0
             maxPoints: -98.76543209876543
             isPositive: false
+            type: "aspect"
         companyFacts:
           totalPurchaseFromSuppliers: 300
           totalStaffCosts: 100
