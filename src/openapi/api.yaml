@@ -127,6 +127,14 @@ paths:
             enum:
               - en
               - de
+        - in: query
+          name: version
+          description: "Filter and return only regions which are valid for this balance sheet version"
+          required: false
+          schema:
+            type: string
+            default: '5.06'
+            enum: [ '5.04', '5.05', '5.06' ]
       security:
         - bearerAuth: [ ]
       tags:
@@ -171,7 +179,7 @@ components:
           description: Balance Sheet type
         version:
           type: string
-          enum: [ '5.04' ]
+          enum: [ '5.04', '5.05', '5.06' ]
           description: Balance Sheet version
         companyFacts:
           $ref: '#/components/schemas/CompanyFactsBody'
@@ -369,7 +377,7 @@ components:
           description: Balance Sheet type
         version:
           type: string
-          enum: [ '5.04' ]
+          enum: [ '5.04', '5.05', '5.06' ]
           description: Balance Sheet version
         ratings:
           $ref: '#/components/schemas/RatingsResponse'

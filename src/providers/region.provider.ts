@@ -4,7 +4,11 @@ import Provider from './provider';
 import { Region } from '../entities/region';
 import { BalanceSheetVersion } from '../entities/enums';
 import { compare, lte } from '@mr42/version-comparator/dist/version.comparator';
-import NotFoundException from '../exceptions/not.found.exception';
+import InternalServerException from '../exceptions/internal.server.exception';
+
+type VersionResult = {
+  validFromVersion: BalanceSheetVersion;
+};
 
 export class RegionProvider extends Provider<string, Region> {
   public static createFromCompanyFacts = async (
@@ -13,36 +17,43 @@ export class RegionProvider extends Provider<string, Region> {
     balanceSheetVersion: BalanceSheetVersion
   ) => {
     const regionProvider = new Provider<string, Region>();
+    const validFromVersion = await RegionProvider.findCorrectValidFromVersion(
+      balanceSheetVersion,
+      regionRepository
+    );
     const countryCodes = companyFacts.getAllCountryCodes(true);
     for (const countryCode of countryCodes) {
-      const foundRegion = RegionProvider.findRegionByVersion(
-        await regionRepository.find({
+      const foundRegion = await regionRepository.findOneOrFail({
+        where: {
           countryCode: countryCode,
-        }),
-        balanceSheetVersion
-      );
-      if (foundRegion) {
-        regionProvider.set(countryCode, foundRegion);
-      } else {
-        throw new NotFoundException(`Region ${countryCode} not found`);
-      }
+          validFromVersion: validFromVersion,
+        },
+      });
+      regionProvider.set(countryCode, foundRegion);
     }
     return regionProvider;
   };
 
-  private static findRegionByVersion(
-    regions: Region[],
-    version: BalanceSheetVersion
-  ): Region | undefined {
-    const regionsFiltered = regions.filter((r) =>
-      lte(r.validFromVersion, version)
+  public static async findCorrectValidFromVersion(
+    version: BalanceSheetVersion,
+    regionRepository: Repository<Region>
+  ): Promise<BalanceSheetVersion> {
+    const existingVersionsInDescendingOrder: BalanceSheetVersion[] = (
+      await regionRepository.query(
+        'Select distinct "validFromVersion" from region'
+      )
+    )
+      .sort((v1: VersionResult, v2: VersionResult) =>
+        compare(v2.validFromVersion, v1.validFromVersion)
+      )
+      .map((v: VersionResult) => v.validFromVersion);
+    const correctVersion = existingVersionsInDescendingOrder.find((v) =>
+      lte(v, version)
     );
-    const regionsFilteredWithDescendingVersion = regionsFiltered.sort(
-      (a: Region, b: Region) => compare(b.validFromVersion, a.validFromVersion)
-    );
-    if (regionsFilteredWithDescendingVersion.length > 0) {
-      return regionsFilteredWithDescendingVersion[0];
+    if (correctVersion) {
+      return correctVersion;
+    } else {
+      throw new InternalServerException(`Correct version not found`);
     }
-    return undefined;
   }
 }

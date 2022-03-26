@@ -113,7 +113,7 @@ describe('Balance Sheet Controller', () => {
     const testApp = supertest(app);
     const postResponse = await createBalanceSheet(token);
     const response = await testApp
-      .get(`${endpointPath}/${postResponse.body.id}?responseFormat=short`)
+      .get(`${endpointPath}/${postResponse.body.id}`)
       .set(authHeaderKey, token)
       .send();
     expect(response.status).toEqual(200);

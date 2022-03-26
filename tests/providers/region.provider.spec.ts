@@ -113,4 +113,17 @@ describe('Region Provider', () => {
       validFromVersion: BalanceSheetVersion.v5_0_5,
     });
   });
+
+  it('should return validFromVersion corresponding to given balance sheet version', async () => {
+    let result = await RegionProvider.findCorrectValidFromVersion(
+      BalanceSheetVersion.v5_0_6,
+      regionRepo
+    );
+    expect(result).toBe(BalanceSheetVersion.v5_0_5);
+    result = await RegionProvider.findCorrectValidFromVersion(
+      BalanceSheetVersion.v5_0_4,
+      regionRepo
+    );
+    expect(result).toBe(BalanceSheetVersion.v5_0_4);
+  });
 });
