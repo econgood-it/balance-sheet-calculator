@@ -108,6 +108,53 @@ paths:
               examples:
                 Full 5.06:
                   $ref: '#/components/examples/Full_5_0_6_Response'
+  /v1/regions:
+    get:
+      parameters:
+        - in: header
+          name: x-correlation-id
+          description: "If x-correlation-id is set then it's value will be used as the id for this request, otherwise the id will be a new uuid."
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: lng
+          description: "Choose the language. All country names are translated to the given language."
+          required: false
+          schema:
+            type: string
+            default: en
+            enum:
+              - en
+              - de
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - "regions"
+      summary: "Returns all regions which are valid for the given balance sheet version"
+      responses:
+        '200': # status code
+          description: An array of the regions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    countryCode:
+                      type: string
+                      description: "The country code of the region (e.g. DEU, BEL)"
+                    countryName:
+                      type: string
+                      description: "The country name of the region (e.g. Germany, Belgium)"
+              examples:
+                Example of regions:
+                  value:
+                    - countryCode: "DEU"
+                      countryName: "Germany"
+                    - countryCode: "ALB"
+                      countryName: "Albania"
 components:
   securitySchemes:
     bearerAuth: # arbitrary name for the security scheme
