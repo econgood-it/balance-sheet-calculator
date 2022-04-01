@@ -12,7 +12,7 @@ describe('BalanceSheetReader', () => {
     const pathToCsv = path.join(__dirname, 'full_5_0_6.xlsx');
     const wb: Workbook = await new Workbook().xlsx.readFile(pathToCsv);
     const language = readLanguage(wb);
-    const balancesheet = balanceSheetReader.readFromWorkbook(wb, language);
+    const balancesheet = balanceSheetReader.readFromWorkbook(wb, language, []);
     const companyFacts = balancesheet.companyFacts;
     expect(companyFacts.totalPurchaseFromSuppliers).toBe(200000);
     expect(companyFacts.profit).toBe(456456456);
@@ -64,7 +64,7 @@ describe('BalanceSheetReader', () => {
     const pathToCsv = path.join(__dirname, 'full_5_0_6.xlsx');
     const wb: Workbook = await new Workbook().xlsx.readFile(pathToCsv);
     const language = readLanguage(wb);
-    const balancesheet = balanceSheetReader.readFromWorkbook(wb, language);
+    const balancesheet = balanceSheetReader.readFromWorkbook(wb, language, []);
     const ratings = balancesheet.ratings;
     expect(ratings).toHaveLength(80);
     expect(ratings).toContainEqual({

@@ -73,21 +73,46 @@ export class BalanceSheetService {
     res: Response,
     next: NextFunction
   ) {
-    if (req.file) {
-      try {
-        const wb = await new Workbook().xlsx.load(req.file.buffer);
-        const language = readLanguage(wb);
-        const balanceSheetReader = new BalanceSheetReader();
-        const balanceSheet = balanceSheetReader.readFromWorkbook(wb, language);
-        res.json(
-          BalanceSheetDTOResponse.fromBalanceSheet(balanceSheet, language)
-        );
-      } catch (e: any) {
-        handle(e, next);
-      }
-    } else {
-      res.json({ message: 'File empty' });
-    }
+    const saveFlag = this.parseSaveFlag(req.query.save);
+    this.connection.manager
+      .transaction(async (entityManager) => {
+        if (req.file) {
+          if (req.userInfo === undefined) {
+            throw new UnauthorizedException('No user provided');
+          }
+          const userId = req.userInfo.id;
+          const userRepository = entityManager.getRepository(User);
+          const foundUser = await userRepository.findOneOrFail(userId);
+
+          const wb = await new Workbook().xlsx.load(req.file.buffer);
+          const language = readLanguage(wb);
+          const balanceSheetReader = new BalanceSheetReader();
+          const balanceSheet = balanceSheetReader.readFromWorkbook(
+            wb,
+            language,
+            [foundUser]
+          );
+
+          const balanceSheetResponse: BalanceSheet =
+            await CalculationService.calculate(
+              balanceSheet,
+              entityManager,
+              saveFlag
+            );
+
+          res.json(
+            BalanceSheetDTOResponse.fromBalanceSheet(
+              balanceSheetResponse,
+              language
+            )
+          );
+        } else {
+          res.json({ message: 'File empty' });
+        }
+      })
+      .catch((error) => {
+        handle(error, next);
+      });
   }
 
   public async updateBalanceSheet(

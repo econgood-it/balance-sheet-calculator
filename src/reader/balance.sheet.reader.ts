@@ -8,6 +8,8 @@ import { EmployeesFraction } from '../entities/employeesFraction';
 import { IndustrySector } from '../entities/industry.sector';
 import { createTranslations, Translations } from '../entities/Translations';
 import { Rating } from '../entities/rating';
+import { User } from '../entities/user';
+import { DEFAULT_COUNTRY_CODE } from '../entities/region';
 
 class Value {
   constructor(public readonly value: string) {}
@@ -36,7 +38,8 @@ class Value {
   }
 
   public get countryCode(): string {
-    return this.splitAndGetFirst(' ');
+    const countryCode = this.splitAndGetFirst(' ');
+    return countryCode.length <= 3 ? countryCode : DEFAULT_COUNTRY_CODE;
   }
 
   public get industryCode(): string {
@@ -170,7 +173,11 @@ export const readLanguage = (workbook: Workbook): keyof Translations => {
 };
 
 export class BalanceSheetReader {
-  public readFromWorkbook(wb: Workbook, language: keyof Translations) {
+  public readFromWorkbook(
+    wb: Workbook,
+    language: keyof Translations,
+    users: User[]
+  ) {
     const cr = new CellReader();
     const sheet = wb.getWorksheet('2. Company Facts');
 
@@ -225,7 +232,7 @@ export class BalanceSheetReader {
       BalanceSheetVersion.v5_0_6,
       companyFacts,
       ratings,
-      []
+      users
     );
   }
 }
