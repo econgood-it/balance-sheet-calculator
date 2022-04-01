@@ -22,7 +22,10 @@ import { CalculationService } from './calculation.service';
 import UnauthorizedException from '../exceptions/unauthorized.exception';
 import { NoAccessError } from '../exceptions/no.access.error';
 import { Workbook } from 'exceljs';
-import { BalanceSheetReader } from '../reader/balance.sheet.reader';
+import {
+  BalanceSheetReader,
+  readLanguage,
+} from '../reader/balance.sheet.reader';
 
 export class BalanceSheetService {
   constructor(private connection: Connection) {}
@@ -70,13 +73,15 @@ export class BalanceSheetService {
     res: Response,
     next: NextFunction
   ) {
-    let wb: Workbook = new Workbook();
     if (req.file) {
       try {
-        wb = await wb.xlsx.load(req.file.buffer);
+        const wb = await new Workbook().xlsx.load(req.file.buffer);
+        const language = readLanguage(wb);
         const balanceSheetReader = new BalanceSheetReader();
-        const balanceSheet = balanceSheetReader.readFromWorkbook(wb);
-        res.json(balanceSheet);
+        const balanceSheet = balanceSheetReader.readFromWorkbook(wb, language);
+        res.json(
+          BalanceSheetDTOResponse.fromBalanceSheet(balanceSheet, language)
+        );
       } catch (e: any) {
         handle(e, next);
       }

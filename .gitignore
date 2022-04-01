@@ -12,3 +12,4 @@ warn.log
 documentation
 .vscode
 .~lock.*
+*.tmp

@@ -1,16 +1,18 @@
 import * as path from 'path';
-import { BalanceSheetReader } from '../../src/reader/balance.sheet.reader';
+import {
+  BalanceSheetReader,
+  readLanguage,
+} from '../../src/reader/balance.sheet.reader';
 import { Workbook } from 'exceljs';
 import { createTranslations } from '../../src/entities/Translations';
 
 describe('BalanceSheetReader', () => {
-  it('should read ratings from csv', async () => {
+  it('should read company facts from excel', async () => {
     const balanceSheetReader = new BalanceSheetReader();
     const pathToCsv = path.join(__dirname, 'full_5_0_6.xlsx');
-    const wb: Workbook = new Workbook();
-    const balancesheet = balanceSheetReader.readFromWorkbook(
-      await wb.xlsx.readFile(pathToCsv)
-    );
+    const wb: Workbook = await new Workbook().xlsx.readFile(pathToCsv);
+    const language = readLanguage(wb);
+    const balancesheet = balanceSheetReader.readFromWorkbook(wb, language);
     const companyFacts = balancesheet.companyFacts;
     expect(companyFacts.totalPurchaseFromSuppliers).toBe(200000);
     expect(companyFacts.profit).toBe(456456456);
@@ -54,6 +56,27 @@ describe('BalanceSheetReader', () => {
       countryCode: 'QAT',
       costs: 195425,
       id: undefined,
+    });
+  });
+
+  it('should read ratings from excel', async () => {
+    const balanceSheetReader = new BalanceSheetReader();
+    const pathToCsv = path.join(__dirname, 'full_5_0_6.xlsx');
+    const wb: Workbook = await new Workbook().xlsx.readFile(pathToCsv);
+    const language = readLanguage(wb);
+    const balancesheet = balanceSheetReader.readFromWorkbook(wb, language);
+    const ratings = balancesheet.ratings;
+    expect(ratings).toHaveLength(80);
+    expect(ratings).toContainEqual({
+      id: undefined,
+      shortName: 'E3.2',
+      name: 'Relative impact',
+      estimations: 4,
+      weight: 1.5,
+      points: 11.4285714285714,
+      maxPoints: 28.5714285714286,
+      isPositive: true,
+      isWeightSelectedByUser: true,
     });
   });
 });

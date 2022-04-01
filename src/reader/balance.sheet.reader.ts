@@ -7,6 +7,7 @@ import { BalanceSheetType, BalanceSheetVersion } from '../entities/enums';
 import { EmployeesFraction } from '../entities/employeesFraction';
 import { IndustrySector } from '../entities/industry.sector';
 import { createTranslations, Translations } from '../entities/Translations';
+import { Rating } from '../entities/rating';
 
 class Value {
   constructor(public readonly value: string) {}
@@ -30,15 +31,6 @@ class Value {
     }
   }
 
-  public get language(): keyof Translations {
-    switch (this.value) {
-      case 'Deutsch':
-        return 'de';
-      default:
-        return 'en';
-    }
-  }
-
   public get percentage(): number {
     return this.number;
   }
@@ -51,12 +43,35 @@ class Value {
     return this.splitAndGetFirst('-');
   }
 
+  public get isWeightSelectedByUser(): boolean {
+    return (
+      this.value.startsWith('Weighting changed') ||
+      this.value.startsWith('Gewichtung geändert')
+    );
+  }
+
+  public get isPositiveAspect(): boolean {
+    return !this.value.startsWith('Negativ');
+  }
+
+  public get weight(): number {
+    return this.getNumberWithDefault(1);
+  }
+
+  public get points(): number {
+    return this.getNumberWithDefault(0);
+  }
+
   public getDescription(lng: keyof Translations) {
     return createTranslations(lng, this.value);
   }
 
   private splitAndGetFirst(splitBy: string): string {
     return this.value.split(splitBy)[0].trim();
+  }
+
+  private getNumberWithDefault(defaultValue: number): number {
+    return !isNaN(this.number) ? this.number : defaultValue;
   }
 }
 
@@ -114,6 +129,27 @@ class IndustrySectorReader {
   }
 }
 
+class RatingReader {
+  public read(row: Row, lng: keyof Translations): Rating | undefined {
+    const cr = new CellReader();
+    const shortName = cr.readWithRow(row, 'B').text;
+    const nameValue = cr.readWithRow(row, 'C');
+    return shortName.length > 1
+      ? new Rating(
+          undefined,
+          shortName,
+          nameValue.text,
+          cr.readWithRow(row, 'H').number,
+          cr.readWithRow(row, 'I').points,
+          cr.readWithRow(row, 'J').number,
+          cr.readWithRow(row, 'D').weight,
+          cr.readWithRow(row, 'N').isWeightSelectedByUser,
+          nameValue.isPositiveAspect
+        )
+      : undefined;
+  }
+}
+
 const range = (start: number, end: number): number[] =>
   Array.from(Array(end - start + 1).keys()).map((x) => x + start);
 
@@ -121,11 +157,21 @@ const filterUndef = <T>(ts: (T | undefined)[]): T[] => {
   return ts.filter((t: T | undefined): t is T => t !== undefined);
 };
 
+export const readLanguage = (workbook: Workbook): keyof Translations => {
+  const introSheet = workbook.getWorksheet('0. Intro');
+  const cr = new CellReader();
+  const language = cr.read(introSheet, 1, 'B').text;
+  switch (language) {
+    case 'Deutsch':
+      return 'de';
+    default:
+      return 'en';
+  }
+};
+
 export class BalanceSheetReader {
-  public readFromWorkbook(wb: Workbook) {
+  public readFromWorkbook(wb: Workbook, language: keyof Translations) {
     const cr = new CellReader();
-    const introSheet = wb.getWorksheet('0. Intro');
-    const language = cr.read(introSheet, 1, 'B').language;
     const sheet = wb.getWorksheet('2. Company Facts');
 
     const supplyFractionReader = new SupplyFractionReader();
@@ -166,12 +212,19 @@ export class BalanceSheetReader {
         cr.read(sheet, 15, 'F').number
       )
     );
+    const ratingReader = new RatingReader();
+    const calcSheet = wb.getWorksheet('3. Calc');
+    const ratings = filterUndef(
+      range(9, 93).map((row) =>
+        ratingReader.read(calcSheet.getRow(row), language)
+      )
+    );
     return new BalanceSheet(
       undefined,
       BalanceSheetType.Full,
       BalanceSheetVersion.v5_0_6,
       companyFacts,
-      [],
+      ratings,
       []
     );
   }

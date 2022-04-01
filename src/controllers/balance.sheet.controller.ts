@@ -26,7 +26,7 @@ export class BalanceSheetController {
     this.app.post(
       '/v1/balancesheets/upload',
       allowUserOnly,
-      upload.single('avatar'),
+      upload.single('balanceSheet'),
       this.balanceSheetService.uploadBalanceSheet.bind(this.balanceSheetService)
     );
     this.app.get(
