@@ -21,6 +21,8 @@ import { AccessCheckerService } from './access.checker.service';
 import { CalculationService } from './calculation.service';
 import UnauthorizedException from '../exceptions/unauthorized.exception';
 import { NoAccessError } from '../exceptions/no.access.error';
+import { Workbook } from 'exceljs';
+import { BalanceSheetReader } from '../reader/balance.sheet.reader';
 
 export class BalanceSheetService {
   constructor(private connection: Connection) {}
@@ -61,6 +63,26 @@ export class BalanceSheetService {
       .catch((error) => {
         handle(error, next);
       });
+  }
+
+  public async uploadBalanceSheet(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    let wb: Workbook = new Workbook();
+    if (req.file) {
+      try {
+        wb = await wb.xlsx.load(req.file.buffer);
+        const balanceSheetReader = new BalanceSheetReader();
+        const balanceSheet = balanceSheetReader.readFromWorkbook(wb);
+        res.json(balanceSheet);
+      } catch (e: any) {
+        handle(e, next);
+      }
+    } else {
+      res.json({ message: 'File empty' });
+    }
   }
 
   public async updateBalanceSheet(

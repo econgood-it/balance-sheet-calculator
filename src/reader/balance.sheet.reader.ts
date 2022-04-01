@@ -1,0 +1,178 @@
+import { Row, Workbook, Worksheet } from 'exceljs';
+import { CompanyFacts } from '../entities/companyFacts';
+import { MainOriginOfOtherSuppliers } from '../entities/main.origin.of.other.suppliers';
+import { SupplyFraction } from '../entities/supplyFraction';
+import { BalanceSheet } from '../entities/balanceSheet';
+import { BalanceSheetType, BalanceSheetVersion } from '../entities/enums';
+import { EmployeesFraction } from '../entities/employeesFraction';
+import { IndustrySector } from '../entities/industry.sector';
+import { createTranslations, Translations } from '../entities/Translations';
+
+class Value {
+  constructor(public readonly value: string) {}
+
+  public get text(): string {
+    return this.value;
+  }
+
+  public get number(): number {
+    return Number.parseFloat(this.value);
+  }
+
+  public get boolean(): boolean {
+    switch (this.value) {
+      case 'yes':
+        return true;
+      case 'ja':
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  public get language(): keyof Translations {
+    switch (this.value) {
+      case 'Deutsch':
+        return 'de';
+      default:
+        return 'en';
+    }
+  }
+
+  public get percentage(): number {
+    return this.number;
+  }
+
+  public get countryCode(): string {
+    return this.splitAndGetFirst(' ');
+  }
+
+  public get industryCode(): string {
+    return this.splitAndGetFirst('-');
+  }
+
+  public getDescription(lng: keyof Translations) {
+    return createTranslations(lng, this.value);
+  }
+
+  private splitAndGetFirst(splitBy: string): string {
+    return this.value.split(splitBy)[0].trim();
+  }
+}
+
+class CellReader {
+  public read(sheet: Worksheet, row: number, column: string): Value {
+    return this.readWithRow(sheet.getRow(row), column);
+  }
+
+  public readWithRow(row: Row, column: string): Value {
+    return new Value(row.getCell(column).text);
+  }
+}
+
+class SupplyFractionReader {
+  public read(row: Row): SupplyFraction | undefined {
+    const cr = new CellReader();
+    const costs = cr.readWithRow(row, 'F').number;
+    return costs > 0
+      ? new SupplyFraction(
+          undefined,
+          cr.readWithRow(row, 'B').industryCode,
+          cr.readWithRow(row, 'D').countryCode,
+          costs
+        )
+      : undefined;
+  }
+}
+
+class EmployeesFractionReader {
+  public read(row: Row): EmployeesFraction | undefined {
+    const cr = new CellReader();
+    const percentage = cr.readWithRow(row, 'D').percentage;
+    return percentage > 0
+      ? new EmployeesFraction(
+          undefined,
+          cr.readWithRow(row, 'B').countryCode,
+          percentage
+        )
+      : undefined;
+  }
+}
+
+class IndustrySectorReader {
+  public read(row: Row, lng: keyof Translations): IndustrySector | undefined {
+    const cr = new CellReader();
+    const amountOfTotalTurnover = cr.readWithRow(row, 'D').percentage;
+    return amountOfTotalTurnover > 0
+      ? new IndustrySector(
+          undefined,
+          cr.readWithRow(row, 'B').industryCode,
+          amountOfTotalTurnover,
+          cr.readWithRow(row, 'C').getDescription(lng)
+        )
+      : undefined;
+  }
+}
+
+const range = (start: number, end: number): number[] =>
+  Array.from(Array(end - start + 1).keys()).map((x) => x + start);
+
+const filterUndef = <T>(ts: (T | undefined)[]): T[] => {
+  return ts.filter((t: T | undefined): t is T => t !== undefined);
+};
+
+export class BalanceSheetReader {
+  public readFromWorkbook(wb: Workbook) {
+    const cr = new CellReader();
+    const introSheet = wb.getWorksheet('0. Intro');
+    const language = cr.read(introSheet, 1, 'B').language;
+    const sheet = wb.getWorksheet('2. Company Facts');
+
+    const supplyFractionReader = new SupplyFractionReader();
+    const employeesFractionReader = new EmployeesFractionReader();
+    const industrySectorReader = new IndustrySectorReader();
+    const valueColumn = 'C';
+    const companyFacts = new CompanyFacts(
+      undefined,
+      cr.read(sheet, 7, valueColumn).number,
+      cr.read(sheet, 27, valueColumn).number,
+      cr.read(sheet, 18, valueColumn).number,
+      cr.read(sheet, 19, valueColumn).number,
+      cr.read(sheet, 20, valueColumn).number,
+      cr.read(sheet, 22, valueColumn).number,
+      cr.read(sheet, 37, valueColumn).number,
+      cr.read(sheet, 21, valueColumn).number,
+      cr.read(sheet, 23, valueColumn).number,
+      cr.read(sheet, 26, valueColumn).number,
+      cr.read(sheet, 26, valueColumn).boolean,
+      cr.read(sheet, 33, valueColumn).number,
+      cr.read(sheet, 38, valueColumn).boolean,
+      filterUndef(
+        range(10, 14).map((row) => supplyFractionReader.read(sheet.getRow(row)))
+      ),
+      filterUndef(
+        range(30, 32).map((row) =>
+          employeesFractionReader.read(sheet.getRow(row))
+        )
+      ),
+      filterUndef(
+        range(41, 43).map((row) =>
+          industrySectorReader.read(sheet.getRow(row), language)
+        )
+      ),
+      new MainOriginOfOtherSuppliers(
+        undefined,
+        cr.read(sheet, 15, 'D').countryCode,
+        cr.read(sheet, 15, 'F').number
+      )
+    );
+    return new BalanceSheet(
+      undefined,
+      BalanceSheetType.Full,
+      BalanceSheetVersion.v5_0_6,
+      companyFacts,
+      [],
+      []
+    );
+  }
+}
