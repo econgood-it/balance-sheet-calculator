@@ -55,6 +55,8 @@ export class RatingsUpdater {
         (sum, current) => sum + current.points,
         0
       );
+      topic.estimations =
+        topic.maxPoints > 0 ? topic.points / topic.maxPoints : 0;
       ratings.push(topic, ...updatedAspects);
     }
     return new BalanceSheet(

@@ -13,6 +13,10 @@ export class Assertions {
           expected[i].maxPoints,
           numDigits
         );
+        expect(received[i].estimations).toBeCloseTo(
+          expected[i].estimations,
+          numDigits
+        );
         expect(received[i].points).toBeCloseTo(expected[i].points, numDigits);
         expect(received[i].weight).toBeCloseTo(expected[i].weight, numDigits);
         expect(received[i].name).toBe(expected[i].name);
