@@ -26,6 +26,7 @@ import {
   BalanceSheetReader,
   readLanguage,
 } from '../reader/balanceSheetReader/balance.sheet.reader';
+import { diffBetweenBalanceSheets } from '../dto/response/balance.sheet.diff.response';
 
 export class BalanceSheetService {
   constructor(private connection: Connection) {}
@@ -47,17 +48,58 @@ export class BalanceSheetService {
           language,
           [foundUser]
         );
-        const balanceSheetResponse = await CalculationService.calculate(
+        const { updatedBalanceSheet } = await CalculationService.calculate(
           balanceSheet,
           entityManager,
           saveFlag
         );
         res.json(
           BalanceSheetDTOResponse.fromBalanceSheet(
-            balanceSheetResponse,
+            updatedBalanceSheet,
             language
           )
         );
+      })
+      .catch((error) => {
+        handle(error, next);
+      });
+  }
+
+  public async diffBetweenUploadApiBalanceSheet(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    this.connection.manager
+      .transaction(async (entityManager) => {
+        if (req.file) {
+          const foundUser = await this.findUserOrFail(req, entityManager);
+          const wb = await new Workbook().xlsx.load(req.file.buffer);
+          const language = readLanguage(wb);
+          const balanceSheetReader = new BalanceSheetReader();
+
+          const balanceSheetUpload = balanceSheetReader.readFromWorkbook(
+            wb,
+            language,
+            [foundUser]
+          );
+
+          const { updatedBalanceSheet } = await CalculationService.calculate(
+            balanceSheetUpload,
+            entityManager,
+            false
+          );
+          res.json({
+            lhs: 'upload',
+            rhs: 'api',
+            diff: diffBetweenBalanceSheets(
+              balanceSheetUpload,
+              updatedBalanceSheet
+            ),
+          });
+        } else {
+          res.json({ message: 'File empty' });
+        }
       })
       .catch((error) => {
         handle(error, next);
@@ -77,21 +119,21 @@ export class BalanceSheetService {
           const wb = await new Workbook().xlsx.load(req.file.buffer);
           const language = readLanguage(wb);
           const balanceSheetReader = new BalanceSheetReader();
+
           const balanceSheet = balanceSheetReader.readFromWorkbook(
             wb,
             language,
             [foundUser]
           );
 
-          const balanceSheetResponse = await CalculationService.calculate(
+          const { updatedBalanceSheet } = await CalculationService.calculate(
             balanceSheet,
             entityManager,
             saveFlag
           );
-
           res.json(
             BalanceSheetDTOResponse.fromBalanceSheet(
-              balanceSheetResponse,
+              updatedBalanceSheet,
               language
             )
           );
@@ -135,11 +177,14 @@ export class BalanceSheetService {
           balanceSheetDTOUpdate,
           language
         );
-        const balanceSheetResponse: BalanceSheet =
-          await CalculationService.calculate(balanceSheet, entityManager, true);
+        const { updatedBalanceSheet } = await CalculationService.calculate(
+          balanceSheet,
+          entityManager,
+          true
+        );
         res.json(
           BalanceSheetDTOResponse.fromBalanceSheet(
-            balanceSheetResponse,
+            updatedBalanceSheet,
             language
           )
         );

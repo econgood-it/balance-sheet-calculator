@@ -29,6 +29,14 @@ export class BalanceSheetController {
       upload.single('balanceSheet'),
       this.balanceSheetService.uploadBalanceSheet.bind(this.balanceSheetService)
     );
+    this.app.post(
+      '/v1/balancesheets/diff/upload',
+      allowUserOnly,
+      upload.single('balanceSheet'),
+      this.balanceSheetService.diffBetweenUploadApiBalanceSheet.bind(
+        this.balanceSheetService
+      )
+    );
     this.app.get(
       '/v1/balancesheets',
       allowUserOnly,

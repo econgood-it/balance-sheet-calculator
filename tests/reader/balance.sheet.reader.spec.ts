@@ -73,8 +73,8 @@ describe('BalanceSheetReader', () => {
       name: 'Relative impact',
       estimations: 4,
       weight: 1.5,
-      points: 11.4285714285714,
-      maxPoints: 28.5714285714286,
+      points: 11.7073170731707,
+      maxPoints: 29.2682926829268,
       isPositive: true,
       isWeightSelectedByUser: true,
     });

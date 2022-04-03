@@ -51,7 +51,7 @@ export class Value {
     return this.getNumberWithDefault(1);
   }
 
-  public get points(): number {
+  public get numberWithDefault0(): number {
     return this.getNumberWithDefault(0);
   }
 

@@ -33,6 +33,7 @@ export class RatingsUpdater {
             calcResults,
             balanceSheet.companyFacts
           );
+
       sumOfTopicWeights += stakeholderWeight * topic.weight;
     }
 

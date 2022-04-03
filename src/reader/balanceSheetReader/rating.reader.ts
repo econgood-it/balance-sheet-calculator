@@ -8,8 +8,8 @@ export class RatingReader {
     const cr = new CellReader();
     const shortName = cr.readWithRow(row, 'B').text;
     const nameValue = cr.readWithRow(row, 'C');
-    const estimations = cr.readWithRow(row, 'H').number;
-    const points = cr.readWithRow(row, 'I').points;
+    const estimations = cr.readWithRow(row, 'H').numberWithDefault0;
+    const points = cr.readWithRow(row, 'I').numberWithDefault0;
     const maxPoints = cr.readWithRow(row, 'J').number;
     return shortName.length > 1
       ? new Rating(

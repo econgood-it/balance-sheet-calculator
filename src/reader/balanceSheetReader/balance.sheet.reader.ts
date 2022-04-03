@@ -51,7 +51,7 @@ export class BalanceSheetReader {
       cr.read(sheet, 19, valueColumn).number,
       cr.read(sheet, 20, valueColumn).number,
       cr.read(sheet, 22, valueColumn).number,
-      cr.read(sheet, 37, valueColumn).number,
+      cr.read(sheet, 37, valueColumn).numberWithDefault0,
       cr.read(sheet, 21, valueColumn).number,
       cr.read(sheet, 23, valueColumn).number,
       cr.read(sheet, 26, valueColumn).number,
@@ -74,7 +74,7 @@ export class BalanceSheetReader {
       new MainOriginOfOtherSuppliers(
         undefined,
         cr.read(sheet, 15, 'D').countryCode,
-        cr.read(sheet, 15, 'F').number
+        cr.read(sheet, 15, 'F').numberWithDefault0
       )
     );
     const ratingReader = new RatingReader();

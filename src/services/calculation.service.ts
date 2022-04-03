@@ -12,7 +12,7 @@ export class CalculationService {
     balanceSheet: BalanceSheet,
     entityManager: EntityManager,
     saveCalcResults: boolean
-  ): Promise<BalanceSheet> {
+  ): Promise<{ updatedBalanceSheet: BalanceSheet; calcResults: CalcResults }> {
     const industryRepository = entityManager.getRepository(Industry);
     const regionProvider = await RegionProvider.createFromCompanyFacts(
       balanceSheet.companyFacts,
@@ -38,6 +38,9 @@ export class CalculationService {
         .save(updatedBalanceSheet);
     }
     updatedBalanceSheet.sortRatings();
-    return updatedBalanceSheet;
+    return {
+      updatedBalanceSheet: updatedBalanceSheet,
+      calcResults: calcResults,
+    };
   }
 }
