@@ -2,7 +2,7 @@ import * as path from 'path';
 import {
   BalanceSheetReader,
   readLanguage,
-} from '../../src/reader/balance.sheet.reader';
+} from '../../src/reader/balanceSheetReader/balance.sheet.reader';
 import { Workbook } from 'exceljs';
 import { createTranslations } from '../../src/entities/Translations';
 

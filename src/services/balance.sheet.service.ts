@@ -4,7 +4,7 @@ import {
   BALANCE_SHEET_RELATIONS,
   BalanceSheet,
 } from '../entities/balanceSheet';
-import { Connection } from 'typeorm';
+import { Connection, EntityManager } from 'typeorm';
 import { BalanceSheetDTOUpdate } from '../dto/update/balance.sheet.update.dto';
 import { SupplyFraction } from '../entities/supplyFraction';
 import { EmployeesFraction } from '../entities/employeesFraction';
@@ -25,7 +25,7 @@ import { Workbook } from 'exceljs';
 import {
   BalanceSheetReader,
   readLanguage,
-} from '../reader/balance.sheet.reader';
+} from '../reader/balanceSheetReader/balance.sheet.reader';
 
 export class BalanceSheetService {
   constructor(private connection: Connection) {}
@@ -42,20 +42,16 @@ export class BalanceSheetService {
         const balanceSheetDTOCreate: BalanceSheetDTOCreate =
           BalanceSheetDTOCreate.fromJSON(req.body);
         await this.validateOrFail(balanceSheetDTOCreate);
-        if (req.userInfo === undefined) {
-          throw new UnauthorizedException('No user provided');
-        }
-        const userId = req.userInfo.id;
-        const userRepository = entityManager.getRepository(User);
-        const foundUser = await userRepository.findOneOrFail(userId);
-        const balanceSheet: BalanceSheet =
-          await balanceSheetDTOCreate.toBalanceSheet(language, [foundUser]);
-        const balanceSheetResponse: BalanceSheet =
-          await CalculationService.calculate(
-            balanceSheet,
-            entityManager,
-            saveFlag
-          );
+        const foundUser = await this.findUserOrFail(req, entityManager);
+        const balanceSheet = await balanceSheetDTOCreate.toBalanceSheet(
+          language,
+          [foundUser]
+        );
+        const balanceSheetResponse = await CalculationService.calculate(
+          balanceSheet,
+          entityManager,
+          saveFlag
+        );
         res.json(
           BalanceSheetDTOResponse.fromBalanceSheet(
             balanceSheetResponse,
@@ -77,13 +73,7 @@ export class BalanceSheetService {
     this.connection.manager
       .transaction(async (entityManager) => {
         if (req.file) {
-          if (req.userInfo === undefined) {
-            throw new UnauthorizedException('No user provided');
-          }
-          const userId = req.userInfo.id;
-          const userRepository = entityManager.getRepository(User);
-          const foundUser = await userRepository.findOneOrFail(userId);
-
+          const foundUser = await this.findUserOrFail(req, entityManager);
           const wb = await new Workbook().xlsx.load(req.file.buffer);
           const language = readLanguage(wb);
           const balanceSheetReader = new BalanceSheetReader();
@@ -93,12 +83,11 @@ export class BalanceSheetService {
             [foundUser]
           );
 
-          const balanceSheetResponse: BalanceSheet =
-            await CalculationService.calculate(
-              balanceSheet,
-              entityManager,
-              saveFlag
-            );
+          const balanceSheetResponse = await CalculationService.calculate(
+            balanceSheet,
+            entityManager,
+            saveFlag
+          );
 
           res.json(
             BalanceSheetDTOResponse.fromBalanceSheet(
@@ -268,6 +257,15 @@ export class BalanceSheetService {
       .catch((error) => {
         handle(error, next);
       });
+  }
+
+  private async findUserOrFail(req: Request, entityManager: EntityManager) {
+    if (req.userInfo === undefined) {
+      throw new UnauthorizedException('No user provided');
+    }
+    const userId = req.userInfo.id;
+    const userRepository = entityManager.getRepository(User);
+    return await userRepository.findOneOrFail(userId);
   }
 
   private async validateOrFail(
