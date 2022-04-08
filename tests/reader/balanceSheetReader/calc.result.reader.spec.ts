@@ -32,8 +32,16 @@ describe('CalcResults', () => {
       79181.6338864915
     );
 
-    // expect(calcResults..normedEmployeesRisk).toBe(
-    //   79181.6338864915
-    // );
+    expect(
+      calcResults.customerCalcResults.sumOfEcologicalDesignOfProductsAndService
+    ).toBe(1);
+
+    expect(
+      calcResults.socialEnvironmentCalcResults.profitInPercentOfTurnover.get() as number
+    ).toBe(0.925711640823883);
+    expect(
+      calcResults.socialEnvironmentCalcResults
+        .companyIsActiveInMiningOrConstructionIndustry
+    ).toBeFalsy();
   });
 });

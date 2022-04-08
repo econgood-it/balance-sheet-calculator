@@ -1,6 +1,7 @@
 import { DEFAULT_COUNTRY_CODE } from '../../entities/region';
 import { createTranslations, Translations } from '../../entities/Translations';
 import { CompanySize } from '../../calculations/employees.calc';
+import { none, Option, some } from '../../calculations/option';
 
 export class Value {
   constructor(public readonly value: string) {}
@@ -58,6 +59,10 @@ export class Value {
 
   public getDescription(lng: keyof Translations) {
     return createTranslations(lng, this.value);
+  }
+
+  public parseAsOptionalNumber(): Option<number> {
+    return !isNaN(this.number) ? some(this.number) : none();
   }
 
   public parseAsCompanySize(): CompanySize {

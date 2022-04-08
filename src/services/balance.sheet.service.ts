@@ -27,6 +27,9 @@ import {
   readLanguage,
 } from '../reader/balanceSheetReader/balance.sheet.reader';
 import { diffBetweenBalanceSheets } from '../dto/response/balance.sheet.diff.response';
+import { CalcResultsReader } from '../reader/balanceSheetReader/calc.results.reader';
+import { diff } from 'deep-diff';
+import { CalcResults } from '../calculations/calculator';
 
 export class BalanceSheetService {
   constructor(private connection: Connection) {}
@@ -77,18 +80,22 @@ export class BalanceSheetService {
           const wb = await new Workbook().xlsx.load(req.file.buffer);
           const language = readLanguage(wb);
           const balanceSheetReader = new BalanceSheetReader();
+          const calcResultsReader = new CalcResultsReader();
 
           const balanceSheetUpload = balanceSheetReader.readFromWorkbook(
             wb,
             language,
             [foundUser]
           );
+          const calcResultsUpload = calcResultsReader.readFromWorkbook(wb);
 
-          const { updatedBalanceSheet } = await CalculationService.calculate(
-            balanceSheetUpload,
-            entityManager,
-            false
-          );
+          const { updatedBalanceSheet, calcResults } =
+            await CalculationService.calculate(
+              balanceSheetUpload,
+              entityManager,
+              false
+            );
+
           res.json({
             lhs: 'upload',
             rhs: 'api',
@@ -96,6 +103,9 @@ export class BalanceSheetService {
               balanceSheetUpload,
               updatedBalanceSheet
             ),
+            diffCalc:
+              calcResultsUpload.isPresent() &&
+              diff(calcResultsUpload.get() as CalcResults, calcResults),
           });
         } else {
           res.json({ message: 'File empty' });

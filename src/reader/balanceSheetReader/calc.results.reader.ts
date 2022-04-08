@@ -2,13 +2,19 @@ import { Workbook } from 'exceljs';
 import { CellReader } from './cell.reader';
 import { none, Option, some } from '../../calculations/option';
 import { CalcResults } from '../../calculations/calculator';
+import {
+  INDUSTRY_CODE_FOR_CONSTRUCTION_INDUSTRY,
+  INDUSTRY_CODE_FOR_FINANCIAL_SERVICES,
+  INDUSTRY_CODE_FOR_MINING,
+} from '../../entities/industry.sector';
 
 export class CalcResultsReader {
   public readFromWorkbook(wb: Workbook): Option<CalcResults> {
     const cr = new CellReader();
     const regionSheet = wb.getWorksheet('11.Region');
     const weightingSheet = wb.getWorksheet('9. Weighting');
-    if (!regionSheet || !weightingSheet) {
+    const industrySheet = wb.getWorksheet('10. Industry');
+    if (!regionSheet || !weightingSheet || !industrySheet) {
       return none();
     }
     const sumOfFinancialAspects =
@@ -28,18 +34,28 @@ export class CalcResultsReader {
         companySize: cr.read(weightingSheet, 39, 'H').parseAsCompanySize(),
       },
       customerCalcResults: {
-        sumOfEcologicalDesignOfProductsAndService: 0,
+        sumOfEcologicalDesignOfProductsAndService: cr.read(
+          industrySheet,
+          38,
+          'J'
+        ).number,
       },
       financeCalcResults: {
         companyIsActiveInFinancialServices:
-          cr.read(weightingSheet, 35, 'H').text === 'K',
+          cr.read(weightingSheet, 35, 'H').text ===
+          INDUSTRY_CODE_FOR_FINANCIAL_SERVICES,
         economicRatio: cr.read(weightingSheet, 23, 'E').number,
         economicRatioE22: cr.read(weightingSheet, 22, 'E').number,
         sumOfFinancialAspects: sumOfFinancialAspects,
       },
       socialEnvironmentCalcResults: {
-        companyIsActiveInMiningOrConstructionIndustry: true,
-        profitInPercentOfTurnover: none(),
+        companyIsActiveInMiningOrConstructionIndustry: [
+          INDUSTRY_CODE_FOR_CONSTRUCTION_INDUSTRY,
+          INDUSTRY_CODE_FOR_MINING,
+        ].includes(cr.read(weightingSheet, 35, 'H').text),
+        profitInPercentOfTurnover: cr
+          .read(weightingSheet, 20, 'I')
+          .parseAsOptionalNumber(),
       },
     });
   }

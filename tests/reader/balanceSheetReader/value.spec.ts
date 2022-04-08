@@ -23,4 +23,11 @@ describe('Value', () => {
     value = new Value('Grossunternehmen');
     expect(value.parseAsCompanySize()).toBe(CompanySize.large);
   });
+
+  it('should be parsed as optional number', async () => {
+    let value = new Value('0.93');
+    expect(value.parseAsOptionalNumber().get() as number).toBe(0.93);
+    value = new Value('-');
+    expect(value.parseAsOptionalNumber().isPresent()).toBeFalsy();
+  });
 });
