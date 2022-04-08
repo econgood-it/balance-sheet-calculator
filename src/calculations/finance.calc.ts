@@ -39,7 +39,11 @@ export class FinanceCalc {
     );
   }
 
-  // In Excel I19+I21+I22+G24
+  /**
+   * In Excel $'11.Region' I19+I21+I22+G24
+   * @param companyFacts
+   * @private
+   */
   private getSumOfFinancialAspects(companyFacts: CompanyFacts): number {
     return (
       companyFacts.profit +

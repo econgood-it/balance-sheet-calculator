@@ -1,5 +1,6 @@
 import { DEFAULT_COUNTRY_CODE } from '../../entities/region';
 import { createTranslations, Translations } from '../../entities/Translations';
+import { CompanySize } from '../../calculations/employees.calc';
 
 export class Value {
   constructor(public readonly value: string) {}
@@ -57,6 +58,20 @@ export class Value {
 
   public getDescription(lng: keyof Translations) {
     return createTranslations(lng, this.value);
+  }
+
+  public parseAsCompanySize(): CompanySize {
+    if (['Micro-business', 'Kleinstunternehmen'].includes(this.value)) {
+      return CompanySize.micro;
+    } else if (['Small business', 'Kleinunternehmen'].includes(this.value)) {
+      return CompanySize.small;
+    } else if (
+      ['Medium business', 'Mittleres Unternehmen'].includes(this.value)
+    ) {
+      return CompanySize.middle;
+    }
+
+    return CompanySize.large;
   }
 
   private splitAndGetFirst(splitBy: string): string {
