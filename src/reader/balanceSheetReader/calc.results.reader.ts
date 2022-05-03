@@ -18,19 +18,19 @@ export class CalcResultsReader {
       return none();
     }
     const sumOfFinancialAspects =
-      cr.read(weightingSheet, 19, 'I').number +
-      cr.read(weightingSheet, 21, 'I').number +
-      cr.read(weightingSheet, 22, 'I').number +
-      cr.read(weightingSheet, 24, 'G').number;
+      cr.read(weightingSheet, 19, 'I').numberWithDefault0 +
+      cr.read(weightingSheet, 21, 'I').numberWithDefault0 +
+      cr.read(weightingSheet, 22, 'I').numberWithDefault0 +
+      cr.read(weightingSheet, 24, 'G').numberWithDefault0;
     return some({
       supplyCalcResults: {
-        supplyRiskSum: cr.read(regionSheet, 3, 'G').number,
+        supplyRiskSum: cr.read(regionSheet, 3, 'G').numberWithDefault0,
         supplyChainWeight: cr.read(regionSheet, 8, 'N').number,
-        itucAverage: cr.read(regionSheet, 9, 'I').number,
+        itucAverage: cr.read(regionSheet, 9, 'I').numberWithDefault0,
       },
       employeesCalcResults: {
-        itucAverage: cr.read(regionSheet, 14, 'I').number,
-        normedEmployeesRisk: cr.read(regionSheet, 10, 'G').number,
+        itucAverage: cr.read(regionSheet, 14, 'I').numberWithDefault0,
+        normedEmployeesRisk: cr.read(regionSheet, 10, 'G').numberWithDefault0,
         companySize: cr.read(weightingSheet, 39, 'H').parseAsCompanySize(),
       },
       customerCalcResults: {
