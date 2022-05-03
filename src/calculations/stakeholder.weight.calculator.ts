@@ -38,7 +38,6 @@ export class StakeholderWeightCalculator {
     return weight;
   }
 
-  // A
   public async calculateSupplierWeightFromCompanyFacts(
     calcResults: CalcResults
   ): Promise<number> {
@@ -97,7 +96,11 @@ export class StakeholderWeightCalculator {
       : supplierAndEmployeesRiskRatio;
   }
 
-  // =WENNFEHLER((60*$'11.Region'.G3/($'11.Region'.G3+$'11.Region'.G10+(I19+I21+I22+G24))*5),100)
+  /**
+   * In excel this is equal to the cell $'9.Weighting'.I49
+   * =IFERROR((60*$'11.Region'.G3/($'11.Region'.G3+$'11.Region'.G10+(I19+I21+I22+G24))*5),100)
+   * @param calcResults
+   */
   public async calculateSupplierAndEmployeesRiskRatio(
     calcResults: CalcResults
   ): Promise<number> {
