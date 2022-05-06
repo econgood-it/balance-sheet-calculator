@@ -1,80 +1,35 @@
 import { CalcResults } from './calculator';
 import { CompanyFacts } from '../entities/companyFacts';
 import { CompanySize } from './employees.calc';
+import Provider from '../providers/provider';
 
 export class TopicWeightCalculator {
-  public async calcTopicWeight(
-    topicShortName: string,
+  public calcTopicWeights(
     calcResults: CalcResults,
     companyFacts: CompanyFacts
-  ): Promise<number> {
-    let weight: number = 1;
-    switch (topicShortName) {
-      case 'A1':
-        weight = await this.constantWeight();
-        break;
-      case 'A2':
-        weight = await this.constantWeight();
-        break;
-      case 'A3':
-        weight = await this.calculateTopicWeightOfA3(calcResults);
-        break;
-      case 'A4':
-        weight = await this.calculateTopicWeightOfA4(calcResults);
-        break;
-      case 'B1':
-        weight = await this.calculateTopicWeightOfB1(calcResults);
-        break;
-      case 'B2':
-        weight = await this.calculateTopicWeightOfB2(calcResults);
-        break;
-      case 'B3':
-        weight = await this.calculateTopicWeightOfB3(calcResults);
-        break;
-      case 'B4':
-        weight = await this.calculateTopicWeightOfB4(calcResults);
-        break;
-      case 'C1':
-        weight = this.constantWeight();
-        break;
-      case 'C2':
-        weight = this.constantWeight();
-        break;
-      case 'C3':
-        weight = this.calculateTopicWeightOfC3(companyFacts);
-        break;
-      case 'C4':
-        weight = this.calculateTopicWeightOfC4(calcResults, companyFacts);
-        break;
-      case 'D1':
-        weight = this.constantWeight();
-        break;
-      case 'D2':
-        weight = this.constantWeight();
-        break;
-      case 'D3':
-        weight = this.calculateTopicWeightOfD3AndE3(calcResults);
-        break;
-      case 'D4':
-        weight = this.calculateTopicWeightOfD4(companyFacts);
-        break;
-      case 'E1':
-        weight = this.constantWeight();
-        break;
-      case 'E2':
-        weight = this.calculateTopicWeightOfE2(calcResults);
-        break;
-      case 'E3':
-        weight = this.calculateTopicWeightOfD3AndE3(calcResults);
-        break;
-      case 'E4':
-        weight = this.calculateTopicWeightOfE4(calcResults);
-        break;
-      default:
-        weight = 1;
-        break;
-    }
-    return weight;
+  ): Provider<string, number> {
+    return new Provider<string, number>([
+      ['A1', this.constantWeight()],
+      ['A2', this.constantWeight()],
+      ['A3', this.calculateTopicWeightOfA3(calcResults)],
+      ['A4', this.calculateTopicWeightOfA4(calcResults)],
+      ['B1', this.calculateTopicWeightOfB1(calcResults)],
+      ['B2', this.calculateTopicWeightOfB2(calcResults)],
+      ['B3', this.calculateTopicWeightOfB3(calcResults)],
+      ['B4', this.calculateTopicWeightOfB4(calcResults)],
+      ['C1', this.constantWeight()],
+      ['C2', this.constantWeight()],
+      ['C3', this.calculateTopicWeightOfC3(companyFacts)],
+      ['C4', this.calculateTopicWeightOfC4(calcResults, companyFacts)],
+      ['D1', this.constantWeight()],
+      ['D2', this.constantWeight()],
+      ['D3', this.calculateTopicWeightOfD3AndE3(calcResults)],
+      ['D4', this.calculateTopicWeightOfD4(companyFacts)],
+      ['E1', this.constantWeight()],
+      ['E2', this.calculateTopicWeightOfE2(calcResults)],
+      ['E3', this.calculateTopicWeightOfD3AndE3(calcResults)],
+      ['E4', this.calculateTopicWeightOfE4(calcResults)],
+    ]);
   }
 
   public constantWeight(): number {

@@ -24,6 +24,11 @@ export class RatingsUpdater {
         calcResults
       );
 
+    const topicWeights = await this.topicWeightCalculator.calcTopicWeights(
+      calcResults,
+      balanceSheet.companyFacts
+    );
+
     for (const topic of topics) {
       const stakeholderName: string = topic.shortName.substring(0, 1);
       const stakeholderWeight = stakeholderWeights.getOrFail(stakeholderName);
@@ -32,11 +37,7 @@ export class RatingsUpdater {
       // See Weighting G69
       topic.weight = topic.isWeightSelectedByUser
         ? topic.weight
-        : await this.topicWeightCalculator.calcTopicWeight(
-            topic.shortName,
-            calcResults,
-            balanceSheet.companyFacts
-          );
+        : topicWeights.getOrFail(topic.shortName);
 
       sumOfTopicWeights += stakeholderWeight * topic.weight;
     }

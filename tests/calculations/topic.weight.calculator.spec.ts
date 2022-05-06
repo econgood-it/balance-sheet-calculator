@@ -14,12 +14,13 @@ describe('Rating Weight Calculator', () => {
     topicShortName: string,
     calcResults: CalcResults,
     companyFacts: CompanyFacts
-  ) =>
-    await topicWeihgtCalculator.calcTopicWeight(
-      topicShortName,
+  ) => {
+    const topicWeights = topicWeihgtCalculator.calcTopicWeights(
       calcResults,
       companyFacts
     );
+    return topicWeights.getOrFail(topicShortName);
+  };
 
   beforeEach(() => {
     companyFacts = EmptyCompanyFacts;
