@@ -3,6 +3,7 @@ import { CalcResults } from './calculator';
 import { TopicWeightCalculator } from './topic.weight.calculator';
 import { BalanceSheet } from '../entities/balanceSheet';
 import { Rating } from '../entities/rating';
+import Provider from '../providers/provider';
 
 export class RatingsUpdater {
   private stakeholderWeightCalculator: StakeholderWeightCalculator =
@@ -13,21 +14,14 @@ export class RatingsUpdater {
 
   public async update(
     balanceSheet: BalanceSheet,
-    calcResults: CalcResults
+    calcResults: CalcResults,
+    stakeholderWeights: Provider<string, number>,
+    topicWeights: Provider<string, number>
   ): Promise<BalanceSheet> {
     let sumOfTopicWeights = 0;
     // Compute sum of topic weights
     const topics = balanceSheet.getTopics();
     const ratings: Rating[] = [];
-    const stakeholderWeights =
-      await this.stakeholderWeightCalculator.calcStakeholderWeights(
-        calcResults
-      );
-
-    const topicWeights = await this.topicWeightCalculator.calcTopicWeights(
-      calcResults,
-      balanceSheet.companyFacts
-    );
 
     for (const topic of topics) {
       const stakeholderName: string = topic.shortName.substring(0, 1);

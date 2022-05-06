@@ -18,9 +18,13 @@ import {
   BalanceSheetVersion,
 } from '../../src/entities/enums';
 import { BalanceSheet } from '../../src/entities/balanceSheet';
+import { StakeholderWeightCalculator } from '../../src/calculations/stakeholder.weight.calculator';
+import { TopicWeightCalculator } from '../../src/calculations/topic.weight.calculator';
 
 describe('Ratings updater', () => {
   let connection: Connection;
+  const stakeholderWeightCalculator = new StakeholderWeightCalculator();
+  const topicWeightCalculator = new TopicWeightCalculator();
 
   beforeAll(async () => {
     connection =
@@ -66,9 +70,17 @@ describe('Ratings updater', () => {
       []
     );
     const ratingsUpdater: RatingsUpdater = new RatingsUpdater();
+    const stakeholderWeights =
+      await stakeholderWeightCalculator.calcStakeholderWeights(calcResults);
+    const topicWeights = topicWeightCalculator.calcTopicWeights(
+      calcResults,
+      balanceSheet.companyFacts
+    );
     const updatedBalanceSheet = await ratingsUpdater.update(
       balanceSheet,
-      calcResults
+      calcResults,
+      stakeholderWeights,
+      topicWeights
     );
     pathToCsv = path.join(testDataDir, fileNameOfRatingExpectedData);
     const expected: Rating[] = await testDataReader.readRatingsFromCsv(
@@ -103,9 +115,17 @@ describe('Ratings updater', () => {
       []
     );
     const ratingsUpdater: RatingsUpdater = new RatingsUpdater();
+    const stakeholderWeights =
+      await stakeholderWeightCalculator.calcStakeholderWeights(calcResults);
+    const topicWeights = topicWeightCalculator.calcTopicWeights(
+      calcResults,
+      balanceSheet.companyFacts
+    );
     const updatedBalanceSheet = await ratingsUpdater.update(
       balanceSheet,
-      calcResults
+      calcResults,
+      stakeholderWeights,
+      topicWeights
     );
     expect(updatedBalanceSheet.ratings[0].weight).toBeCloseTo(2, 2);
   });
