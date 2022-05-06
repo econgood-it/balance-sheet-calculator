@@ -1,41 +1,20 @@
 import { CalcResults } from './calculator';
+import Provider from '../providers/provider';
 
 export class StakeholderWeightCalculator {
   private readonly defaultPPPIndex = 0.978035862587365;
   private readonly defaultIfDenominatorIsZero = 100.0;
 
-  public async calcStakeholderWeight(
-    stakeholderName: string,
+  public async calcStakeholderWeights(
     calcResults: CalcResults
-  ): Promise<number> {
-    let weight: number = 1;
-    switch (stakeholderName) {
-      case 'A':
-        weight = await this.calculateSupplierWeightFromCompanyFacts(
-          calcResults
-        );
-        break;
-      case 'B':
-        weight = await this.calculateFinancialWeightFromCompanyFacts(
-          calcResults
-        );
-        break;
-      case 'C':
-        weight = await this.calculateEmployeeWeightFromCompanyFacts(
-          calcResults
-        );
-        break;
-      case 'D':
-        weight = await this.calculateCustomerWeightFromCompanyFacts();
-        break;
-      case 'E':
-        weight = await this.calculateSocialEnvironmentlWeightFromCompanyFacts();
-        break;
-      default:
-        weight = 1;
-        break;
-    }
-    return weight;
+  ): Promise<Provider<string, number>> {
+    return new Provider<string, number>([
+      ['A', await this.calculateSupplierWeightFromCompanyFacts(calcResults)],
+      ['B', await this.calculateFinancialWeightFromCompanyFacts(calcResults)],
+      ['C', await this.calculateEmployeeWeightFromCompanyFacts(calcResults)],
+      ['D', await this.calculateCustomerWeightFromCompanyFacts()],
+      ['E', await this.calculateSocialEnvironmentlWeightFromCompanyFacts()],
+    ]);
   }
 
   public async calculateSupplierWeightFromCompanyFacts(
