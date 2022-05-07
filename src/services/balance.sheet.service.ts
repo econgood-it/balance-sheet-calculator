@@ -29,7 +29,6 @@ import {
 import { diffBetweenBalanceSheets } from '../dto/response/balance.sheet.diff.response';
 import { CalcResultsReader } from '../reader/balanceSheetReader/calc.results.reader';
 import { diff } from 'deep-diff';
-import { CalcResults } from '../calculations/calculator';
 
 export class BalanceSheetService {
   constructor(private connection: Connection) {}
@@ -96,16 +95,15 @@ export class BalanceSheetService {
               false
             );
 
+          // TODO: Add diff for stakeholder and topic weights
           res.json({
             lhs: 'upload',
             rhs: 'api',
+            diffCalc: calcResultsUpload && diff(calcResultsUpload, calcResults),
             diff: diffBetweenBalanceSheets(
               balanceSheetUpload,
               updatedBalanceSheet
             ),
-            diffCalc:
-              calcResultsUpload.isPresent() &&
-              diff(calcResultsUpload.get() as CalcResults, calcResults),
           });
         } else {
           res.json({ message: 'File empty' });
