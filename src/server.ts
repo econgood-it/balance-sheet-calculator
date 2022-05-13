@@ -12,7 +12,7 @@ declare global {
     export interface Request {
       correlationId(): string | undefined;
       userInfo?: { id: number; email: string; role: Role };
-      file?: Multer.File;
+      file?: Express.Multer.File;
     }
   }
 }
