@@ -2,6 +2,7 @@ import { DEFAULT_COUNTRY_CODE } from '../../entities/region';
 import { createTranslations, Translations } from '../../entities/Translations';
 import { CompanySize } from '../../calculations/employees.calc';
 import { none, Option, some } from '../../calculations/option';
+import { BalanceSheetVersion } from '../../entities/enums';
 
 export class Value {
   constructor(public readonly value: string) {}
@@ -63,6 +64,13 @@ export class Value {
 
   public parseAsOptionalNumber(): Option<number> {
     return !isNaN(this.number) ? some(this.number) : none();
+  }
+
+  public parseAsVersion(): BalanceSheetVersion {
+    const match = Object.entries(BalanceSheetVersion).find(
+      ([_, value]) => value === this.text
+    );
+    return match ? match[1] : BalanceSheetVersion.v5_0_8;
   }
 
   public parseAsCompanySize(): CompanySize {

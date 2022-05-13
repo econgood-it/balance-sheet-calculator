@@ -2,7 +2,7 @@ import { Workbook } from 'exceljs';
 import { CompanyFacts } from '../../entities/companyFacts';
 import { MainOriginOfOtherSuppliers } from '../../entities/main.origin.of.other.suppliers';
 import { BalanceSheet } from '../../entities/balanceSheet';
-import { BalanceSheetType, BalanceSheetVersion } from '../../entities/enums';
+import { BalanceSheetType } from '../../entities/enums';
 import { Translations } from '../../entities/Translations';
 import { User } from '../../entities/user';
 import { CellReader } from './cell.reader';
@@ -38,7 +38,7 @@ export class BalanceSheetReader {
   ) {
     const cr = new CellReader();
     const sheet = wb.getWorksheet('2. Company Facts');
-
+    const introSheet = wb.getWorksheet('0. Intro');
     const supplyFractionReader = new SupplyFractionReader();
     const employeesFractionReader = new EmployeesFractionReader();
     const industrySectorReader = new IndustrySectorReader();
@@ -84,10 +84,11 @@ export class BalanceSheetReader {
         ratingReader.read(calcSheet.getRow(row), language)
       )
     );
+    // TODO: Find a good way to distinguish between balance sheet types. Instead of hard coding Full.
     return new BalanceSheet(
       undefined,
       BalanceSheetType.Full,
-      BalanceSheetVersion.v5_0_6,
+      cr.read(introSheet, 3, 'C').parseAsVersion(),
       companyFacts,
       ratings,
       users

@@ -5,6 +5,10 @@ import {
 } from '../../../src/reader/balanceSheetReader/balance.sheet.reader';
 import { Workbook } from 'exceljs';
 import { createTranslations } from '../../../src/entities/Translations';
+import {
+  BalanceSheetType,
+  BalanceSheetVersion,
+} from '../../../src/entities/enums';
 
 describe('BalanceSheetReader', () => {
   it('should read company facts from excel', async () => {
@@ -78,5 +82,15 @@ describe('BalanceSheetReader', () => {
       isPositive: true,
       isWeightSelectedByUser: true,
     });
+  });
+
+  it('should read version and type from excel', async () => {
+    const balanceSheetReader = new BalanceSheetReader();
+    const pathToCsv = path.join(__dirname, 'full_5_0_6.xlsx');
+    const wb: Workbook = await new Workbook().xlsx.readFile(pathToCsv);
+    const language = readLanguage(wb);
+    const balancesheet = balanceSheetReader.readFromWorkbook(wb, language, []);
+    expect(balancesheet.version).toBe(BalanceSheetVersion.v5_0_6);
+    expect(balancesheet.type).toBe(BalanceSheetType.Full);
   });
 });
