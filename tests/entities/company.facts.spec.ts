@@ -6,6 +6,39 @@ import { EmptyCompanyFacts } from '../testData/company.facts';
 import { MainOriginOfOtherSuppliers } from '../../src/entities/main.origin.of.other.suppliers';
 import { EmployeesFraction } from '../../src/entities/employeesFraction';
 import { SupplyFraction } from '../../src/entities/supplyFraction';
+import { IndustrySector } from '../../src/entities/industry.sector';
+import { createTranslations } from '../../src/entities/Translations';
+
+describe('Company Facts', () => {
+  it('allValuesAreZero should return true', () => {
+    const companyFacts = EmptyCompanyFacts;
+    expect(companyFacts.allValuesAreZero()).toBeTruthy();
+  });
+  it('allValuesAreZero should return false', () => {
+    const value = 3;
+    const companyFacts = new CompanyFacts(
+      undefined,
+      value,
+      value,
+      value,
+      value,
+      value,
+      value,
+      value,
+      value,
+      value,
+      value,
+      true,
+      value,
+      true,
+      [new SupplyFraction(undefined, 'A', 'DEU', value)],
+      [new EmployeesFraction(undefined, 'DEU', value)],
+      [new IndustrySector(undefined, 'A', value, createTranslations('en', ''))],
+      new MainOriginOfOtherSuppliers(undefined, 'DEU', 0)
+    );
+    expect(companyFacts.allValuesAreZero()).toBeFalsy();
+  });
+});
 
 describe('Company Facts entity', () => {
   let companyFactsRepository: Repository<CompanyFacts>;
