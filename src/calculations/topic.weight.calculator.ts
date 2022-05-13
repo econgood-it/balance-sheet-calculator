@@ -8,7 +8,7 @@ export class TopicWeightCalculator {
     calcResults: CalcResults,
     companyFacts: CompanyFacts
   ): Provider<string, number> {
-    return new Provider<string, number>([
+    const topicWeights = new Provider<string, number>([
       ['A1', this.constantWeight()],
       ['A2', this.constantWeight()],
       ['A3', this.calculateTopicWeightOfA3(calcResults)],
@@ -30,6 +30,14 @@ export class TopicWeightCalculator {
       ['E3', this.calculateTopicWeightOfD3AndE3(calcResults)],
       ['E4', this.calculateTopicWeightOfE4(calcResults)],
     ]);
+    if (companyFacts.allValuesAreZero()) {
+      const allTopicWeightsAreOne = new Provider<string, number>();
+      for (const [key] of topicWeights) {
+        allTopicWeightsAreOne.set(key, 1);
+      }
+      return allTopicWeightsAreOne;
+    }
+    return topicWeights;
   }
 
   public constantWeight(): number {
