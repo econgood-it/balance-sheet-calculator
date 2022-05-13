@@ -4,9 +4,10 @@ import { Workbook } from 'exceljs';
 import { StakeholderWeightsReader } from '../../../src/reader/balanceSheetReader/stakeholder.weights.reader';
 
 describe('Stakeholder weights reader', () => {
+  const fileDir = path.resolve(__dirname, '../../testData');
   it('should read stakeholder weights from excel', async () => {
     const stakeholderWeightsReader = new StakeholderWeightsReader();
-    const pathToCsv = path.join(__dirname, 'full_5_0_7_unprotected.xlsx');
+    const pathToCsv = path.join(fileDir, 'full_5_0_7_unprotected.xlsx');
     const wb: Workbook = await new Workbook().xlsx.readFile(pathToCsv);
     const stakeholderWeights = stakeholderWeightsReader.readFromWorkbook(wb);
     expect(stakeholderWeights).toBeDefined();

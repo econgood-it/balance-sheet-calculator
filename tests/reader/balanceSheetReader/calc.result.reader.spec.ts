@@ -5,9 +5,10 @@ import { CalcResultsReader } from '../../../src/reader/balanceSheetReader/calc.r
 import { CompanySize } from '../../../src/calculations/employees.calc';
 
 describe('CalcResults', () => {
+  const fileDir = path.resolve(__dirname, '../../testData');
   it('should read calc results from excel', async () => {
     const calcResultsReader = new CalcResultsReader();
-    const pathToCsv = path.join(__dirname, 'full_5_0_7_unprotected.xlsx');
+    const pathToCsv = path.join(fileDir, 'full_5_0_7_unprotected.xlsx');
     const wb: Workbook = await new Workbook().xlsx.readFile(pathToCsv);
     const calcResults = calcResultsReader.readFromWorkbook(wb);
     expect(calcResults).toBeDefined();
