@@ -29,6 +29,8 @@ import {
 import { diffBetweenBalanceSheets } from '../dto/response/balance.sheet.diff.response';
 import { CalcResultsReader } from '../reader/balanceSheetReader/calc.results.reader';
 import { diff } from 'deep-diff';
+import { TopicWeightsReader } from '../reader/balanceSheetReader/topic.weights.reader';
+import { StakeholderWeightsReader } from '../reader/balanceSheetReader/stakeholder.weights.reader';
 
 export class BalanceSheetService {
   constructor(private connection: Connection) {}
@@ -80,6 +82,8 @@ export class BalanceSheetService {
           const language = readLanguage(wb);
           const balanceSheetReader = new BalanceSheetReader();
           const calcResultsReader = new CalcResultsReader();
+          const topicWeightsReader = new TopicWeightsReader();
+          const stakeholderWeightsReader = new StakeholderWeightsReader();
 
           const balanceSheetUpload = balanceSheetReader.readFromWorkbook(
             wb,
@@ -87,18 +91,36 @@ export class BalanceSheetService {
             [foundUser]
           );
           const calcResultsUpload = calcResultsReader.readFromWorkbook(wb);
+          const stakeholderWeightsUpload =
+            stakeholderWeightsReader.readFromWorkbook(wb);
+          const topicWeightsUpload = topicWeightsReader.readFromWorkbook(wb);
 
-          const { updatedBalanceSheet, calcResults } =
-            await CalculationService.calculate(
-              balanceSheetUpload,
-              entityManager,
-              false
-            );
+          const {
+            updatedBalanceSheet,
+            calcResults,
+            stakeholderWeights,
+            topicWeights,
+          } = await CalculationService.calculate(
+            balanceSheetUpload,
+            entityManager,
+            false
+          );
 
-          // TODO: Add diff for stakeholder and topic weights
           res.json({
             lhs: 'upload',
             rhs: 'api',
+            diffStakeHolderWeights:
+              stakeholderWeightsUpload &&
+              diff(
+                Object.fromEntries(stakeholderWeightsUpload),
+                Object.fromEntries(stakeholderWeights)
+              ),
+            diffTopicWeights:
+              topicWeightsUpload &&
+              diff(
+                Object.fromEntries(topicWeightsUpload),
+                Object.fromEntries(topicWeights)
+              ),
             diffCalc: calcResultsUpload && diff(calcResultsUpload, calcResults),
             diff: diffBetweenBalanceSheets(
               balanceSheetUpload,
