@@ -1,5 +1,9 @@
 import { CompanyFacts } from '../entities/companyFacts';
 import { none, Option, some } from './option';
+import {
+  INDUSTRY_CODE_FOR_CONSTRUCTION_INDUSTRY,
+  INDUSTRY_CODE_FOR_MINING,
+} from '../entities/industry.sector';
 
 export interface SocialEnvironmentCalcResults {
   profitInPercentOfTurnover: Option<number>;
@@ -7,9 +11,6 @@ export interface SocialEnvironmentCalcResults {
 }
 
 export class SocialEnvironmentCalc {
-  public static readonly INDUSTRY_CODE_FOR_MINING = 'B';
-  public static readonly INDUSTRY_CODE_FOR_CONSTRUCTION_INDUSTRY = 'F';
-
   public calculate(companyFacts: CompanyFacts): SocialEnvironmentCalcResults {
     return {
       profitInPercentOfTurnover:
@@ -32,9 +33,8 @@ export class SocialEnvironmentCalc {
   ): boolean {
     return companyFacts.industrySectors.some(
       (is) =>
-        is.industryCode === SocialEnvironmentCalc.INDUSTRY_CODE_FOR_MINING ||
-        is.industryCode ===
-          SocialEnvironmentCalc.INDUSTRY_CODE_FOR_CONSTRUCTION_INDUSTRY
+        is.industryCode === INDUSTRY_CODE_FOR_MINING ||
+        is.industryCode === INDUSTRY_CODE_FOR_CONSTRUCTION_INDUSTRY
     );
   }
 }

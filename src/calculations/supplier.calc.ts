@@ -14,6 +14,7 @@ export interface SupplyCalcResults {
 
 export class SupplierCalc {
   private static readonly DEFAULT_SUPPLY_CHAIN_WEIGHT = 1;
+  private static readonly DEFAULT_ITUC_AVERAGE = 0;
   constructor(
     private readonly regionProvider: RegionProvider,
     private readonly industryProvider: IndustryProvider
@@ -21,15 +22,19 @@ export class SupplierCalc {
 
   public calculate(companyFacts: CompanyFacts): SupplyCalcResults {
     const supplyRiskSum = this.supplyRiskSum(companyFacts);
-    let supplyChainWeight = this.supplyChainWeight(companyFacts, supplyRiskSum);
+    const supplyChainWeight = this.supplyChainWeight(
+      companyFacts,
+      supplyRiskSum
+    );
     const itucAverage = this.itucAverage(companyFacts, supplyRiskSum);
-    supplyChainWeight = Number.isNaN(supplyChainWeight)
-      ? SupplierCalc.DEFAULT_SUPPLY_CHAIN_WEIGHT
-      : supplyChainWeight;
     return {
       supplyRiskSum: supplyRiskSum,
-      supplyChainWeight: supplyChainWeight,
-      itucAverage: itucAverage,
+      supplyChainWeight: !Number.isNaN(supplyChainWeight)
+        ? supplyChainWeight
+        : SupplierCalc.DEFAULT_SUPPLY_CHAIN_WEIGHT,
+      itucAverage: !Number.isNaN(itucAverage)
+        ? itucAverage
+        : SupplierCalc.DEFAULT_ITUC_AVERAGE,
     };
   }
 

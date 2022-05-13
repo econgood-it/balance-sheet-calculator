@@ -1,5 +1,6 @@
 import { CompanyFacts } from '../entities/companyFacts';
 import { none, Option, some } from './option';
+import { INDUSTRY_CODE_FOR_FINANCIAL_SERVICES } from '../entities/industry.sector';
 
 export interface FinanceCalcResults {
   sumOfFinancialAspects: number;
@@ -9,7 +10,6 @@ export interface FinanceCalcResults {
 }
 
 export class FinanceCalc {
-  public static readonly INDUSTRY_CODE_FOR_FINANCIAL_SERVICES = 'K';
   public static readonly DEFAULT_SUPPLY_ECONOMIC_RATIO = 0.3;
   public static readonly DEFAULT_SUPPLY_ECONOMIC_RATIO_E22 = 0.2;
 
@@ -34,12 +34,15 @@ export class FinanceCalc {
     companyFacts: CompanyFacts
   ): boolean {
     return companyFacts.industrySectors.some(
-      (is) =>
-        is.industryCode === FinanceCalc.INDUSTRY_CODE_FOR_FINANCIAL_SERVICES
+      (is) => is.industryCode === INDUSTRY_CODE_FOR_FINANCIAL_SERVICES
     );
   }
 
-  // In Excel I19+I21+I22+G24
+  /**
+   * In Excel $'11.Region' I19+I21+I22+G24
+   * @param companyFacts
+   * @private
+   */
   private getSumOfFinancialAspects(companyFacts: CompanyFacts): number {
     return (
       companyFacts.profit +

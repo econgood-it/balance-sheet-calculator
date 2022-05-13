@@ -2,6 +2,17 @@ import { Application } from 'express';
 import { BalanceSheetService } from '../services/balance.sheet.service';
 import { allowUserOnly } from './role.access';
 
+import multer from 'multer';
+// setup multer upload
+const storage = multer.memoryStorage();
+const upload = multer({
+  storage: storage,
+  // dest: 'uploads/',
+  limits: {
+    fileSize: 1000000, // 1MB limit
+  },
+});
+
 export class BalanceSheetController {
   constructor(
     private app: Application,
@@ -12,6 +23,20 @@ export class BalanceSheetController {
   }
 
   public routes() {
+    this.app.post(
+      '/v1/balancesheets/upload',
+      allowUserOnly,
+      upload.single('balanceSheet'),
+      this.balanceSheetService.uploadBalanceSheet.bind(this.balanceSheetService)
+    );
+    this.app.post(
+      '/v1/balancesheets/diff/upload',
+      allowUserOnly,
+      upload.single('balanceSheet'),
+      this.balanceSheetService.diffBetweenUploadApiBalanceSheet.bind(
+        this.balanceSheetService
+      )
+    );
     this.app.get(
       '/v1/balancesheets',
       allowUserOnly,

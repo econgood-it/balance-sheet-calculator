@@ -1,6 +1,10 @@
 import { PrimaryGeneratedColumn, Column, Entity, ManyToOne } from 'typeorm';
 import { BalanceSheet } from './balanceSheet';
 
+export function isTopic(shortName: string): boolean {
+  return shortName.length === 2;
+}
+
 @Entity()
 export class Rating {
   @PrimaryGeneratedColumn()
@@ -56,7 +60,7 @@ export class Rating {
   }
 
   public isTopic(): boolean {
-    return this.shortName.length === 2;
+    return isTopic(this.shortName);
   }
 
   public isAspectOfTopic(shortNameTopic: string): boolean {

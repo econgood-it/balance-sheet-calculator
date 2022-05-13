@@ -16,6 +16,10 @@ export enum BalanceSheetVersion {
   v5_0_5 = '5.05',
   // eslint-disable-next-line camelcase
   v5_0_6 = '5.06',
+  // eslint-disable-next-line camelcase
+  v5_0_7 = '5.07',
+  // eslint-disable-next-line camelcase
+  v5_0_8 = '5.08',
 }
 
 export const balanceSheetVersionFromJSON =

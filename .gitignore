@@ -11,3 +11,5 @@ warn.log
 *.csv#
 documentation
 .vscode
+.~lock.*
+*.tmp

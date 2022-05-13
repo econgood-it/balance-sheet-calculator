@@ -4,7 +4,7 @@ import {
   BALANCE_SHEET_RELATIONS,
   BalanceSheet,
 } from '../entities/balanceSheet';
-import { Connection } from 'typeorm';
+import { Connection, EntityManager } from 'typeorm';
 import { BalanceSheetDTOUpdate } from '../dto/update/balance.sheet.update.dto';
 import { SupplyFraction } from '../entities/supplyFraction';
 import { EmployeesFraction } from '../entities/employeesFraction';
@@ -21,6 +21,16 @@ import { AccessCheckerService } from './access.checker.service';
 import { CalculationService } from './calculation.service';
 import UnauthorizedException from '../exceptions/unauthorized.exception';
 import { NoAccessError } from '../exceptions/no.access.error';
+import { Workbook } from 'exceljs';
+import {
+  BalanceSheetReader,
+  readLanguage,
+} from '../reader/balanceSheetReader/balance.sheet.reader';
+import { diffBetweenBalanceSheets } from '../dto/response/balance.sheet.diff.response';
+import { CalcResultsReader } from '../reader/balanceSheetReader/calc.results.reader';
+import { diff } from 'deep-diff';
+import { TopicWeightsReader } from '../reader/balanceSheetReader/topic.weights.reader';
+import { StakeholderWeightsReader } from '../reader/balanceSheetReader/stakeholder.weights.reader';
 
 export class BalanceSheetService {
   constructor(private connection: Connection) {}
@@ -37,26 +47,129 @@ export class BalanceSheetService {
         const balanceSheetDTOCreate: BalanceSheetDTOCreate =
           BalanceSheetDTOCreate.fromJSON(req.body);
         await this.validateOrFail(balanceSheetDTOCreate);
-        if (req.userInfo === undefined) {
-          throw new UnauthorizedException('No user provided');
+        const foundUser = await this.findUserOrFail(req, entityManager);
+        const balanceSheet = await balanceSheetDTOCreate.toBalanceSheet(
+          language,
+          [foundUser]
+        );
+        const { updatedBalanceSheet } = await CalculationService.calculate(
+          balanceSheet,
+          entityManager,
+          saveFlag
+        );
+        res.json(
+          BalanceSheetDTOResponse.fromBalanceSheet(
+            updatedBalanceSheet,
+            language
+          )
+        );
+      })
+      .catch((error) => {
+        handle(error, next);
+      });
+  }
+
+  public async diffBetweenUploadApiBalanceSheet(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    this.connection.manager
+      .transaction(async (entityManager) => {
+        if (req.file) {
+          const foundUser = await this.findUserOrFail(req, entityManager);
+          const wb = await new Workbook().xlsx.load(req.file.buffer);
+          const language = readLanguage(wb);
+          const balanceSheetReader = new BalanceSheetReader();
+          const calcResultsReader = new CalcResultsReader();
+          const topicWeightsReader = new TopicWeightsReader();
+          const stakeholderWeightsReader = new StakeholderWeightsReader();
+
+          const balanceSheetUpload = balanceSheetReader.readFromWorkbook(
+            wb,
+            language,
+            [foundUser]
+          );
+          const calcResultsUpload = calcResultsReader.readFromWorkbook(wb);
+          const stakeholderWeightsUpload =
+            stakeholderWeightsReader.readFromWorkbook(wb);
+          const topicWeightsUpload = topicWeightsReader.readFromWorkbook(wb);
+
+          const {
+            updatedBalanceSheet,
+            calcResults,
+            stakeholderWeights,
+            topicWeights,
+          } = await CalculationService.calculate(
+            balanceSheetUpload,
+            entityManager,
+            false
+          );
+
+          res.json({
+            lhs: 'upload',
+            rhs: 'api',
+            diffStakeHolderWeights:
+              stakeholderWeightsUpload &&
+              diff(
+                Object.fromEntries(stakeholderWeightsUpload),
+                Object.fromEntries(stakeholderWeights)
+              ),
+            diffTopicWeights:
+              topicWeightsUpload &&
+              diff(
+                Object.fromEntries(topicWeightsUpload),
+                Object.fromEntries(topicWeights)
+              ),
+            diffCalc: calcResultsUpload && diff(calcResultsUpload, calcResults),
+            diff: diffBetweenBalanceSheets(
+              balanceSheetUpload,
+              updatedBalanceSheet
+            ),
+          });
+        } else {
+          res.json({ message: 'File empty' });
         }
-        const userId = req.userInfo.id;
-        const userRepository = entityManager.getRepository(User);
-        const foundUser = await userRepository.findOneOrFail(userId);
-        const balanceSheet: BalanceSheet =
-          await balanceSheetDTOCreate.toBalanceSheet(language, [foundUser]);
-        const balanceSheetResponse: BalanceSheet =
-          await CalculationService.calculate(
+      })
+      .catch((error) => {
+        handle(error, next);
+      });
+  }
+
+  public async uploadBalanceSheet(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    const saveFlag = this.parseSaveFlag(req.query.save);
+    this.connection.manager
+      .transaction(async (entityManager) => {
+        if (req.file) {
+          const foundUser = await this.findUserOrFail(req, entityManager);
+          const wb = await new Workbook().xlsx.load(req.file.buffer);
+          const language = readLanguage(wb);
+          const balanceSheetReader = new BalanceSheetReader();
+
+          const balanceSheet = balanceSheetReader.readFromWorkbook(
+            wb,
+            language,
+            [foundUser]
+          );
+
+          const { updatedBalanceSheet } = await CalculationService.calculate(
             balanceSheet,
             entityManager,
             saveFlag
           );
-        res.json(
-          BalanceSheetDTOResponse.fromBalanceSheet(
-            balanceSheetResponse,
-            language
-          )
-        );
+          res.json(
+            BalanceSheetDTOResponse.fromBalanceSheet(
+              updatedBalanceSheet,
+              language
+            )
+          );
+        } else {
+          res.json({ message: 'File empty' });
+        }
       })
       .catch((error) => {
         handle(error, next);
@@ -94,11 +207,14 @@ export class BalanceSheetService {
           balanceSheetDTOUpdate,
           language
         );
-        const balanceSheetResponse: BalanceSheet =
-          await CalculationService.calculate(balanceSheet, entityManager, true);
+        const { updatedBalanceSheet } = await CalculationService.calculate(
+          balanceSheet,
+          entityManager,
+          true
+        );
         res.json(
           BalanceSheetDTOResponse.fromBalanceSheet(
-            balanceSheetResponse,
+            updatedBalanceSheet,
             language
           )
         );
@@ -216,6 +332,15 @@ export class BalanceSheetService {
       .catch((error) => {
         handle(error, next);
       });
+  }
+
+  private async findUserOrFail(req: Request, entityManager: EntityManager) {
+    if (req.userInfo === undefined) {
+      throw new UnauthorizedException('No user provided');
+    }
+    const userId = req.userInfo.id;
+    const userRepository = entityManager.getRepository(User);
+    return await userRepository.findOneOrFail(userId);
   }
 
   private async validateOrFail(

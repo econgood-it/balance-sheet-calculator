@@ -6,7 +6,7 @@ export class RatingResponseDTO {
     public readonly shortName: string,
     public readonly name: string,
     public readonly weight: number,
-    public readonly estimations: number,
+    public readonly estimations: number | null,
     public readonly points: number,
     public readonly maxPoints: number,
     public readonly isPositive: boolean,

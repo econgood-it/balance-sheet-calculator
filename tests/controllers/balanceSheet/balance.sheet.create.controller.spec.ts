@@ -10,13 +10,13 @@ import {
 } from '../../../src/entities/enums';
 import { Assertions } from '../../Assertions';
 import { Rating } from '../../../src/entities/rating';
-import { FinanceCalc } from '../../../src/calculations/finance.calc';
 import { CompanyFacts } from '../../../src/entities/companyFacts';
 import { EmptyCompanyFactsJson } from '../../testData/company.facts';
 import { TokenProvider } from '../../TokenProvider';
 import { BalanceSheet } from '../../../src/entities/balanceSheet';
 import { CORRELATION_HEADER_NAME } from '../../../src/middleware/correlation.id.middleware';
 import { RatingResponseDTO } from '../../../src/dto/response/rating.response.dto';
+import { INDUSTRY_CODE_FOR_FINANCIAL_SERVICES } from '../../../src/entities/industry.sector';
 
 describe('Balance Sheet Controller', () => {
   let connection: Connection;
@@ -114,7 +114,7 @@ describe('Balance Sheet Controller', () => {
     const testApp = supertest(app);
     balanceSheetJson.companyFacts.industrySectors = [
       {
-        industryCode: FinanceCalc.INDUSTRY_CODE_FOR_FINANCIAL_SERVICES,
+        industryCode: INDUSTRY_CODE_FOR_FINANCIAL_SERVICES,
         amountOfTotalTurnover: 1,
         description: 'desc',
       },

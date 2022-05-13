@@ -3,6 +3,7 @@ import { CalcResults } from './calculator';
 import { TopicWeightCalculator } from './topic.weight.calculator';
 import { BalanceSheet } from '../entities/balanceSheet';
 import { Rating } from '../entities/rating';
+import Provider from '../providers/provider';
 
 export class RatingsUpdater {
   private stakeholderWeightCalculator: StakeholderWeightCalculator =
@@ -13,38 +14,32 @@ export class RatingsUpdater {
 
   public async update(
     balanceSheet: BalanceSheet,
-    calcResults: CalcResults
+    calcResults: CalcResults,
+    stakeholderWeights: Provider<string, number>,
+    topicWeights: Provider<string, number>
   ): Promise<BalanceSheet> {
     let sumOfTopicWeights = 0;
     // Compute sum of topic weights
     const topics = balanceSheet.getTopics();
     const ratings: Rating[] = [];
-    for (const topic of topics) {
-      const stakeholderName: string = topic.shortName.substring(0, 1);
-      const stakeholderWeight: number =
-        await this.stakeholderWeightCalculator.calcStakeholderWeight(
-          stakeholderName,
-          calcResults
-        );
-      topic.weight = topic.isWeightSelectedByUser
-        ? topic.weight
-        : await this.topicWeightCalculator.calcTopicWeight(
-            topic.shortName,
-            calcResults,
-            balanceSheet.companyFacts
-          );
-      sumOfTopicWeights += stakeholderWeight * topic.weight;
-    }
 
     for (const topic of topics) {
+      const stakeholderName: string = topic.shortName.substring(0, 1);
+      const stakeholderWeight = stakeholderWeights.getOrFail(stakeholderName);
+      // TODO: Debug topic weights further:
+      // Topic wheigt is set to 1 if data of company facts is empty.
+      // See Weighting G69
+      topic.weight = topic.isWeightSelectedByUser
+        ? topic.weight
+        : topicWeights.getOrFail(topic.shortName);
+
+      sumOfTopicWeights += stakeholderWeight * topic.weight;
+    }
+    for (const topic of topics) {
       // Update max points of topic
-      const stackholderName: string = topic.shortName.substring(0, 1);
-      const stakeholderWeight: number =
-        await this.stakeholderWeightCalculator.calcStakeholderWeight(
-          stackholderName,
-          calcResults
-        );
-      topic.maxPoints =
+      const stakeholderName = topic.shortName.substring(0, 1);
+      const stakeholderWeight = stakeholderWeights.getOrFail(stakeholderName);
+      topic.maxPoints = topic.maxPoints =
         ((stakeholderWeight * topic.weight) / sumOfTopicWeights) * 1000;
       const aspects = balanceSheet.getAspectsOfTopic(topic.shortName);
       const updatedAspects = [
@@ -55,6 +50,8 @@ export class RatingsUpdater {
         (sum, current) => sum + current.points,
         0
       );
+      topic.estimations =
+        topic.maxPoints > 0 ? topic.points / topic.maxPoints : 0;
       ratings.push(topic, ...updatedAspects);
     }
     return new BalanceSheet(

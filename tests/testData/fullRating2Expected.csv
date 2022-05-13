@@ -1,6 +1,6 @@
 No.,Stakeholders/ Themes/ Aspects,Weight,IsWeightSelectedByUser,Estimations,Points,MaxPoints,IsPositive
 A,Suppliers,1,TRUE,0,0,215.686274509804,TRUE
-A1,Human dignity in the supply chain,2,TRUE,0,54.9019607843137,78.4313725490196,TRUE
+A1,Human dignity in the supply chain,2,TRUE,0.7,54.9019607843137,78.4313725490196,TRUE
 A1.1,Working conditions and social impact in the supply chain,1,TRUE,7,54.9019607843137,78.4313725490196,TRUE
 A1.2,Negative aspect: violation of human dignity in the supply chain,1,TRUE,0,0,-313.725490196078,FALSE
 A2,Solidarity and social justice in the supply chain,1.5,TRUE,0,0,58.8235294117647,TRUE
@@ -25,7 +25,7 @@ B3,Use of funds in relation to social and environmental impacts,1,TRUE,0,0,58.82
 B3.1,Environmental quality of investments,1,TRUE,0,0,29.4117647058823,TRUE
 B3.2,Common Good-orientated investment,1,TRUE,0,0,29.4117647058823,TRUE
 B3.3,Negative aspect: reliance on environmentally unsafe resources,1,TRUE,0,0,-235.294117647059,FALSE
-B4,Ownership and co-determination,1,TRUE,0,58.8235294117647,58.8235294117647,TRUE
+B4,Ownership and co-determination,1,TRUE,1.0000000000000002,58.8235294117647,58.8235294117647,TRUE
 B4.1,Common Good-orientated ownership structure,1,TRUE,10,58.8235294117647,58.8235294117647,TRUE
 B4.2,Negative aspect: hostile takeover,1,TRUE,0,0,-235.294117647059,FALSE
 C,Employees,1.5,TRUE,0,0,235.294117647059,TRUE
