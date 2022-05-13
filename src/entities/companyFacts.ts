@@ -128,4 +128,46 @@ export class CompanyFacts {
     ];
     return !removeDuplicates ? allCountryCodes : [...new Set(allCountryCodes)];
   }
+
+  /**
+   * =IF(AND($'2. Company Facts'.C7=0,$'2. Company Facts'.F10=0,$'2.
+   * Company Facts'.F11=0,$'2. Company Facts'.F12=0,$'2.
+   * Company Facts'.F13=0,$'2. Company Facts'.F14=0,$'2.
+   * Company Facts'.C18=0,$'2. Company Facts'.C19=0,$'2.
+   * Company Facts'.C20=0,$'2. Company Facts'.C21=0,$'2.
+   * Company Facts'.C22=0,$'2. Company Facts'.C23=0,$'2.
+   * Company Facts'.C26=0,$'2. Company Facts'.C27=0,$'2.
+   * Company Facts'.D30=0,$'2. Company Facts'.D31=0,$'2.
+   * Company Facts'.D32=0,$'2. Company Facts'.C33=0,$'2.
+   * Company Facts'.C34=0,$'2. Company Facts'.C37=0,$'2.
+   * Company Facts'.C38=0,$'2. Company Facts'.D41=0,$'2.
+   * Company Facts'.D42=0,$'2. Company Facts'.D43=0),"empty","data")
+   */
+  public allValuesAreZero(): boolean {
+    if (
+      [
+        this.totalPurchaseFromSuppliers,
+        ...this.supplyFractions.map((sf) => sf.costs),
+        this.profit,
+        this.financialCosts,
+        this.incomeFromFinancialInvestments,
+        this.totalAssets,
+        this.additionsToFixedAssets,
+        this.financialAssetsAndCashBalance,
+        this.numberOfEmployees,
+        this.totalStaffCosts,
+        ...this.employeesFractions.map((ef) => ef.percentage),
+        this.averageJourneyToWorkForStaffInKm,
+        this.turnover,
+        ...this.industrySectors.map((is) => is.amountOfTotalTurnover),
+      ].every(
+        (value) =>
+          value === 0 &&
+          [this.isB2B, this.hasCanteen].every((value) => value === false)
+      )
+    ) {
+      return true;
+    }
+    return false;
+  }
 }
