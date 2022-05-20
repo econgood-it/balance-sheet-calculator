@@ -46,15 +46,13 @@ export class IndustryReader {
         headers.ecologicalDesignOfProductsAndServicesIndex
       );
 
-      const nameSplitted = cellIndustryName.text.split('-');
+      const indexOfFirstHyphenInName = cellIndustryName.text.indexOf('-');
 
       industries.push(
         new Industry(
           undefined,
           cellIndustryCode.text.trim(),
-          nameSplitted.length === 2
-            ? nameSplitted[1].trim()
-            : nameSplitted[0].trim(),
+          cellIndustryName.text.substring(indexOfFirstHyphenInName + 1).trim(),
           this.mapTextToWeightValue(cellEcologicalSupplyChainRisk.text),
           this.mapTextToWeightValue(
             cellEcologicalDesignOfProductsAndServices.text

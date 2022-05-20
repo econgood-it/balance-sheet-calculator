@@ -11,7 +11,6 @@ describe('Industry Reader', () => {
     );
 
     const industries: Industry[] = await regionReader.read(pathToCsv);
-
     expect(industries).toContainEqual({
       industryCode: 'A',
       ecologicalSupplyChainRisk: 2,
@@ -25,6 +24,22 @@ describe('Industry Reader', () => {
       ecologicalDesignOfProductsAndServices: 1.5,
       id: undefined,
       name: 'Pharmaceutical products and preparations (C21)',
+    });
+
+    expect(industries).toContainEqual({
+      industryCode: 'Cf',
+      ecologicalSupplyChainRisk: 1.5,
+      ecologicalDesignOfProductsAndServices: 1,
+      id: undefined,
+      name: 'Production of non-metallic minerals (C23)',
+    });
+
+    expect(industries).toContainEqual({
+      industryCode: 'T',
+      ecologicalSupplyChainRisk: 1,
+      ecologicalDesignOfProductsAndServices: 1,
+      id: undefined,
+      name: 'Please enter',
     });
   });
 });
