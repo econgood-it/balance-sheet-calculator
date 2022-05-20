@@ -1,4 +1,3 @@
-import * as path from 'path';
 import { Workbook, Cell, Worksheet } from 'exceljs';
 import { Industry } from '../entities/industry';
 
@@ -6,6 +5,7 @@ interface Headers {
   ecologicalDesignOfProductsAndServicesIndex: number;
   ecologicalSupplyChainRiskIndex: number;
   industryCodeIndex: number;
+  industryNameIndex: number;
 }
 
 export class IndustryReader {
@@ -13,15 +13,13 @@ export class IndustryReader {
     ecologicalDesignOfProductsAndServicesIndex: 9,
     ecologicalSupplyChainRiskIndex: 16,
     industryCodeIndex: 1,
+    industryNameIndex: 2,
   };
 
   public async read(
+    pathToCsv: string,
     headers: Headers = IndustryReader.DEFAULT_HEADERS
   ): Promise<Industry[]> {
-    const pathToCsv = path.join(
-      path.resolve(__dirname, '../files/reader'),
-      'industry.csv'
-    );
     // create object for workbook
     const wb: Workbook = new Workbook();
     const sheet: Worksheet = await wb.csv.readFile(pathToCsv, {
@@ -35,6 +33,10 @@ export class IndustryReader {
         row,
         headers.industryCodeIndex
       );
+      const cellIndustryName: Cell = sheet.getCell(
+        row,
+        headers.industryNameIndex
+      );
       const cellEcologicalSupplyChainRisk: Cell = sheet.getCell(
         row,
         headers.ecologicalSupplyChainRiskIndex
@@ -44,14 +46,19 @@ export class IndustryReader {
         headers.ecologicalDesignOfProductsAndServicesIndex
       );
 
+      const nameSplitted = cellIndustryName.text.split('-');
+
       industries.push(
         new Industry(
           undefined,
+          cellIndustryCode.text.trim(),
+          nameSplitted.length === 2
+            ? nameSplitted[1].trim()
+            : nameSplitted[0].trim(),
           this.mapTextToWeightValue(cellEcologicalSupplyChainRisk.text),
           this.mapTextToWeightValue(
             cellEcologicalDesignOfProductsAndServices.text
-          ),
-          cellIndustryCode.text.trim()
+          )
         )
       );
     }
