@@ -20,10 +20,17 @@ describe('Industry', () => {
   });
 
   it('should be saved and deleted', async () => {
-    const industry: Industry = new Industry(undefined, 2, 1, 'NEWCODE');
+    const industry: Industry = new Industry(
+      undefined,
+      'NEWCODE',
+      'Industry Name',
+      2,
+      1
+    );
     const result = await industryRepository.save(industry);
     expect(result.industryCode).toBe('NEWCODE');
     expect(result.ecologicalSupplyChainRisk).toBe(2);
+    expect(result.name).toBe('Industry Name');
     await industryRepository.remove(result);
   });
 });
