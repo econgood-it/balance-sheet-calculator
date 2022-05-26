@@ -16,12 +16,15 @@ import { DocsController } from './controllers/docs.controller';
 import correlationIdMiddleware from './middleware/correlation.id.middleware';
 import { RegionService } from './services/region.service';
 import { RegionController } from './controllers/region.controller';
+import { IndustryController } from './controllers/industry.controller';
+import { IndustryService } from './services/industry.service';
 
 class App {
   public readonly app: Application;
   // declaring our controllers
   private balanceSheetController: BalanceSheetController;
   private regionController: RegionController;
+  private industryController: IndustryController;
   private userController: UserController;
   private healthCheckController: HealthCheckController;
   private docsController: DocsController;
@@ -44,6 +47,14 @@ class App {
     );
     const regionService = new RegionService(connection);
     this.regionController = new RegionController(this.app, regionService);
+    this.industryController = new IndustryController(
+      this.app,
+      new IndustryService(connection)
+    );
+    this.industryController = new IndustryController(
+      this.app,
+      new IndustryService(connection)
+    );
     const userService = new UserService(connection, configuration.jwtSecret);
     this.userController = new UserController(this.app, userService);
     this.healthCheckController = new HealthCheckController(

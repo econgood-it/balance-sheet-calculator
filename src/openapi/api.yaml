@@ -163,6 +163,53 @@ paths:
                       countryName: "Germany"
                     - countryCode: "ALB"
                       countryName: "Albania"
+  /v1/industries:
+    get:
+      parameters:
+        - in: header
+          name: x-correlation-id
+          description: "If x-correlation-id is set then it's value will be used as the id for this request, otherwise the id will be a new uuid."
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: lng
+          description: "Choose the language. All industry names are translated to the given language."
+          required: false
+          schema:
+            type: string
+            default: en
+            enum:
+              - en
+              - de
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - "industries"
+      summary: "Returns all industries"
+      responses:
+        '200': # status code
+          description: An array of the industries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    industryCode:
+                      type: string
+                      description: "The code of the industry (e.g. A, Ch)"
+                    industryName:
+                      type: string
+                      description: "The name of the industry (e.g. Extraterritorial organisations and bodies)"
+              examples:
+                Example of industries:
+                  value:
+                    - countryCode: "A"
+                      countryName: "agriculture, forestry management, fishing industry"
+                    - countryCode: "U"
+                      countryName: "Extraterritorial organisations and bodies"
 components:
   securitySchemes:
     bearerAuth: # arbitrary name for the security scheme
