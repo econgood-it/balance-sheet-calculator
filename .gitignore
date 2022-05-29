@@ -2,6 +2,7 @@ docs
 node_modules
 package-lock.json
 dist
+venv
 .idea
 .env-cmdrc.json
 coverage/
