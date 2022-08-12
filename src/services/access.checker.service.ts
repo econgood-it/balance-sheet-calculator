@@ -13,7 +13,7 @@ export class AccessCheckerService {
     if (request.userInfo) {
       const foundUser = await entityManager
         .getRepository(User)
-        .findOne({ email: request.userInfo.email });
+        .findOne({ where: { email: request.userInfo.email } });
       if (foundUser) {
         const userWithAccess = balanceSheet.users.find(
           (u) => u.id === foundUser.id

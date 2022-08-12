@@ -12,8 +12,7 @@ export class CustomerCalc {
     const sumOfEcologicalDesignOfProductsAndService =
       this.calcSumOfEcologicalDesignOfProductsAndService(companyFacts);
     return {
-      sumOfEcologicalDesignOfProductsAndService:
-        sumOfEcologicalDesignOfProductsAndService,
+      sumOfEcologicalDesignOfProductsAndService,
     };
   }
 

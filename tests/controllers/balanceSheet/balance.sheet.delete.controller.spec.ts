@@ -14,12 +14,12 @@ import { SupplyFraction } from '../../../src/entities/supplyFraction';
 import { IndustrySector } from '../../../src/entities/industry.sector';
 import { EmployeesFraction } from '../../../src/entities/employeesFraction';
 import { TokenProvider } from '../../TokenProvider';
-import supertest = require('supertest');
 import { CORRELATION_HEADER_NAME } from '../../../src/middleware/correlation.id.middleware';
 import {
   BALANCE_SHEET_RELATIONS,
   BalanceSheet,
 } from '../../../src/entities/balanceSheet';
+import supertest = require('supertest');
 
 describe('Balance Sheet Controller', () => {
   let connection: Connection;
@@ -78,7 +78,8 @@ describe('Balance Sheet Controller', () => {
 
     const balanceSheet = await connection
       .getRepository(BalanceSheet)
-      .findOneOrFail(postResponse.body.id, {
+      .findOneOrFail({
+        where: { id: postResponse.body.id },
         relations: BALANCE_SHEET_RELATIONS,
       });
 
@@ -99,31 +100,30 @@ describe('Balance Sheet Controller', () => {
     expect(
       await connection
         .getRepository(Rating)
-        .count({ balanceSheet: balanceSheet })
+        .countBy({ balanceSheet: { id: balanceSheet.id } })
     ).toBe(expectZeroCount);
-
     // Company Facts
     expect(
       await connection
         .getRepository(CompanyFacts)
-        .count({ id: balanceSheet.companyFacts.id })
+        .countBy({ id: balanceSheet.companyFacts.id })
     ).toBe(expectZeroCount);
     // Industry Sectors
     expect(
-      await connection.getRepository(IndustrySector).count({
-        companyFacts: balanceSheet.companyFacts,
+      await connection.getRepository(IndustrySector).countBy({
+        companyFacts: { id: balanceSheet.companyFacts.id },
       })
     ).toBe(expectZeroCount);
     // Supply Fractions
     expect(
-      await connection.getRepository(SupplyFraction).count({
-        companyFacts: balanceSheet.companyFacts,
+      await connection.getRepository(SupplyFraction).countBy({
+        companyFacts: { id: balanceSheet.companyFacts.id },
       })
     ).toBe(expectZeroCount);
     // EmployeesFractions
     expect(
-      await connection.getRepository(EmployeesFraction).count({
-        companyFacts: balanceSheet.companyFacts,
+      await connection.getRepository(EmployeesFraction).countBy({
+        companyFacts: { id: balanceSheet.companyFacts.id },
       })
     ).toBe(expectZeroCount);
   });

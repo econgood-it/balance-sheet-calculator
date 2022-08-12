@@ -60,12 +60,12 @@ describe('CompanyFactsCreateDTO', () => {
     const companyFactsDTOCreate: CompanyFactsDTOCreate =
       CompanyFactsDTOCreate.fromJSON({
         totalPurchaseFromSuppliers: 500,
-        supplyFractions: supplyFractions,
+        supplyFractions,
       });
     const result = companyFactsDTOCreate.toCompanyFacts('en');
     expect(result).toMatchObject({
       totalPurchaseFromSuppliers: 500,
-      supplyFractions: supplyFractions,
+      supplyFractions,
       mainOriginOfOtherSuppliers: {
         countryCode: DEFAULT_COUNTRY_CODE,
         costs: 200,

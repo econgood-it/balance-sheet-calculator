@@ -25,8 +25,8 @@ export class RegionProvider extends Provider<string, Region> {
     for (const countryCode of countryCodes) {
       const foundRegion = await regionRepository.findOneOrFail({
         where: {
-          countryCode: countryCode,
-          validFromVersion: validFromVersion,
+          countryCode,
+          validFromVersion,
         },
       });
       regionProvider.set(countryCode, foundRegion);

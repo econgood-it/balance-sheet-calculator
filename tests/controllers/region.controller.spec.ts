@@ -57,7 +57,7 @@ describe('Region Controller', () => {
     expect(response.status).toBe(200);
     const expected = await connection
       .getRepository(Region)
-      .count({ validFromVersion: BalanceSheetVersion.v5_0_4 });
+      .countBy({ validFromVersion: BalanceSheetVersion.v5_0_4 });
     expect(response.body.length).toEqual(expected);
   });
 });

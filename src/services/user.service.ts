@@ -23,7 +23,7 @@ export class UserService {
     );
 
     return {
-      token: token,
+      token,
       expires: moment.unix(expires).format(),
       user: user.id,
     };
@@ -37,10 +37,12 @@ export class UserService {
         const user: User = userDTO.toUser();
         const userRepository = entityManager.getRepository(User);
         const foundUser: User = await userRepository.findOneOrFail({
-          email: user.email,
+          where: {
+            email: user.email,
+          },
         });
         const success = foundUser.comparePassword(user.password);
-        if (success === false) {
+        if (!success) {
           throw new BadRequestException('Invalid credentials');
         }
         res.json(this.genToken(foundUser));
@@ -58,7 +60,9 @@ export class UserService {
         const user: User = userDTO.toUser();
         const userRepository = entityManager.getRepository(User);
         const foundUser = await userRepository.findOne({
-          email: user.email,
+          where: {
+            email: user.email,
+          },
         });
         if (foundUser) {
           throw new Error('User already exists');
@@ -77,7 +81,9 @@ export class UserService {
         const email: string = req.body.email;
         const userRepository = entityManager.getRepository(User);
         const foundUser = await userRepository.findOne({
-          email: email,
+          where: {
+            email,
+          },
         });
         if (foundUser) {
           await userRepository.remove(foundUser);
@@ -99,7 +105,9 @@ export class UserService {
         const passwordResetDto = PasswordResetDto.fromJSON(req.body);
         await this.validateOrFail(passwordResetDto);
         const userRepository = entityManager.getRepository(User);
-        const foundUser = await userRepository.findOneOrFail(userId);
+        const foundUser = await userRepository.findOneOrFail({
+          where: { id: userId },
+        });
         foundUser.password = passwordResetDto.password;
         await userRepository.save(foundUser);
         res.json({ message: 'Password has been reset to new one' });

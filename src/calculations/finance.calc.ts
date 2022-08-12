@@ -22,11 +22,11 @@ export class FinanceCalc {
       companyFacts
     ).getOrElse(FinanceCalc.DEFAULT_SUPPLY_ECONOMIC_RATIO_E22);
     return {
-      sumOfFinancialAspects: sumOfFinancialAspects,
-      economicRatio: economicRatio,
+      sumOfFinancialAspects,
+      economicRatio,
       companyIsActiveInFinancialServices:
         this.checkCompanysActivityInFinancialServices(companyFacts),
-      economicRatioE22: economicRatioE22,
+      economicRatioE22,
     };
   }
 

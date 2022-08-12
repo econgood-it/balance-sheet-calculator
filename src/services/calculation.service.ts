@@ -57,10 +57,10 @@ export class CalculationService {
     }
     updatedBalanceSheet.sortRatings();
     return {
-      updatedBalanceSheet: updatedBalanceSheet,
-      calcResults: calcResults,
-      stakeholderWeights: stakeholderWeights,
-      topicWeights: topicWeights,
+      updatedBalanceSheet,
+      calcResults,
+      stakeholderWeights,
+      topicWeights,
     };
   }
 }

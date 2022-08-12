@@ -93,7 +93,7 @@ describe('Balance Sheet Controller', () => {
       .set(authHeaderKey, token)
       .send();
     for (const id of expectedIds) {
-      expect(response.body).toContainEqual({ id: id });
+      expect(response.body).toContainEqual({ id });
     }
     expect(response.body).not.toContainEqual({ id: balanceSheetIdOfUser2 });
   });

@@ -13,7 +13,7 @@ export class TokenProvider {
   ): Promise<void> {
     await connection.manager.transaction(async (entityManager) => {
       const userRepository = entityManager.getRepository(User);
-      const user = await userRepository.findOne({ email: email });
+      const user = await userRepository.findOne({ where: { email } });
       if (!user) {
         await userRepository.save(new User(undefined, email, password, role));
       }
@@ -36,7 +36,7 @@ export class TokenProvider {
     );
     const response = await testApp
       .post('/v1/users/token')
-      .send({ email: email, password: password });
+      .send({ email, password });
     return response.body.token;
   }
 

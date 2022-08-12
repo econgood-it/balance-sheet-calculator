@@ -82,7 +82,9 @@ describe('Balance Sheet Controller', () => {
         .reduce((sum: number, current: Rating) => sum + current.maxPoints, 0)
     ).toBeCloseTo(999.9999999999998);
     const foundBalanceSheet = await balaneSheetRepository.findOne({
-      id: response.body.id,
+      where: {
+        id: response.body.id,
+      },
     });
     expect(foundBalanceSheet).toBeDefined();
   });
@@ -104,10 +106,11 @@ describe('Balance Sheet Controller', () => {
         .reduce((sum: number, current: Rating) => sum + current.maxPoints, 0)
     ).toBeCloseTo(999.9999999999998);
     // Save flag is false such that balance sheet should not be saved
-    const foundBalanceSheet = await balaneSheetRepository.findOne({
-      id: response.body.id,
-    });
-    expect(foundBalanceSheet).toBeUndefined();
+    expect(
+      (await balaneSheetRepository.find()).filter(
+        (b) => b.id === response.body.id
+      )
+    ).toHaveLength(0);
   });
 
   it('creates BalanceSheet where B1 weight is very high', async () => {

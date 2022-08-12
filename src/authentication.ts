@@ -89,7 +89,9 @@ export class Authentication {
           const userRepository = entityManager.getRepository(User);
 
           const foundUser = await userRepository.findOneOrFail({
-            email: payload.email,
+            where: {
+              email: payload.email,
+            },
           });
 
           return done(null, {

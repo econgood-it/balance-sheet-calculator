@@ -29,7 +29,7 @@ describe('Region', () => {
       3.4,
       BalanceSheetVersion.v5_0_4
     );
-    const alreadyExistingFromPreviousRuns = await regionRepository.findOne({
+    const alreadyExistingFromPreviousRuns = await regionRepository.findOneBy({
       countryCode: 'DEU_TEST',
     });
     if (alreadyExistingFromPreviousRuns) {

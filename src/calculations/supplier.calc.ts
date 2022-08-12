@@ -28,7 +28,7 @@ export class SupplierCalc {
     );
     const itucAverage = this.itucAverage(companyFacts, supplyRiskSum);
     return {
-      supplyRiskSum: supplyRiskSum,
+      supplyRiskSum,
       supplyChainWeight: !Number.isNaN(supplyChainWeight)
         ? supplyChainWeight
         : SupplierCalc.DEFAULT_SUPPLY_CHAIN_WEIGHT,

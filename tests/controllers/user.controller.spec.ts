@@ -50,7 +50,9 @@ describe('User Controller', () => {
   });
 
   beforeEach(async () => {
-    const user = await userRepository.findOne({ email: newUser.email });
+    const user = await userRepository.findOne({
+      where: { email: newUser.email },
+    });
     if (user) {
       await userRepository.remove(user);
     }
@@ -70,11 +72,13 @@ describe('User Controller', () => {
       .post('/v1/users/actions/reset/password')
       .set('Authorization', `Bearer ${tokenResponse.body.token}`)
       .send({
-        newPassword: newPassword,
+        newPassword,
       });
     expect(response.status).toBe(200);
     const user = await userRepository.findOneOrFail({
-      email: newUser.email,
+      where: {
+        email: newUser.email,
+      },
     });
     expect(user.comparePassword(newPassword)).toBeTruthy();
   });
@@ -113,7 +117,7 @@ describe('User Controller', () => {
       new User(undefined, newUser2.email, newUser2.password, Role.User)
     );
     expect(
-      await userRepository.findOne({ email: newUser2.email })
+      await userRepository.findOne({ where: { email: newUser2.email } })
     ).toBeDefined();
 
     const response = await testApp
@@ -124,7 +128,7 @@ describe('User Controller', () => {
       });
     expect(response.status).toBe(200);
     expect(
-      await userRepository.findOne({ email: newUser2.email })
-    ).toBeUndefined();
+      await userRepository.findOne({ where: { email: newUser2.email } })
+    ).toBeNull();
   });
 });

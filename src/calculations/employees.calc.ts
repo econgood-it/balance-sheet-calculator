@@ -23,9 +23,9 @@ export class EmployeesCalc {
     const companySize = this.calculateCompanySize(companyFacts);
     const itucAverage = this.calculateItucAverage(companyFacts);
     return {
-      normedEmployeesRisk: normedEmployeesRisk,
-      companySize: companySize,
-      itucAverage: itucAverage,
+      normedEmployeesRisk,
+      companySize,
+      itucAverage,
     };
   }
 

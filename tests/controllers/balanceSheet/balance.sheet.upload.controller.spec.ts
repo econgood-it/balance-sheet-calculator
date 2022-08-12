@@ -56,7 +56,9 @@ describe('Balance Sheet Controller', () => {
         .reduce((sum: number, current: Rating) => sum + current.maxPoints, 0)
     ).toBeCloseTo(999.9999999999998);
     const foundBalanceSheet = await balaneSheetRepository.findOne({
-      id: response.body.id,
+      where: {
+        id: response.body.id,
+      },
     });
     expect(foundBalanceSheet).toBeDefined();
   });

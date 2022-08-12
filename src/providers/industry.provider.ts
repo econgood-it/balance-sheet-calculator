@@ -13,7 +13,9 @@ export class IndustryProvider extends Provider<string, Industry> {
       industryProvider.set(
         supplyFraction.industryCode,
         await industryRepository.findOneOrFail({
-          industryCode: supplyFraction.industryCode,
+          where: {
+            industryCode: supplyFraction.industryCode,
+          },
         })
       );
     }
@@ -21,7 +23,9 @@ export class IndustryProvider extends Provider<string, Industry> {
       industryProvider.set(
         industrySector.industryCode,
         await industryRepository.findOneOrFail({
-          industryCode: industrySector.industryCode,
+          where: {
+            industryCode: industrySector.industryCode,
+          },
         })
       );
     }

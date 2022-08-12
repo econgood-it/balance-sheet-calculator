@@ -46,7 +46,8 @@ describe('Balance Sheet', () => {
       [new User(undefined, 'test@example.com', 'test1234', Role.User)]
     );
     const savedResult = await balanceSheetRepository.save(balanceSheet);
-    const result = await balanceSheetRepository.findOneOrFail(savedResult.id, {
+    const result = await balanceSheetRepository.findOneOrFail({
+      where: { id: savedResult.id },
       relations: BALANCE_SHEET_RELATIONS,
     });
     expect(result.users).toHaveLength(0);
@@ -70,7 +71,8 @@ describe('Balance Sheet', () => {
       [user]
     );
     const savedResult = await balanceSheetRepository.save(balanceSheet);
-    const result = await balanceSheetRepository.findOneOrFail(savedResult.id, {
+    const result = await balanceSheetRepository.findOneOrFail({
+      where: { id: savedResult.id },
       relations: BALANCE_SHEET_RELATIONS,
     });
 

@@ -192,12 +192,10 @@ export class BalanceSheetService {
           entityManager.getRepository(IndustrySector)
         );
         const balanceSheetId: number = Number(req.params.id);
-        const balanceSheet = await balanceSheetRepository.findOneOrFail(
-          balanceSheetId,
-          {
-            relations: BALANCE_SHEET_RELATIONS,
-          }
-        );
+        const balanceSheet = await balanceSheetRepository.findOneOrFail({
+          where: { id: balanceSheetId },
+          relations: BALANCE_SHEET_RELATIONS,
+        });
         await AccessCheckerService.check(req, balanceSheet, entityManager);
         const balanceSheetDTOUpdate: BalanceSheetDTOUpdate =
           BalanceSheetDTOUpdate.fromJSON(req.body);
@@ -235,7 +233,8 @@ export class BalanceSheetService {
           throw new NoAccessError();
         }
         const userRepository = entityManager.getRepository(User);
-        const user = await userRepository.findOneOrFail(req.userInfo.id, {
+        const user = await userRepository.findOneOrFail({
+          where: { id: req.userInfo.id },
           relations: ['balanceSheets'],
         });
         res.json(
@@ -260,12 +259,10 @@ export class BalanceSheetService {
         const balanceSheetRepository =
           entityManager.getRepository(BalanceSheet);
         const balanceSheetId: number = Number(req.params.id);
-        const balanceSheet = await balanceSheetRepository.findOneOrFail(
-          balanceSheetId,
-          {
-            relations: BALANCE_SHEET_RELATIONS,
-          }
-        );
+        const balanceSheet = await balanceSheetRepository.findOneOrFail({
+          where: { id: balanceSheetId },
+          relations: BALANCE_SHEET_RELATIONS,
+        });
         await AccessCheckerService.check(req, balanceSheet, entityManager);
         balanceSheet.sortRatings();
         res.json(
@@ -288,12 +285,10 @@ export class BalanceSheetService {
         const balanceSheetRepository =
           entityManager.getRepository(BalanceSheet);
         const balanceSheetId: number = Number(req.params.id);
-        const balanceSheet = await balanceSheetRepository.findOneOrFail(
-          balanceSheetId,
-          {
-            relations: BALANCE_SHEET_RELATIONS,
-          }
-        );
+        const balanceSheet = await balanceSheetRepository.findOneOrFail({
+          where: { id: balanceSheetId },
+          relations: BALANCE_SHEET_RELATIONS,
+        });
         await AccessCheckerService.check(req, balanceSheet, entityManager);
         balanceSheet.sortRatings();
         res.json(MatrixDTO.fromBalanceSheet(balanceSheet, language));
@@ -315,12 +310,10 @@ export class BalanceSheetService {
           entityManager.getRepository(BalanceSheet);
         const companyFactsRepository =
           entityManager.getRepository(CompanyFacts);
-        const balanceSheet = await balanceSheetRepository.findOneOrFail(
-          balanceSheetId,
-          {
-            relations: BALANCE_SHEET_RELATIONS,
-          }
-        );
+        const balanceSheet = await balanceSheetRepository.findOneOrFail({
+          where: { id: balanceSheetId },
+          relations: BALANCE_SHEET_RELATIONS,
+        });
         await AccessCheckerService.check(req, balanceSheet, entityManager);
         await companyFactsRepository.remove(balanceSheet.companyFacts);
         await balanceSheetRepository.remove(balanceSheet);
@@ -340,7 +333,7 @@ export class BalanceSheetService {
     }
     const userId = req.userInfo.id;
     const userRepository = entityManager.getRepository(User);
-    return await userRepository.findOneOrFail(userId);
+    return await userRepository.findOneOrFail({ where: { id: userId } });
   }
 
   private async validateOrFail(

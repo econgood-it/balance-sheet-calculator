@@ -12,12 +12,12 @@ function errorMiddleware(
   const message = error.message || 'Something went wrong';
   if (status >= 400 && status < 500) {
     LoggingService.warn(message, {
-      status: status,
+      status,
       correlationId: request.correlationId(),
     });
   } else {
     LoggingService.error(message, {
-      status: status,
+      status,
       correlationId: request.correlationId(),
     });
   }

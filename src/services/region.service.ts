@@ -25,7 +25,7 @@ export class RegionService {
         const validFromVersion =
           await RegionProvider.findCorrectValidFromVersion(version, regionRepo);
         const regions = await regionRepo.find({
-          where: { validFromVersion: validFromVersion },
+          where: { validFromVersion },
         });
         res.json(regions.map((r) => RegionResponseDTO.fromRegion(r, language)));
       })

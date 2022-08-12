@@ -45,7 +45,7 @@ export class CalcResultsReader {
           INDUSTRY_CODE_FOR_FINANCIAL_SERVICES,
         economicRatio: cr.read(weightingSheet, 23, 'E').number,
         economicRatioE22: cr.read(weightingSheet, 22, 'E').number,
-        sumOfFinancialAspects: sumOfFinancialAspects,
+        sumOfFinancialAspects,
       },
       socialEnvironmentCalcResults: {
         companyIsActiveInMiningOrConstructionIndustry: [
