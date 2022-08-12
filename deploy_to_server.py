@@ -8,6 +8,7 @@ run = 'run'
 docker_compose = 'docker-compose'
 
 
+
 def install_dependencies(production: bool,):
     cmd = [npm, 'install']
     if production:

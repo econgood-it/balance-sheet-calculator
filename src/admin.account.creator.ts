@@ -10,7 +10,7 @@ export class AdminAccountCreator {
   ) {
     await connection.manager.transaction(async (entityManager) => {
       const userRepository = entityManager.getRepository(User);
-      const foundUser = await userRepository.findOne({
+      const foundUser = await userRepository.findOneBy({
         email: configuration.adminEmail,
       });
 
