@@ -11,7 +11,7 @@
     "format": "prettier --write .",
     "test": "env-cmd -e development jest --watch --runInBand",
     "coverage": "env-cmd -e development jest --runInBand --coverage",
-    "test:prod": "env-cmd -e development jest --runInBand",
+    "test:ci": "env-cmd -e ci jest --runInBand",
     "update:to:latest": "ncu -u && npm update && npm install && npm audit fix"
   },
   "repository": {

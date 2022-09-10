@@ -7,7 +7,7 @@ export class DatabaseConnectionCreator {
   ): Promise<Connection> {
     return createConnection({
       type: 'postgres',
-      host: 'localhost',
+      host: configuration.dbHost,
       port: configuration.dbPort,
       username: configuration.dbUser,
       password: configuration.dbPassword,

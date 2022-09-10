@@ -29,7 +29,7 @@ def startup_test_database():
 
 
 def run_tests():
-    subprocess.run([npm, run, 'test:prod'], check=True)
+    subprocess.run([npm, run, 'test:ci'], check=True)
 
 
 def compile():

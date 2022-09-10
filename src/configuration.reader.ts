@@ -8,6 +8,7 @@ export class Configuration {
   public readonly migrationRegex: string;
   constructor(
     public readonly dbName: string,
+    public readonly dbHost: string,
     public readonly dbPort: number,
     public readonly dbUser: string,
     public readonly dbPassword: string,
@@ -29,6 +30,7 @@ export class Configuration {
 export class ConfigurationReader {
   public static read(): Configuration {
     const dbName = process.env.DB_NAME;
+    const dbHost = process.env.DB_HOST;
     const dbPort = process.env.DB_PORT;
     const dbUser = process.env.DB_USER;
     const dbPassword = process.env.DB_PASSWORD;
@@ -41,6 +43,7 @@ export class ConfigurationReader {
     const jwtsecret = process.env.JWT_SECRET;
     ConfigurationReader.checkIfEnvironmentVariableIsSet('DB_NAME', dbName);
     ConfigurationReader.checkIfEnvironmentVariableIsSet('DB_PORT', dbPort);
+    ConfigurationReader.checkIfEnvironmentVariableIsSet('DB_HOST', dbPort);
     ConfigurationReader.checkIfEnvironmentVariableIsSet('DB_USER', dbUser);
     ConfigurationReader.checkIfEnvironmentVariableIsSet(
       'DB_PASSWORD',
@@ -80,6 +83,7 @@ export class ConfigurationReader {
     }
     return new Configuration(
       dbName as string,
+      dbHost as string,
       Number(dbPort),
       dbUser as string,
       dbPassword as string,

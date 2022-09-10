@@ -45,6 +45,7 @@ application on a different port just replace the _4000_ by the your port.
 {
   "development": {
     "DB_NAME": "balancesheet",
+    "DB_HOST": "localhost",
     "DB_PORT": 5433,
     "DB_USER": "postgres",
     "DB_PASSWORD": "oKLyNUr2doEBlMup47ii",
@@ -92,9 +93,10 @@ date +%s%3N
 
 # Deployments
 
-To deploy the application use the python script *deploy_to_server.py* like explained below:
+To deploy the application use the docker commands explained below:
 
-```shell script
-python deploy_to_server [test|prod]
+```
+docker build -t deployment_server . -f Dockerfile_Deployment
+docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock -v /usr/bin/docker:/usr/bin/docker -v ~/.ssh:/root/.ssh:ro deployment_server
 ```
 
