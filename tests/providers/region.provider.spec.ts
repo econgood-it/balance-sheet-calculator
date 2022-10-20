@@ -8,6 +8,7 @@ import { SupplyFraction } from '../../src/entities/supplyFraction';
 import { Region } from '../../src/entities/region';
 import { EmployeesFraction } from '../../src/entities/employeesFraction';
 import { BalanceSheetVersion } from '../../src/entities/enums';
+import path from 'path';
 
 describe('Region Provider', () => {
   let connection: Connection;
@@ -125,5 +126,23 @@ describe('Region Provider', () => {
       regionRepo
     );
     expect(result).toBe(BalanceSheetVersion.v5_0_4);
+  });
+});
+
+it('should create region provider from file', async () => {
+  const regionProvider = await RegionProvider.fromFile(
+    path.join(__dirname, 'regions.json')
+  );
+  expect(regionProvider.getOrFail('ASM')).toMatchObject({
+    pppIndex: 1.49,
+    countryCode: 'ASM',
+    countryName: 'American Samoa',
+    ituc: 4.05,
+  });
+  expect(regionProvider.getOrFail('ATG')).toMatchObject({
+    pppIndex: 1.77,
+    countryCode: 'ATG',
+    countryName: 'Antigua and Barbuda',
+    ituc: 3.52,
   });
 });

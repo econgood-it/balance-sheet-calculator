@@ -8,6 +8,7 @@ import { Industry } from '../../src/entities/industry';
 import { IndustryProvider } from '../../src/providers/industry.provider';
 import { IndustrySector } from '../../src/entities/industry.sector';
 import { createTranslations } from '../../src/entities/Translations';
+import path from 'path';
 
 describe('Industry Provider', () => {
   let connection: Connection;
@@ -56,5 +57,23 @@ describe('Industry Provider', () => {
     );
     expect(industryProvider.getOrFail('Ce').industryCode).toBe('Ce');
     expect(industryProvider.getOrFail('A').industryCode).toBe('A');
+  });
+});
+
+it('should create industry provider from file', async () => {
+  const industryProvider = await IndustryProvider.fromFile(
+    path.join(__dirname, 'industries.json')
+  );
+  expect(industryProvider.getOrFail('A')).toMatchObject({
+    ecologicalSupplyChainRisk: 2,
+    ecologicalDesignOfProductsAndServices: 1,
+    industryCode: 'A',
+    name: 'agriculture, forestry management, fishing industry',
+  });
+  expect(industryProvider.getOrFail('C')).toMatchObject({
+    ecologicalSupplyChainRisk: 1.5,
+    ecologicalDesignOfProductsAndServices: 1,
+    industryCode: 'C',
+    name: 'Manufacturing industries (not further specified)',
   });
 });

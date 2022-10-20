@@ -1,0 +1,20 @@
+[
+  {
+    "ecologicalSupplyChainRisk": 2,
+    "ecologicalDesignOfProductsAndServices": 1,
+    "industryCode": "A",
+    "name": "agriculture, forestry management, fishing industry"
+  },
+  {
+    "ecologicalSupplyChainRisk": 2,
+    "ecologicalDesignOfProductsAndServices": 1,
+    "industryCode": "B",
+    "name": "Mining and quarrying"
+  },
+  {
+    "ecologicalSupplyChainRisk": 1.5,
+    "ecologicalDesignOfProductsAndServices": 1,
+    "industryCode": "C",
+    "name": "Manufacturing industries (not further specified)"
+  }
+]

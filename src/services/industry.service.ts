@@ -15,9 +15,10 @@ export class IndustryService {
       .transaction(async (entityManager) => {
         const industryRepo = entityManager.getRepository(Industry);
         const industries = await industryRepo.find();
-        res.json(
-          industries.map((i) => IndustryResponseDTO.fromIndustry(i, language))
-        );
+        res.json(industries);
+        // res.json(
+        //   industries.map((i) => IndustryResponseDTO.fromIndustry(i, language))
+        // );
       })
       .catch((error) => {
         handle(error, next);
