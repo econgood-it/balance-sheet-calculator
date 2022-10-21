@@ -49,11 +49,7 @@ class App {
     this.regionController = new RegionController(this.app, regionService);
     this.industryController = new IndustryController(
       this.app,
-      new IndustryService(connection)
-    );
-    this.industryController = new IndustryController(
-      this.app,
-      new IndustryService(connection)
+      new IndustryService()
     );
     const userService = new UserService(connection, configuration.jwtSecret);
     this.userController = new UserController(this.app, userService);

@@ -1,10 +1,10 @@
 import { IndustryProvider } from '../../src/providers/industry.provider';
-import path from 'path';
+import { BalanceSheetVersion } from '../../src/entities/enums';
 
 describe('Industry Provider', () => {
   it('is created from file', async () => {
-    const industryProvider = await IndustryProvider.fromFile(
-      path.join(__dirname, 'industries.json')
+    const industryProvider = await IndustryProvider.fromVersion(
+      BalanceSheetVersion.v5_0_8
     );
     expect(industryProvider.getOrFail('A')).toMatchObject({
       ecologicalSupplyChainRisk: 2,

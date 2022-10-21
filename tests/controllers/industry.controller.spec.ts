@@ -42,16 +42,15 @@ describe('Industry Controller', () => {
       expect.arrayContaining([
         expect.objectContaining({
           industryCode: 'A',
-          industryName: 'agriculture, forestry management, fishing industry',
+          name: 'agriculture, forestry management, fishing industry',
         }),
         expect.objectContaining({
           industryCode: 'Ch',
-          industryName:
-            'Production of electronic equipment, instruments and components as well as computers (C26, C27, C28)',
+          name: 'Production of electronic equipment, instruments and components as well as computers (C26, C27, C28)',
         }),
         expect.objectContaining({
           industryCode: 'U',
-          industryName: 'Extraterritorial organisations and bodies',
+          name: 'Extraterritorial organisations and bodies',
         }),
       ])
     );

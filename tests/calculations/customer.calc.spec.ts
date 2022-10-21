@@ -1,36 +1,23 @@
 import { CompanyFacts } from '../../src/entities/companyFacts';
-import { DatabaseConnectionCreator } from '../../src/database.connection.creator';
-import { Connection } from 'typeorm';
-import { ConfigurationReader } from '../../src/configuration.reader';
-import { Industry } from '../../src/entities/industry';
 import { IndustryProvider } from '../../src/providers/industry.provider';
 import { EmptyCompanyFacts } from '../testData/company.facts';
 import { CustomerCalc } from '../../src/calculations/customer.calc';
 import { IndustrySector } from '../../src/entities/industry.sector';
 import { createTranslations } from '../../src/entities/Translations';
+import { BalanceSheetVersion } from '../../src/entities/enums';
 
 describe('Customer Calculator', () => {
   let companyFacts: CompanyFacts;
-  let connection: Connection;
   let industryProvider: IndustryProvider;
 
-  beforeAll(async () => {
-    connection =
-      await DatabaseConnectionCreator.createConnectionAndRunMigrations(
-        ConfigurationReader.read()
-      );
+  beforeEach(async () => {
     companyFacts = EmptyCompanyFacts;
-  });
-
-  afterAll(async () => {
-    await connection.close();
   });
 
   it('should calculate when industry sectors empty', async () => {
     companyFacts.industrySectors = [];
-    industryProvider = await IndustryProvider.createFromCompanyFacts(
-      companyFacts,
-      connection.getRepository(Industry)
+    industryProvider = await IndustryProvider.fromVersion(
+      BalanceSheetVersion.v5_0_8
     );
     const customerCalcResults = await new CustomerCalc(
       industryProvider
@@ -45,9 +32,8 @@ describe('Customer Calculator', () => {
       new IndustrySector(undefined, 'F', 0.2, createTranslations('en', '')),
       new IndustrySector(undefined, 'A', 0.4, createTranslations('en', '')),
     ];
-    industryProvider = await IndustryProvider.createFromCompanyFacts(
-      companyFacts,
-      connection.getRepository(Industry)
+    industryProvider = await IndustryProvider.fromVersion(
+      BalanceSheetVersion.v5_0_8
     );
     const customerCalcResults = await new CustomerCalc(
       industryProvider

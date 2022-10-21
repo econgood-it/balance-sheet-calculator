@@ -1,16 +1,11 @@
 import { RatingsUpdater } from '../../src/calculations/ratings.updater';
 import { Rating } from '../../src/entities/rating';
 import { CompanyFacts } from '../../src/entities/companyFacts';
-import { Connection } from 'typeorm';
-import { Region } from '../../src/entities/region';
-import { DatabaseConnectionCreator } from '../../src/database.connection.creator';
-import { ConfigurationReader } from '../../src/configuration.reader';
 import { Assertions } from '../Assertions';
 import * as path from 'path';
 import { RatingsReader } from '../../src/reader/ratings.reader';
 import { CompanyFacts1, EmptyCompanyFacts } from '../testData/company.facts';
 import { CalcResults, Calculator } from '../../src/calculations/calculator';
-import { Industry } from '../../src/entities/industry';
 import { RegionProvider } from '../../src/providers/region.provider';
 import { IndustryProvider } from '../../src/providers/industry.provider';
 import {
@@ -22,20 +17,8 @@ import { StakeholderWeightCalculator } from '../../src/calculations/stakeholder.
 import { TopicWeightCalculator } from '../../src/calculations/topic.weight.calculator';
 
 describe('Ratings updater', () => {
-  let connection: Connection;
   const stakeholderWeightCalculator = new StakeholderWeightCalculator();
   const topicWeightCalculator = new TopicWeightCalculator();
-
-  beforeAll(async () => {
-    connection =
-      await DatabaseConnectionCreator.createConnectionAndRunMigrations(
-        ConfigurationReader.read()
-      );
-  });
-
-  afterAll(async () => {
-    await connection.close();
-  });
 
   async function testCalculation(
     fileNameOfRatingInputData: string,
@@ -51,9 +34,8 @@ describe('Ratings updater', () => {
     const regionProvider = await RegionProvider.fromVersion(
       BalanceSheetVersion.v5_0_4
     );
-    const industryProvider = await IndustryProvider.createFromCompanyFacts(
-      companyFacts,
-      connection.getRepository(Industry)
+    const industryProvider = await IndustryProvider.fromVersion(
+      BalanceSheetVersion.v5_0_4
     );
     const calcResults: CalcResults = await new Calculator(
       regionProvider,
@@ -91,10 +73,10 @@ describe('Ratings updater', () => {
     const regionProvider = await RegionProvider.fromVersion(
       BalanceSheetVersion.v5_0_4
     );
-    const industryProvider = await IndustryProvider.createFromCompanyFacts(
-      CompanyFacts1,
-      connection.getRepository(Industry)
+    const industryProvider = await IndustryProvider.fromVersion(
+      BalanceSheetVersion.v5_0_4
     );
+
     const calcResults: CalcResults = await new Calculator(
       regionProvider,
       industryProvider

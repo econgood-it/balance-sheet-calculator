@@ -1,11 +1,9 @@
 import Provider from './provider';
 import { Industry } from '../entities/industry';
-import { Repository } from 'typeorm';
-import { CompanyFacts } from '../entities/companyFacts';
 import fs from 'fs';
-import { Region } from '../entities/region';
 import { BalanceSheetVersion } from '../entities/enums';
 import { z } from 'zod';
+import path from 'path';
 
 const IndustrySchema = z.object({
   ecologicalSupplyChainRisk: z.number(),
@@ -15,7 +13,15 @@ const IndustrySchema = z.object({
 });
 
 export class IndustryProvider extends Provider<string, Industry> {
-  public static async fromFile(path: string) {
+  public static async fromVersion(version: BalanceSheetVersion) {
+    const regionPath = path.join(
+      path.resolve(__dirname, '../files/providers'),
+      'industries_5_0_4.json'
+    );
+    return IndustryProvider.fromFile(regionPath);
+  }
+
+  private static async fromFile(path: string) {
     const fileText = fs.readFileSync(path);
     const jsonParsed = JSON.parse(fileText.toString());
     const industries = IndustrySchema.array().parse(jsonParsed);
@@ -34,32 +40,4 @@ export class IndustryProvider extends Provider<string, Industry> {
     }
     return industryProvider;
   }
-
-  public static createFromCompanyFacts = async (
-    companyFacts: CompanyFacts,
-    industryRepository: Repository<Industry>
-  ) => {
-    const industryProvider = new Provider<string, Industry>();
-    for (const supplyFraction of companyFacts.supplyFractions) {
-      industryProvider.set(
-        supplyFraction.industryCode,
-        await industryRepository.findOneOrFail({
-          where: {
-            industryCode: supplyFraction.industryCode,
-          },
-        })
-      );
-    }
-    for (const industrySector of companyFacts.industrySectors) {
-      industryProvider.set(
-        industrySector.industryCode,
-        await industryRepository.findOneOrFail({
-          where: {
-            industryCode: industrySector.industryCode,
-          },
-        })
-      );
-    }
-    return industryProvider;
-  };
 }

@@ -3,7 +3,6 @@ import { SupplyFraction } from '../../src/entities/supplyFraction';
 import { DatabaseConnectionCreator } from '../../src/database.connection.creator';
 import { Connection } from 'typeorm';
 import { ConfigurationReader } from '../../src/configuration.reader';
-import { Industry } from '../../src/entities/industry';
 import {
   SupplierCalc,
   SupplyCalcResults,
@@ -16,7 +15,6 @@ import { BalanceSheetVersion } from '../../src/entities/enums';
 
 describe('Supply Calculator', () => {
   let companyFacts: CompanyFacts;
-  let connection: Connection;
   let regionProvider: RegionProvider;
   let industryProvider: IndustryProvider;
   const useNonDefaultMainOriginOfOtherSuppliers = () => {
@@ -29,12 +27,7 @@ describe('Supply Calculator', () => {
     companyFacts.mainOriginOfOtherSuppliers.countryCode = 'BRA';
   };
 
-  beforeAll(async () => {
-    connection =
-      await DatabaseConnectionCreator.createConnectionAndRunMigrations(
-        ConfigurationReader.read()
-      );
-
+  beforeEach(async () => {
     const supplyFractions: SupplyFraction[] = [
       new SupplyFraction(undefined, 'B', 'AND', 100),
       new SupplyFraction(undefined, 'Cf', 'ARE', 200),
@@ -48,14 +41,9 @@ describe('Supply Calculator', () => {
     regionProvider = await RegionProvider.fromVersion(
       BalanceSheetVersion.v5_0_4
     );
-    industryProvider = await IndustryProvider.createFromCompanyFacts(
-      companyFacts,
-      connection.getRepository(Industry)
+    industryProvider = await IndustryProvider.fromVersion(
+      BalanceSheetVersion.v5_0_4
     );
-  });
-
-  afterAll(async () => {
-    await connection.close();
   });
 
   it('should calculate ', async () => {

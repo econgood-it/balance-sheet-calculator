@@ -2,12 +2,8 @@ import { StakeholderWeightCalculator } from '../../src/calculations/stakeholder.
 import { CompanyFacts } from '../../src/entities/companyFacts';
 import { SupplyFraction } from '../../src/entities/supplyFraction';
 import { EmployeesFraction } from '../../src/entities/employeesFraction';
-import { DatabaseConnectionCreator } from '../../src/database.connection.creator';
-import { Connection } from 'typeorm';
 import { DEFAULT_COUNTRY_CODE } from '../../src/entities/region';
-import { ConfigurationReader } from '../../src/configuration.reader';
 import { CalcResults, Calculator } from '../../src/calculations/calculator';
-import { Industry } from '../../src/entities/industry';
 import { RegionProvider } from '../../src/providers/region.provider';
 import { IndustryProvider } from '../../src/providers/industry.provider';
 import { MainOriginOfOtherSuppliers } from '../../src/entities/main.origin.of.other.suppliers';
@@ -15,7 +11,6 @@ import { BalanceSheetVersion } from '../../src/entities/enums';
 
 describe('Stakeholder Weight Calculator', () => {
   let companyFacts: CompanyFacts;
-  let connection: Connection;
   let regionProvider: RegionProvider;
   let industryProvider: IndustryProvider;
   const arabEmiratesCode = 'ARE';
@@ -23,11 +18,7 @@ describe('Stakeholder Weight Calculator', () => {
   const agricultureCode = 'A';
   const pharmaceuticCode = 'Ce';
 
-  beforeAll(async () => {
-    connection =
-      await DatabaseConnectionCreator.createConnectionAndRunMigrations(
-        ConfigurationReader.read()
-      );
+  beforeEach(async () => {
     const supplyFractions: SupplyFraction[] = [
       new SupplyFraction(undefined, agricultureCode, arabEmiratesCode, 300),
       new SupplyFraction(undefined, pharmaceuticCode, afghanistanCode, 20),
@@ -59,14 +50,9 @@ describe('Stakeholder Weight Calculator', () => {
     regionProvider = await RegionProvider.fromVersion(
       BalanceSheetVersion.v5_0_4
     );
-    industryProvider = await IndustryProvider.createFromCompanyFacts(
-      companyFacts,
-      connection.getRepository(Industry)
+    industryProvider = await IndustryProvider.fromVersion(
+      BalanceSheetVersion.v5_0_4
     );
-  });
-
-  afterAll(async () => {
-    await connection.close();
   });
 
   it('should calculate supplier and employees risk ratio', async () => {
