@@ -18,7 +18,7 @@ import {
 import { IndustrySectorCreateDtoCreate } from './industry.sector.create.dto';
 import { Translations } from '../../entities/Translations';
 import { computeCostsAndCreateMainOriginOfOtherSuppliers } from '../../entities/main.origin.of.other.suppliers';
-import { DEFAULT_COUNTRY_CODE } from '../../entities/region';
+import { DEFAULT_COUNTRY_CODE } from '../../models/region';
 
 export class CompanyFactsDTOCreate {
   @Min(0)

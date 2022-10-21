@@ -1,21 +1,9 @@
 import Provider from './provider';
-import { Region } from '../entities/region';
 import { BalanceSheetVersion } from '../entities/enums';
 import fs from 'fs';
 
-import { z } from 'zod';
 import path from 'path';
-
-type VersionResult = {
-  validFromVersion: BalanceSheetVersion;
-};
-
-const RegionSchema = z.object({
-  pppIndex: z.number(),
-  countryCode: z.string(),
-  countryName: z.string(),
-  ituc: z.number(),
-});
+import { Region, RegionSchema } from '../models/region';
 
 export class RegionProvider extends Provider<string, Region> {
   public static async fromVersion(version: BalanceSheetVersion) {
@@ -29,23 +17,14 @@ export class RegionProvider extends Provider<string, Region> {
     );
     return RegionProvider.fromFile(regionPath);
   }
+
   private static async fromFile(path: string) {
     const fileText = fs.readFileSync(path);
     const jsonParsed = JSON.parse(fileText.toString());
     const regions = RegionSchema.array().parse(jsonParsed);
     const regionProvider = new RegionProvider();
     for (const region of regions) {
-      regionProvider.set(
-        region.countryCode,
-        new Region(
-          undefined,
-          region.pppIndex,
-          region.countryCode,
-          region.countryName,
-          region.ituc,
-          BalanceSheetVersion.v5_0_8
-        )
-      );
+      regionProvider.set(region.countryCode, region);
     }
     return regionProvider;
   }

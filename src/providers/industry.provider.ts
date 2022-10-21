@@ -1,16 +1,10 @@
 import Provider from './provider';
-import { Industry } from '../entities/industry';
+
 import fs from 'fs';
 import { BalanceSheetVersion } from '../entities/enums';
-import { z } from 'zod';
-import path from 'path';
 
-const IndustrySchema = z.object({
-  ecologicalSupplyChainRisk: z.number(),
-  ecologicalDesignOfProductsAndServices: z.number(),
-  industryCode: z.string(),
-  name: z.string(),
-});
+import path from 'path';
+import { Industry, IndustrySchema } from '../models/industry';
 
 export class IndustryProvider extends Provider<string, Industry> {
   public static async fromVersion(version: BalanceSheetVersion) {
@@ -27,16 +21,7 @@ export class IndustryProvider extends Provider<string, Industry> {
     const industries = IndustrySchema.array().parse(jsonParsed);
     const industryProvider = new IndustryProvider();
     for (const industry of industries) {
-      industryProvider.set(
-        industry.industryCode,
-        new Industry(
-          undefined,
-          industry.industryCode,
-          industry.name,
-          industry.ecologicalSupplyChainRisk,
-          industry.ecologicalDesignOfProductsAndServices
-        )
-      );
+      industryProvider.set(industry.industryCode, industry);
     }
     return industryProvider;
   }

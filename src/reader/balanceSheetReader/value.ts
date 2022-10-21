@@ -1,8 +1,8 @@
-import { DEFAULT_COUNTRY_CODE } from '../../entities/region';
 import { createTranslations, Translations } from '../../entities/Translations';
 import { CompanySize } from '../../calculations/employees.calc';
 import { none, Option, some } from '../../calculations/option';
 import { BalanceSheetVersion } from '../../entities/enums';
+import { DEFAULT_COUNTRY_CODE } from '../../models/region';
 
 export class Value {
   constructor(public readonly value: string) {}

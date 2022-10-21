@@ -1,18 +1,17 @@
-import { Region } from '../../../src/entities/region';
 import { BalanceSheetVersion } from '../../../src/entities/enums';
 import { RegionResponseDTO } from '../../../src/dto/response/region.response.dto';
+import { Region } from '../../../src/models/region';
 
 describe('Region DTO', () => {
   it('should be created from region entity', () => {
-    const region = new Region(
-      undefined,
-      3.4,
-      'DEU',
-      'Germany',
-      3,
-      BalanceSheetVersion.v5_0_6
-    );
-    const regionDTO = RegionResponseDTO.fromRegion(region, 'en');
+    const region: Region = {
+      pppIndex: 3.4,
+      countryCode: 'DEU',
+      countryName: 'Germany',
+      ituc: 3,
+    };
+
+    const regionDTO = RegionResponseDTO.fromRegion(region);
     expect(regionDTO).toMatchObject({
       countryCode: 'DEU',
       countryName: 'Germany',

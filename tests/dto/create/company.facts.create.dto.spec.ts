@@ -1,6 +1,6 @@
 import { validate } from 'class-validator';
 import { CompanyFactsDTOCreate } from '../../../src/dto/create/company.facts.create.dto';
-import { DEFAULT_COUNTRY_CODE } from '../../../src/entities/region';
+import { DEFAULT_COUNTRY_CODE } from '../../../src/models/region';
 
 describe('CompanyFactsCreateDTO', () => {
   it('is created from json and returns a CompanyFacts entity', () => {

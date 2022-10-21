@@ -1,5 +1,4 @@
-import { Translations } from '../../entities/Translations';
-import { Region } from '../../entities/region';
+import { Region } from '../../models/region';
 
 export class RegionResponseDTO {
   public constructor(
@@ -7,11 +6,7 @@ export class RegionResponseDTO {
     public readonly countryName: string
   ) {}
 
-  public static fromRegion(
-    region: Region,
-    language: keyof Translations
-  ): RegionResponseDTO {
-    // TODO: Add translation of countryName
+  public static fromRegion(region: Region): RegionResponseDTO {
     return new RegionResponseDTO(region.countryCode, region.countryName);
   }
 }

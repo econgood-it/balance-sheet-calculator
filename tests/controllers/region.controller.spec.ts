@@ -5,8 +5,6 @@ import { DatabaseConnectionCreator } from '../../src/database.connection.creator
 import App from '../../src/app';
 import { TokenProvider } from '../TokenProvider';
 import supertest from 'supertest';
-import { Region } from '../../src/entities/region';
-import { BalanceSheetVersion } from '../../src/entities/enums';
 
 describe('Region Controller', () => {
   let connection: Connection;

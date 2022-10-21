@@ -16,7 +16,7 @@ import {
   IsString,
 } from 'class-validator';
 import { IndustrySectorDtoUpdate } from './industry.sector.update.dto';
-import { DEFAULT_COUNTRY_CODE } from '../../entities/region';
+import { DEFAULT_COUNTRY_CODE } from '../../models/region';
 
 export class CompanyFactsDTOUpdate {
   @IsOptional()

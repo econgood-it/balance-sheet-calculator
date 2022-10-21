@@ -1,5 +1,4 @@
-import { Translations } from '../../entities/Translations';
-import { Industry } from '../../entities/industry';
+import { Industry } from '../../models/industry';
 
 export class IndustryResponseDTO {
   public constructor(
@@ -7,10 +6,7 @@ export class IndustryResponseDTO {
     public readonly industryName: string
   ) {}
 
-  public static fromIndustry(
-    industry: Industry,
-    language: keyof Translations
-  ): IndustryResponseDTO {
+  public static fromIndustry(industry: Industry): IndustryResponseDTO {
     // TODO: Add translation of industryName
     return new IndustryResponseDTO(industry.industryCode, industry.name);
   }

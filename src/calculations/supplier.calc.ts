@@ -1,10 +1,10 @@
 import { CompanyFacts } from '../entities/companyFacts';
-import { Region } from '../entities/region';
 import { SupplyFraction } from '../entities/supplyFraction';
-import { Industry } from '../entities/industry';
 import { RegionProvider } from '../providers/region.provider';
 import { IndustryProvider } from '../providers/industry.provider';
 import { MainOriginOfOtherSuppliers } from '../entities/main.origin.of.other.suppliers';
+import { Region } from '../models/region';
+import { Industry } from '../models/industry';
 
 export interface SupplyCalcResults {
   supplyRiskSum: number;

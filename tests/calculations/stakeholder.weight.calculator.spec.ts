@@ -2,12 +2,12 @@ import { StakeholderWeightCalculator } from '../../src/calculations/stakeholder.
 import { CompanyFacts } from '../../src/entities/companyFacts';
 import { SupplyFraction } from '../../src/entities/supplyFraction';
 import { EmployeesFraction } from '../../src/entities/employeesFraction';
-import { DEFAULT_COUNTRY_CODE } from '../../src/entities/region';
 import { CalcResults, Calculator } from '../../src/calculations/calculator';
 import { RegionProvider } from '../../src/providers/region.provider';
 import { IndustryProvider } from '../../src/providers/industry.provider';
 import { MainOriginOfOtherSuppliers } from '../../src/entities/main.origin.of.other.suppliers';
 import { BalanceSheetVersion } from '../../src/entities/enums';
+import { DEFAULT_COUNTRY_CODE } from '../../src/models/region';
 
 describe('Stakeholder Weight Calculator', () => {
   let companyFacts: CompanyFacts;
