@@ -4,7 +4,7 @@ import { SupplyFraction } from '../../src/entities/supplyFraction';
 import { EmployeesFraction } from '../../src/entities/employeesFraction';
 import { DatabaseConnectionCreator } from '../../src/database.connection.creator';
 import { Connection } from 'typeorm';
-import { DEFAULT_COUNTRY_CODE, Region } from '../../src/entities/region';
+import { DEFAULT_COUNTRY_CODE } from '../../src/entities/region';
 import { ConfigurationReader } from '../../src/configuration.reader';
 import { CalcResults, Calculator } from '../../src/calculations/calculator';
 import { Industry } from '../../src/entities/industry';
@@ -56,9 +56,7 @@ describe('Stakeholder Weight Calculator', () => {
       [],
       new MainOriginOfOtherSuppliers(undefined, DEFAULT_COUNTRY_CODE, 0)
     );
-    regionProvider = await RegionProvider.createFromCompanyFacts(
-      companyFacts,
-      connection.getRepository(Region),
+    regionProvider = await RegionProvider.fromVersion(
       BalanceSheetVersion.v5_0_4
     );
     industryProvider = await IndustryProvider.createFromCompanyFacts(

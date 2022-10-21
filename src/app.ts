@@ -45,7 +45,7 @@ class App {
       this.app,
       balanceSheetService
     );
-    const regionService = new RegionService(connection);
+    const regionService = new RegionService();
     this.regionController = new RegionController(this.app, regionService);
     this.industryController = new IndustryController(
       this.app,

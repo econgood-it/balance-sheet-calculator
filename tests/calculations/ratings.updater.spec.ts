@@ -48,9 +48,7 @@ describe('Ratings updater', () => {
     const ratings: Rating[] = await testDataReader.readRatingsFromCsv(
       pathToCsv
     );
-    const regionProvider = await RegionProvider.createFromCompanyFacts(
-      companyFacts,
-      connection.getRepository(Region),
+    const regionProvider = await RegionProvider.fromVersion(
       BalanceSheetVersion.v5_0_4
     );
     const industryProvider = await IndustryProvider.createFromCompanyFacts(
@@ -90,9 +88,7 @@ describe('Ratings updater', () => {
   }
 
   it('should not calculate automatic weight', async () => {
-    const regionProvider = await RegionProvider.createFromCompanyFacts(
-      CompanyFacts1,
-      connection.getRepository(Region),
+    const regionProvider = await RegionProvider.fromVersion(
       BalanceSheetVersion.v5_0_4
     );
     const industryProvider = await IndustryProvider.createFromCompanyFacts(

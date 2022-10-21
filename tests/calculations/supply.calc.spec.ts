@@ -2,7 +2,6 @@ import { CompanyFacts } from '../../src/entities/companyFacts';
 import { SupplyFraction } from '../../src/entities/supplyFraction';
 import { DatabaseConnectionCreator } from '../../src/database.connection.creator';
 import { Connection } from 'typeorm';
-import { Region } from '../../src/entities/region';
 import { ConfigurationReader } from '../../src/configuration.reader';
 import { Industry } from '../../src/entities/industry';
 import {
@@ -35,6 +34,7 @@ describe('Supply Calculator', () => {
       await DatabaseConnectionCreator.createConnectionAndRunMigrations(
         ConfigurationReader.read()
       );
+
     const supplyFractions: SupplyFraction[] = [
       new SupplyFraction(undefined, 'B', 'AND', 100),
       new SupplyFraction(undefined, 'Cf', 'ARE', 200),
@@ -45,9 +45,7 @@ describe('Supply Calculator', () => {
     companyFacts = EmptyCompanyFacts;
 
     companyFacts.supplyFractions = supplyFractions;
-    regionProvider = await RegionProvider.createFromCompanyFacts(
-      companyFacts,
-      connection.getRepository(Region),
+    regionProvider = await RegionProvider.fromVersion(
       BalanceSheetVersion.v5_0_4
     );
     industryProvider = await IndustryProvider.createFromCompanyFacts(
@@ -75,9 +73,7 @@ describe('Supply Calculator', () => {
 
   it('should calculate supply risk sum', async () => {
     useNonDefaultMainOriginOfOtherSuppliers();
-    regionProvider = await RegionProvider.createFromCompanyFacts(
-      companyFacts,
-      connection.getRepository(Region),
+    regionProvider = await RegionProvider.fromVersion(
       BalanceSheetVersion.v5_0_4
     );
     const supplyCalcResults: SupplyCalcResults = await new SupplierCalc(
@@ -89,9 +85,7 @@ describe('Supply Calculator', () => {
 
   it('should calculate supply risk of mainOriginOfOtherSuppliers', async () => {
     useNonDefaultMainOriginOfOtherSuppliers();
-    regionProvider = await RegionProvider.createFromCompanyFacts(
-      companyFacts,
-      connection.getRepository(Region),
+    regionProvider = await RegionProvider.fromVersion(
       BalanceSheetVersion.v5_0_4
     );
     const supplyRiskSum = new SupplierCalc(
@@ -106,9 +100,7 @@ describe('Supply Calculator', () => {
   });
   it('should calculate ituc average', async () => {
     useNonDefaultMainOriginOfOtherSuppliers();
-    regionProvider = await RegionProvider.createFromCompanyFacts(
-      companyFacts,
-      connection.getRepository(Region),
+    regionProvider = await RegionProvider.fromVersion(
       BalanceSheetVersion.v5_0_4
     );
     const supplyRiskSum = new SupplierCalc(

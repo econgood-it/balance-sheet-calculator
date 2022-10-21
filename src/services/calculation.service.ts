@@ -2,7 +2,6 @@ import { BalanceSheet } from '../entities/balanceSheet';
 import { EntityManager } from 'typeorm';
 import { Industry } from '../entities/industry';
 import { RegionProvider } from '../providers/region.provider';
-import { Region } from '../entities/region';
 import { IndustryProvider } from '../providers/industry.provider';
 import { CalcResults, Calculator } from '../calculations/calculator';
 import { RatingsUpdater } from '../calculations/ratings.updater';
@@ -22,9 +21,8 @@ export class CalculationService {
     topicWeights: Provider<string, number>;
   }> {
     const industryRepository = entityManager.getRepository(Industry);
-    const regionProvider = await RegionProvider.createFromCompanyFacts(
-      balanceSheet.companyFacts,
-      entityManager.getRepository(Region),
+
+    const regionProvider = await RegionProvider.fromVersion(
       balanceSheet.version
     );
     const industryProvider = await IndustryProvider.createFromCompanyFacts(

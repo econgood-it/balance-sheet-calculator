@@ -1,8 +1,4 @@
 import { CompanyFacts } from '../../src/entities/companyFacts';
-import { DatabaseConnectionCreator } from '../../src/database.connection.creator';
-import { Connection } from 'typeorm';
-import { Region } from '../../src/entities/region';
-import { ConfigurationReader } from '../../src/configuration.reader';
 import { RegionProvider } from '../../src/providers/region.provider';
 import { EmptyCompanyFacts } from '../testData/company.facts';
 import {
@@ -14,19 +10,6 @@ import { EmployeesFraction } from '../../src/entities/employeesFraction';
 import { BalanceSheetVersion } from '../../src/entities/enums';
 
 describe('Employees Calculator', () => {
-  let connection: Connection;
-
-  beforeAll(async () => {
-    connection =
-      await DatabaseConnectionCreator.createConnectionAndRunMigrations(
-        ConfigurationReader.read()
-      );
-  });
-
-  afterAll(async () => {
-    await connection.close();
-  });
-
   describe('should calculate the itucAverage ', () => {
     let companyFacts: CompanyFacts;
     let regionProvider: RegionProvider;
@@ -37,9 +20,7 @@ describe('Employees Calculator', () => {
     const calc = async (
       companyFacts: CompanyFacts
     ): Promise<EmployeesCalcResults> => {
-      regionProvider = await RegionProvider.createFromCompanyFacts(
-        companyFacts,
-        connection.getRepository(Region),
+      regionProvider = await RegionProvider.fromVersion(
         BalanceSheetVersion.v5_0_4
       );
       return new EmployeesCalc(regionProvider).calculate(companyFacts);
@@ -81,9 +62,7 @@ describe('Employees Calculator', () => {
     };
     beforeEach(async () => {
       companyFacts = EmptyCompanyFacts;
-      regionProvider = await RegionProvider.createFromCompanyFacts(
-        companyFacts,
-        connection.getRepository(Region),
+      regionProvider = await RegionProvider.fromVersion(
         BalanceSheetVersion.v5_0_4
       );
     });

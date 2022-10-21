@@ -47,17 +47,4 @@ describe('Region Controller', () => {
       ])
     );
   });
-
-  it('should return only regions for given balance sheet version', async () => {
-    const testApp = supertest(app);
-    const response = await testApp
-      .get(`/v1/regions?version=${BalanceSheetVersion.v5_0_4}`)
-      .set(userTokenHeader.key, userTokenHeader.value)
-      .send();
-    expect(response.status).toBe(200);
-    const expected = await connection
-      .getRepository(Region)
-      .countBy({ validFromVersion: BalanceSheetVersion.v5_0_4 });
-    expect(response.body.length).toEqual(expected);
-  });
 });
