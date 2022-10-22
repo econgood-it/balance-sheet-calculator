@@ -1,5 +1,5 @@
 import { IndustryProvider } from '../../src/providers/industry.provider';
-import { BalanceSheetVersion } from '../../src/entities/enums';
+import { BalanceSheetVersion } from '../../src/models/balance.sheet';
 
 describe('Industry Provider', () => {
   it('is created from file', async () => {

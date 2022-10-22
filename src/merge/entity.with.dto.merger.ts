@@ -1,193 +1,150 @@
 import { BalanceSheetDTOUpdate } from '../dto/update/balance.sheet.update.dto';
-import { BalanceSheet } from '../entities/balanceSheet';
-import { CompanyFacts } from '../entities/companyFacts';
 import { CompanyFactsDTOUpdate } from '../dto/update/company.facts.update.dto';
 import { SupplyFractionDTOUpdate } from '../dto/update/supply.fraction.update.dto';
-import { Repository } from 'typeorm';
-import { SupplyFraction } from '../entities/supplyFraction';
-import { EmployeesFraction } from '../entities/employeesFraction';
+
 import { EmployeesFractionDTOUpdate } from '../dto/update/employees.fraction.update.dto';
 import { IndustrySectorDtoUpdate } from '../dto/update/industry.sector.update.dto';
-import { IndustrySector } from '../entities/industry.sector';
-import {
-  createTranslations,
-  Translations,
-  updateTranslationOfLanguage,
-} from '../entities/Translations';
 import { RatingsWithDtoMerger } from './ratingsWithDtoMerger';
 import { mergeVal } from './merge.utils';
-import { computeCostsOfMainOriginOfOtherSuppliers } from '../entities/main.origin.of.other.suppliers';
+import {
+  BalanceSheet,
+  CompanyFacts,
+  computeCostsOfMainOriginOfOtherSuppliers,
+  EmployeesFraction,
+  IndustrySector,
+  SupplyFraction,
+} from '../models/balance.sheet';
 
 export class EntityWithDtoMerger {
   private ratingWithDtoMerger: RatingsWithDtoMerger =
     new RatingsWithDtoMerger();
 
-  public constructor(
-    private supplyFractionRepository: Repository<SupplyFraction>,
-    private employeesFractionRepository: Repository<EmployeesFraction>,
-    private industrySectorRepository: Repository<IndustrySector>
-  ) {}
-
-  public async mergeBalanceSheet(
+  public mergeBalanceSheet(
     balanceSheet: BalanceSheet,
-    balanceSheetDTOUpdate: BalanceSheetDTOUpdate,
-    language: keyof Translations
-  ): Promise<void> {
-    if (balanceSheetDTOUpdate.companyFacts) {
-      await this.mergeCompanyFacts(
-        balanceSheet.companyFacts,
-        balanceSheetDTOUpdate.companyFacts,
-        language
-      );
-    }
-    if (balanceSheetDTOUpdate.ratings.length > 0) {
-      this.ratingWithDtoMerger.mergeRatings(
-        balanceSheet.ratings,
-        balanceSheetDTOUpdate.ratings,
-        balanceSheet.type
-      );
-    }
+    balanceSheetDTOUpdate: BalanceSheetDTOUpdate
+  ): BalanceSheet {
+    return {
+      ...balanceSheet,
+      ...(balanceSheetDTOUpdate.companyFacts && {
+        companyFacts: this.mergeCompanyFacts(
+          balanceSheet.companyFacts,
+          balanceSheetDTOUpdate.companyFacts
+        ),
+      }),
+      ...(balanceSheetDTOUpdate.ratings.length > 0 && {
+        ratings: this.ratingWithDtoMerger.mergeRatings(
+          balanceSheet.ratings,
+          balanceSheetDTOUpdate.ratings
+        ),
+      }),
+    };
   }
 
-  public async mergeCompanyFacts(
+  public mergeCompanyFacts(
     companyFacts: CompanyFacts,
-    companyFactsDTOUpdate: CompanyFactsDTOUpdate,
-    language: keyof Translations
-  ): Promise<void> {
-    companyFacts.totalPurchaseFromSuppliers = mergeVal(
-      companyFacts.totalPurchaseFromSuppliers,
-      companyFactsDTOUpdate.totalPurchaseFromSuppliers
-    );
-    companyFacts.totalStaffCosts = mergeVal(
-      companyFacts.totalStaffCosts,
-      companyFactsDTOUpdate.totalStaffCosts
-    );
-    companyFacts.profit = mergeVal(
-      companyFacts.profit,
-      companyFactsDTOUpdate.profit
-    );
-    companyFacts.financialCosts = mergeVal(
-      companyFacts.financialCosts,
-      companyFactsDTOUpdate.financialCosts
-    );
-    companyFacts.incomeFromFinancialInvestments = mergeVal(
-      companyFacts.incomeFromFinancialInvestments,
-      companyFactsDTOUpdate.incomeFromFinancialInvestments
-    );
-    companyFacts.additionsToFixedAssets = mergeVal(
-      companyFacts.additionsToFixedAssets,
-      companyFactsDTOUpdate.additionsToFixedAssets
-    );
-    companyFacts.turnover = mergeVal(
-      companyFacts.turnover,
-      companyFactsDTOUpdate.turnover
-    );
-    companyFacts.totalAssets = mergeVal(
-      companyFacts.totalAssets,
-      companyFactsDTOUpdate.totalAssets
-    );
-    companyFacts.financialAssetsAndCashBalance = mergeVal(
-      companyFacts.financialAssetsAndCashBalance,
-      companyFactsDTOUpdate.financialAssetsAndCashBalance
-    );
-    companyFacts.numberOfEmployees = mergeVal(
-      companyFacts.numberOfEmployees,
-      companyFactsDTOUpdate.numberOfEmployees
-    );
-    companyFacts.hasCanteen = mergeVal(
-      companyFacts.hasCanteen,
-      companyFactsDTOUpdate.hasCanteen
-    );
-    companyFacts.averageJourneyToWorkForStaffInKm = mergeVal(
-      companyFacts.averageJourneyToWorkForStaffInKm,
-      companyFactsDTOUpdate.averageJourneyToWorkForStaffInKm
-    );
-    companyFacts.isB2B = mergeVal(
-      companyFacts.isB2B,
-      companyFactsDTOUpdate.isB2B
-    );
-
-    if (companyFactsDTOUpdate.industrySectors) {
-      await this.replaceIndustrySectors(
-        companyFacts,
-        companyFactsDTOUpdate.industrySectors,
-        language
-      );
-    }
-    if (companyFactsDTOUpdate.supplyFractions) {
-      await this.replaceSupplyFractions(
-        companyFacts,
-        companyFactsDTOUpdate.supplyFractions
-      );
-    }
-    if (companyFactsDTOUpdate.employeesFractions) {
-      await this.replaceEmployeesFractions(
-        companyFacts,
-        companyFactsDTOUpdate.employeesFractions
-      );
-    }
-    companyFacts.mainOriginOfOtherSuppliers.costs =
-      computeCostsOfMainOriginOfOtherSuppliers(
+    companyFactsDTOUpdate: CompanyFactsDTOUpdate
+  ): CompanyFacts {
+    const merged = {
+      totalPurchaseFromSuppliers: mergeVal(
         companyFacts.totalPurchaseFromSuppliers,
-        companyFacts.supplyFractions
-      );
-    companyFacts.mainOriginOfOtherSuppliers.countryCode = mergeVal(
-      companyFacts.mainOriginOfOtherSuppliers.countryCode,
-      companyFactsDTOUpdate.mainOriginOfOtherSuppliers
-    );
-  }
-
-  public async replaceIndustrySectors(
-    companyFacts: CompanyFacts,
-    industrySectorDTOUpdates: IndustrySectorDtoUpdate[],
-    language: keyof Translations
-  ): Promise<void> {
-    const industrySectors: IndustrySector[] = [];
-    for (const industrySectorDTOUpdate of industrySectorDTOUpdates) {
-      const industrySector = companyFacts.industrySectors.find(
-        (is) => is.industryCode === industrySectorDTOUpdate.industryCode
-      );
-      const description = industrySector
-        ? updateTranslationOfLanguage(
-            industrySector.description,
-            language,
-            industrySectorDTOUpdate.description
+        companyFactsDTOUpdate.totalPurchaseFromSuppliers
+      ),
+      totalStaffCosts: mergeVal(
+        companyFacts.totalStaffCosts,
+        companyFactsDTOUpdate.totalStaffCosts
+      ),
+      profit: mergeVal(companyFacts.profit, companyFactsDTOUpdate.profit),
+      financialCosts: mergeVal(
+        companyFacts.financialCosts,
+        companyFactsDTOUpdate.financialCosts
+      ),
+      incomeFromFinancialInvestments: mergeVal(
+        companyFacts.incomeFromFinancialInvestments,
+        companyFactsDTOUpdate.incomeFromFinancialInvestments
+      ),
+      additionsToFixedAssets: mergeVal(
+        companyFacts.additionsToFixedAssets,
+        companyFactsDTOUpdate.additionsToFixedAssets
+      ),
+      turnover: mergeVal(companyFacts.turnover, companyFactsDTOUpdate.turnover),
+      totalAssets: mergeVal(
+        companyFacts.totalAssets,
+        companyFactsDTOUpdate.totalAssets
+      ),
+      financialAssetsAndCashBalance: mergeVal(
+        companyFacts.financialAssetsAndCashBalance,
+        companyFactsDTOUpdate.financialAssetsAndCashBalance
+      ),
+      numberOfEmployees: mergeVal(
+        companyFacts.numberOfEmployees,
+        companyFactsDTOUpdate.numberOfEmployees
+      ),
+      hasCanteen: mergeVal(
+        companyFacts.hasCanteen,
+        companyFactsDTOUpdate.hasCanteen
+      ),
+      averageJourneyToWorkForStaffInKm: mergeVal(
+        companyFacts.averageJourneyToWorkForStaffInKm,
+        companyFactsDTOUpdate.averageJourneyToWorkForStaffInKm
+      ),
+      isB2B: mergeVal(companyFacts.isB2B, companyFactsDTOUpdate.isB2B),
+      industrySectors: companyFactsDTOUpdate.industrySectors
+        ? this.replaceIndustrySectors(companyFactsDTOUpdate.industrySectors)
+        : companyFacts.industrySectors,
+      supplyFractions: companyFactsDTOUpdate.supplyFractions
+        ? this.replaceSupplyFractions(companyFactsDTOUpdate.supplyFractions)
+        : companyFacts.supplyFractions,
+      employeesFractions: companyFactsDTOUpdate.employeesFractions
+        ? this.replaceEmployeesFractions(
+            companyFactsDTOUpdate.employeesFractions
           )
-        : createTranslations(language, industrySectorDTOUpdate.description);
-
-      industrySectors.push(
-        new IndustrySector(
-          undefined,
-          industrySectorDTOUpdate.industryCode,
-          industrySectorDTOUpdate.amountOfTotalTurnover,
-          description
-        )
-      );
-    }
-    await this.industrySectorRepository.remove(companyFacts.industrySectors);
-    companyFacts.industrySectors = industrySectors;
+        : companyFacts.employeesFractions,
+      mainOriginOfOtherSuppliers: {
+        costs: 0,
+        countryCode: mergeVal(
+          companyFacts.mainOriginOfOtherSuppliers.countryCode,
+          companyFactsDTOUpdate.mainOriginOfOtherSuppliers
+        ),
+      },
+    };
+    return {
+      ...merged,
+      mainOriginOfOtherSuppliers: {
+        ...merged.mainOriginOfOtherSuppliers,
+        costs: computeCostsOfMainOriginOfOtherSuppliers(
+          merged.totalPurchaseFromSuppliers,
+          merged.supplyFractions
+        ),
+      },
+    };
   }
 
-  public async replaceSupplyFractions(
-    companyFacts: CompanyFacts,
+  public replaceIndustrySectors(
+    industrySectorDTOUpdates: IndustrySectorDtoUpdate[]
+  ): IndustrySector[] {
+    return industrySectorDTOUpdates.map((i) => ({
+      industryCode: i.industryCode,
+      amountOfTotalTurnover: i.amountOfTotalTurnover,
+      description: i.description,
+    }));
+  }
+
+  public replaceSupplyFractions(
     supplyFractionDTOUpdates: SupplyFractionDTOUpdate[]
-  ): Promise<void> {
-    await this.supplyFractionRepository.remove(companyFacts.supplyFractions);
-    companyFacts.supplyFractions = supplyFractionDTOUpdates.map(
-      (sf) =>
-        new SupplyFraction(undefined, sf.industryCode, sf.countryCode, sf.costs)
-    );
+  ): SupplyFraction[] {
+    return supplyFractionDTOUpdates.map((sf) => ({
+      industryCode: sf.industryCode,
+      countryCode: sf.countryCode,
+      costs: sf.costs,
+    }));
   }
 
-  public async replaceEmployeesFractions(
-    companyFacts: CompanyFacts,
+  public replaceEmployeesFractions(
     employeesFractionDTOUpdates: EmployeesFractionDTOUpdate[]
-  ): Promise<void> {
-    await this.employeesFractionRepository.remove(
-      companyFacts.employeesFractions
-    );
-    companyFacts.employeesFractions = employeesFractionDTOUpdates.map(
-      (ef) => new EmployeesFraction(undefined, ef.countryCode, ef.percentage)
-    );
+  ): EmployeesFraction[] {
+    return employeesFractionDTOUpdates.map((ef) => ({
+      countryCode: ef.countryCode,
+      percentage: ef.percentage,
+    }));
   }
 }

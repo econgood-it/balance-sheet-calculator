@@ -1,8 +1,8 @@
 import { createTranslations, Translations } from '../../entities/Translations';
 import { CompanySize } from '../../calculations/employees.calc';
 import { none, Option, some } from '../../calculations/option';
-import { BalanceSheetVersion } from '../../entities/enums';
 import { DEFAULT_COUNTRY_CODE } from '../../models/region';
+import { BalanceSheetVersion } from '../../models/balance.sheet';
 
 export class Value {
   constructor(public readonly value: string) {}
@@ -56,10 +56,6 @@ export class Value {
 
   public get numberWithDefault0(): number {
     return this.getNumberWithDefault(0);
-  }
-
-  public getDescription(lng: keyof Translations) {
-    return createTranslations(lng, this.value);
   }
 
   public parseAsOptionalNumber(): Option<number> {

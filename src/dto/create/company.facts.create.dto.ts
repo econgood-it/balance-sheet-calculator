@@ -7,7 +7,7 @@ import {
 } from '@daniel-faber/json-ts';
 import { SupplyFractionDTOCreate } from './supply.fraction.create.dto';
 import { EmployeesFractionDTOCreate } from './employees.fraction.create.dto';
-import { CompanyFacts } from '../../entities/companyFacts';
+
 import {
   IsBoolean,
   IsNumber,
@@ -16,9 +16,11 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { IndustrySectorCreateDtoCreate } from './industry.sector.create.dto';
-import { Translations } from '../../entities/Translations';
-import { computeCostsAndCreateMainOriginOfOtherSuppliers } from '../../entities/main.origin.of.other.suppliers';
 import { DEFAULT_COUNTRY_CODE } from '../../models/region';
+import {
+  CompanyFacts,
+  computeCostsAndCreateMainOriginOfOtherSuppliers,
+} from '../../models/balance.sheet';
 
 export class CompanyFactsDTOCreate {
   @Min(0)
@@ -161,30 +163,32 @@ export class CompanyFactsDTOCreate {
       )
   );
 
-  public toCompanyFacts(language: keyof Translations): CompanyFacts {
-    return new CompanyFacts(
-      undefined,
-      this.totalPurchaseFromSuppliers,
-      this.totalStaffCosts,
-      this.profit,
-      this.financialCosts,
-      this.incomeFromFinancialInvestments,
-      this.additionsToFixedAssets,
-      this.turnover,
-      this.totalAssets,
-      this.financialAssetsAndCashBalance,
-      this.numberOfEmployees,
-      this.hasCanteen,
-      this.averageJourneyToWorkForStaffInKm,
-      this.isB2B,
-      this.supplyFractions.map((sf) => sf.toSupplyFraction()),
-      this.employeesFractions.map((ef) => ef.toEmployeesFraction()),
-      this.industrySectors.map((is) => is.toIndustrySector(language)),
-      computeCostsAndCreateMainOriginOfOtherSuppliers(
-        this.mainOriginOfOtherSuppliers,
-        this.totalPurchaseFromSuppliers,
-        this.supplyFractions
-      )
-    );
+  public toCompanyFacts(): CompanyFacts {
+    return {
+      totalPurchaseFromSuppliers: this.totalPurchaseFromSuppliers,
+      totalStaffCosts: this.totalStaffCosts,
+      profit: this.profit,
+      financialCosts: this.financialCosts,
+      incomeFromFinancialInvestments: this.incomeFromFinancialInvestments,
+      additionsToFixedAssets: this.additionsToFixedAssets,
+      turnover: this.turnover,
+      totalAssets: this.totalAssets,
+      financialAssetsAndCashBalance: this.financialAssetsAndCashBalance,
+      numberOfEmployees: this.numberOfEmployees,
+      hasCanteen: this.hasCanteen,
+      averageJourneyToWorkForStaffInKm: this.averageJourneyToWorkForStaffInKm,
+      isB2B: this.isB2B,
+      supplyFractions: this.supplyFractions.map((sf) => sf.toSupplyFraction()),
+      employeesFractions: this.employeesFractions.map((ef) =>
+        ef.toEmployeesFraction()
+      ),
+      industrySectors: this.industrySectors.map((is) => is.toIndustrySector()),
+      mainOriginOfOtherSuppliers:
+        computeCostsAndCreateMainOriginOfOtherSuppliers(
+          this.mainOriginOfOtherSuppliers,
+          this.totalPurchaseFromSuppliers,
+          this.supplyFractions
+        ),
+    };
   }
 }

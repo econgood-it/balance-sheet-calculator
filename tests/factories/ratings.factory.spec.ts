@@ -2,7 +2,7 @@ import { RatingsFactory } from '../../src/factories/ratings.factory';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
-} from '../../src/entities/enums';
+} from '../../src/models/balance.sheet';
 
 describe('Ratings factory', () => {
   it('should create a default rating for a compact balance sheet', async () => {

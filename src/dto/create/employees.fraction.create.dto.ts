@@ -3,7 +3,6 @@ import {
   expectString,
   expectNumber,
 } from '@daniel-faber/json-ts';
-import { EmployeesFraction } from '../../entities/employeesFraction';
 import {
   IsAlpha,
   IsNumber,
@@ -12,6 +11,7 @@ import {
   Max,
   Min,
 } from 'class-validator';
+import { EmployeesFraction } from '../../models/balance.sheet';
 
 export class EmployeesFractionDTOCreate {
   @IsAlpha()
@@ -38,6 +38,6 @@ export class EmployeesFractionDTOCreate {
   );
 
   public toEmployeesFraction(): EmployeesFraction {
-    return new EmployeesFraction(undefined, this.countryCode, this.percentage);
+    return { countryCode: this.countryCode, percentage: this.percentage };
   }
 }

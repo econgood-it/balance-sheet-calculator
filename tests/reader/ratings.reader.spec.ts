@@ -1,6 +1,6 @@
 import * as path from 'path';
-import { Rating } from '../../src/entities/rating';
 import { RatingsReader } from '../../src/reader/ratings.reader';
+import { Rating } from '../../src/models/balance.sheet';
 
 describe('RatingsReader', () => {
   it('should read ratings from csv', async () => {
@@ -8,7 +8,6 @@ describe('RatingsReader', () => {
     const pathToCsv = path.join(__dirname, 'rating.csv');
     const ratings: Rating[] = await ratingsReader.readRatingsFromCsv(pathToCsv);
     expect(ratings[0]).toMatchObject({
-      id: undefined,
       shortName: 'A1',
       name: 'Human dignity in the supply chain',
       weight: 1,
@@ -19,7 +18,6 @@ describe('RatingsReader', () => {
       isPositive: true,
     });
     expect(ratings[1]).toMatchObject({
-      id: undefined,
       shortName: 'A1.1',
       name: 'Working conditions and social impact in the supply chain',
       weight: 1,
@@ -30,7 +28,6 @@ describe('RatingsReader', () => {
       isPositive: true,
     });
     expect(ratings[2]).toMatchObject({
-      id: undefined,
       shortName: 'A1.2',
       name: 'Negative aspect: violation of human dignity in the supply chain',
       weight: 1,
@@ -41,7 +38,6 @@ describe('RatingsReader', () => {
       isPositive: false,
     });
     expect(ratings[7]).toMatchObject({
-      id: undefined,
       shortName: 'A3',
       name: 'Environmental sustainability in the supply chain',
       weight: 2,
@@ -52,7 +48,6 @@ describe('RatingsReader', () => {
       isPositive: true,
     });
     expect(ratings[8]).toMatchObject({
-      id: undefined,
       shortName: 'A3.1',
       name: 'Environmental impact throughout the supply chain',
       weight: 1.5,
@@ -63,7 +58,6 @@ describe('RatingsReader', () => {
       isPositive: true,
     });
     expect(ratings[9]).toMatchObject({
-      id: undefined,
       shortName: 'A3.2',
       name: 'Negative aspect: disproportionate environmental impact throughout the supply chain',
       weight: 1,

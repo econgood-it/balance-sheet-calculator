@@ -1,4 +1,3 @@
-import { CompanyFacts } from '../entities/companyFacts';
 import { SupplierCalc, SupplyCalcResults } from './supplier.calc';
 import { EmployeesCalc, EmployeesCalcResults } from './employees.calc';
 import { FinanceCalc, FinanceCalcResults } from './finance.calc';
@@ -9,6 +8,7 @@ import {
   SocialEnvironmentCalc,
   SocialEnvironmentCalcResults,
 } from './social.environment.calc';
+import { CompanyFacts } from '../models/balance.sheet';
 
 export interface CalcResults {
   supplyCalcResults: SupplyCalcResults;

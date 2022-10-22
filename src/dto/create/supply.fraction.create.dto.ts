@@ -3,8 +3,8 @@ import {
   expectString,
   expectNumber,
 } from '@daniel-faber/json-ts';
-import { SupplyFraction } from '../../entities/supplyFraction';
 import { IsAlpha, IsNumber, IsUppercase, Length, Min } from 'class-validator';
+import { SupplyFraction } from '../../models/balance.sheet';
 
 export class SupplyFractionDTOCreate {
   @IsAlpha()
@@ -36,11 +36,10 @@ export class SupplyFractionDTOCreate {
   );
 
   public toSupplyFraction(): SupplyFraction {
-    return new SupplyFraction(
-      undefined,
-      this.industryCode,
-      this.countryCode,
-      this.costs
-    );
+    return {
+      industryCode: this.industryCode,
+      countryCode: this.countryCode,
+      costs: this.costs,
+    };
   }
 }

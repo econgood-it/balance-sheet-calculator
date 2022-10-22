@@ -1,7 +1,10 @@
-import { BalanceSheetType, BalanceSheetVersion } from '../entities/enums';
 import * as path from 'path';
 import { RatingsReader } from '../reader/ratings.reader';
-import { Rating } from '../entities/rating';
+import {
+  BalanceSheetType,
+  BalanceSheetVersion,
+  Rating,
+} from '../models/balance.sheet';
 
 export class RatingsFactory {
   public static async createDefaultRatings(

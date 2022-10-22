@@ -1,11 +1,11 @@
 import { NextFunction, Request, Response } from 'express';
 import { handle } from '../exceptions/error.handler';
+import { RegionProvider } from '../providers/region.provider';
+import { RegionResponseDTO } from '../dto/response/region.response.dto';
 import {
   BalanceSheetVersion,
   balanceSheetVersionFromJSON,
-} from '../entities/enums';
-import { RegionProvider } from '../providers/region.provider';
-import { RegionResponseDTO } from '../dto/response/region.response.dto';
+} from '../models/balance.sheet';
 
 export class RegionService {
   public async getRegions(req: Request, res: Response, next: NextFunction) {

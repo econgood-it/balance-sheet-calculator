@@ -1,5 +1,5 @@
 import { RegionProvider } from '../../src/providers/region.provider';
-import { BalanceSheetVersion } from '../../src/entities/enums';
+import { BalanceSheetVersion } from '../../src/models/balance.sheet';
 
 describe('Region Provider', () => {
   it('returns regions of version 5.08', async () => {

@@ -1,10 +1,9 @@
 import { Row } from 'exceljs';
-import { Translations } from '../../entities/Translations';
-import { isTopic, Rating } from '../../entities/rating';
 import { CellReader } from './cell.reader';
+import { isTopicShortName, Rating } from '../../models/balance.sheet';
 
 export class RatingReader {
-  public read(row: Row, lng: keyof Translations): Rating | undefined {
+  public read(row: Row): Rating | undefined {
     const cr = new CellReader();
     const shortName = cr.readWithRow(row, 'B').text;
     const nameValue = cr.readWithRow(row, 'C');
@@ -12,17 +11,22 @@ export class RatingReader {
     const points = cr.readWithRow(row, 'I').numberWithDefault0;
     const maxPoints = cr.readWithRow(row, 'J').number;
     return shortName.length > 1
-      ? new Rating(
-          undefined,
-          shortName,
-          nameValue.text,
-          this.estimations(estimations, shortName, points, maxPoints),
-          points,
-          maxPoints,
-          cr.readWithRow(row, 'D').weight,
-          cr.readWithRow(row, 'N').isWeightSelectedByUser,
-          nameValue.isPositiveAspect
-        )
+      ? {
+          shortName: shortName,
+          name: nameValue.text,
+          estimations: this.estimations(
+            estimations,
+            shortName,
+            points,
+            maxPoints
+          ),
+          points: points,
+          maxPoints: maxPoints,
+          weight: cr.readWithRow(row, 'D').weight,
+          isWeightSelectedByUser: cr.readWithRow(row, 'N')
+            .isWeightSelectedByUser,
+          isPositive: nameValue.isPositiveAspect,
+        }
       : undefined;
   }
 
@@ -32,7 +36,7 @@ export class RatingReader {
     points: number,
     maxPoinst: number
   ): number {
-    if (isTopic(shortName)) {
+    if (isTopicShortName(shortName)) {
       return maxPoinst > 0 ? points / maxPoinst : 0;
     }
     return value;

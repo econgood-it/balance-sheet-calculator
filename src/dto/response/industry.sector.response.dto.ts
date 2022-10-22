@@ -1,8 +1,5 @@
-import { IndustrySector } from '../../entities/industry.sector';
-import {
-  getTranslationOfLanguage,
-  Translations,
-} from '../../entities/Translations';
+import { Translations } from '../../entities/Translations';
+import { IndustrySector } from '../../models/balance.sheet';
 
 export class IndustrySectorDtoResponse {
   constructor(
@@ -12,13 +9,12 @@ export class IndustrySectorDtoResponse {
   ) {}
 
   public static fromIndustrySector(
-    industrySector: IndustrySector,
-    language: keyof Translations
+    industrySector: IndustrySector
   ): IndustrySectorDtoResponse {
     return new IndustrySectorDtoResponse(
       industrySector.industryCode,
       industrySector.amountOfTotalTurnover,
-      getTranslationOfLanguage(industrySector.description, language)
+      industrySector.description
     );
   }
 }

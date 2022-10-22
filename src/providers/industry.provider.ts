@@ -1,10 +1,10 @@
 import Provider from './provider';
 
 import fs from 'fs';
-import { BalanceSheetVersion } from '../entities/enums';
 
 import path from 'path';
 import { Industry, IndustrySchema } from '../models/industry';
+import { BalanceSheetVersion } from '../models/balance.sheet';
 
 export class IndustryProvider extends Provider<string, Industry> {
   public static async fromVersion(version: BalanceSheetVersion) {

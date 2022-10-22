@@ -1,6 +1,8 @@
-import { CompanyFacts } from '../entities/companyFacts';
 import { none, Option, some } from './option';
-import { INDUSTRY_CODE_FOR_FINANCIAL_SERVICES } from '../entities/industry.sector';
+import {
+  CompanyFacts,
+  INDUSTRY_CODE_FOR_FINANCIAL_SERVICES,
+} from '../models/balance.sheet';
 
 export interface FinanceCalcResults {
   sumOfFinancialAspects: number;

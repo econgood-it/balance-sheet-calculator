@@ -1,4 +1,4 @@
-import { SupplyFraction } from '../../entities/supplyFraction';
+import { SupplyFraction } from '../../models/balance.sheet';
 import { Translations } from '../../entities/Translations';
 
 export class SupplyFractionDTOResponse {

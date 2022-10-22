@@ -1,9 +1,9 @@
-import { CompanyFacts } from '../entities/companyFacts';
 import { none, Option, some } from './option';
 import {
+  CompanyFacts,
   INDUSTRY_CODE_FOR_CONSTRUCTION_INDUSTRY,
   INDUSTRY_CODE_FOR_MINING,
-} from '../entities/industry.sector';
+} from '../models/balance.sheet';
 
 export interface SocialEnvironmentCalcResults {
   profitInPercentOfTurnover: Option<number>;

@@ -5,15 +5,15 @@ import App from '../../../src/app';
 import { Application } from 'express';
 import { ConfigurationReader } from '../../../src/configuration.reader';
 
-import { Rating } from '../../../src/entities/rating';
 import { TokenProvider } from '../../TokenProvider';
-import { BalanceSheet } from '../../../src/entities/balanceSheet';
+import { BalanceSheetEntity } from '../../../src/entities/balance.sheet.entity';
 import { RatingResponseDTO } from '../../../src/dto/response/rating.response.dto';
 import path from 'path';
+import { Rating } from '../../../src/models/balance.sheet';
 
 describe('Balance Sheet Controller', () => {
   let connection: Connection;
-  let balaneSheetRepository: Repository<BalanceSheet>;
+  let balaneSheetRepository: Repository<BalanceSheetEntity>;
   let app: Application;
   const configuration = ConfigurationReader.read();
 
@@ -27,7 +27,7 @@ describe('Balance Sheet Controller', () => {
       await DatabaseConnectionCreator.createConnectionAndRunMigrations(
         configuration
       );
-    balaneSheetRepository = connection.getRepository(BalanceSheet);
+    balaneSheetRepository = connection.getRepository(BalanceSheetEntity);
     app = new App(connection, configuration).app;
     tokenHeader.value = `Bearer ${await TokenProvider.provideValidUserToken(
       app,

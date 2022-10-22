@@ -1,21 +1,17 @@
-import { CompanyFacts } from '../../src/entities/companyFacts';
 import { IndustryProvider } from '../../src/providers/industry.provider';
-import { EmptyCompanyFacts } from '../testData/company.facts';
+
 import { CustomerCalc } from '../../src/calculations/customer.calc';
-import { IndustrySector } from '../../src/entities/industry.sector';
-import { createTranslations } from '../../src/entities/Translations';
-import { BalanceSheetVersion } from '../../src/entities/enums';
+import {
+  BalanceSheetVersion,
+  CompanyFacts,
+} from '../../src/models/balance.sheet';
+import { companyFactsFactory } from '../testData/balance.sheet';
 
 describe('Customer Calculator', () => {
-  let companyFacts: CompanyFacts;
   let industryProvider: IndustryProvider;
 
-  beforeEach(async () => {
-    companyFacts = EmptyCompanyFacts;
-  });
-
   it('should calculate when industry sectors empty', async () => {
-    companyFacts.industrySectors = [];
+    const companyFacts = companyFactsFactory.empty();
     industryProvider = await IndustryProvider.fromVersion(
       BalanceSheetVersion.v5_0_8
     );
@@ -28,10 +24,13 @@ describe('Customer Calculator', () => {
   });
 
   it('should calculate when industry sectors non empty', async () => {
-    companyFacts.industrySectors = [
-      new IndustrySector(undefined, 'F', 0.2, createTranslations('en', '')),
-      new IndustrySector(undefined, 'A', 0.4, createTranslations('en', '')),
-    ];
+    const companyFacts: CompanyFacts = {
+      ...companyFactsFactory.empty(),
+      industrySectors: [
+        { industryCode: 'F', amountOfTotalTurnover: 0.2, description: '' },
+        { industryCode: 'A', amountOfTotalTurnover: 0.4, description: '' },
+      ],
+    };
     industryProvider = await IndustryProvider.fromVersion(
       BalanceSheetVersion.v5_0_8
     );

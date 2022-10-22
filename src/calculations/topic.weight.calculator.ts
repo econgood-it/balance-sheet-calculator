@@ -1,7 +1,7 @@
 import { CalcResults } from './calculator';
-import { CompanyFacts } from '../entities/companyFacts';
 import { CompanySize } from './employees.calc';
 import Provider from '../providers/provider';
+import { allValuesAreZero, CompanyFacts } from '../models/balance.sheet';
 
 export class TopicWeightCalculator {
   public calcTopicWeights(
@@ -30,7 +30,7 @@ export class TopicWeightCalculator {
       ['E3', this.calculateTopicWeightOfD3AndE3(calcResults)],
       ['E4', this.calculateTopicWeightOfE4(calcResults)],
     ]);
-    if (companyFacts.allValuesAreZero()) {
+    if (allValuesAreZero(companyFacts)) {
       const allTopicWeightsAreOne = new Provider<string, number>();
       for (const [key] of topicWeights) {
         allTopicWeightsAreOne.set(key, 1);

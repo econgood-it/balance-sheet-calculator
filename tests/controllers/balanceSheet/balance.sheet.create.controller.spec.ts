@@ -4,23 +4,21 @@ import { DatabaseConnectionCreator } from '../../../src/database.connection.crea
 import App from '../../../src/app';
 import { Application } from 'express';
 import { ConfigurationReader } from '../../../src/configuration.reader';
+import { companyFactsJsonFactory } from '../../testData/balance.sheet';
+import { TokenProvider } from '../../TokenProvider';
+import { BalanceSheetEntity } from '../../../src/entities/balance.sheet.entity';
+import { CORRELATION_HEADER_NAME } from '../../../src/middleware/correlation.id.middleware';
+import { RatingResponseDTO } from '../../../src/dto/response/rating.response.dto';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
-} from '../../../src/entities/enums';
-import { Assertions } from '../../Assertions';
-import { Rating } from '../../../src/entities/rating';
-import { CompanyFacts } from '../../../src/entities/companyFacts';
-import { EmptyCompanyFactsJson } from '../../testData/company.facts';
-import { TokenProvider } from '../../TokenProvider';
-import { BalanceSheet } from '../../../src/entities/balanceSheet';
-import { CORRELATION_HEADER_NAME } from '../../../src/middleware/correlation.id.middleware';
-import { RatingResponseDTO } from '../../../src/dto/response/rating.response.dto';
-import { INDUSTRY_CODE_FOR_FINANCIAL_SERVICES } from '../../../src/entities/industry.sector';
+  INDUSTRY_CODE_FOR_FINANCIAL_SERVICES,
+  Rating,
+} from '../../../src/models/balance.sheet';
 
 describe('Balance Sheet Controller', () => {
   let connection: Connection;
-  let balaneSheetRepository: Repository<BalanceSheet>;
+  let balaneSheetRepository: Repository<BalanceSheetEntity>;
   let app: Application;
   const configuration = ConfigurationReader.read();
   let balanceSheetJson: any;
@@ -46,7 +44,7 @@ describe('Balance Sheet Controller', () => {
       await DatabaseConnectionCreator.createConnectionAndRunMigrations(
         configuration
       );
-    balaneSheetRepository = connection.getRepository(BalanceSheet);
+    balaneSheetRepository = connection.getRepository(BalanceSheetEntity);
     app = new App(connection, configuration).app;
     tokenHeader.value = `Bearer ${await TokenProvider.provideValidUserToken(
       app,
@@ -62,7 +60,7 @@ describe('Balance Sheet Controller', () => {
     balanceSheetJson = {
       type: BalanceSheetType.Full,
       version: BalanceSheetVersion.v5_0_4,
-      companyFacts: EmptyCompanyFactsJson,
+      companyFacts: companyFactsJsonFactory.empty(),
     };
   });
 
@@ -73,8 +71,7 @@ describe('Balance Sheet Controller', () => {
       .set(tokenHeader.key, tokenHeader.value)
       .send(balanceSheetJson);
     expect(response.status).toEqual(200);
-    const companyFacts = balanceSheetJson.companyFacts as CompanyFacts;
-    Assertions.rmIdFieldsOfCompanyFacts(companyFacts);
+    const companyFacts = balanceSheetJson.companyFacts;
     expect(response.body.companyFacts).toMatchObject(companyFacts);
     expect(
       response.body.ratings
@@ -97,8 +94,7 @@ describe('Balance Sheet Controller', () => {
       .query({ save: 'false' })
       .send(balanceSheetJson);
     expect(response.status).toEqual(200);
-    const companyFacts = balanceSheetJson.companyFacts as CompanyFacts;
-    Assertions.rmIdFieldsOfCompanyFacts(companyFacts);
+    const companyFacts = balanceSheetJson.companyFacts;
     expect(response.body.companyFacts).toMatchObject(companyFacts);
     expect(
       response.body.ratings
@@ -115,51 +111,76 @@ describe('Balance Sheet Controller', () => {
 
   it('creates BalanceSheet where B1 weight is very high', async () => {
     const testApp = supertest(app);
-    balanceSheetJson.companyFacts.industrySectors = [
-      {
-        industryCode: INDUSTRY_CODE_FOR_FINANCIAL_SERVICES,
-        amountOfTotalTurnover: 1,
-        description: 'desc',
+    const json = {
+      ...balanceSheetJson,
+      companyFacts: {
+        ...balanceSheetJson.companyFacts,
+        industrySectors: [
+          {
+            industryCode: INDUSTRY_CODE_FOR_FINANCIAL_SERVICES,
+            amountOfTotalTurnover: 1,
+            description: 'desc',
+          },
+        ],
       },
-    ];
+    };
     const response = await testApp
       .post(endpointPath)
       .set(tokenHeader.key, tokenHeader.value)
-      .send(balanceSheetJson);
+      .send(json);
     expect(response.status).toEqual(200);
     assertTopicWeight('B1', 2, response.body.ratings);
   });
 
   it('creates BalanceSheet where B2 weight is high', async () => {
     const testApp = supertest(app);
-    balanceSheetJson.companyFacts.profit = 12;
-    balanceSheetJson.companyFacts.turnover = 100;
+    const json = {
+      ...balanceSheetJson,
+      companyFacts: {
+        ...balanceSheetJson.companyFacts,
+        profit: 12,
+        turnover: 100,
+      },
+    };
     const response = await testApp
       .post(endpointPath)
       .set(tokenHeader.key, tokenHeader.value)
-      .send(balanceSheetJson);
+      .send(json);
     expect(response.status).toEqual(200);
     assertTopicWeight('B2', 1.5, response.body.ratings);
   });
 
   it('creates BalanceSheet where B4 weight is 0.5', async () => {
     const testApp = supertest(app);
-    balanceSheetJson.companyFacts.numberOfEmployees = 9;
+    const json = {
+      ...balanceSheetJson,
+      companyFacts: {
+        ...balanceSheetJson.companyFacts,
+        numberOfEmployees: 9,
+      },
+    };
+
     const response = await testApp
       .post(endpointPath)
       .set(tokenHeader.key, tokenHeader.value)
-      .send(balanceSheetJson);
+      .send(json);
     expect(response.status).toEqual(200);
     assertTopicWeight('B4', 0.5, response.body.ratings);
   });
 
   it('creates BalanceSheet where B4 weight is 1', async () => {
     const testApp = supertest(app);
-    balanceSheetJson.companyFacts.numberOfEmployees = 10;
+    const json = {
+      ...balanceSheetJson,
+      companyFacts: {
+        ...balanceSheetJson.companyFacts,
+        numberOfEmployees: 10,
+      },
+    };
     const response = await testApp
       .post(endpointPath)
       .set(tokenHeader.key, tokenHeader.value)
-      .send(balanceSheetJson);
+      .send(json);
     expect(response.status).toEqual(200);
     assertTopicWeight('B4', 1, response.body.ratings);
   });
@@ -176,11 +197,7 @@ describe('Balance Sheet Controller', () => {
       supplyFractions: [],
       employeesFractions: [],
     };
-    await testMissingProperty(
-      companyFacts,
-      testApp,
-      'totalPurchaseFromSuppliers'
-    );
+    await testMissingProperty(companyFacts, testApp);
     const companyFacts2 = {
       totalPurchaseFromSuppliers: 300,
       totalStaffCosts: 100,
@@ -190,12 +207,11 @@ describe('Balance Sheet Controller', () => {
       supplyFractions: [],
       employeesFractions: [],
     };
-    await testMissingProperty(companyFacts2, testApp, 'financialCosts');
+    await testMissingProperty(companyFacts2, testApp);
   });
   async function testMissingProperty(
     companyFacts: any,
-    testApp: supertest.SuperTest<supertest.Test>,
-    missingProperty: string
+    testApp: supertest.SuperTest<supertest.Test>
   ): Promise<void> {
     const response = await testApp
       .post(endpointPath)
@@ -225,6 +241,7 @@ describe('Balance Sheet Controller', () => {
       .set(tokenHeader.key, tokenHeader.value)
       .set(CORRELATION_HEADER_NAME, 'my-own-corr-id')
       .send(balanceSheetJson);
+
     expect(response.status).toEqual(200);
     expect(response.headers[CORRELATION_HEADER_NAME]).toBe('my-own-corr-id');
   });

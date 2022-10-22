@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Role } from './enums';
-import { BalanceSheet } from './balanceSheet';
+import { BalanceSheetEntity } from './balance.sheet.entity';
 
 @Entity()
 export class User {
@@ -28,8 +28,11 @@ export class User {
   @Column('text')
   public role: Role;
 
-  @ManyToMany((type) => BalanceSheet, (balanceSheet) => balanceSheet.users)
-  balanceSheets!: BalanceSheet[];
+  @ManyToMany(
+    (type) => BalanceSheetEntity,
+    (balanceSheetEntity) => balanceSheetEntity.users
+  )
+  balanceSheetEntities!: BalanceSheetEntity[];
 
   public constructor(
     id: number | undefined,

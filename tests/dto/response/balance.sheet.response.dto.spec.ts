@@ -1,11 +1,6 @@
-import { Rating } from '../../../src/entities/rating';
 import { BalanceSheetDTOResponse } from '../../../src/dto/response/balance.sheet.response.dto';
-import { BalanceSheet } from '../../../src/entities/balanceSheet';
-import {
-  BalanceSheetType,
-  BalanceSheetVersion,
-} from '../../../src/entities/enums';
-import { EmptyCompanyFacts } from '../../testData/company.facts';
+import { balanceSheetFactory } from '../../testData/balance.sheet';
+import { Rating } from '../../../src/models/balance.sheet';
 
 jest.mock('../../../src/i18n', () => ({
   init: () => {},
@@ -15,22 +10,46 @@ jest.mock('../../../src/i18n', () => ({
 
 describe('BalanceSheetResponseDTO', () => {
   it('is created from balance sheet', async () => {
-    const ratings = [
-      new Rating(undefined, 'A1', 'v5:compact.A1', 2, 3, 51, 5, true, true),
-      new Rating(undefined, 'A1.1', 'v5:compact.A1', 2, 3, 51, 5, true, true),
-      new Rating(undefined, 'A2', 'v5:compact.A1', 2, 3, 51, 5, true, true),
+    const ratings: Rating[] = [
+      {
+        shortName: 'A1',
+        name: 'v5:compact.A1',
+        estimations: 2,
+        points: 3,
+        maxPoints: 51,
+        weight: 5,
+        isWeightSelectedByUser: true,
+        isPositive: true,
+      },
+      {
+        shortName: 'A1.1',
+        name: 'v5:compact.A1.1',
+        estimations: 2,
+        points: 3,
+        maxPoints: 51,
+        weight: 5,
+        isWeightSelectedByUser: true,
+        isPositive: true,
+      },
+      {
+        shortName: 'A2',
+        name: 'v5:compact.A2',
+        estimations: 2,
+        points: 3,
+        maxPoints: 51,
+        weight: 5,
+        isWeightSelectedByUser: true,
+        isPositive: true,
+      },
     ];
-    const balanceSheet = new BalanceSheet(
-      undefined,
-      BalanceSheetType.Full,
-      BalanceSheetVersion.v5_0_6,
-      EmptyCompanyFacts,
-      ratings,
-      []
-    );
+    const balanceSheet = {
+      ...(await balanceSheetFactory.emptyV508()),
+      ratings: ratings,
+    };
     const balanceSheetDTO = BalanceSheetDTOResponse.fromBalanceSheet(
+      undefined,
       balanceSheet,
-      'de'
+      'en'
     );
     expect(balanceSheetDTO).toBeDefined();
     expect(balanceSheetDTO.ratings).toMatchObject([

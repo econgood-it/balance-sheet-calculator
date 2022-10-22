@@ -1,21 +1,20 @@
-import { CompanyFacts } from '../../src/entities/companyFacts';
 import { RegionProvider } from '../../src/providers/region.provider';
-import { EmptyCompanyFacts } from '../testData/company.facts';
+
 import {
   CompanySize,
   EmployeesCalc,
   EmployeesCalcResults,
 } from '../../src/calculations/employees.calc';
-import { EmployeesFraction } from '../../src/entities/employeesFraction';
-import { BalanceSheetVersion } from '../../src/entities/enums';
+
+import {
+  BalanceSheetVersion,
+  CompanyFacts,
+} from '../../src/models/balance.sheet';
+import { companyFactsFactory } from '../testData/balance.sheet';
 
 describe('Employees Calculator', () => {
   describe('should calculate the itucAverage ', () => {
-    let companyFacts: CompanyFacts;
     let regionProvider: RegionProvider;
-    beforeEach(async () => {
-      companyFacts = EmptyCompanyFacts;
-    });
 
     const calc = async (
       companyFacts: CompanyFacts
@@ -27,154 +26,219 @@ describe('Employees Calculator', () => {
     };
 
     it('when employeesFractions array empty', async () => {
-      companyFacts.employeesFractions = [];
+      const companyFacts = companyFactsFactory.empty();
       const employeesCalcResults = await calc(companyFacts);
       expect(employeesCalcResults.itucAverage).toBeCloseTo(0);
     });
 
     it('when employeesFractions array has size 1', async () => {
-      companyFacts.employeesFractions = [
-        new EmployeesFraction(undefined, 'CRI', 3),
-      ];
+      const companyFacts: CompanyFacts = {
+        ...companyFactsFactory.empty(),
+        employeesFractions: [{ countryCode: 'CRI', percentage: 3 }],
+      };
       const employeesCalcResults = await calc(companyFacts);
       expect(employeesCalcResults.itucAverage).toBeCloseTo(9);
     });
 
     it('when employeesFractions array has size > 1', async () => {
-      companyFacts.employeesFractions = [
-        new EmployeesFraction(undefined, 'CRI', 3),
-        new EmployeesFraction(undefined, 'CHN', 2),
-      ];
+      const companyFacts: CompanyFacts = {
+        ...companyFactsFactory.empty(),
+        employeesFractions: [
+          { countryCode: 'CRI', percentage: 3 },
+          { countryCode: 'CHN', percentage: 2 },
+        ],
+      };
       const employeesCalcResults = await calc(companyFacts);
       expect(employeesCalcResults.itucAverage).toBeCloseTo(19);
     });
   });
 
   describe('should calculate the company size ', () => {
-    let companyFacts: CompanyFacts;
     let regionProvider: RegionProvider;
     const mio = 1000000;
-    const companySizeIs = (companySize: CompanySize) => {
+    const companySizeIs = (
+      companySize: CompanySize,
+      companyFacts: CompanyFacts
+    ) => {
       const employeesCalc: EmployeesCalcResults = new EmployeesCalc(
         regionProvider
       ).calculate(companyFacts);
       expect(employeesCalc.companySize).toBe(companySize);
     };
     beforeEach(async () => {
-      companyFacts = EmptyCompanyFacts;
       regionProvider = await RegionProvider.fromVersion(
         BalanceSheetVersion.v5_0_4
       );
     });
 
     describe('when turnover and totalAssets are 2mio ', () => {
-      beforeEach(() => {
-        companyFacts.turnover = 2 * mio;
-        companyFacts.totalAssets = 2 * mio;
-      });
+      const companyFactsWithMioValues = {
+        ...companyFactsFactory.empty(),
+        turnover: 2 * mio,
+        totalAssets: 2 * mio,
+      };
 
       it('and FTE < 10 -> micro', async () => {
-        companyFacts.numberOfEmployees = 9;
-        companySizeIs(CompanySize.micro);
+        const companyFacts = {
+          ...companyFactsWithMioValues,
+          numberOfEmployees: 9,
+        };
+        companySizeIs(CompanySize.micro, companyFacts);
       });
 
       it('and FTE = 10 -> small', async () => {
+        const companyFacts = {
+          ...companyFactsWithMioValues,
+          numberOfEmployees: 10,
+        };
         companyFacts.numberOfEmployees = 10;
-        companySizeIs(CompanySize.small);
+        companySizeIs(CompanySize.small, companyFacts);
       });
 
       it('and FTE = 50 -> middle', async () => {
-        companyFacts.numberOfEmployees = 50;
-        companySizeIs(CompanySize.middle);
+        const companyFacts = {
+          ...companyFactsWithMioValues,
+          numberOfEmployees: 50,
+        };
+        companySizeIs(CompanySize.middle, companyFacts);
       });
 
       it('and FTE = 250 -> large', async () => {
-        companyFacts.numberOfEmployees = 250;
-        companySizeIs(CompanySize.large);
+        const companyFacts = {
+          ...companyFactsWithMioValues,
+          numberOfEmployees: 250,
+        };
+        companySizeIs(CompanySize.large, companyFacts);
       });
     });
 
     describe('when FTE = 9 and totalAssets = 2 Mio', () => {
-      beforeEach(() => {
-        companyFacts.numberOfEmployees = 9;
-        companyFacts.totalAssets = 2 * mio;
-      });
+      const companyFactsWithMioValues = {
+        ...companyFactsFactory.empty(),
+        numberOfEmployees: 9,
+        totalAssets: 2 * mio,
+      };
 
       it('and turnover = 2 Mio -> micro', async () => {
-        companyFacts.turnover = 2 * mio;
-        companySizeIs(CompanySize.micro);
+        const companyFacts = {
+          ...companyFactsWithMioValues,
+          turnover: 2 * mio,
+        };
+        companySizeIs(CompanySize.micro, companyFacts);
       });
 
       it('and turnover = 10 Mio -> micro', async () => {
-        companyFacts.turnover = 10 * mio;
-        companySizeIs(CompanySize.micro);
+        const companyFacts = {
+          ...companyFactsWithMioValues,
+          turnover: 10 * mio,
+        };
+
+        companySizeIs(CompanySize.micro, companyFacts);
       });
 
       it('and turnover = 50 Mio -> micro', async () => {
-        companyFacts.turnover = 50 * mio;
-        companySizeIs(CompanySize.micro);
+        const companyFacts = {
+          ...companyFactsWithMioValues,
+          turnover: 50 * mio,
+        };
+        companySizeIs(CompanySize.micro, companyFacts);
       });
 
       it('and turnover = 51 Mio -> micro', async () => {
-        companyFacts.turnover = 51 * mio;
-        companySizeIs(CompanySize.micro);
+        const companyFacts = {
+          ...companyFactsWithMioValues,
+          turnover: 51 * mio,
+        };
+        companySizeIs(CompanySize.micro, companyFacts);
       });
     });
 
     describe('when FTE = 9 and turnover = 2 Mio', () => {
-      beforeEach(() => {
-        companyFacts.numberOfEmployees = 9;
-        companyFacts.turnover = 2 * mio;
-      });
+      const companyFactsWithMioValues = {
+        ...companyFactsFactory.empty(),
+        numberOfEmployees: 9,
+        turnover: 2 * mio,
+      };
 
       it('and totalAssets = 2 Mio -> micro', async () => {
-        companyFacts.totalAssets = 2 * mio;
-        companySizeIs(CompanySize.micro);
+        const companyFacts = {
+          ...companyFactsWithMioValues,
+          totalAssets: 2 * mio,
+        };
+        companySizeIs(CompanySize.micro, companyFacts);
       });
 
       it('and totalAssets = 10 Mio -> micro', async () => {
-        companyFacts.totalAssets = 10 * mio;
-        companySizeIs(CompanySize.micro);
+        const companyFacts = {
+          ...companyFactsWithMioValues,
+          totalAssets: 10 * mio,
+        };
+        companySizeIs(CompanySize.micro, companyFacts);
       });
 
       it('and totalAssets = 43 Mio -> micro', async () => {
-        companyFacts.totalAssets = 43 * mio;
-        companySizeIs(CompanySize.micro);
+        const companyFacts = {
+          ...companyFactsWithMioValues,
+          totalAssets: 43 * mio,
+        };
+
+        companySizeIs(CompanySize.micro, companyFacts);
       });
 
       it('and totalAssets = 44 Mio -> micro', async () => {
-        companyFacts.totalAssets = 44 * mio;
-        companySizeIs(CompanySize.micro);
+        const companyFacts = {
+          ...companyFactsWithMioValues,
+          totalAssets: 44 * mio,
+        };
+        companySizeIs(CompanySize.micro, companyFacts);
       });
     });
 
     describe('when FTE = 9', () => {
-      beforeEach(() => {
-        companyFacts.numberOfEmployees = 9;
-      });
+      const companyFactsWith9Employees = {
+        ...companyFactsFactory.empty(),
+        numberOfEmployees: 9,
+      };
 
       it('and both totalAssets and turnover are 2 Mio -> micro', async () => {
-        companyFacts.totalAssets = 2 * mio;
-        companyFacts.turnover = 2 * mio;
-        companySizeIs(CompanySize.micro);
+        const companyFacts = {
+          ...companyFactsWith9Employees,
+          totalAssets: 2 * mio,
+          turnover: 2 * mio,
+        };
+
+        companySizeIs(CompanySize.micro, companyFacts);
       });
 
       it('and both totalAssets and turnover are 10 Mio -> small', async () => {
-        companyFacts.totalAssets = 10 * mio;
-        companyFacts.turnover = 10 * mio;
-        companySizeIs(CompanySize.small);
+        const companyFacts = {
+          ...companyFactsWith9Employees,
+          totalAssets: 10 * mio,
+          turnover: 10 * mio,
+        };
+
+        companySizeIs(CompanySize.small, companyFacts);
       });
 
       it('and both totalAssets and turnover >= 43 Mio -> middle', async () => {
+        const companyFacts = {
+          ...companyFactsWith9Employees,
+          totalAssets: 43 * mio,
+          turnover: 50 * mio,
+        };
         companyFacts.totalAssets = 43 * mio;
         companyFacts.turnover = 50 * mio;
-        companySizeIs(CompanySize.middle);
+        companySizeIs(CompanySize.middle, companyFacts);
       });
 
       it('and both totalAssets and turnover > 50 Mio -> large', async () => {
-        companyFacts.totalAssets = 51 * mio;
-        companyFacts.turnover = 51 * mio;
-        companySizeIs(CompanySize.large);
+        const companyFacts = {
+          ...companyFactsWith9Employees,
+          totalAssets: 51 * mio,
+          turnover: 51 * mio,
+        };
+
+        companySizeIs(CompanySize.large, companyFacts);
       });
     });
   });

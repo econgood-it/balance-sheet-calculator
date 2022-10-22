@@ -1,5 +1,5 @@
 import { Translations } from '../../entities/Translations';
-import { MainOriginOfOtherSuppliers } from '../../entities/main.origin.of.other.suppliers';
+import { MainOriginOfOtherSuppliers } from '../../models/balance.sheet';
 
 export class MainOriginOfOtherSuppliersDTOResponse {
   constructor(

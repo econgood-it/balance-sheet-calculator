@@ -25,4 +25,7 @@ DatabaseConnectionCreator.createConnectionAndRunMigrations(configuration)
     const app = new App(connection, configuration);
     app.start();
   })
-  .catch((error) => LoggingService.error(error.message, {}, error));
+  .catch((error) => {
+    LoggingService.error(error.message, {}, error);
+    console.log(error);
+  });

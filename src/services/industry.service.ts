@@ -1,12 +1,12 @@
 import { NextFunction, Request, Response } from 'express';
 
 import { handle } from '../exceptions/error.handler';
+import { IndustryProvider } from '../providers/industry.provider';
+import { IndustryResponseDTO } from '../dto/response/industry.response.dto';
 import {
   BalanceSheetVersion,
   balanceSheetVersionFromJSON,
-} from '../entities/enums';
-import { IndustryProvider } from '../providers/industry.provider';
-import { IndustryResponseDTO } from '../dto/response/industry.response.dto';
+} from '../models/balance.sheet';
 
 export class IndustryService {
   public async getIndustries(req: Request, res: Response, next: NextFunction) {

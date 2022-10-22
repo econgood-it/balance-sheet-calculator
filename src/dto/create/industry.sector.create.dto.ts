@@ -4,8 +4,8 @@ import {
   expectNumber,
 } from '@daniel-faber/json-ts';
 import { IsAlpha, IsNumber, IsString, Length, Max, Min } from 'class-validator';
-import { IndustrySector } from '../../entities/industry.sector';
 import { createTranslations, Translations } from '../../entities/Translations';
+import { IndustrySector } from '../../models/balance.sheet';
 
 export class IndustrySectorCreateDtoCreate {
   @IsAlpha()
@@ -39,12 +39,11 @@ export class IndustrySectorCreateDtoCreate {
       )
   );
 
-  public toIndustrySector(lng: keyof Translations): IndustrySector {
-    return new IndustrySector(
-      undefined,
-      this.industryCode,
-      this.amountOfTotalTurnover,
-      createTranslations(lng, this.description)
-    );
+  public toIndustrySector(): IndustrySector {
+    return {
+      industryCode: this.industryCode,
+      amountOfTotalTurnover: this.amountOfTotalTurnover,
+      description: this.description,
+    };
   }
 }

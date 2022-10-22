@@ -1,6 +1,10 @@
 import { MatrixRatingDto } from './matrix.rating.dto';
 import { Translations } from '../../entities/Translations';
-import { BalanceSheet } from '../../entities/balanceSheet';
+import {
+  BalanceSheet,
+  filterTopics,
+  sortRatings,
+} from '../../models/balance.sheet';
 
 export class MatrixDTO {
   constructor(public readonly ratings: MatrixRatingDto[]) {}
@@ -10,9 +14,9 @@ export class MatrixDTO {
     language: keyof Translations
   ): MatrixDTO {
     return new MatrixDTO(
-      balanceSheet
-        .getTopics()
-        .map((r) => MatrixRatingDto.fromRating(r, language))
+      filterTopics(sortRatings(balanceSheet.ratings)).map((r) =>
+        MatrixRatingDto.fromRating(r, language)
+      )
     );
   }
 }

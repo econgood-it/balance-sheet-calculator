@@ -1,31 +1,34 @@
-import { Rating } from '../entities/rating';
 import { RatingDTO } from '../dto/createAndUpdate/ratingDTO';
-import { BalanceSheetType } from '../entities/enums';
 import { mergeVal } from './merge.utils';
+import { Rating } from '../models/balance.sheet';
 
 export class RatingsWithDtoMerger {
-  public mergeRatings(
-    ratings: Rating[],
-    ratingDTOs: RatingDTO[],
-    balanceSheetType: BalanceSheetType
-  ) {
-    for (const ratingDTO of ratingDTOs) {
+  public mergeRatings(ratings: Rating[], ratingDTOs: RatingDTO[]): Rating[] {
+    ratingDTOs.forEach((ratingDTO) => {
       const rating: Rating | undefined = ratings.find(
         (t) => t.shortName === ratingDTO.shortName
       );
-      if (rating) {
-        this.mergeRating(rating, ratingDTO);
-      } else {
+      if (!rating) {
         throw Error(`Cannot find rating ${ratingDTO.shortName}`);
       }
-    }
+    });
+    return ratings.map((rating) => {
+      const ratingDTO: RatingDTO | undefined = ratingDTOs.find(
+        (t) => t.shortName === rating.shortName
+      );
+      return ratingDTO ? this.mergeRating(rating, ratingDTO) : rating;
+    });
   }
 
-  public mergeRating(rating: Rating, ratingDTO: RatingDTO) {
-    rating.estimations = mergeVal(rating.estimations, ratingDTO.estimations);
-    if (rating.isPositive && ratingDTO.weight !== undefined) {
-      rating.isWeightSelectedByUser = true;
-      rating.weight = mergeVal(rating.weight, ratingDTO.weight);
-    }
+  public mergeRating(rating: Rating, ratingDTO: RatingDTO): Rating {
+    return {
+      ...rating,
+      estimations: mergeVal(rating.estimations, ratingDTO.estimations),
+      ...(rating.isPositive &&
+        ratingDTO.weight !== undefined && {
+          isWeightSelectedByUser: true,
+          weight: mergeVal(rating.weight, ratingDTO.weight),
+        }),
+    };
   }
 }

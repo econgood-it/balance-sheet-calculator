@@ -1,18 +1,12 @@
 import { BalanceSheetDTOCreate } from '../../../src/dto/create/balance.sheet.create.dto';
+import { RatingsFactory } from '../../../src/factories/ratings.factory';
+import { toJsObject } from '../../to.js.object';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
-  Role,
-} from '../../../src/entities/enums';
-import { RatingsFactory } from '../../../src/factories/ratings.factory';
-import { modifyRating } from '../../rating.modification.utils';
-import { toJsObject } from '../../to.js.object';
-import { User } from '../../../src/entities/user';
+} from '../../../src/models/balance.sheet';
 
 describe('BalanceSheetCreateDTO', () => {
-  const users = [
-    new User(undefined, 'test@example.com', 'test1234', Role.User),
-  ];
   it('is created from json with a merged rating entity', async () => {
     const json = {
       type: BalanceSheetType.Full,
@@ -27,19 +21,47 @@ describe('BalanceSheetCreateDTO', () => {
     const balanceSheetDTOCreate = BalanceSheetDTOCreate.fromJSON(
       toJsObject(json)
     );
-    const result = await balanceSheetDTOCreate.toBalanceSheet('en', users);
+    const result = await balanceSheetDTOCreate.toBalanceSheet();
 
-    const expectedRatings = await RatingsFactory.createDefaultRatings(
+    const defaultRatings = await RatingsFactory.createDefaultRatings(
       json.type,
       json.version
     );
+    const expectedRatings = defaultRatings.map((r) => {
+      if (r.shortName === 'A1.1') {
+        return {
+          shortName: 'A1.1',
+          estimations: 5,
+          weight: 1,
+          isWeightSelectedByUser: true,
+        };
+      } else if (r.shortName === 'D1.2') {
+        return {
+          shortName: 'D1.2',
+          estimations: 3,
+          weight: 0.5,
+          isWeightSelectedByUser: true,
+        };
+      } else if (r.shortName === 'E2.1') {
+        return {
+          ...r,
+          shortName: 'E2.1',
+          estimations: 3,
+          isWeightSelectedByUser: false,
+        };
+      } else if (r.shortName === 'D1') {
+        return {
+          ...r,
+          shortName: 'D1',
+          weight: 1.5,
+          isWeightSelectedByUser: true,
+        };
+      } else {
+        return r;
+      }
+    });
 
-    modifyRating(expectedRatings, 'A1.1', 5, 1, true);
-    modifyRating(expectedRatings, 'D1.2', 3, 0.5, true);
-    modifyRating(expectedRatings, 'E2.1', 3, undefined, false);
-    modifyRating(expectedRatings, 'D1', undefined, 1.5, true);
-
-    expect(result.ratings).toMatchObject(toJsObject(expectedRatings));
+    expect(result.ratings).toMatchObject(expectedRatings);
   });
 
   it('is created from json with default rating entity', async () => {
@@ -50,7 +72,7 @@ describe('BalanceSheetCreateDTO', () => {
     const balanceSheetDTOCreate = BalanceSheetDTOCreate.fromJSON(
       toJsObject(json)
     );
-    const result = await balanceSheetDTOCreate.toBalanceSheet('en', users);
+    const result = await balanceSheetDTOCreate.toBalanceSheet();
 
     const expectedRatings = await RatingsFactory.createDefaultRatings(
       json.type,

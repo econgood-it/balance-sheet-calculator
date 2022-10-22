@@ -1,9 +1,9 @@
 import { SupplyFractionDTOResponse } from './supply.fraction.response.dto';
 import { EmployeesFractionDTOResponse } from './employees.fraction.response.dto';
 import { IndustrySectorDtoResponse } from './industry.sector.response.dto';
-import { CompanyFacts } from '../../entities/companyFacts';
 import { Translations } from '../../entities/Translations';
 import { MainOriginOfOtherSuppliersDTOResponse } from './main.origin.of.other.suppliers.response.dto';
+import { CompanyFacts } from '../../models/balance.sheet';
 export class CompanyFactsDTOResponse {
   public constructor(
     public readonly totalPurchaseFromSuppliers: number,
@@ -50,7 +50,7 @@ export class CompanyFactsDTOResponse {
         EmployeesFractionDTOResponse.fromEmployeesFraction(ef, language)
       ),
       companyFacts.industrySectors.map((is) =>
-        IndustrySectorDtoResponse.fromIndustrySector(is, language)
+        IndustrySectorDtoResponse.fromIndustrySector(is)
       ),
       MainOriginOfOtherSuppliersDTOResponse.fromMainOriginOfOtherSuppliers(
         companyFacts.mainOriginOfOtherSuppliers,

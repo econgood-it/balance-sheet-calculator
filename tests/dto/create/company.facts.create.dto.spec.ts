@@ -24,14 +24,14 @@ describe('CompanyFactsCreateDTO', () => {
     };
     const companyFactsDTOCreate: CompanyFactsDTOCreate =
       CompanyFactsDTOCreate.fromJSON(json);
-    const result = companyFactsDTOCreate.toCompanyFacts('en');
+    const result = companyFactsDTOCreate.toCompanyFacts();
     expect(result).toMatchObject(json);
   });
 
   it('is created using default values', () => {
     const companyFactsDTOCreate: CompanyFactsDTOCreate =
       CompanyFactsDTOCreate.fromJSON({});
-    const result = companyFactsDTOCreate.toCompanyFacts('en');
+    const result = companyFactsDTOCreate.toCompanyFacts();
     expect(result).toMatchObject({
       totalPurchaseFromSuppliers: 0,
       totalStaffCosts: 0,
@@ -62,7 +62,7 @@ describe('CompanyFactsCreateDTO', () => {
         totalPurchaseFromSuppliers: 500,
         supplyFractions,
       });
-    const result = companyFactsDTOCreate.toCompanyFacts('en');
+    const result = companyFactsDTOCreate.toCompanyFacts();
     expect(result).toMatchObject({
       totalPurchaseFromSuppliers: 500,
       supplyFractions,
@@ -79,7 +79,7 @@ describe('CompanyFactsCreateDTO', () => {
         totalPurchaseFromSuppliers: 500,
         supplyFractions: [],
       });
-    const result = companyFactsDTOCreate.toCompanyFacts('en');
+    const result = companyFactsDTOCreate.toCompanyFacts();
     expect(result).toMatchObject({
       mainOriginOfOtherSuppliers: {
         countryCode: DEFAULT_COUNTRY_CODE,
@@ -95,7 +95,7 @@ describe('CompanyFactsCreateDTO', () => {
         supplyFractions: [],
         mainOriginOfOtherSuppliers: 'DEU',
       });
-    const result = companyFactsDTOCreate.toCompanyFacts('en');
+    const result = companyFactsDTOCreate.toCompanyFacts();
     expect(result).toMatchObject({
       mainOriginOfOtherSuppliers: {
         countryCode: 'DEU',

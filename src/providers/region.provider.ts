@@ -1,9 +1,9 @@
 import Provider from './provider';
-import { BalanceSheetVersion } from '../entities/enums';
 import fs from 'fs';
 
 import path from 'path';
 import { Region, RegionSchema } from '../models/region';
+import { BalanceSheetVersion } from '../models/balance.sheet';
 
 export class RegionProvider extends Provider<string, Region> {
   public static async fromVersion(version: BalanceSheetVersion) {

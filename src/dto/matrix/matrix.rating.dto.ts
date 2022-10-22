@@ -1,7 +1,7 @@
-import { Rating } from '../../entities/rating';
 import { none, Option, some } from '../../calculations/option';
 import { roundWithPrecision } from '../../math';
 import { staticTranslate, Translations } from '../../entities/Translations';
+import { Rating } from '../../models/balance.sheet';
 
 export class MatrixRatingDto {
   constructor(

@@ -1,20 +1,22 @@
 import { RatingsUpdater } from '../../src/calculations/ratings.updater';
-import { Rating } from '../../src/entities/rating';
-import { CompanyFacts } from '../../src/entities/companyFacts';
+
 import { Assertions } from '../Assertions';
 import * as path from 'path';
 import { RatingsReader } from '../../src/reader/ratings.reader';
-import { CompanyFacts1, EmptyCompanyFacts } from '../testData/company.facts';
+
 import { CalcResults, Calculator } from '../../src/calculations/calculator';
 import { RegionProvider } from '../../src/providers/region.provider';
 import { IndustryProvider } from '../../src/providers/industry.provider';
-import {
-  BalanceSheetType,
-  BalanceSheetVersion,
-} from '../../src/entities/enums';
-import { BalanceSheet } from '../../src/entities/balanceSheet';
 import { StakeholderWeightCalculator } from '../../src/calculations/stakeholder.weight.calculator';
 import { TopicWeightCalculator } from '../../src/calculations/topic.weight.calculator';
+import {
+  BalanceSheet,
+  BalanceSheetType,
+  BalanceSheetVersion,
+  CompanyFacts,
+  Rating,
+} from '../../src/models/balance.sheet';
+import { companyFactsFactory } from '../testData/balance.sheet';
 
 describe('Ratings updater', () => {
   const stakeholderWeightCalculator = new StakeholderWeightCalculator();
@@ -41,14 +43,13 @@ describe('Ratings updater', () => {
       regionProvider,
       industryProvider
     ).calculate(companyFacts);
-    const balanceSheet = new BalanceSheet(
-      undefined,
-      BalanceSheetType.Full,
-      BalanceSheetVersion.v5_0_4,
-      companyFacts,
-      ratings,
-      []
-    );
+    const balanceSheet = {
+      type: BalanceSheetType.Full,
+      version: BalanceSheetVersion.v5_0_4,
+      companyFacts: companyFacts,
+      ratings: ratings,
+    };
+
     const ratingsUpdater: RatingsUpdater = new RatingsUpdater();
     const stakeholderWeights =
       await stakeholderWeightCalculator.calcStakeholderWeights(calcResults);
@@ -80,18 +81,25 @@ describe('Ratings updater', () => {
     const calcResults: CalcResults = await new Calculator(
       regionProvider,
       industryProvider
-    ).calculate(CompanyFacts1);
-    const ratings = [
-      new Rating(undefined, 'A1', 'A1 name', 0, 0, 0, 2, true, true),
+    ).calculate(companyFactsFactory.nonEmpty());
+    const ratings: Rating[] = [
+      {
+        shortName: 'A1',
+        name: 'A1 name',
+        estimations: 0,
+        points: 0,
+        maxPoints: 0,
+        weight: 2,
+        isWeightSelectedByUser: true,
+        isPositive: true,
+      },
     ];
-    const balanceSheet = new BalanceSheet(
-      undefined,
-      BalanceSheetType.Full,
-      BalanceSheetVersion.v5_0_4,
-      CompanyFacts1,
+    const balanceSheet: BalanceSheet = {
+      type: BalanceSheetType.Full,
+      version: BalanceSheetVersion.v5_0_4,
+      companyFacts: companyFactsFactory.nonEmpty(),
       ratings,
-      []
-    );
+    };
     const ratingsUpdater: RatingsUpdater = new RatingsUpdater();
     const stakeholderWeights =
       await stakeholderWeightCalculator.calcStakeholderWeights(calcResults);
@@ -112,20 +120,20 @@ describe('Ratings updater', () => {
     testCalculation(
       'fullRating01Input.csv',
       'fullRating0Expected.csv',
-      EmptyCompanyFacts
+      companyFactsFactory.empty()
     ));
 
   it('should calculate rating when the company facts values filled out but estimations, and weights are not set', async () =>
     testCalculation(
       'fullRating01Input.csv',
       'fullRating1Expected.csv',
-      CompanyFacts1
+      companyFactsFactory.nonEmpty()
     ));
 
   it('should calculate rating when the company facts values and rating values filled out', async () =>
     testCalculation(
       'fullRating2Input.csv',
       'fullRating2Expected.csv',
-      CompanyFacts1
+      companyFactsFactory.nonEmpty()
     ));
 });

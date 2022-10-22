@@ -1,20 +1,22 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class BalanceSheetTable1594223075373 implements MigrationInterface {
+export class BalanceSheetEntityTable1594223075373
+  implements MigrationInterface
+{
   public async up(queryRunner: QueryRunner): Promise<void> {
-    const query = `CREATE TABLE IF NOT EXISTS "balance_sheet" (
+    const query = `CREATE TABLE IF NOT EXISTS "balance_sheet_entity" (
             "id" SERIAL NOT NULL, 
             "type" text NOT NULL, 
             "version" text NOT NULL, 
-            "companyFactsId" integer, 
-            CONSTRAINT "REL_balance_sheet_company_facts" UNIQUE ("companyFactsId"), 
-            CONSTRAINT "PK_balance_sheet" PRIMARY KEY ("id")
+            "companyFacts" jsonb NOT NULL, 
+            "ratings" jsonb NOT NULL, 
+            CONSTRAINT "PK_balance_sheet_entity" PRIMARY KEY ("id")
         )`;
     await queryRunner.query(query);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    const query = 'DROP TABLE IF EXISTS balance_sheet';
+    const query = 'DROP TABLE IF EXISTS balance_sheet_entity';
     await queryRunner.query(query);
   }
 }

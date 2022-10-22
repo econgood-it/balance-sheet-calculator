@@ -1,18 +1,19 @@
 import { arrayMapper, strictObjectMapper } from '@daniel-faber/json-ts';
 import { CompanyFactsDTOCreate } from './company.facts.create.dto';
 import { RatingsFactory } from '../../factories/ratings.factory';
-import { BalanceSheet } from '../../entities/balanceSheet';
-import {
-  BalanceSheetType,
-  balanceSheetTypeFromJSON,
-  BalanceSheetVersion,
-  balanceSheetVersionFromJSON,
-} from '../../entities/enums';
+import { BalanceSheetEntity } from '../../entities/balance.sheet.entity';
 import { ValidateNested } from 'class-validator';
 import { Translations } from '../../entities/Translations';
 import { RatingsWithDtoMerger } from '../../merge/ratingsWithDtoMerger';
 import { User } from '../../entities/user';
 import { RatingDTO } from '../createAndUpdate/ratingDTO';
+import {
+  BalanceSheet,
+  BalanceSheetType,
+  balanceSheetTypeFromJSON,
+  BalanceSheetVersion,
+  balanceSheetVersionFromJSON,
+} from '../../models/balance.sheet';
 
 export class BalanceSheetDTOCreate {
   @ValidateNested()
@@ -45,24 +46,18 @@ export class BalanceSheetDTOCreate {
       )
   );
 
-  public async toBalanceSheet(
-    language: keyof Translations,
-    users: User[]
-  ): Promise<BalanceSheet> {
-    const mergedRatings = await RatingsFactory.createDefaultRatings(
+  public async toBalanceSheet(): Promise<BalanceSheet> {
+    const defaultRatings = await RatingsFactory.createDefaultRatings(
       this.type,
       this.version
     );
     const ratingWithDtoMerger = new RatingsWithDtoMerger();
-    ratingWithDtoMerger.mergeRatings(mergedRatings, this.ratings, this.type);
 
-    return new BalanceSheet(
-      undefined,
-      this.type,
-      this.version,
-      this.companyFacts.toCompanyFacts(language),
-      mergedRatings,
-      users
-    );
+    return {
+      type: this.type,
+      version: this.version,
+      companyFacts: this.companyFacts.toCompanyFacts(),
+      ratings: ratingWithDtoMerger.mergeRatings(defaultRatings, this.ratings),
+    };
   }
 }

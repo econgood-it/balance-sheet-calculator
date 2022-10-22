@@ -1,10 +1,12 @@
-import { CompanyFacts } from '../entities/companyFacts';
-import { SupplyFraction } from '../entities/supplyFraction';
 import { RegionProvider } from '../providers/region.provider';
 import { IndustryProvider } from '../providers/industry.provider';
-import { MainOriginOfOtherSuppliers } from '../entities/main.origin.of.other.suppliers';
 import { Region } from '../models/region';
 import { Industry } from '../models/industry';
+import {
+  CompanyFacts,
+  MainOriginOfOtherSuppliers,
+  SupplyFraction,
+} from '../models/balance.sheet';
 
 export interface SupplyCalcResults {
   supplyRiskSum: number;

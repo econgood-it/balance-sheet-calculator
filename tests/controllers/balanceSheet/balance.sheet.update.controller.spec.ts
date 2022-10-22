@@ -4,14 +4,15 @@ import { DatabaseConnectionCreator } from '../../../src/database.connection.crea
 import App from '../../../src/app';
 import { Application } from 'express';
 import { ConfigurationReader } from '../../../src/configuration.reader';
+
+import { TokenProvider } from '../../TokenProvider';
+import { CORRELATION_HEADER_NAME } from '../../../src/middleware/correlation.id.middleware';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
-} from '../../../src/entities/enums';
-import { CompanyFacts1Json } from '../../testData/company.facts';
-import { Rating } from '../../../src/entities/rating';
-import { TokenProvider } from '../../TokenProvider';
-import { CORRELATION_HEADER_NAME } from '../../../src/middleware/correlation.id.middleware';
+  Rating,
+} from '../../../src/models/balance.sheet';
+import { companyFactsJsonFactory } from '../../testData/balance.sheet';
 
 describe('Update endpoint of Balance Sheet Controller', () => {
   let connection: Connection;
@@ -47,7 +48,7 @@ describe('Update endpoint of Balance Sheet Controller', () => {
       .send({
         type: BalanceSheetType.Compact,
         version: BalanceSheetVersion.v5_0_4,
-        companyFacts: CompanyFacts1Json,
+        companyFacts: companyFactsJsonFactory.empty(),
       });
     const balanceSheetUpdate = {
       companyFacts: {
@@ -90,7 +91,7 @@ describe('Update endpoint of Balance Sheet Controller', () => {
       .send({
         type: BalanceSheetType.Full,
         version: BalanceSheetVersion.v5_0_6,
-        companyFacts: CompanyFacts1Json,
+        companyFacts: companyFactsJsonFactory.nonEmpty(),
       });
     const balanceSheetUpdate = {
       ratings: [
@@ -132,7 +133,7 @@ describe('Update endpoint of Balance Sheet Controller', () => {
       .send({
         type: balanceSheetType,
         version: BalanceSheetVersion.v5_0_4,
-        companyFacts: CompanyFacts1Json,
+        companyFacts: companyFactsJsonFactory.nonEmpty(),
       });
     const balanceSheetUpdate = {
       ratings: [
@@ -190,7 +191,7 @@ describe('Update endpoint of Balance Sheet Controller', () => {
         .send({
           type: BalanceSheetType.Compact,
           version: BalanceSheetVersion.v5_0_4,
-          companyFacts: CompanyFacts1Json,
+          companyFacts: companyFactsJsonFactory.nonEmpty(),
         });
       const balanceSheetUpdate = {
         id: postResponse.body.id,

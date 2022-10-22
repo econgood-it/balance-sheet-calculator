@@ -1,5 +1,5 @@
 import { Request } from 'express';
-import { BalanceSheet } from '../entities/balanceSheet';
+import { BalanceSheetEntity } from '../entities/balance.sheet.entity';
 import { EntityManager } from 'typeorm';
 import { User } from '../entities/user';
 import { NoAccessError } from '../exceptions/no.access.error';
@@ -7,7 +7,7 @@ import { NoAccessError } from '../exceptions/no.access.error';
 export class AccessCheckerService {
   public static async check(
     request: Request,
-    balanceSheet: BalanceSheet,
+    balanceSheet: BalanceSheetEntity,
     entityManager: EntityManager
   ): Promise<void> {
     if (request.userInfo) {

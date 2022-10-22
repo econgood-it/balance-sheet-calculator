@@ -1,5 +1,5 @@
-import { CompanyFacts1 } from '../../testData/company.facts';
 import { CompanyFactsDTOResponse } from '../../../src/dto/response/company.facts.response.dto';
+import { companyFactsFactory } from '../../testData/balance.sheet';
 
 jest.mock('../../../src/i18n', () => ({
   init: () => {},
@@ -9,17 +9,19 @@ jest.mock('../../../src/i18n', () => ({
 
 describe('CompanyFactsResponseDTO', () => {
   it('is created from company facts', async () => {
-    const companyFacts = CompanyFacts1;
+    const companyFacts = companyFactsFactory.nonEmpty();
     const companyFactsDTOResponse = CompanyFactsDTOResponse.fromCompanyFacts(
       companyFacts,
       'de'
     );
     expect(companyFactsDTOResponse).toBeDefined();
     expect(companyFactsDTOResponse).toMatchObject({
-      totalPurchaseFromSuppliers: CompanyFacts1.totalPurchaseFromSuppliers,
+      totalPurchaseFromSuppliers:
+        companyFactsFactory.nonEmpty().totalPurchaseFromSuppliers,
       mainOriginOfOtherSuppliers: {
-        costs: CompanyFacts1.mainOriginOfOtherSuppliers.costs,
-        countryCode: CompanyFacts1.mainOriginOfOtherSuppliers.countryCode,
+        costs: companyFactsFactory.nonEmpty().mainOriginOfOtherSuppliers.costs,
+        countryCode:
+          companyFactsFactory.nonEmpty().mainOriginOfOtherSuppliers.countryCode,
       },
     });
   });

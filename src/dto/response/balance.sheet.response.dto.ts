@@ -1,8 +1,12 @@
-import { BalanceSheet } from '../../entities/balanceSheet';
 import { CompanyFactsDTOResponse } from './company.facts.response.dto';
 import { Translations } from '../../entities/Translations';
-import { BalanceSheetType, BalanceSheetVersion } from '../../entities/enums';
 import { RatingResponseDTO } from './rating.response.dto';
+import {
+  BalanceSheet,
+  BalanceSheetType,
+  BalanceSheetVersion,
+  sortRatings,
+} from '../../models/balance.sheet';
 
 export class BalanceSheetDTOResponse {
   public constructor(
@@ -14,14 +18,15 @@ export class BalanceSheetDTOResponse {
   ) {}
 
   public static fromBalanceSheet(
+    balanceSheetId: number | undefined,
     balanceSheet: BalanceSheet,
     language: keyof Translations
   ) {
     return new BalanceSheetDTOResponse(
-      balanceSheet.id,
+      balanceSheetId,
       balanceSheet.type,
       balanceSheet.version,
-      balanceSheet.ratings.map((r) =>
+      sortRatings(balanceSheet.ratings).map((r) =>
         RatingResponseDTO.fromRating(r, language)
       ),
       CompanyFactsDTOResponse.fromCompanyFacts(

@@ -1,5 +1,5 @@
 import { diff } from 'deep-diff';
-import { BalanceSheet } from '../../entities/balanceSheet';
+import { BalanceSheet } from '../../models/balance.sheet';
 
 export const diffBetweenBalanceSheets = (
   balanceSheet: BalanceSheet,

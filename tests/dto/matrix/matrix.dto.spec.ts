@@ -1,28 +1,13 @@
-import { RatingsFactory } from '../../../src/factories/ratings.factory';
-import {
-  BalanceSheetType,
-  BalanceSheetVersion,
-} from '../../../src/entities/enums';
 import { MatrixDTO } from '../../../src/dto/matrix/matrix.dto';
-import { BalanceSheet } from '../../../src/entities/balanceSheet';
-import { EmptyCompanyFacts } from '../../testData/company.facts';
+
+import { BalanceSheet } from '../../../src/models/balance.sheet';
+import { balanceSheetFactory } from '../../testData/balance.sheet';
 
 describe('Matrix DTO', () => {
   let balanceSheet: BalanceSheet;
 
   beforeEach(async () => {
-    const ratings = await RatingsFactory.createDefaultRatings(
-      BalanceSheetType.Full,
-      BalanceSheetVersion.v5_0_4
-    );
-    balanceSheet = new BalanceSheet(
-      undefined,
-      BalanceSheetType.Full,
-      BalanceSheetVersion.v5_0_6,
-      EmptyCompanyFacts,
-      ratings,
-      []
-    );
+    balanceSheet = await balanceSheetFactory.emptyV508();
   });
 
   it('is created from rating', async () => {

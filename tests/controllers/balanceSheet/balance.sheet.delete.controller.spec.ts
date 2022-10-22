@@ -1,25 +1,22 @@
 import { DatabaseConnectionCreator } from '../../../src/database.connection.creator';
 import App from '../../../src/app';
 import { ConfigurationReader } from '../../../src/configuration.reader';
-import {
-  BalanceSheetType,
-  BalanceSheetVersion,
-} from '../../../src/entities/enums';
-import { Rating } from '../../../src/entities/rating';
-import { EmptyCompanyFactsJson } from '../../testData/company.facts';
+
 import { Connection } from 'typeorm';
 import { Application } from 'express';
-import { CompanyFacts } from '../../../src/entities/companyFacts';
-import { SupplyFraction } from '../../../src/entities/supplyFraction';
-import { IndustrySector } from '../../../src/entities/industry.sector';
-import { EmployeesFraction } from '../../../src/entities/employeesFraction';
+
 import { TokenProvider } from '../../TokenProvider';
 import { CORRELATION_HEADER_NAME } from '../../../src/middleware/correlation.id.middleware';
 import {
   BALANCE_SHEET_RELATIONS,
-  BalanceSheet,
-} from '../../../src/entities/balanceSheet';
+  BalanceSheetEntity,
+} from '../../../src/entities/balance.sheet.entity';
+import {
+  BalanceSheetType,
+  BalanceSheetVersion,
+} from '../../../src/models/balance.sheet';
 import supertest = require('supertest');
+import { companyFactsJsonFactory } from '../../testData/balance.sheet';
 
 describe('Balance Sheet Controller', () => {
   let connection: Connection;
@@ -52,7 +49,7 @@ describe('Balance Sheet Controller', () => {
     balanceSheetJson = {
       type: BalanceSheetType.Full,
       version: BalanceSheetVersion.v5_0_4,
-      companyFacts: EmptyCompanyFactsJson,
+      companyFacts: companyFactsJsonFactory.empty(),
     };
   });
 
@@ -76,12 +73,10 @@ describe('Balance Sheet Controller', () => {
       .set(tokenHeader.key, tokenHeader.value)
       .send(balanceSheetJson);
 
-    const balanceSheet = await connection
-      .getRepository(BalanceSheet)
-      .findOneOrFail({
-        where: { id: postResponse.body.id },
-        relations: BALANCE_SHEET_RELATIONS,
-      });
+    await connection.getRepository(BalanceSheetEntity).findOneOrFail({
+      where: { id: postResponse.body.id },
+      relations: BALANCE_SHEET_RELATIONS,
+    });
 
     const response = await testApp
       .delete(`${endpointPath}/${postResponse.body.id}`)
@@ -94,38 +89,6 @@ describe('Balance Sheet Controller', () => {
       .set(tokenHeader.key, tokenHeader.value)
       .send();
     expect(responseGet.status).toEqual(404);
-    // Test if all relations marked with cascade true are deleted as well
-    const expectZeroCount = 0;
-    // Ratings
-    expect(
-      await connection
-        .getRepository(Rating)
-        .countBy({ balanceSheet: { id: balanceSheet.id } })
-    ).toBe(expectZeroCount);
-    // Company Facts
-    expect(
-      await connection
-        .getRepository(CompanyFacts)
-        .countBy({ id: balanceSheet.companyFacts.id })
-    ).toBe(expectZeroCount);
-    // Industry Sectors
-    expect(
-      await connection.getRepository(IndustrySector).countBy({
-        companyFacts: { id: balanceSheet.companyFacts.id },
-      })
-    ).toBe(expectZeroCount);
-    // Supply Fractions
-    expect(
-      await connection.getRepository(SupplyFraction).countBy({
-        companyFacts: { id: balanceSheet.companyFacts.id },
-      })
-    ).toBe(expectZeroCount);
-    // EmployeesFractions
-    expect(
-      await connection.getRepository(EmployeesFraction).countBy({
-        companyFacts: { id: balanceSheet.companyFacts.id },
-      })
-    ).toBe(expectZeroCount);
   });
 
   describe('block access to balance sheet ', () => {

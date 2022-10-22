@@ -1,18 +1,19 @@
 import { DatabaseConnectionCreator } from '../../../src/database.connection.creator';
 import App from '../../../src/app';
 import { ConfigurationReader } from '../../../src/configuration.reader';
-import {
-  BalanceSheetType,
-  BalanceSheetVersion,
-} from '../../../src/entities/enums';
-import { Rating } from '../../../src/entities/rating';
-import { EmptyCompanyFactsJson } from '../../testData/company.facts';
+
 import { Connection } from 'typeorm';
 import { Application } from 'express';
 import { TokenProvider } from '../../TokenProvider';
-import supertest = require('supertest');
 import { CORRELATION_HEADER_NAME } from '../../../src/middleware/correlation.id.middleware';
 import { RatingResponseDTO } from '../../../src/dto/response/rating.response.dto';
+import {
+  BalanceSheetType,
+  BalanceSheetVersion,
+  Rating,
+} from '../../../src/models/balance.sheet';
+import { companyFactsJsonFactory } from '../../testData/balance.sheet';
+import supertest = require('supertest');
 
 describe('Balance Sheet Controller', () => {
   let connection: Connection;
@@ -49,7 +50,7 @@ describe('Balance Sheet Controller', () => {
     balanceSheetJson = {
       type: BalanceSheetType.Full,
       version: BalanceSheetVersion.v5_0_4,
-      companyFacts: EmptyCompanyFactsJson,
+      companyFacts: companyFactsJsonFactory.empty(),
     };
   });
 

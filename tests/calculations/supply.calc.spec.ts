@@ -1,43 +1,50 @@
-import { CompanyFacts } from '../../src/entities/companyFacts';
-import { SupplyFraction } from '../../src/entities/supplyFraction';
-import { DatabaseConnectionCreator } from '../../src/database.connection.creator';
-import { Connection } from 'typeorm';
-import { ConfigurationReader } from '../../src/configuration.reader';
 import {
   SupplierCalc,
   SupplyCalcResults,
 } from '../../src/calculations/supplier.calc';
 import { RegionProvider } from '../../src/providers/region.provider';
 import { IndustryProvider } from '../../src/providers/industry.provider';
-import { EmptyCompanyFacts } from '../testData/company.facts';
-import { computeCostsOfMainOriginOfOtherSuppliers } from '../../src/entities/main.origin.of.other.suppliers';
-import { BalanceSheetVersion } from '../../src/entities/enums';
+import {
+  BalanceSheetVersion,
+  CompanyFacts,
+  computeCostsOfMainOriginOfOtherSuppliers,
+  SupplyFraction,
+} from '../../src/models/balance.sheet';
+import { companyFactsFactory } from '../testData/balance.sheet';
 
 describe('Supply Calculator', () => {
-  let companyFacts: CompanyFacts;
+  let companyFactsWithSupplyFractions: CompanyFacts;
   let regionProvider: RegionProvider;
   let industryProvider: IndustryProvider;
-  const useNonDefaultMainOriginOfOtherSuppliers = () => {
-    companyFacts.totalPurchaseFromSuppliers = 2000;
-    companyFacts.mainOriginOfOtherSuppliers.costs =
-      computeCostsOfMainOriginOfOtherSuppliers(
-        companyFacts.totalPurchaseFromSuppliers,
-        companyFacts.supplyFractions
-      );
-    companyFacts.mainOriginOfOtherSuppliers.countryCode = 'BRA';
+  const useNonDefaultMainOriginOfOtherSuppliers = (
+    companyFacts: CompanyFacts
+  ) => {
+    const totalPurchaseFromSuppliers = 2000;
+    return {
+      ...companyFacts,
+      totalPurchaseFromSuppliers: totalPurchaseFromSuppliers,
+      mainOriginOfOtherSuppliers: {
+        costs: computeCostsOfMainOriginOfOtherSuppliers(
+          totalPurchaseFromSuppliers,
+          companyFacts.supplyFractions
+        ),
+        countryCode: 'BRA',
+      },
+    };
   };
 
   beforeEach(async () => {
     const supplyFractions: SupplyFraction[] = [
-      new SupplyFraction(undefined, 'B', 'AND', 100),
-      new SupplyFraction(undefined, 'Cf', 'ARE', 200),
-      new SupplyFraction(undefined, 'Ca', 'AFG', 300),
-      new SupplyFraction(undefined, 'J', 'BHR', 400),
-      new SupplyFraction(undefined, 'P', 'BHS', 500),
+      { countryCode: 'AND', industryCode: 'B', costs: 100 },
+      { countryCode: 'ARE', industryCode: 'Cf', costs: 200 },
+      { countryCode: 'AFG', industryCode: 'Ca', costs: 300 },
+      { countryCode: 'BHR', industryCode: 'J', costs: 400 },
+      { countryCode: 'BHS', industryCode: 'P', costs: 500 },
     ];
-    companyFacts = EmptyCompanyFacts;
-
-    companyFacts.supplyFractions = supplyFractions;
+    companyFactsWithSupplyFractions = {
+      ...companyFactsFactory.empty(),
+      supplyFractions: supplyFractions,
+    };
     regionProvider = await RegionProvider.fromVersion(
       BalanceSheetVersion.v5_0_4
     );
@@ -50,7 +57,7 @@ describe('Supply Calculator', () => {
     const supplyCalcResults: SupplyCalcResults = await new SupplierCalc(
       regionProvider,
       industryProvider
-    ).calculate(companyFacts);
+    ).calculate(companyFactsWithSupplyFractions);
     expect(supplyCalcResults.supplyRiskSum).toBeCloseTo(3197.88426323363, 13);
     expect(supplyCalcResults.supplyChainWeight).toBeCloseTo(
       1.62000609960581,
@@ -60,11 +67,13 @@ describe('Supply Calculator', () => {
   });
 
   it('should calculate supply risk sum', async () => {
-    useNonDefaultMainOriginOfOtherSuppliers();
+    const companyFacts = useNonDefaultMainOriginOfOtherSuppliers(
+      companyFactsWithSupplyFractions
+    );
     regionProvider = await RegionProvider.fromVersion(
       BalanceSheetVersion.v5_0_4
     );
-    const supplyCalcResults: SupplyCalcResults = await new SupplierCalc(
+    const supplyCalcResults: SupplyCalcResults = new SupplierCalc(
       regionProvider,
       industryProvider
     ).calculate(companyFacts);
@@ -72,7 +81,9 @@ describe('Supply Calculator', () => {
   });
 
   it('should calculate supply risk of mainOriginOfOtherSuppliers', async () => {
-    useNonDefaultMainOriginOfOtherSuppliers();
+    const companyFacts = useNonDefaultMainOriginOfOtherSuppliers(
+      companyFactsWithSupplyFractions
+    );
     regionProvider = await RegionProvider.fromVersion(
       BalanceSheetVersion.v5_0_4
     );
@@ -87,7 +98,9 @@ describe('Supply Calculator', () => {
     expect(supplyRisk).toBeCloseTo(0.21774257139959138, 13);
   });
   it('should calculate ituc average', async () => {
-    useNonDefaultMainOriginOfOtherSuppliers();
+    const companyFacts = useNonDefaultMainOriginOfOtherSuppliers(
+      companyFactsWithSupplyFractions
+    );
     regionProvider = await RegionProvider.fromVersion(
       BalanceSheetVersion.v5_0_4
     );

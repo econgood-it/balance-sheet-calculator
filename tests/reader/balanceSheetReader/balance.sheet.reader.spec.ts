@@ -1,22 +1,19 @@
 import * as path from 'path';
-import {
-  BalanceSheetReader,
-  readLanguage,
-} from '../../../src/reader/balanceSheetReader/balance.sheet.reader';
+import { BalanceSheetReader } from '../../../src/reader/balanceSheetReader/balance.sheet.reader';
 import { Workbook } from 'exceljs';
 import { createTranslations } from '../../../src/entities/Translations';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
-} from '../../../src/entities/enums';
+} from '../../../src/models/balance.sheet';
 
 describe('BalanceSheetReader', () => {
   it('should read company facts from excel', async () => {
     const balanceSheetReader = new BalanceSheetReader();
     const pathToCsv = path.join(__dirname, 'full_5_0_6.xlsx');
     const wb: Workbook = await new Workbook().xlsx.readFile(pathToCsv);
-    const language = readLanguage(wb);
-    const balancesheet = balanceSheetReader.readFromWorkbook(wb, language, []);
+
+    const balancesheet = balanceSheetReader.readFromWorkbook(wb);
     const companyFacts = balancesheet.companyFacts;
     expect(companyFacts.totalPurchaseFromSuppliers).toBe(200000);
     expect(companyFacts.profit).toBe(456456456);
@@ -33,14 +30,12 @@ describe('BalanceSheetReader', () => {
       industryCode: 'Ca',
       countryCode: 'AFG',
       costs: 654,
-      id: undefined,
     });
 
     expect(companyFacts.employeesFractions).toHaveLength(2);
     expect(companyFacts.employeesFractions).toContainEqual({
       countryCode: 'BHR',
       percentage: 0.11,
-      id: undefined,
     });
 
     expect(companyFacts.averageJourneyToWorkForStaffInKm).toBe(456456);
@@ -52,14 +47,12 @@ describe('BalanceSheetReader', () => {
     expect(companyFacts.industrySectors).toContainEqual({
       industryCode: 'Ce',
       amountOfTotalTurnover: 0.13,
-      description: createTranslations('en', 'abc'),
-      id: undefined,
+      description: 'abc',
     });
 
     expect(companyFacts.mainOriginOfOtherSuppliers).toMatchObject({
       countryCode: 'QAT',
       costs: 195425,
-      id: undefined,
     });
   });
 
@@ -67,12 +60,10 @@ describe('BalanceSheetReader', () => {
     const balanceSheetReader = new BalanceSheetReader();
     const pathToCsv = path.join(__dirname, 'full_5_0_6.xlsx');
     const wb: Workbook = await new Workbook().xlsx.readFile(pathToCsv);
-    const language = readLanguage(wb);
-    const balancesheet = balanceSheetReader.readFromWorkbook(wb, language, []);
+    const balancesheet = balanceSheetReader.readFromWorkbook(wb);
     const ratings = balancesheet.ratings;
     expect(ratings).toHaveLength(80);
     expect(ratings).toContainEqual({
-      id: undefined,
       shortName: 'E3.2',
       name: 'Relative impact',
       estimations: 4,
@@ -88,8 +79,7 @@ describe('BalanceSheetReader', () => {
     const balanceSheetReader = new BalanceSheetReader();
     const pathToCsv = path.join(__dirname, 'full_5_0_6.xlsx');
     const wb: Workbook = await new Workbook().xlsx.readFile(pathToCsv);
-    const language = readLanguage(wb);
-    const balancesheet = balanceSheetReader.readFromWorkbook(wb, language, []);
+    const balancesheet = balanceSheetReader.readFromWorkbook(wb);
     expect(balancesheet.version).toBe(BalanceSheetVersion.v5_0_6);
     expect(balancesheet.type).toBe(BalanceSheetType.Full);
   });

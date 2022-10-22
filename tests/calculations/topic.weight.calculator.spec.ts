@@ -1,13 +1,10 @@
 import { TopicWeightCalculator } from '../../src/calculations/topic.weight.calculator';
 import { CalcResults } from '../../src/calculations/calculator';
-import { CompanyFacts } from '../../src/entities/companyFacts';
-import {
-  EmptyCompanyFacts,
-  EmptyCompanyFactsJson,
-} from '../testData/company.facts';
+
 import { CompanySize } from '../../src/calculations/employees.calc';
 import { none, some } from '../../src/calculations/option';
-import { CompanyFactsDTOCreate } from '../../src/dto/create/company.facts.create.dto';
+import { CompanyFacts } from '../../src/models/balance.sheet';
+import { companyFactsFactory } from '../testData/balance.sheet';
 
 describe('Topic Weight Calculator', () => {
   let calcResults: CalcResults;
@@ -27,10 +24,10 @@ describe('Topic Weight Calculator', () => {
   };
 
   beforeEach(() => {
-    companyFacts = CompanyFactsDTOCreate.fromJSON({
-      ...EmptyCompanyFactsJson,
+    companyFacts = {
+      ...companyFactsFactory.empty(),
       profit: 1,
-    }).toCompanyFacts('en');
+    };
     calcResults = {
       supplyCalcResults: {
         itucAverage: 1,
@@ -358,7 +355,7 @@ describe('Topic Weight Calculator', () => {
   it('should return for all topics a weight of 1 if company facts values are all zero', async () => {
     const topicWeights = topicWeihgtCalculator.calcTopicWeights(
       calcResults,
-      EmptyCompanyFacts
+      companyFactsFactory.empty()
     );
     expect(topicWeights.size).toBe(20);
     for (const [, value] of topicWeights.entries()) {

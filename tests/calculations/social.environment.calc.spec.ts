@@ -1,31 +1,14 @@
-import { CompanyFacts } from '../../src/entities/companyFacts';
-import { DatabaseConnectionCreator } from '../../src/database.connection.creator';
-import { Connection } from 'typeorm';
-import { ConfigurationReader } from '../../src/configuration.reader';
-import { EmptyCompanyFacts } from '../testData/company.facts';
-import { IndustrySector } from '../../src/entities/industry.sector';
 import { SocialEnvironmentCalc } from '../../src/calculations/social.environment.calc';
-import { createTranslations } from '../../src/entities/Translations';
+import { companyFactsFactory } from '../testData/balance.sheet';
+import { CompanyFacts } from '../../src/models/balance.sheet';
 
 describe('Social Environment Calculator', () => {
-  let companyFacts: CompanyFacts;
-  let connection: Connection;
-
-  beforeAll(async () => {
-    connection =
-      await DatabaseConnectionCreator.createConnectionAndRunMigrations(
-        ConfigurationReader.read()
-      );
-    companyFacts = EmptyCompanyFacts;
-  });
-
-  afterAll(async () => {
-    await connection.close();
-  });
-
   it('should return empty option if turnover is zero', async () => {
-    companyFacts.profit = 0;
-    companyFacts.turnover = 0;
+    const companyFacts = {
+      ...companyFactsFactory.empty(),
+      profit: 0,
+      turnover: 0,
+    };
     const socialEnvironmentCalcResults =
       await new SocialEnvironmentCalc().calculate(companyFacts);
     expect(
@@ -34,8 +17,11 @@ describe('Social Environment Calculator', () => {
   });
 
   it('should return result if turnover is not zero', async () => {
-    companyFacts.profit = 4;
-    companyFacts.turnover = 8;
+    const companyFacts = {
+      ...companyFactsFactory.empty(),
+      profit: 4,
+      turnover: 8,
+    };
     const socialEnvironmentCalcResults =
       await new SocialEnvironmentCalc().calculate(companyFacts);
     expect(
@@ -47,9 +33,16 @@ describe('Social Environment Calculator', () => {
   });
 
   it('should return that company is active in mining', async () => {
-    companyFacts.industrySectors = [
-      new IndustrySector(undefined, 'B', 0, createTranslations('en', '')),
-    ];
+    const companyFacts: CompanyFacts = {
+      ...companyFactsFactory.empty(),
+      industrySectors: [
+        {
+          industryCode: 'B',
+          amountOfTotalTurnover: 0,
+          description: '',
+        },
+      ],
+    };
     const socialEnvironmentCalcResults =
       await new SocialEnvironmentCalc().calculate(companyFacts);
     expect(
@@ -58,9 +51,16 @@ describe('Social Environment Calculator', () => {
   });
 
   it('should return that company is active in construction industry', async () => {
-    companyFacts.industrySectors = [
-      new IndustrySector(undefined, 'F', 0, createTranslations('en', '')),
-    ];
+    const companyFacts: CompanyFacts = {
+      ...companyFactsFactory.empty(),
+      industrySectors: [
+        {
+          industryCode: 'F',
+          amountOfTotalTurnover: 0,
+          description: '',
+        },
+      ],
+    };
     const socialEnvironmentCalcResults =
       await new SocialEnvironmentCalc().calculate(companyFacts);
     expect(
@@ -69,10 +69,21 @@ describe('Social Environment Calculator', () => {
   });
 
   it('should return that company is not active in mining or construction industry', async () => {
-    companyFacts.industrySectors = [
-      new IndustrySector(undefined, 'A', 0, createTranslations('en', '')),
-      new IndustrySector(undefined, 'Ce', 0, createTranslations('en', '')),
-    ];
+    const companyFacts: CompanyFacts = {
+      ...companyFactsFactory.empty(),
+      industrySectors: [
+        {
+          industryCode: 'A',
+          amountOfTotalTurnover: 0,
+          description: '',
+        },
+        {
+          industryCode: 'Ce',
+          amountOfTotalTurnover: 0,
+          description: '',
+        },
+      ],
+    };
     const socialEnvironmentCalcResults =
       await new SocialEnvironmentCalc().calculate(companyFacts);
     expect(

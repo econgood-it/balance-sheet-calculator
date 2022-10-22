@@ -1,5 +1,4 @@
-import { Rating } from '../src/entities/rating';
-import { CompanyFacts } from '../src/entities/companyFacts';
+import { Rating } from '../src/models/balance.sheet';
 
 export class Assertions {
   public static assertRatings(
@@ -41,9 +40,5 @@ export class Assertions {
       `weight: ${expected.weight}, ${received.weight} \n` +
       `isWeightSelectedByUser: ${expected.isWeightSelectedByUser}, ${received.isWeightSelectedByUser}`
     );
-  }
-
-  public static rmIdFieldsOfCompanyFacts(companyFacts: CompanyFacts) {
-    delete (companyFacts as any).id;
   }
 }

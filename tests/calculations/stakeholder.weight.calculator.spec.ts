@@ -1,52 +1,21 @@
 import { StakeholderWeightCalculator } from '../../src/calculations/stakeholder.weight.calculator';
-import { CompanyFacts } from '../../src/entities/companyFacts';
-import { SupplyFraction } from '../../src/entities/supplyFraction';
-import { EmployeesFraction } from '../../src/entities/employeesFraction';
+
 import { CalcResults, Calculator } from '../../src/calculations/calculator';
 import { RegionProvider } from '../../src/providers/region.provider';
 import { IndustryProvider } from '../../src/providers/industry.provider';
-import { MainOriginOfOtherSuppliers } from '../../src/entities/main.origin.of.other.suppliers';
-import { BalanceSheetVersion } from '../../src/entities/enums';
-import { DEFAULT_COUNTRY_CODE } from '../../src/models/region';
+import {
+  BalanceSheetVersion,
+  CompanyFacts,
+} from '../../src/models/balance.sheet';
+import { companyFactsFactory } from '../testData/balance.sheet';
 
 describe('Stakeholder Weight Calculator', () => {
   let companyFacts: CompanyFacts;
   let regionProvider: RegionProvider;
   let industryProvider: IndustryProvider;
-  const arabEmiratesCode = 'ARE';
-  const afghanistanCode = 'AFG';
-  const agricultureCode = 'A';
-  const pharmaceuticCode = 'Ce';
 
   beforeEach(async () => {
-    const supplyFractions: SupplyFraction[] = [
-      new SupplyFraction(undefined, agricultureCode, arabEmiratesCode, 300),
-      new SupplyFraction(undefined, pharmaceuticCode, afghanistanCode, 20),
-    ];
-    const employeesFractions: EmployeesFraction[] = [
-      new EmployeesFraction(undefined, arabEmiratesCode, 0.3),
-      new EmployeesFraction(undefined, afghanistanCode, 1),
-    ];
-    companyFacts = new CompanyFacts(
-      undefined,
-      0,
-      2345,
-      238,
-      473,
-      342,
-      234,
-      30,
-      40,
-      0,
-      0,
-      false,
-      0,
-      false,
-      supplyFractions,
-      employeesFractions,
-      [],
-      new MainOriginOfOtherSuppliers(undefined, DEFAULT_COUNTRY_CODE, 0)
-    );
+    companyFacts = companyFactsFactory.nonEmpty2();
     regionProvider = await RegionProvider.fromVersion(
       BalanceSheetVersion.v5_0_4
     );

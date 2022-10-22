@@ -1,5 +1,5 @@
 import { staticTranslate, Translations } from '../../entities/Translations';
-import { Rating } from '../../entities/rating';
+import { isTopic, Rating } from '../../models/balance.sheet';
 
 export class RatingResponseDTO {
   public constructor(
@@ -25,7 +25,7 @@ export class RatingResponseDTO {
       rating.points,
       rating.maxPoints,
       rating.isPositive,
-      rating.isTopic() ? 'topic' : 'aspect'
+      isTopic(rating) ? 'topic' : 'aspect'
     );
   }
 }
