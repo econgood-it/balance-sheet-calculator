@@ -68,11 +68,12 @@ export class BalanceSheetEntity {
 }
 
 export function createFromBalanceSheet(
+  balanceSheetId: number | undefined,
   balanceSheet: BalanceSheet,
   users: User[]
 ): BalanceSheetEntity {
   return new BalanceSheetEntity(
-    undefined,
+    balanceSheetId,
     balanceSheet.type,
     balanceSheet.version,
     balanceSheet.ratings,

@@ -53,6 +53,7 @@ export class BalanceSheetService {
 
         const balanceSheetId = saveFlag
           ? await this.saveBalanceSheet(
+              undefined,
               entityManager,
               updatedBalanceSheet,
               foundUser
@@ -149,6 +150,7 @@ export class BalanceSheetService {
 
           const balanceSheetId = saveFlag
             ? await this.saveBalanceSheet(
+                undefined,
                 entityManager,
                 updatedBalanceSheet,
                 foundUser
@@ -202,6 +204,7 @@ export class BalanceSheetService {
           mergedBalanceSheet
         );
         const balanceSheetId = await this.saveBalanceSheet(
+          balanceSheetEntity.id,
           entityManager,
           updatedBalanceSheet,
           balanceSheetEntity.users[0]
@@ -233,7 +236,7 @@ export class BalanceSheetService {
         const userRepository = entityManager.getRepository(User);
         const user = await userRepository.findOneOrFail({
           where: { id: req.userInfo.id },
-          relations: ['balanceSheets'],
+          relations: ['balanceSheetEntities'],
         });
         res.json(
           user.balanceSheetEntities.map((b) => {
@@ -343,6 +346,7 @@ export class BalanceSheetService {
   }
 
   private async saveBalanceSheet(
+    balanceSheetId: number | undefined,
     entityManager: EntityManager,
     balanceSheet: BalanceSheet,
     user: User
@@ -350,7 +354,7 @@ export class BalanceSheetService {
     return (
       await entityManager
         .getRepository(BalanceSheetEntity)
-        .save(createFromBalanceSheet(balanceSheet, [user]))
+        .save(createFromBalanceSheet(balanceSheetId, balanceSheet, [user]))
     ).id;
   }
 
