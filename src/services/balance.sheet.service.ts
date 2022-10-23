@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from 'express';
-import { BalanceSheetDTOCreate } from '../dto/create/balance.sheet.create.dto';
 import {
   BALANCE_SHEET_RELATIONS,
   BalanceSheetEntity,
@@ -29,6 +28,7 @@ import { diff } from 'deep-diff';
 import { TopicWeightsReader } from '../reader/balanceSheetReader/topic.weights.reader';
 import { StakeholderWeightsReader } from '../reader/balanceSheetReader/stakeholder.weights.reader';
 import { BalanceSheet } from '../models/balance.sheet';
+import { BalanceSheetCreateRequestBodySchema } from '../dto/balance.sheet.dto';
 
 export class BalanceSheetService {
   constructor(private connection: Connection) {}
@@ -42,11 +42,10 @@ export class BalanceSheetService {
     const language = parseLanguageParameter(req.query.lng);
     this.connection.manager
       .transaction(async (entityManager) => {
-        const balanceSheetDTOCreate: BalanceSheetDTOCreate =
-          BalanceSheetDTOCreate.fromJSON(req.body);
-        await this.validateOrFail(balanceSheetDTOCreate);
         const foundUser = await this.findUserOrFail(req, entityManager);
-        const balanceSheet = await balanceSheetDTOCreate.toBalanceSheet();
+        const balanceSheet =
+          await BalanceSheetCreateRequestBodySchema.parseAsync(req.body);
+
         const { updatedBalanceSheet } = await CalculationService.calculate(
           balanceSheet
         );
@@ -364,9 +363,7 @@ export class BalanceSheetService {
     return await userRepository.findOneOrFail({ where: { id: userId } });
   }
 
-  private async validateOrFail(
-    balanceSheet: BalanceSheetDTOCreate | BalanceSheetDTOUpdate
-  ) {
+  private async validateOrFail(balanceSheet: BalanceSheetDTOUpdate) {
     await validateOrReject(balanceSheet, {
       validationError: { target: false },
     });

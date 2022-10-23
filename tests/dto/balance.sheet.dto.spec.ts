@@ -1,13 +1,12 @@
-import { BalanceSheetDTOCreate } from '../../../src/dto/create/balance.sheet.create.dto';
-import { RatingsFactory } from '../../../src/factories/ratings.factory';
-import { toJsObject } from '../../to.js.object';
+import { BalanceSheetCreateRequestBodySchema } from '../../src/dto/balance.sheet.dto';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
-} from '../../../src/models/balance.sheet';
+} from '../../src/models/balance.sheet';
+import { RatingsFactory } from '../../src/factories/ratings.factory';
 
-describe('BalanceSheetCreateDTO', () => {
-  it('is created from json with a merged rating entity', async () => {
+describe('BalanceSheetCreateRequestBodySchema', () => {
+  it('parse json with a merged rating entity', async () => {
     const json = {
       type: BalanceSheetType.Full,
       version: BalanceSheetVersion.v5_0_4,
@@ -18,10 +17,7 @@ describe('BalanceSheetCreateDTO', () => {
         { shortName: 'E2.1', estimations: 3 },
       ],
     };
-    const balanceSheetDTOCreate = BalanceSheetDTOCreate.fromJSON(
-      toJsObject(json)
-    );
-    const result = await balanceSheetDTOCreate.toBalanceSheet();
+    const result = await BalanceSheetCreateRequestBodySchema.parseAsync(json);
 
     const defaultRatings = await RatingsFactory.createDefaultRatings(
       json.type,
@@ -64,20 +60,17 @@ describe('BalanceSheetCreateDTO', () => {
     expect(result.ratings).toMatchObject(expectedRatings);
   });
 
-  it('is created from json with default rating entity', async () => {
+  it('parse json with default rating entity', async () => {
     const json = {
       type: BalanceSheetType.Full,
       version: BalanceSheetVersion.v5_0_4,
     };
-    const balanceSheetDTOCreate = BalanceSheetDTOCreate.fromJSON(
-      toJsObject(json)
-    );
-    const result = await balanceSheetDTOCreate.toBalanceSheet();
+    const result = await BalanceSheetCreateRequestBodySchema.parseAsync(json);
 
     const expectedRatings = await RatingsFactory.createDefaultRatings(
       json.type,
       json.version
     );
-    expect(result.ratings).toMatchObject(toJsObject(expectedRatings));
+    expect(result.ratings).toMatchObject(expectedRatings);
   });
 });

@@ -8,9 +8,13 @@ import InternalServerException from './internal.server.exception';
 import { NoAccessError } from './no.access.error';
 import ForbiddenException from './forbidden.exception';
 import UnauthorizedException from './unauthorized.exception';
+import { ZodError } from 'zod';
 
 export const handle = (error: Error, next: NextFunction) => {
   if (error instanceof JsonMappingError) {
+    return next(new BadRequestException(error.message));
+  }
+  if (error instanceof ZodError) {
     return next(new BadRequestException(error.message));
   }
   if (

@@ -1,9 +1,13 @@
 import { RatingDTO } from '../dto/createAndUpdate/ratingDTO';
 import { mergeVal } from './merge.utils';
 import { Rating } from '../models/rating';
+import { RatingRequestBody } from '../dto/rating.dto';
 
 export class RatingsWithDtoMerger {
-  public mergeRatings(ratings: Rating[], ratingDTOs: RatingDTO[]): Rating[] {
+  public mergeRatings(
+    ratings: Rating[],
+    ratingDTOs: RatingDTO[] | RatingRequestBody[]
+  ): Rating[] {
     ratingDTOs.forEach((ratingDTO) => {
       const rating: Rating | undefined = ratings.find(
         (t) => t.shortName === ratingDTO.shortName
@@ -13,14 +17,16 @@ export class RatingsWithDtoMerger {
       }
     });
     return ratings.map((rating) => {
-      const ratingDTO: RatingDTO | undefined = ratingDTOs.find(
-        (t) => t.shortName === rating.shortName
-      );
+      const ratingDTO: RatingDTO | RatingRequestBody | undefined =
+        ratingDTOs.find((t) => t.shortName === rating.shortName);
       return ratingDTO ? this.mergeRating(rating, ratingDTO) : rating;
     });
   }
 
-  public mergeRating(rating: Rating, ratingDTO: RatingDTO): Rating {
+  public mergeRating(
+    rating: Rating,
+    ratingDTO: RatingDTO | RatingRequestBody
+  ): Rating {
     return {
       ...rating,
       estimations: mergeVal(rating.estimations, ratingDTO.estimations),

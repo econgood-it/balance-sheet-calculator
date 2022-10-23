@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { SupplyFractionDTOCreate } from '../dto/create/supply.fraction.create.dto';
 
 const SupplyFractionSchema = z.object({
   countryCode: z.string(),
@@ -47,7 +46,7 @@ export const CompanyFactsSchema = z.object({
 export type CompanyFacts = z.infer<typeof CompanyFactsSchema>;
 export const computeCostsOfMainOriginOfOtherSuppliers = (
   totalPurchaseFromSuppliers: number,
-  supplyFractions: SupplyFractionDTOCreate[] | SupplyFraction[]
+  supplyFractions: SupplyFraction[]
 ): number => {
   const costs = supplyFractions.map((sf) => sf.costs);
   return (
@@ -61,7 +60,7 @@ export const computeCostsOfMainOriginOfOtherSuppliers = (
 export const computeCostsAndCreateMainOriginOfOtherSuppliers = (
   countryCode: string,
   totalPurchaseFromSuppliers: number,
-  supplyFractions: SupplyFractionDTOCreate[]
+  supplyFractions: SupplyFraction[]
 ): MainOriginOfOtherSuppliers => {
   return {
     countryCode,

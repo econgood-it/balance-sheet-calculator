@@ -1,8 +1,7 @@
-import { validate } from 'class-validator';
-import { CompanyFactsDTOCreate } from '../../../src/dto/create/company.facts.create.dto';
-import { DEFAULT_COUNTRY_CODE } from '../../../src/models/region';
+import { CompanyFactsCreateRequestBody } from '../../src/dto/company.facts.dto';
+import { DEFAULT_COUNTRY_CODE } from '../../src/models/region';
 
-describe('CompanyFactsCreateDTO', () => {
+describe('CompanyFactsCreatBody', () => {
   it('is created from json and returns a CompanyFacts entity', () => {
     const json = {
       totalPurchaseFromSuppliers: 1,
@@ -22,16 +21,12 @@ describe('CompanyFactsCreateDTO', () => {
       employeesFractions: [],
       industrySectors: [],
     };
-    const companyFactsDTOCreate: CompanyFactsDTOCreate =
-      CompanyFactsDTOCreate.fromJSON(json);
-    const result = companyFactsDTOCreate.toCompanyFacts();
+    const result = CompanyFactsCreateRequestBody.parse(json);
     expect(result).toMatchObject(json);
   });
 
   it('is created using default values', () => {
-    const companyFactsDTOCreate: CompanyFactsDTOCreate =
-      CompanyFactsDTOCreate.fromJSON({});
-    const result = companyFactsDTOCreate.toCompanyFacts();
+    const result = CompanyFactsCreateRequestBody.parse({});
     expect(result).toMatchObject({
       totalPurchaseFromSuppliers: 0,
       totalStaffCosts: 0,
@@ -57,12 +52,10 @@ describe('CompanyFactsCreateDTO', () => {
       { industryCode: 'A', countryCode: 'DEU', costs: 200 },
       { industryCode: 'A', countryCode: 'DEU', costs: 100 },
     ];
-    const companyFactsDTOCreate: CompanyFactsDTOCreate =
-      CompanyFactsDTOCreate.fromJSON({
-        totalPurchaseFromSuppliers: 500,
-        supplyFractions,
-      });
-    const result = companyFactsDTOCreate.toCompanyFacts();
+    const result = CompanyFactsCreateRequestBody.parse({
+      totalPurchaseFromSuppliers: 500,
+      supplyFractions,
+    });
     expect(result).toMatchObject({
       totalPurchaseFromSuppliers: 500,
       supplyFractions,
@@ -74,12 +67,10 @@ describe('CompanyFactsCreateDTO', () => {
   });
 
   it('is created where mainOriginOfOtherSuppliers costs is equal to totalPurchaseFromSuppliers', () => {
-    const companyFactsDTOCreate: CompanyFactsDTOCreate =
-      CompanyFactsDTOCreate.fromJSON({
-        totalPurchaseFromSuppliers: 500,
-        supplyFractions: [],
-      });
-    const result = companyFactsDTOCreate.toCompanyFacts();
+    const result = CompanyFactsCreateRequestBody.parse({
+      totalPurchaseFromSuppliers: 500,
+      supplyFractions: [],
+    });
     expect(result).toMatchObject({
       mainOriginOfOtherSuppliers: {
         countryCode: DEFAULT_COUNTRY_CODE,
@@ -87,15 +78,12 @@ describe('CompanyFactsCreateDTO', () => {
       },
     });
   });
-
   it('is created where country code of mainOriginOfOtherSuppliers is provided', () => {
-    const companyFactsDTOCreate: CompanyFactsDTOCreate =
-      CompanyFactsDTOCreate.fromJSON({
-        totalPurchaseFromSuppliers: 500,
-        supplyFractions: [],
-        mainOriginOfOtherSuppliers: 'DEU',
-      });
-    const result = companyFactsDTOCreate.toCompanyFacts();
+    const result = CompanyFactsCreateRequestBody.parse({
+      totalPurchaseFromSuppliers: 500,
+      supplyFractions: [],
+      mainOriginOfOtherSuppliers: 'DEU',
+    });
     expect(result).toMatchObject({
       mainOriginOfOtherSuppliers: {
         countryCode: 'DEU',
@@ -105,14 +93,10 @@ describe('CompanyFactsCreateDTO', () => {
   });
 
   it('allows negative values for incomeFromFinancialInvestments and additionsToFixedAssets', async () => {
-    const companyFactsDTOCreate: CompanyFactsDTOCreate =
-      CompanyFactsDTOCreate.fromJSON({
-        incomeFromFinancialInvestments: -20,
-        additionsToFixedAssets: -70,
-      });
-    const validationErrors = await validate(companyFactsDTOCreate, {
-      validationError: { target: false },
+    const result = CompanyFactsCreateRequestBody.safeParse({
+      incomeFromFinancialInvestments: -20,
+      additionsToFixedAssets: -70,
     });
-    expect(validationErrors).toHaveLength(0);
+    expect(result.success).toBeTruthy();
   });
 });
