@@ -2,12 +2,13 @@ import { NextFunction, Request, Response } from 'express';
 import { Connection } from 'typeorm';
 import * as jwt from 'jwt-simple';
 import * as moment from 'moment';
-import { UserDto } from '../dto/user/user.dto';
-import { validateOrReject } from 'class-validator';
 import { User } from '../entities/user';
 import BadRequestException from '../exceptions/bad.request.exception';
 import { handle } from '../exceptions/error.handler';
-import { PasswordResetDto } from '../dto/user/password.reset.dto';
+import {
+  PasswordResetRequestBodySchema,
+  UserRequestBodySchema,
+} from '../dto/user.dto';
 
 export class UserService {
   constructor(private connection: Connection, public jwtSecret: string) {}
@@ -32,9 +33,7 @@ export class UserService {
   public async getToken(req: Request, res: Response, next: NextFunction) {
     this.connection.manager
       .transaction(async (entityManager) => {
-        const userDTO: UserDto = UserDto.fromJSON(req.body);
-        await this.validateOrFail(userDTO);
-        const user: User = userDTO.toUser();
+        const user: User = UserRequestBodySchema.parse(req.body);
         const userRepository = entityManager.getRepository(User);
         const foundUser: User = await userRepository.findOneOrFail({
           where: {
@@ -55,9 +54,7 @@ export class UserService {
   public async createUser(req: Request, res: Response, next: NextFunction) {
     this.connection.manager
       .transaction(async (entityManager) => {
-        const userDTO: UserDto = UserDto.fromJSON(req.body);
-        await this.validateOrFail(userDTO);
-        const user: User = userDTO.toUser();
+        const user: User = UserRequestBodySchema.parse(req.body);
         const userRepository = entityManager.getRepository(User);
         const foundUser = await userRepository.findOne({
           where: {
@@ -102,24 +99,19 @@ export class UserService {
           throw new Error('User undefined');
         }
         const userId = req.userInfo.id;
-        const passwordResetDto = PasswordResetDto.fromJSON(req.body);
-        await this.validateOrFail(passwordResetDto);
+        const passwordResetRequestBody = PasswordResetRequestBodySchema.parse(
+          req.body
+        );
         const userRepository = entityManager.getRepository(User);
         const foundUser = await userRepository.findOneOrFail({
           where: { id: userId },
         });
-        foundUser.password = passwordResetDto.password;
+        foundUser.password = passwordResetRequestBody.password;
         await userRepository.save(foundUser);
         res.json({ message: 'Password has been reset to new one' });
       })
       .catch((error) => {
         handle(error, next);
       });
-  }
-
-  private async validateOrFail(userDTO: UserDto | PasswordResetDto) {
-    await validateOrReject(userDTO, {
-      validationError: { target: false },
-    });
   }
 }
