@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { enumMapperByValue } from '@daniel-faber/json-ts';
 import { CompanyFactsSchema } from './company.facts';
 import { RatingSchema } from './rating';
 
@@ -8,9 +7,6 @@ export enum BalanceSheetType {
   Full = 'Full',
   Other = 'other',
 }
-
-export const balanceSheetTypeFromJSON =
-  enumMapperByValue<BalanceSheetType>(BalanceSheetType);
 
 export enum BalanceSheetVersion {
   // eslint-disable-next-line camelcase
@@ -25,11 +21,10 @@ export enum BalanceSheetVersion {
   v5_0_8 = '5.08',
 }
 
-export const balanceSheetVersionFromJSON =
-  enumMapperByValue<BalanceSheetVersion>(BalanceSheetVersion);
+export const BalanceSheetVersionSchema = z.nativeEnum(BalanceSheetVersion);
 export const BalanceSheetSchema = z.object({
   type: z.nativeEnum(BalanceSheetType),
-  version: z.nativeEnum(BalanceSheetVersion),
+  version: BalanceSheetVersionSchema,
   companyFacts: CompanyFactsSchema,
   ratings: RatingSchema.array(),
 });
