@@ -1,5 +1,5 @@
 import { MatrixRatingDto } from '../../../src/dto/matrix/matrix.rating.dto';
-import { Rating } from '../../../src/models/balance.sheet';
+import { Rating } from '../../../src/models/rating';
 
 jest.mock('../../../src/i18n', () => ({
   init: () => {},

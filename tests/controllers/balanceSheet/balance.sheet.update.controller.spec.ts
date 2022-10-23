@@ -10,9 +10,9 @@ import { CORRELATION_HEADER_NAME } from '../../../src/middleware/correlation.id.
 import {
   BalanceSheetType,
   BalanceSheetVersion,
-  Rating,
 } from '../../../src/models/balance.sheet';
 import { companyFactsJsonFactory } from '../../testData/balance.sheet';
+import { Rating } from '../../../src/models/rating';
 
 describe('Update endpoint of Balance Sheet Controller', () => {
   let connection: Connection;

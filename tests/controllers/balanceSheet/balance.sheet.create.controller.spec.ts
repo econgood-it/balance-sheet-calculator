@@ -12,9 +12,9 @@ import { RatingResponseDTO } from '../../../src/dto/response/rating.response.dto
 import {
   BalanceSheetType,
   BalanceSheetVersion,
-  INDUSTRY_CODE_FOR_FINANCIAL_SERVICES,
-  Rating,
 } from '../../../src/models/balance.sheet';
+import { Rating } from '../../../src/models/rating';
+import { INDUSTRY_CODE_FOR_FINANCIAL_SERVICES } from '../../../src/models/company.facts';
 
 describe('Balance Sheet Controller', () => {
   let connection: Connection;

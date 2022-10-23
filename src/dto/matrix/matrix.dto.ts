@@ -1,10 +1,7 @@
 import { MatrixRatingDto } from './matrix.rating.dto';
 import { Translations } from '../../entities/Translations';
-import {
-  BalanceSheet,
-  filterTopics,
-  sortRatings,
-} from '../../models/balance.sheet';
+import { BalanceSheet } from '../../models/balance.sheet';
+import { filterTopics, sortRatings } from '../../models/rating';
 
 export class MatrixDTO {
   constructor(public readonly ratings: MatrixRatingDto[]) {}

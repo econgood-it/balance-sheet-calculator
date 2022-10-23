@@ -1,5 +1,5 @@
 import { Translations } from '../../entities/Translations';
-import { EmployeesFraction } from '../../models/balance.sheet';
+import { EmployeesFraction } from '../../models/company.facts';
 
 export class EmployeesFractionDTOResponse {
   public constructor(

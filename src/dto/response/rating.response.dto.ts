@@ -1,5 +1,5 @@
 import { staticTranslate, Translations } from '../../entities/Translations';
-import { isTopic, Rating } from '../../models/balance.sheet';
+import { isTopic, Rating } from '../../models/rating';
 
 export class RatingResponseDTO {
   public constructor(

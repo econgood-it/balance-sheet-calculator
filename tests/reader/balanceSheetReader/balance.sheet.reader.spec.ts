@@ -1,7 +1,6 @@
 import * as path from 'path';
 import { BalanceSheetReader } from '../../../src/reader/balanceSheetReader/balance.sheet.reader';
 import { Workbook } from 'exceljs';
-import { createTranslations } from '../../../src/entities/Translations';
 import {
   BalanceSheetType,
   BalanceSheetVersion,

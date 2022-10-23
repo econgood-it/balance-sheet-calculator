@@ -1,10 +1,7 @@
 import * as path from 'path';
 import { RatingsReader } from '../reader/ratings.reader';
-import {
-  BalanceSheetType,
-  BalanceSheetVersion,
-  Rating,
-} from '../models/balance.sheet';
+import { BalanceSheetType, BalanceSheetVersion } from '../models/balance.sheet';
+import { Rating } from '../models/rating';
 
 export class RatingsFactory {
   public static async createDefaultRatings(

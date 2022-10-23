@@ -1,5 +1,4 @@
-import { Translations } from '../../entities/Translations';
-import { IndustrySector } from '../../models/balance.sheet';
+import { IndustrySector } from '../../models/company.facts';
 
 export class IndustrySectorDtoResponse {
   constructor(

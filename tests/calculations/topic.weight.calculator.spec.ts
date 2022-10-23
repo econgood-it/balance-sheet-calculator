@@ -3,8 +3,8 @@ import { CalcResults } from '../../src/calculations/calculator';
 
 import { CompanySize } from '../../src/calculations/employees.calc';
 import { none, some } from '../../src/calculations/option';
-import { CompanyFacts } from '../../src/models/balance.sheet';
 import { companyFactsFactory } from '../testData/balance.sheet';
+import { CompanyFacts } from '../../src/models/company.facts';
 
 describe('Topic Weight Calculator', () => {
   let calcResults: CalcResults;

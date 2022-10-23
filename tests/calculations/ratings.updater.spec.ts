@@ -13,10 +13,10 @@ import {
   BalanceSheet,
   BalanceSheetType,
   BalanceSheetVersion,
-  CompanyFacts,
-  Rating,
 } from '../../src/models/balance.sheet';
 import { companyFactsFactory } from '../testData/balance.sheet';
+import { CompanyFacts } from '../../src/models/company.facts';
+import { Rating } from '../../src/models/rating';
 
 describe('Ratings updater', () => {
   const stakeholderWeightCalculator = new StakeholderWeightCalculator();
@@ -46,8 +46,8 @@ describe('Ratings updater', () => {
     const balanceSheet = {
       type: BalanceSheetType.Full,
       version: BalanceSheetVersion.v5_0_4,
-      companyFacts: companyFacts,
-      ratings: ratings,
+      companyFacts,
+      ratings,
     };
 
     const ratingsUpdater: RatingsUpdater = new RatingsUpdater();

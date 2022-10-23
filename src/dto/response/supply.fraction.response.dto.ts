@@ -1,5 +1,5 @@
-import { SupplyFraction } from '../../models/balance.sheet';
 import { Translations } from '../../entities/Translations';
+import { SupplyFraction } from '../../models/company.facts';
 
 export class SupplyFractionDTOResponse {
   constructor(

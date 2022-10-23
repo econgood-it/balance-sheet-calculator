@@ -1,6 +1,6 @@
 import { Row } from 'exceljs';
 import { CellReader } from './cell.reader';
-import { EmployeesFraction } from '../../models/balance.sheet';
+import { EmployeesFraction } from '../../models/company.facts';
 
 export class EmployeesFractionReader {
   public read(row: Row): EmployeesFraction | undefined {
@@ -9,7 +9,7 @@ export class EmployeesFractionReader {
     return percentage > 0
       ? {
           countryCode: cr.readWithRow(row, 'B').countryCode,
-          percentage: percentage,
+          percentage,
         }
       : undefined;
   }

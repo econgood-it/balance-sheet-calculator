@@ -5,7 +5,7 @@ import {
   INDUSTRY_CODE_FOR_CONSTRUCTION_INDUSTRY,
   INDUSTRY_CODE_FOR_FINANCIAL_SERVICES,
   INDUSTRY_CODE_FOR_MINING,
-} from '../../models/balance.sheet';
+} from '../../models/company.facts';
 
 export class CalcResultsReader {
   public readFromWorkbook(wb: Workbook): CalcResults | undefined {

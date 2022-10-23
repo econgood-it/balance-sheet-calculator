@@ -1,6 +1,5 @@
 import { RegionResponseDTO } from '../../../src/dto/response/region.response.dto';
 import { Region } from '../../../src/models/region';
-import { BalanceSheetVersion } from '../../../src/models/balance.sheet';
 
 describe('Region DTO', () => {
   it('should be created from region entity', () => {

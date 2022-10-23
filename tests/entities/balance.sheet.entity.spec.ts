@@ -92,7 +92,7 @@ describe('Balance Sheet', () => {
   it(' does remove relation to user on delete', async () => {
     await cleanUpTables();
     const email = 'u2@example.com';
-    await connection.getRepository(User).delete({ email: email });
+    await connection.getRepository(User).delete({ email });
     const user = await connection
       .getRepository(User)
       .save(new User(undefined, email, 'test1234', Role.User));

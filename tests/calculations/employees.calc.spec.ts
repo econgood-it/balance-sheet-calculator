@@ -6,11 +6,9 @@ import {
   EmployeesCalcResults,
 } from '../../src/calculations/employees.calc';
 
-import {
-  BalanceSheetVersion,
-  CompanyFacts,
-} from '../../src/models/balance.sheet';
+import { BalanceSheetVersion } from '../../src/models/balance.sheet';
 import { companyFactsFactory } from '../testData/balance.sheet';
+import { CompanyFacts } from '../../src/models/company.facts';
 
 describe('Employees Calculator', () => {
   describe('should calculate the itucAverage ', () => {

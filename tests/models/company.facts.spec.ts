@@ -1,6 +1,6 @@
 import { companyFactsFactory } from '../testData/balance.sheet';
-import { allValuesAreZero, CompanyFacts } from '../../src/models/balance.sheet';
 import { DEFAULT_COUNTRY_CODE } from '../../src/models/region';
+import { allValuesAreZero, CompanyFacts } from '../../src/models/company.facts';
 
 describe('Company Facts', () => {
   it('allValuesAreZero should return true', () => {

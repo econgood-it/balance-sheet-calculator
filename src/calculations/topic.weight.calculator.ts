@@ -1,7 +1,7 @@
 import { CalcResults } from './calculator';
 import { CompanySize } from './employees.calc';
 import Provider from '../providers/provider';
-import { allValuesAreZero, CompanyFacts } from '../models/balance.sheet';
+import { allValuesAreZero, CompanyFacts } from '../models/company.facts';
 
 export class TopicWeightCalculator {
   public calcTopicWeights(

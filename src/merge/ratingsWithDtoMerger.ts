@@ -1,6 +1,6 @@
 import { RatingDTO } from '../dto/createAndUpdate/ratingDTO';
 import { mergeVal } from './merge.utils';
-import { Rating } from '../models/balance.sheet';
+import { Rating } from '../models/rating';
 
 export class RatingsWithDtoMerger {
   public mergeRatings(ratings: Rating[], ratingDTOs: RatingDTO[]): Rating[] {

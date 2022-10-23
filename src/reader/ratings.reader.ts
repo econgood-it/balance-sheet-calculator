@@ -1,5 +1,5 @@
 import { Workbook, Row, Worksheet } from 'exceljs';
-import { Rating } from '../models/balance.sheet';
+import { Rating } from '../models/rating';
 
 interface Headers {
   shortNameIndex: number;
@@ -58,14 +58,14 @@ export class RatingsReader {
       'true';
     const isPositive = this.stringToBool(row.getCell(headers.isPositive).text);
     return {
-      shortName: shortName,
-      name: name,
-      estimations: estimations,
+      shortName,
+      name,
+      estimations,
       points: Number(row.getCell(headers.pointsIndex).text),
       maxPoints: Number(row.getCell(headers.maxPointsIndex).text),
       weight: Number(weightAsStr),
-      isWeightSelectedByUser: isWeightSelectedByUser,
-      isPositive: isPositive,
+      isWeightSelectedByUser,
+      isPositive,
     };
   }
 

@@ -8,7 +8,7 @@ import {
   SocialEnvironmentCalc,
   SocialEnvironmentCalcResults,
 } from './social.environment.calc';
-import { CompanyFacts } from '../models/balance.sheet';
+import { CompanyFacts } from '../models/company.facts';
 
 export interface CalcResults {
   supplyCalcResults: SupplyCalcResults;

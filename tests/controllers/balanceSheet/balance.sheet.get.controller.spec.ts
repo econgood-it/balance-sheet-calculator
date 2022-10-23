@@ -10,10 +10,10 @@ import { RatingResponseDTO } from '../../../src/dto/response/rating.response.dto
 import {
   BalanceSheetType,
   BalanceSheetVersion,
-  Rating,
 } from '../../../src/models/balance.sheet';
 import { companyFactsJsonFactory } from '../../testData/balance.sheet';
 import supertest = require('supertest');
+import { Rating } from '../../../src/models/rating';
 
 describe('Balance Sheet Controller', () => {
   let connection: Connection;

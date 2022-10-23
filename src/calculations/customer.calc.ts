@@ -1,5 +1,5 @@
 import { IndustryProvider } from '../providers/industry.provider';
-import { CompanyFacts } from '../models/balance.sheet';
+import { CompanyFacts } from '../models/company.facts';
 
 export interface CustomerCalcResults {
   sumOfEcologicalDesignOfProductsAndService: number;

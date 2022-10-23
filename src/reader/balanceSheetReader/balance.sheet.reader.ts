@@ -75,8 +75,8 @@ export class BalanceSheetReader {
     return {
       type: BalanceSheetType.Full,
       version: cr.read(introSheet, 3, 'C').parseAsVersion(),
-      companyFacts: companyFacts,
-      ratings: ratings,
+      companyFacts,
+      ratings,
     };
   }
 }

@@ -1,6 +1,6 @@
 import * as path from 'path';
 import { RatingsReader } from '../../src/reader/ratings.reader';
-import { Rating } from '../../src/models/balance.sheet';
+import { Rating } from '../../src/models/rating';
 
 describe('RatingsReader', () => {
   it('should read ratings from csv', async () => {

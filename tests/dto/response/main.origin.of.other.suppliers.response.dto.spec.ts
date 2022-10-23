@@ -1,5 +1,5 @@
 import { MainOriginOfOtherSuppliersDTOResponse } from '../../../src/dto/response/main.origin.of.other.suppliers.response.dto';
-import { MainOriginOfOtherSuppliers } from '../../../src/models/balance.sheet';
+import { MainOriginOfOtherSuppliers } from '../../../src/models/company.facts';
 
 describe('MainOriginOfOtherSuppliersesponseDTO', () => {
   it('is created from main origin of other suppliers', async () => {

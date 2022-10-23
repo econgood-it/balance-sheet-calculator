@@ -10,9 +10,9 @@ import {
   BalanceSheet,
   BalanceSheetType,
   BalanceSheetVersion,
-  CompanyFacts,
-  Rating,
 } from '../models/balance.sheet';
+import { CompanyFacts } from '../models/company.facts';
+import { Rating } from '../models/rating';
 
 export const BALANCE_SHEET_RELATIONS = ['users'];
 

@@ -6,7 +6,7 @@ import {
   CompanyFacts,
   MainOriginOfOtherSuppliers,
   SupplyFraction,
-} from '../models/balance.sheet';
+} from '../models/company.facts';
 
 export interface SupplyCalcResults {
   supplyRiskSum: number;

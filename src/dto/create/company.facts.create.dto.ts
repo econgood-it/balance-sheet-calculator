@@ -20,7 +20,7 @@ import { DEFAULT_COUNTRY_CODE } from '../../models/region';
 import {
   CompanyFacts,
   computeCostsAndCreateMainOriginOfOtherSuppliers,
-} from '../../models/balance.sheet';
+} from '../../models/company.facts';
 
 export class CompanyFactsDTOCreate {
   @Min(0)

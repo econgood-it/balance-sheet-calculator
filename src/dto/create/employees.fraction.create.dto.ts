@@ -11,7 +11,7 @@ import {
   Max,
   Min,
 } from 'class-validator';
-import { EmployeesFraction } from '../../models/balance.sheet';
+import { EmployeesFraction } from '../../models/company.facts';
 
 export class EmployeesFractionDTOCreate {
   @IsAlpha()

@@ -2,7 +2,7 @@ import { none, Option, some } from './option';
 import {
   CompanyFacts,
   INDUSTRY_CODE_FOR_FINANCIAL_SERVICES,
-} from '../models/balance.sheet';
+} from '../models/company.facts';
 
 export interface FinanceCalcResults {
   sumOfFinancialAspects: number;

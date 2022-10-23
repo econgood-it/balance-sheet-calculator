@@ -1,5 +1,5 @@
 import { RatingResponseDTO } from '../../../src/dto/response/rating.response.dto';
-import { Rating } from '../../../src/models/balance.sheet';
+import { Rating } from '../../../src/models/rating';
 
 jest.mock('../../../src/i18n', () => ({
   init: () => {},

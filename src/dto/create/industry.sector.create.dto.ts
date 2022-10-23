@@ -4,8 +4,7 @@ import {
   expectNumber,
 } from '@daniel-faber/json-ts';
 import { IsAlpha, IsNumber, IsString, Length, Max, Min } from 'class-validator';
-import { createTranslations, Translations } from '../../entities/Translations';
-import { IndustrySector } from '../../models/balance.sheet';
+import { IndustrySector } from '../../models/company.facts';
 
 export class IndustrySectorCreateDtoCreate {
   @IsAlpha()

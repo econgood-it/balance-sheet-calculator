@@ -1,11 +1,8 @@
 import { arrayMapper, strictObjectMapper } from '@daniel-faber/json-ts';
 import { CompanyFactsDTOCreate } from './company.facts.create.dto';
 import { RatingsFactory } from '../../factories/ratings.factory';
-import { BalanceSheetEntity } from '../../entities/balance.sheet.entity';
 import { ValidateNested } from 'class-validator';
-import { Translations } from '../../entities/Translations';
 import { RatingsWithDtoMerger } from '../../merge/ratingsWithDtoMerger';
-import { User } from '../../entities/user';
 import { RatingDTO } from '../createAndUpdate/ratingDTO';
 import {
   BalanceSheet,

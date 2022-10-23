@@ -1,11 +1,7 @@
 import { CalcResults } from './calculator';
 import Provider from '../providers/provider';
-import {
-  BalanceSheet,
-  filterAspectsOfTopic,
-  filterTopics,
-  Rating,
-} from '../models/balance.sheet';
+import { BalanceSheet } from '../models/balance.sheet';
+import { filterAspectsOfTopic, filterTopics, Rating } from '../models/rating';
 
 export class RatingsUpdater {
   public async update(
@@ -58,7 +54,7 @@ export class RatingsUpdater {
           ...t,
           points: topicPoints,
           maxPoints: topicMaxPoints,
-          estimations: estimations,
+          estimations,
         },
         ...updatedAspects
       );
@@ -83,7 +79,7 @@ export class RatingsUpdater {
           : 0;
       return {
         ...a,
-        maxPoints: maxPoints,
+        maxPoints,
         points: (maxPoints * a.estimations) / 10.0,
       };
     });

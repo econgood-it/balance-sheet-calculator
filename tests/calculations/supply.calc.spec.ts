@@ -4,13 +4,13 @@ import {
 } from '../../src/calculations/supplier.calc';
 import { RegionProvider } from '../../src/providers/region.provider';
 import { IndustryProvider } from '../../src/providers/industry.provider';
+import { BalanceSheetVersion } from '../../src/models/balance.sheet';
+import { companyFactsFactory } from '../testData/balance.sheet';
 import {
-  BalanceSheetVersion,
   CompanyFacts,
   computeCostsOfMainOriginOfOtherSuppliers,
   SupplyFraction,
-} from '../../src/models/balance.sheet';
-import { companyFactsFactory } from '../testData/balance.sheet';
+} from '../../src/models/company.facts';
 
 describe('Supply Calculator', () => {
   let companyFactsWithSupplyFractions: CompanyFacts;
@@ -22,7 +22,7 @@ describe('Supply Calculator', () => {
     const totalPurchaseFromSuppliers = 2000;
     return {
       ...companyFacts,
-      totalPurchaseFromSuppliers: totalPurchaseFromSuppliers,
+      totalPurchaseFromSuppliers,
       mainOriginOfOtherSuppliers: {
         costs: computeCostsOfMainOriginOfOtherSuppliers(
           totalPurchaseFromSuppliers,
@@ -43,7 +43,7 @@ describe('Supply Calculator', () => {
     ];
     companyFactsWithSupplyFractions = {
       ...companyFactsFactory.empty(),
-      supplyFractions: supplyFractions,
+      supplyFractions,
     };
     regionProvider = await RegionProvider.fromVersion(
       BalanceSheetVersion.v5_0_4

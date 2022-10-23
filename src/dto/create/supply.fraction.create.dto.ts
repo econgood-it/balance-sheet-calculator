@@ -4,7 +4,7 @@ import {
   expectNumber,
 } from '@daniel-faber/json-ts';
 import { IsAlpha, IsNumber, IsUppercase, Length, Min } from 'class-validator';
-import { SupplyFraction } from '../../models/balance.sheet';
+import { SupplyFraction } from '../../models/company.facts';
 
 export class SupplyFractionDTOCreate {
   @IsAlpha()

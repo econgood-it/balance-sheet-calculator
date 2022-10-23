@@ -3,9 +3,9 @@ import {
   BalanceSheet,
   BalanceSheetType,
   BalanceSheetVersion,
-  CompanyFacts,
 } from '../../src/models/balance.sheet';
 import { RatingsFactory } from '../../src/factories/ratings.factory';
+import { CompanyFacts } from '../../src/models/company.facts';
 
 const arabEmiratesCode = 'ARE';
 const afghanistanCode = 'AFG';

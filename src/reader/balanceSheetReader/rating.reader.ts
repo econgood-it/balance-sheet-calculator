@@ -1,6 +1,6 @@
 import { Row } from 'exceljs';
 import { CellReader } from './cell.reader';
-import { isTopicShortName, Rating } from '../../models/balance.sheet';
+import { isTopicShortName, Rating } from '../../models/rating';
 
 export class RatingReader {
   public read(row: Row): Rating | undefined {
@@ -12,7 +12,7 @@ export class RatingReader {
     const maxPoints = cr.readWithRow(row, 'J').number;
     return shortName.length > 1
       ? {
-          shortName: shortName,
+          shortName,
           name: nameValue.text,
           estimations: this.estimations(
             estimations,
@@ -20,8 +20,8 @@ export class RatingReader {
             points,
             maxPoints
           ),
-          points: points,
-          maxPoints: maxPoints,
+          points,
+          maxPoints,
           weight: cr.readWithRow(row, 'D').weight,
           isWeightSelectedByUser: cr.readWithRow(row, 'N')
             .isWeightSelectedByUser,

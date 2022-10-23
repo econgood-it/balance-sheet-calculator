@@ -3,7 +3,7 @@ import { EmployeesFractionDTOResponse } from './employees.fraction.response.dto'
 import { IndustrySectorDtoResponse } from './industry.sector.response.dto';
 import { Translations } from '../../entities/Translations';
 import { MainOriginOfOtherSuppliersDTOResponse } from './main.origin.of.other.suppliers.response.dto';
-import { CompanyFacts } from '../../models/balance.sheet';
+import { CompanyFacts } from '../../models/company.facts';
 export class CompanyFactsDTOResponse {
   public constructor(
     public readonly totalPurchaseFromSuppliers: number,

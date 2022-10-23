@@ -2,7 +2,7 @@ import { companyFactsFactory } from '../testData/balance.sheet';
 import { EntityWithDtoMerger } from '../../src/merge/entity.with.dto.merger';
 
 import { CompanyFactsDTOUpdate } from '../../src/dto/update/company.facts.update.dto';
-import { CompanyFacts } from '../../src/models/balance.sheet';
+import { CompanyFacts } from '../../src/models/company.facts';
 
 describe('EntityWithDTOMerger', () => {
   let companyFacts: CompanyFacts;

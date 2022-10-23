@@ -1,7 +1,7 @@
 import { Row } from 'exceljs';
 
 import { CellReader } from './cell.reader';
-import { IndustrySector } from '../../models/balance.sheet';
+import { IndustrySector } from '../../models/company.facts';
 
 export class IndustrySectorReader {
   public read(row: Row): IndustrySector | undefined {
@@ -10,7 +10,7 @@ export class IndustrySectorReader {
     return amountOfTotalTurnover > 0
       ? {
           industryCode: cr.readWithRow(row, 'B').industryCode,
-          amountOfTotalTurnover: amountOfTotalTurnover,
+          amountOfTotalTurnover,
           description: cr.readWithRow(row, 'C').text,
         }
       : undefined;

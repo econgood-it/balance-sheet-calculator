@@ -1,5 +1,5 @@
 import { IndustrySectorDtoResponse } from '../../../src/dto/response/industry.sector.response.dto';
-import { IndustrySector } from '../../../src/models/balance.sheet';
+import { IndustrySector } from '../../../src/models/company.facts';
 
 describe('IndustrySectorResponseDTO', () => {
   it('is created from industry sector', () => {

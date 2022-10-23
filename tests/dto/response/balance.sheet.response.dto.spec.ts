@@ -1,6 +1,6 @@
 import { BalanceSheetDTOResponse } from '../../../src/dto/response/balance.sheet.response.dto';
 import { balanceSheetFactory } from '../../testData/balance.sheet';
-import { Rating } from '../../../src/models/balance.sheet';
+import { Rating } from '../../../src/models/rating';
 
 jest.mock('../../../src/i18n', () => ({
   init: () => {},
@@ -44,7 +44,7 @@ describe('BalanceSheetResponseDTO', () => {
     ];
     const balanceSheet = {
       ...(await balanceSheetFactory.emptyV508()),
-      ratings: ratings,
+      ratings,
     };
     const balanceSheetDTO = BalanceSheetDTOResponse.fromBalanceSheet(
       undefined,

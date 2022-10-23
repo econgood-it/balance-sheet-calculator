@@ -1,4 +1,4 @@
-import { Rating } from '../src/models/balance.sheet';
+import { Rating } from '../src/models/rating';
 
 export class Assertions {
   public static assertRatings(

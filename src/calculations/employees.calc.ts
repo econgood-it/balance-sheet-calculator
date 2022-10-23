@@ -1,6 +1,6 @@
 import { RegionProvider } from '../providers/region.provider';
 import { Region } from '../models/region';
-import { CompanyFacts } from '../models/balance.sheet';
+import { CompanyFacts } from '../models/company.facts';
 
 export enum CompanySize {
   micro = 'micro',

@@ -1,6 +1,6 @@
 import { Row } from 'exceljs';
 import { CellReader } from './cell.reader';
-import { SupplyFraction } from '../../models/balance.sheet';
+import { SupplyFraction } from '../../models/company.facts';
 
 export class SupplyFractionReader {
   public read(row: Row): SupplyFraction | undefined {
@@ -10,7 +10,7 @@ export class SupplyFractionReader {
       ? {
           industryCode: cr.readWithRow(row, 'B').industryCode,
           countryCode: cr.readWithRow(row, 'D').countryCode,
-          costs: costs,
+          costs,
         }
       : undefined;
   }

@@ -6,14 +6,14 @@ import { EmployeesFractionDTOUpdate } from '../dto/update/employees.fraction.upd
 import { IndustrySectorDtoUpdate } from '../dto/update/industry.sector.update.dto';
 import { RatingsWithDtoMerger } from './ratingsWithDtoMerger';
 import { mergeVal } from './merge.utils';
+import { BalanceSheet } from '../models/balance.sheet';
 import {
-  BalanceSheet,
   CompanyFacts,
   computeCostsOfMainOriginOfOtherSuppliers,
   EmployeesFraction,
   IndustrySector,
   SupplyFraction,
-} from '../models/balance.sheet';
+} from '../models/company.facts';
 
 export class EntityWithDtoMerger {
   private ratingWithDtoMerger: RatingsWithDtoMerger =

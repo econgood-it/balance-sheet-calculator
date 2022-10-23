@@ -5,8 +5,8 @@ import {
   BalanceSheet,
   BalanceSheetType,
   BalanceSheetVersion,
-  sortRatings,
 } from '../../models/balance.sheet';
+import { sortRatings } from '../../models/rating';
 
 export class BalanceSheetDTOResponse {
   public constructor(
