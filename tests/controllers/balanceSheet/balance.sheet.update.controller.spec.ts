@@ -154,6 +154,7 @@ describe('Update endpoint of Balance Sheet Controller', () => {
       .patch(`${endpointPath}/${response.body.id}`)
       .set(tokenHeader.key, tokenHeader.value)
       .send({ ...balanceSheetUpdate });
+
     expect(response.status).toEqual(200);
     const aspectA11 = findAspect('A1.1', response);
     expect(aspectA11).toMatchObject({

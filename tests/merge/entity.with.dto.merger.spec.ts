@@ -1,8 +1,8 @@
 import { companyFactsFactory } from '../testData/balance.sheet';
 import { EntityWithDtoMerger } from '../../src/merge/entity.with.dto.merger';
 
-import { CompanyFactsDTOUpdate } from '../../src/dto/update/company.facts.update.dto';
 import { CompanyFacts } from '../../src/models/company.facts';
+import { CompanyFactsPatchRequestBodySchema } from '../../src/dto/company.facts.dto';
 
 describe('EntityWithDTOMerger', () => {
   let companyFacts: CompanyFacts;
@@ -16,7 +16,7 @@ describe('EntityWithDTOMerger', () => {
     const merge = (json: any) =>
       entityWithDtoMerger.mergeCompanyFacts(
         companyFacts,
-        CompanyFactsDTOUpdate.fromJSON(json)
+        CompanyFactsPatchRequestBodySchema.parse(json)
       );
 
     it('using profit from db', async () => {

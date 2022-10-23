@@ -1,4 +1,3 @@
-import { RatingDTO } from '../dto/createAndUpdate/ratingDTO';
 import { mergeVal } from './merge.utils';
 import { Rating } from '../models/rating';
 import { RatingRequestBody } from '../dto/rating.dto';
@@ -6,9 +5,9 @@ import { RatingRequestBody } from '../dto/rating.dto';
 export class RatingsWithDtoMerger {
   public mergeRatings(
     ratings: Rating[],
-    ratingDTOs: RatingDTO[] | RatingRequestBody[]
+    ratingRequestBodies: RatingRequestBody[]
   ): Rating[] {
-    ratingDTOs.forEach((ratingDTO) => {
+    ratingRequestBodies.forEach((ratingDTO) => {
       const rating: Rating | undefined = ratings.find(
         (t) => t.shortName === ratingDTO.shortName
       );
@@ -17,23 +16,25 @@ export class RatingsWithDtoMerger {
       }
     });
     return ratings.map((rating) => {
-      const ratingDTO: RatingDTO | RatingRequestBody | undefined =
-        ratingDTOs.find((t) => t.shortName === rating.shortName);
-      return ratingDTO ? this.mergeRating(rating, ratingDTO) : rating;
+      const ratingRequestBody: RatingRequestBody | undefined =
+        ratingRequestBodies.find((t) => t.shortName === rating.shortName);
+      return ratingRequestBody
+        ? this.mergeRating(rating, ratingRequestBody)
+        : rating;
     });
   }
 
   public mergeRating(
     rating: Rating,
-    ratingDTO: RatingDTO | RatingRequestBody
+    ratingRequestBody: RatingRequestBody
   ): Rating {
     return {
       ...rating,
-      estimations: mergeVal(rating.estimations, ratingDTO.estimations),
+      estimations: mergeVal(rating.estimations, ratingRequestBody.estimations),
       ...(rating.isPositive &&
-        ratingDTO.weight !== undefined && {
+        ratingRequestBody.weight !== undefined && {
           isWeightSelectedByUser: true,
-          weight: mergeVal(rating.weight, ratingDTO.weight),
+          weight: mergeVal(rating.weight, ratingRequestBody.weight),
         }),
     };
   }

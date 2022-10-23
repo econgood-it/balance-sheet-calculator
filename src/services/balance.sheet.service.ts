@@ -5,9 +5,7 @@ import {
   createFromBalanceSheet,
 } from '../entities/balance.sheet.entity';
 import { Connection, EntityManager } from 'typeorm';
-import { BalanceSheetDTOUpdate } from '../dto/update/balance.sheet.update.dto';
 import { EntityWithDtoMerger } from '../merge/entity.with.dto.merger';
-import { validateOrReject } from 'class-validator';
 import { MatrixDTO } from '../dto/matrix/matrix.dto';
 import { BalanceSheetDTOResponse } from '../dto/response/balance.sheet.response.dto';
 import { parseLanguageParameter } from '../entities/Translations';
@@ -28,7 +26,10 @@ import { diff } from 'deep-diff';
 import { TopicWeightsReader } from '../reader/balanceSheetReader/topic.weights.reader';
 import { StakeholderWeightsReader } from '../reader/balanceSheetReader/stakeholder.weights.reader';
 import { BalanceSheet } from '../models/balance.sheet';
-import { BalanceSheetCreateRequestBodySchema } from '../dto/balance.sheet.dto';
+import {
+  BalanceSheetCreateRequestBodySchema,
+  BalanceSheetPatchRequestBodySchema,
+} from '../dto/balance.sheet.dto';
 
 export class BalanceSheetService {
   constructor(private connection: Connection) {}
@@ -191,12 +192,11 @@ export class BalanceSheetService {
           balanceSheetEntity,
           entityManager
         );
-        const balanceSheetDTOUpdate: BalanceSheetDTOUpdate =
-          BalanceSheetDTOUpdate.fromJSON(req.body);
-        await this.validateOrFail(balanceSheetDTOUpdate);
+        const balanceSheetPatchRequestBody =
+          BalanceSheetPatchRequestBodySchema.parse(req.body);
         const mergedBalanceSheet = entityWithDTOMerger.mergeBalanceSheet(
           balanceSheetEntity.toBalanceSheet(),
-          balanceSheetDTOUpdate
+          balanceSheetPatchRequestBody
         );
         const { updatedBalanceSheet } = await CalculationService.calculate(
           mergedBalanceSheet
@@ -361,12 +361,6 @@ export class BalanceSheetService {
     const userId = req.userInfo.id;
     const userRepository = entityManager.getRepository(User);
     return await userRepository.findOneOrFail({ where: { id: userId } });
-  }
-
-  private async validateOrFail(balanceSheet: BalanceSheetDTOUpdate) {
-    await validateOrReject(balanceSheet, {
-      validationError: { target: false },
-    });
   }
 
   private parseSaveFlag(saveParam: any): boolean {

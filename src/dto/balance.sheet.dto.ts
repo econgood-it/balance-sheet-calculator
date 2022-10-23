@@ -1,5 +1,8 @@
 import { z } from 'zod';
-import { CompanyFactsCreateRequestBody } from './company.facts.dto';
+import {
+  CompanyFactsCreateRequestBodySchema,
+  CompanyFactsPatchRequestBodySchema,
+} from './company.facts.dto';
 import { RatingRequestBody, RatingRequestBodySchema } from './rating.dto';
 import { Rating } from '../models/rating';
 import { BalanceSheetType, BalanceSheetVersion } from '../models/balance.sheet';
@@ -23,10 +26,19 @@ export const BalanceSheetCreateRequestBodySchema = z
   .object({
     type: z.nativeEnum(BalanceSheetType),
     version: z.nativeEnum(BalanceSheetVersion),
-    companyFacts: CompanyFactsCreateRequestBody.default({}),
+    companyFacts: CompanyFactsCreateRequestBodySchema.default({}),
     ratings: RatingRequestBodySchema.array().default([]),
   })
   .transform(async (b) => ({
     ...b,
     ratings: await mergeWithDefaultRatings(b.ratings, b.type, b.version),
   }));
+
+export const BalanceSheetPatchRequestBodySchema = z.object({
+  companyFacts: CompanyFactsPatchRequestBodySchema.optional(),
+  ratings: RatingRequestBodySchema.array().default([]),
+});
+
+export type BalanceSheetPatchRequestBody = z.infer<
+  typeof BalanceSheetPatchRequestBodySchema
+>;

@@ -1,8 +1,11 @@
-import { CompanyFactsCreateRequestBody } from '../../src/dto/company.facts.dto';
+import {
+  CompanyFactsCreateRequestBodySchema,
+  CompanyFactsPatchRequestBodySchema,
+} from '../../src/dto/company.facts.dto';
 import { DEFAULT_COUNTRY_CODE } from '../../src/models/region';
 
-describe('CompanyFactsCreatBody', () => {
-  it('is created from json and returns a CompanyFacts entity', () => {
+describe('CompanyFactsCreateRequestBodySchema', () => {
+  it('parse json and returns a CompanyFacts entity', () => {
     const json = {
       totalPurchaseFromSuppliers: 1,
       totalStaffCosts: 2,
@@ -21,12 +24,12 @@ describe('CompanyFactsCreatBody', () => {
       employeesFractions: [],
       industrySectors: [],
     };
-    const result = CompanyFactsCreateRequestBody.parse(json);
+    const result = CompanyFactsCreateRequestBodySchema.parse(json);
     expect(result).toMatchObject(json);
   });
 
-  it('is created using default values', () => {
-    const result = CompanyFactsCreateRequestBody.parse({});
+  it('parse json using default values', () => {
+    const result = CompanyFactsCreateRequestBodySchema.parse({});
     expect(result).toMatchObject({
       totalPurchaseFromSuppliers: 0,
       totalStaffCosts: 0,
@@ -47,12 +50,12 @@ describe('CompanyFactsCreatBody', () => {
     });
   });
 
-  it('is created with default main origin of other suppliers', () => {
+  it('parse with default main origin of other suppliers', () => {
     const supplyFractions = [
       { industryCode: 'A', countryCode: 'DEU', costs: 200 },
       { industryCode: 'A', countryCode: 'DEU', costs: 100 },
     ];
-    const result = CompanyFactsCreateRequestBody.parse({
+    const result = CompanyFactsCreateRequestBodySchema.parse({
       totalPurchaseFromSuppliers: 500,
       supplyFractions,
     });
@@ -66,8 +69,8 @@ describe('CompanyFactsCreatBody', () => {
     });
   });
 
-  it('is created where mainOriginOfOtherSuppliers costs is equal to totalPurchaseFromSuppliers', () => {
-    const result = CompanyFactsCreateRequestBody.parse({
+  it('parse json where mainOriginOfOtherSuppliers costs is equal to totalPurchaseFromSuppliers', () => {
+    const result = CompanyFactsCreateRequestBodySchema.parse({
       totalPurchaseFromSuppliers: 500,
       supplyFractions: [],
     });
@@ -78,8 +81,8 @@ describe('CompanyFactsCreatBody', () => {
       },
     });
   });
-  it('is created where country code of mainOriginOfOtherSuppliers is provided', () => {
-    const result = CompanyFactsCreateRequestBody.parse({
+  it('parse json where country code of mainOriginOfOtherSuppliers is provided', () => {
+    const result = CompanyFactsCreateRequestBodySchema.parse({
       totalPurchaseFromSuppliers: 500,
       supplyFractions: [],
       mainOriginOfOtherSuppliers: 'DEU',
@@ -93,10 +96,100 @@ describe('CompanyFactsCreatBody', () => {
   });
 
   it('allows negative values for incomeFromFinancialInvestments and additionsToFixedAssets', async () => {
-    const result = CompanyFactsCreateRequestBody.safeParse({
+    const result = CompanyFactsCreateRequestBodySchema.safeParse({
       incomeFromFinancialInvestments: -20,
       additionsToFixedAssets: -70,
     });
     expect(result.success).toBeTruthy();
+  });
+});
+
+describe('CompanyFactsPatchRequestBodySchema', () => {
+  const jsonConst = {
+    totalPurchaseFromSuppliers: 1,
+    totalStaffCosts: 2,
+    profit: 3,
+    financialCosts: 4,
+    incomeFromFinancialInvestments: 5,
+    additionsToFixedAssets: 6,
+    turnover: 7,
+    totalAssets: 8,
+    financialAssetsAndCashBalance: 9,
+    numberOfEmployees: 11,
+    hasCanteen: true,
+    averageJourneyToWorkForStaffInKm: 12,
+    isB2B: true,
+    supplyFractions: [],
+    employeesFractions: [],
+    industrySectors: [],
+    mainOriginOfOtherSuppliers: 'DEU',
+  };
+
+  it('parse from json', () => {
+    const companyFactsPatchRequestBody =
+      CompanyFactsPatchRequestBodySchema.parse(jsonConst);
+    expect(companyFactsPatchRequestBody).toMatchObject(jsonConst);
+  });
+
+  it('allows negative values for incomeFromFinancialInvestments and additionsToFixedAssets', async () => {
+    const result = CompanyFactsPatchRequestBodySchema.safeParse({
+      incomeFromFinancialInvestments: -20,
+      additionsToFixedAssets: -70,
+    });
+    expect(result.success).toBeTruthy();
+  });
+
+  describe('parse json where value is missing for field', () => {
+    let json: any;
+    beforeEach(() => {
+      json = jsonConst;
+    });
+
+    it('financialAssetsAndCashBalance', () => {
+      delete json.financialAssetsAndCashBalance;
+      const companyFactsPatchRequestBody =
+        CompanyFactsPatchRequestBodySchema.parse(json);
+      expect(
+        companyFactsPatchRequestBody.financialAssetsAndCashBalance
+      ).toBeUndefined();
+    });
+
+    it('profit', () => {
+      delete json.profit;
+      const companyFactsPatchRequestBody =
+        CompanyFactsPatchRequestBodySchema.parse(json);
+
+      expect(companyFactsPatchRequestBody.profit).toBeUndefined();
+    });
+
+    it('numberOfEmployees', () => {
+      delete json.numberOfEmployees;
+      const companyFactsPatchRequestBody =
+        CompanyFactsPatchRequestBodySchema.parse(json);
+      expect(companyFactsPatchRequestBody.numberOfEmployees).toBeUndefined();
+    });
+
+    it('hasCanteen', () => {
+      delete json.hasCanteen;
+      const companyFactsPatchRequestBody =
+        CompanyFactsPatchRequestBodySchema.parse(json);
+      expect(companyFactsPatchRequestBody.hasCanteen).toBeUndefined();
+    });
+
+    it('averageJourneyToWorkForStaffInKm', () => {
+      delete json.averageJourneyToWorkForStaffInKm;
+      const companyFactsPatchRequestBody =
+        CompanyFactsPatchRequestBodySchema.parse(json);
+      expect(
+        companyFactsPatchRequestBody.averageJourneyToWorkForStaffInKm
+      ).toBeUndefined();
+    });
+
+    it('isB2B', () => {
+      delete json.isB2B;
+      const companyFactsPatchRequestBody =
+        CompanyFactsPatchRequestBodySchema.parse(json);
+      expect(companyFactsPatchRequestBody.isB2B).toBeUndefined();
+    });
   });
 });

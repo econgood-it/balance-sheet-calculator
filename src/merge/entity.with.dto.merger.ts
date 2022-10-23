@@ -1,9 +1,3 @@
-import { BalanceSheetDTOUpdate } from '../dto/update/balance.sheet.update.dto';
-import { CompanyFactsDTOUpdate } from '../dto/update/company.facts.update.dto';
-import { SupplyFractionDTOUpdate } from '../dto/update/supply.fraction.update.dto';
-
-import { EmployeesFractionDTOUpdate } from '../dto/update/employees.fraction.update.dto';
-import { IndustrySectorDtoUpdate } from '../dto/update/industry.sector.update.dto';
 import { RatingsWithDtoMerger } from './ratingsWithDtoMerger';
 import { mergeVal } from './merge.utils';
 import { BalanceSheet } from '../models/balance.sheet';
@@ -14,6 +8,13 @@ import {
   IndustrySector,
   SupplyFraction,
 } from '../models/company.facts';
+import { BalanceSheetPatchRequestBody } from '../dto/balance.sheet.dto';
+import {
+  CompanyFactsPatchRequestBody,
+  EmployeesFractionRequestBody,
+  IndustrySectorRequestBody,
+  SupplyFractionRequestBody,
+} from '../dto/company.facts.dto';
 
 export class EntityWithDtoMerger {
   private ratingWithDtoMerger: RatingsWithDtoMerger =
@@ -21,20 +22,20 @@ export class EntityWithDtoMerger {
 
   public mergeBalanceSheet(
     balanceSheet: BalanceSheet,
-    balanceSheetDTOUpdate: BalanceSheetDTOUpdate
+    balanceSheetPatchRequestBody: BalanceSheetPatchRequestBody
   ): BalanceSheet {
     return {
       ...balanceSheet,
-      ...(balanceSheetDTOUpdate.companyFacts && {
+      ...(balanceSheetPatchRequestBody.companyFacts && {
         companyFacts: this.mergeCompanyFacts(
           balanceSheet.companyFacts,
-          balanceSheetDTOUpdate.companyFacts
+          balanceSheetPatchRequestBody.companyFacts
         ),
       }),
-      ...(balanceSheetDTOUpdate.ratings.length > 0 && {
+      ...(balanceSheetPatchRequestBody.ratings.length > 0 && {
         ratings: this.ratingWithDtoMerger.mergeRatings(
           balanceSheet.ratings,
-          balanceSheetDTOUpdate.ratings
+          balanceSheetPatchRequestBody.ratings
         ),
       }),
     };
@@ -42,68 +43,78 @@ export class EntityWithDtoMerger {
 
   public mergeCompanyFacts(
     companyFacts: CompanyFacts,
-    companyFactsDTOUpdate: CompanyFactsDTOUpdate
+    companyFactsPatchRequestBody: CompanyFactsPatchRequestBody
   ): CompanyFacts {
     const merged = {
       totalPurchaseFromSuppliers: mergeVal(
         companyFacts.totalPurchaseFromSuppliers,
-        companyFactsDTOUpdate.totalPurchaseFromSuppliers
+        companyFactsPatchRequestBody.totalPurchaseFromSuppliers
       ),
       totalStaffCosts: mergeVal(
         companyFacts.totalStaffCosts,
-        companyFactsDTOUpdate.totalStaffCosts
+        companyFactsPatchRequestBody.totalStaffCosts
       ),
-      profit: mergeVal(companyFacts.profit, companyFactsDTOUpdate.profit),
+      profit: mergeVal(
+        companyFacts.profit,
+        companyFactsPatchRequestBody.profit
+      ),
       financialCosts: mergeVal(
         companyFacts.financialCosts,
-        companyFactsDTOUpdate.financialCosts
+        companyFactsPatchRequestBody.financialCosts
       ),
       incomeFromFinancialInvestments: mergeVal(
         companyFacts.incomeFromFinancialInvestments,
-        companyFactsDTOUpdate.incomeFromFinancialInvestments
+        companyFactsPatchRequestBody.incomeFromFinancialInvestments
       ),
       additionsToFixedAssets: mergeVal(
         companyFacts.additionsToFixedAssets,
-        companyFactsDTOUpdate.additionsToFixedAssets
+        companyFactsPatchRequestBody.additionsToFixedAssets
       ),
-      turnover: mergeVal(companyFacts.turnover, companyFactsDTOUpdate.turnover),
+      turnover: mergeVal(
+        companyFacts.turnover,
+        companyFactsPatchRequestBody.turnover
+      ),
       totalAssets: mergeVal(
         companyFacts.totalAssets,
-        companyFactsDTOUpdate.totalAssets
+        companyFactsPatchRequestBody.totalAssets
       ),
       financialAssetsAndCashBalance: mergeVal(
         companyFacts.financialAssetsAndCashBalance,
-        companyFactsDTOUpdate.financialAssetsAndCashBalance
+        companyFactsPatchRequestBody.financialAssetsAndCashBalance
       ),
       numberOfEmployees: mergeVal(
         companyFacts.numberOfEmployees,
-        companyFactsDTOUpdate.numberOfEmployees
+        companyFactsPatchRequestBody.numberOfEmployees
       ),
       hasCanteen: mergeVal(
         companyFacts.hasCanteen,
-        companyFactsDTOUpdate.hasCanteen
+        companyFactsPatchRequestBody.hasCanteen
       ),
       averageJourneyToWorkForStaffInKm: mergeVal(
         companyFacts.averageJourneyToWorkForStaffInKm,
-        companyFactsDTOUpdate.averageJourneyToWorkForStaffInKm
+        companyFactsPatchRequestBody.averageJourneyToWorkForStaffInKm
       ),
-      isB2B: mergeVal(companyFacts.isB2B, companyFactsDTOUpdate.isB2B),
-      industrySectors: companyFactsDTOUpdate.industrySectors
-        ? this.replaceIndustrySectors(companyFactsDTOUpdate.industrySectors)
+      isB2B: mergeVal(companyFacts.isB2B, companyFactsPatchRequestBody.isB2B),
+      industrySectors: companyFactsPatchRequestBody.industrySectors
+        ? this.replaceIndustrySectors(
+            companyFactsPatchRequestBody.industrySectors
+          )
         : companyFacts.industrySectors,
-      supplyFractions: companyFactsDTOUpdate.supplyFractions
-        ? this.replaceSupplyFractions(companyFactsDTOUpdate.supplyFractions)
+      supplyFractions: companyFactsPatchRequestBody.supplyFractions
+        ? this.replaceSupplyFractions(
+            companyFactsPatchRequestBody.supplyFractions
+          )
         : companyFacts.supplyFractions,
-      employeesFractions: companyFactsDTOUpdate.employeesFractions
+      employeesFractions: companyFactsPatchRequestBody.employeesFractions
         ? this.replaceEmployeesFractions(
-            companyFactsDTOUpdate.employeesFractions
+            companyFactsPatchRequestBody.employeesFractions
           )
         : companyFacts.employeesFractions,
       mainOriginOfOtherSuppliers: {
         costs: 0,
         countryCode: mergeVal(
           companyFacts.mainOriginOfOtherSuppliers.countryCode,
-          companyFactsDTOUpdate.mainOriginOfOtherSuppliers
+          companyFactsPatchRequestBody.mainOriginOfOtherSuppliers
         ),
       },
     };
@@ -120,9 +131,9 @@ export class EntityWithDtoMerger {
   }
 
   public replaceIndustrySectors(
-    industrySectorDTOUpdates: IndustrySectorDtoUpdate[]
+    industrySectorRequestBodies: IndustrySectorRequestBody[]
   ): IndustrySector[] {
-    return industrySectorDTOUpdates.map((i) => ({
+    return industrySectorRequestBodies.map((i) => ({
       industryCode: i.industryCode,
       amountOfTotalTurnover: i.amountOfTotalTurnover,
       description: i.description,
@@ -130,9 +141,9 @@ export class EntityWithDtoMerger {
   }
 
   public replaceSupplyFractions(
-    supplyFractionDTOUpdates: SupplyFractionDTOUpdate[]
+    supplyFractionRequestBodies: SupplyFractionRequestBody[]
   ): SupplyFraction[] {
-    return supplyFractionDTOUpdates.map((sf) => ({
+    return supplyFractionRequestBodies.map((sf) => ({
       industryCode: sf.industryCode,
       countryCode: sf.countryCode,
       costs: sf.costs,
@@ -140,9 +151,9 @@ export class EntityWithDtoMerger {
   }
 
   public replaceEmployeesFractions(
-    employeesFractionDTOUpdates: EmployeesFractionDTOUpdate[]
+    employeesFractionRequestBodies: EmployeesFractionRequestBody[]
   ): EmployeesFraction[] {
-    return employeesFractionDTOUpdates.map((ef) => ({
+    return employeesFractionRequestBodies.map((ef) => ({
       countryCode: ef.countryCode,
       percentage: ef.percentage,
     }));
