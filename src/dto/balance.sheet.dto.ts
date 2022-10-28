@@ -7,7 +7,7 @@ import { RatingRequestBody, RatingRequestBodySchema } from './rating.dto';
 import { Rating } from '../models/rating';
 import { BalanceSheetType, BalanceSheetVersion } from '../models/balance.sheet';
 import { RatingsFactory } from '../factories/ratings.factory';
-import { RatingsWithDtoMerger } from '../merge/ratingsWithDtoMerger';
+import { mergeRatingsWithRequestBodies } from '../merge/ratingsWithDtoMerger';
 
 async function mergeWithDefaultRatings(
   ratingRequestBodies: RatingRequestBody[],
@@ -18,8 +18,7 @@ async function mergeWithDefaultRatings(
     type,
     version
   );
-  const ratingWithDtoMerger = new RatingsWithDtoMerger();
-  return ratingWithDtoMerger.mergeRatings(defaultRatings, ratingRequestBodies);
+  return mergeRatingsWithRequestBodies(defaultRatings, ratingRequestBodies);
 }
 
 export const BalanceSheetCreateRequestBodySchema = z

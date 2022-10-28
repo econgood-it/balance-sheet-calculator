@@ -1,20 +1,10 @@
-import { RatingsWithDtoMerger } from './ratingsWithDtoMerger';
-import { mergeVal } from './merge.utils';
+import { mergeRatingsWithRequestBodies } from './ratingsWithDtoMerger';
 import { BalanceSheet } from '../models/balance.sheet';
-import {
-  CompanyFacts,
-  computeCostsOfMainOriginOfOtherSuppliers,
-  EmployeesFraction,
-  IndustrySector,
-  SupplyFraction,
-} from '../models/company.facts';
+import { CompanyFacts } from '../models/company.facts';
 import { BalanceSheetPatchRequestBody } from '../dto/balance.sheet.dto';
 import {
   CompanyFactsCreateRequestBodySchema,
   CompanyFactsPatchRequestBody,
-  EmployeesFractionRequestBody,
-  IndustrySectorRequestBody,
-  SupplyFractionRequestBody,
 } from '../dto/company.facts.dto';
 import * as _ from 'lodash';
 
@@ -25,9 +15,6 @@ function overrideArray(objValue: any, srcValue: any): any {
 }
 
 export class EntityWithDtoMerger {
-  private ratingWithDtoMerger: RatingsWithDtoMerger =
-    new RatingsWithDtoMerger();
-
   public mergeBalanceSheet(
     balanceSheet: BalanceSheet,
     balanceSheetPatchRequestBody: BalanceSheetPatchRequestBody
@@ -41,7 +28,7 @@ export class EntityWithDtoMerger {
         ),
       }),
       ...(balanceSheetPatchRequestBody.ratings.length > 0 && {
-        ratings: this.ratingWithDtoMerger.mergeRatings(
+        ratings: mergeRatingsWithRequestBodies(
           balanceSheet.ratings,
           balanceSheetPatchRequestBody.ratings
         ),
@@ -64,34 +51,5 @@ export class EntityWithDtoMerger {
         overrideArray
       )
     );
-  }
-
-  public replaceIndustrySectors(
-    industrySectorRequestBodies: IndustrySectorRequestBody[]
-  ): IndustrySector[] {
-    return industrySectorRequestBodies.map((i) => ({
-      industryCode: i.industryCode,
-      amountOfTotalTurnover: i.amountOfTotalTurnover,
-      description: i.description,
-    }));
-  }
-
-  public replaceSupplyFractions(
-    supplyFractionRequestBodies: SupplyFractionRequestBody[]
-  ): SupplyFraction[] {
-    return supplyFractionRequestBodies.map((sf) => ({
-      industryCode: sf.industryCode,
-      countryCode: sf.countryCode,
-      costs: sf.costs,
-    }));
-  }
-
-  public replaceEmployeesFractions(
-    employeesFractionRequestBodies: EmployeesFractionRequestBody[]
-  ): EmployeesFraction[] {
-    return employeesFractionRequestBodies.map((ef) => ({
-      countryCode: ef.countryCode,
-      percentage: ef.percentage,
-    }));
   }
 }
