@@ -31,6 +31,50 @@ describe('EntityWithDTOMerger', () => {
       expect(merged.profit).toBeCloseTo(300);
     });
 
+    it('using supplyFractions from db', async () => {
+      const supplyFractions = [
+        { countryCode: 'BEL', costs: 20, industryCode: 'A' },
+        { countryCode: 'DEU', costs: 13, industryCode: 'B' },
+      ];
+      companyFacts.supplyFractions = supplyFractions;
+      const merged = await merge({});
+      expect(merged.supplyFractions).toMatchObject(supplyFractions);
+    });
+
+    it('using supplyFractions from dto', async () => {
+      const supplyFractions = [
+        { countryCode: 'BEL', costs: 20, industryCode: 'A' },
+        { countryCode: 'DEU', costs: 13, industryCode: 'B' },
+      ];
+      companyFacts.supplyFractions = [
+        { countryCode: 'ALG', costs: 5, industryCode: 'Ce' },
+      ];
+      const merged = await merge({ supplyFractions: supplyFractions });
+      expect(merged.supplyFractions).toMatchObject(supplyFractions);
+    });
+
+    it('using employeesFractions from db', async () => {
+      const employeesFractions = [
+        { countryCode: 'BEL', percentage: 0.2 },
+        { countryCode: 'DEU', percentage: 0.3 },
+      ];
+      companyFacts.employeesFractions = employeesFractions;
+      const merged = await merge({});
+      expect(merged.employeesFractions).toMatchObject(employeesFractions);
+    });
+
+    it('using employeesFractions from dto', async () => {
+      const employeesFractions = [
+        { countryCode: 'BEL', percentage: 0.2 },
+        { countryCode: 'DEU', percentage: 1 },
+      ];
+      companyFacts.employeesFractions = [
+        { countryCode: 'ALG', percentage: 0.4 },
+      ];
+      const merged = await merge({ employeesFractions: employeesFractions });
+      expect(merged.employeesFractions).toMatchObject(employeesFractions);
+    });
+
     it('using totalPurchaseFromSuppliers from db', async () => {
       companyFacts.totalPurchaseFromSuppliers = 200;
       const merged = merge({});

@@ -10,11 +10,19 @@ import {
 } from '../models/company.facts';
 import { BalanceSheetPatchRequestBody } from '../dto/balance.sheet.dto';
 import {
+  CompanyFactsCreateRequestBodySchema,
   CompanyFactsPatchRequestBody,
   EmployeesFractionRequestBody,
   IndustrySectorRequestBody,
   SupplyFractionRequestBody,
 } from '../dto/company.facts.dto';
+import * as _ from 'lodash';
+
+function overrideArray(objValue: any, srcValue: any): any {
+  if (_.isArray(srcValue)) {
+    return srcValue;
+  }
+}
 
 export class EntityWithDtoMerger {
   private ratingWithDtoMerger: RatingsWithDtoMerger =
@@ -45,89 +53,17 @@ export class EntityWithDtoMerger {
     companyFacts: CompanyFacts,
     companyFactsPatchRequestBody: CompanyFactsPatchRequestBody
   ): CompanyFacts {
-    const merged = {
-      totalPurchaseFromSuppliers: mergeVal(
-        companyFacts.totalPurchaseFromSuppliers,
-        companyFactsPatchRequestBody.totalPurchaseFromSuppliers
-      ),
-      totalStaffCosts: mergeVal(
-        companyFacts.totalStaffCosts,
-        companyFactsPatchRequestBody.totalStaffCosts
-      ),
-      profit: mergeVal(
-        companyFacts.profit,
-        companyFactsPatchRequestBody.profit
-      ),
-      financialCosts: mergeVal(
-        companyFacts.financialCosts,
-        companyFactsPatchRequestBody.financialCosts
-      ),
-      incomeFromFinancialInvestments: mergeVal(
-        companyFacts.incomeFromFinancialInvestments,
-        companyFactsPatchRequestBody.incomeFromFinancialInvestments
-      ),
-      additionsToFixedAssets: mergeVal(
-        companyFacts.additionsToFixedAssets,
-        companyFactsPatchRequestBody.additionsToFixedAssets
-      ),
-      turnover: mergeVal(
-        companyFacts.turnover,
-        companyFactsPatchRequestBody.turnover
-      ),
-      totalAssets: mergeVal(
-        companyFacts.totalAssets,
-        companyFactsPatchRequestBody.totalAssets
-      ),
-      financialAssetsAndCashBalance: mergeVal(
-        companyFacts.financialAssetsAndCashBalance,
-        companyFactsPatchRequestBody.financialAssetsAndCashBalance
-      ),
-      numberOfEmployees: mergeVal(
-        companyFacts.numberOfEmployees,
-        companyFactsPatchRequestBody.numberOfEmployees
-      ),
-      hasCanteen: mergeVal(
-        companyFacts.hasCanteen,
-        companyFactsPatchRequestBody.hasCanteen
-      ),
-      averageJourneyToWorkForStaffInKm: mergeVal(
-        companyFacts.averageJourneyToWorkForStaffInKm,
-        companyFactsPatchRequestBody.averageJourneyToWorkForStaffInKm
-      ),
-      isB2B: mergeVal(companyFacts.isB2B, companyFactsPatchRequestBody.isB2B),
-      industrySectors: companyFactsPatchRequestBody.industrySectors
-        ? this.replaceIndustrySectors(
-            companyFactsPatchRequestBody.industrySectors
-          )
-        : companyFacts.industrySectors,
-      supplyFractions: companyFactsPatchRequestBody.supplyFractions
-        ? this.replaceSupplyFractions(
-            companyFactsPatchRequestBody.supplyFractions
-          )
-        : companyFacts.supplyFractions,
-      employeesFractions: companyFactsPatchRequestBody.employeesFractions
-        ? this.replaceEmployeesFractions(
-            companyFactsPatchRequestBody.employeesFractions
-          )
-        : companyFacts.employeesFractions,
-      mainOriginOfOtherSuppliers: {
-        costs: 0,
-        countryCode: mergeVal(
-          companyFacts.mainOriginOfOtherSuppliers.countryCode,
-          companyFactsPatchRequestBody.mainOriginOfOtherSuppliers
-        ),
-      },
-    };
-    return {
-      ...merged,
-      mainOriginOfOtherSuppliers: {
-        ...merged.mainOriginOfOtherSuppliers,
-        costs: computeCostsOfMainOriginOfOtherSuppliers(
-          merged.totalPurchaseFromSuppliers,
-          merged.supplyFractions
-        ),
-      },
-    };
+    return CompanyFactsCreateRequestBodySchema.parse(
+      _.mergeWith(
+        {
+          ...companyFacts,
+          mainOriginOfOtherSuppliers:
+            companyFacts.mainOriginOfOtherSuppliers.countryCode,
+        },
+        companyFactsPatchRequestBody,
+        overrideArray
+      )
+    );
   }
 
   public replaceIndustrySectors(
