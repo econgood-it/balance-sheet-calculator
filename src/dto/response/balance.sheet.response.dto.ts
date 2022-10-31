@@ -1,5 +1,4 @@
 import { CompanyFactsDTOResponse } from './company.facts.response.dto';
-import { Translations } from '../../entities/Translations';
 import { RatingResponseDTO } from './rating.response.dto';
 import {
   BalanceSheet,
@@ -19,20 +18,16 @@ export class BalanceSheetDTOResponse {
 
   public static fromBalanceSheet(
     balanceSheetId: number | undefined,
-    balanceSheet: BalanceSheet,
-    language: keyof Translations
+    balanceSheet: BalanceSheet
   ) {
     return new BalanceSheetDTOResponse(
       balanceSheetId,
       balanceSheet.type,
       balanceSheet.version,
       sortRatings(balanceSheet.ratings).map((r) =>
-        RatingResponseDTO.fromRating(r, language)
+        RatingResponseDTO.fromRating(r)
       ),
-      CompanyFactsDTOResponse.fromCompanyFacts(
-        balanceSheet.companyFacts,
-        language
-      )
+      CompanyFactsDTOResponse.fromCompanyFacts(balanceSheet.companyFacts)
     );
   }
 }

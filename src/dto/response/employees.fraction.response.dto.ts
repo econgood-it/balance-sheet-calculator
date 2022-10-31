@@ -1,4 +1,3 @@
-import { Translations } from '../../entities/Translations';
 import { EmployeesFraction } from '../../models/company.facts';
 
 export class EmployeesFractionDTOResponse {
@@ -8,8 +7,7 @@ export class EmployeesFractionDTOResponse {
   ) {}
 
   public static fromEmployeesFraction(
-    employeesFraction: EmployeesFraction,
-    language: keyof Translations
+    employeesFraction: EmployeesFraction
   ): EmployeesFractionDTOResponse {
     return new EmployeesFractionDTOResponse(
       employeesFraction.countryCode,

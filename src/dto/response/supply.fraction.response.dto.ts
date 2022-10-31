@@ -1,4 +1,3 @@
-import { Translations } from '../../entities/Translations';
 import { SupplyFraction } from '../../models/company.facts';
 
 export class SupplyFractionDTOResponse {
@@ -9,8 +8,7 @@ export class SupplyFractionDTOResponse {
   ) {}
 
   public static fromSupplyFraction(
-    supplyFraction: SupplyFraction,
-    language: keyof Translations
+    supplyFraction: SupplyFraction
   ): SupplyFractionDTOResponse {
     return new SupplyFractionDTOResponse(
       supplyFraction.countryCode,

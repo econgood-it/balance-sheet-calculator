@@ -10,10 +10,8 @@ jest.mock('../../../src/i18n', () => ({
 describe('CompanyFactsResponseDTO', () => {
   it('is created from company facts', async () => {
     const companyFacts = companyFactsFactory.nonEmpty();
-    const companyFactsDTOResponse = CompanyFactsDTOResponse.fromCompanyFacts(
-      companyFacts,
-      'de'
-    );
+    const companyFactsDTOResponse =
+      CompanyFactsDTOResponse.fromCompanyFacts(companyFacts);
     expect(companyFactsDTOResponse).toBeDefined();
     expect(companyFactsDTOResponse).toMatchObject({
       totalPurchaseFromSuppliers:

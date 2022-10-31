@@ -1,6 +1,5 @@
 import { none, Option, some } from '../../calculations/option';
 import { roundWithPrecision } from '../../math';
-import { staticTranslate, Translations } from '../../entities/Translations';
 import { Rating } from '../../models/rating';
 
 export class MatrixRatingDto {
@@ -24,10 +23,7 @@ export class MatrixRatingDto {
     return weight === 0;
   }
 
-  public static fromRating(
-    rating: Rating,
-    language: keyof Translations
-  ): MatrixRatingDto {
+  public static fromRating(rating: Rating): MatrixRatingDto {
     const percentage = MatrixRatingDto.percentage(
       rating.points,
       rating.maxPoints
@@ -37,7 +33,7 @@ export class MatrixRatingDto {
       : undefined;
     return new MatrixRatingDto(
       rating.shortName,
-      staticTranslate(language, rating.name),
+      rating.name,
       roundWithPrecision(rating.points),
       roundWithPrecision(rating.maxPoints),
       percentageReached,

@@ -7,7 +7,6 @@ export class IndustryResponseDTO {
   ) {}
 
   public static fromIndustry(industry: Industry): IndustryResponseDTO {
-    // TODO: Add translation of industryName
     return new IndustryResponseDTO(industry.industryCode, industry.name);
   }
 }

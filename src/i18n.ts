@@ -4,9 +4,8 @@ import path from 'path';
 
 i18next.use(Backend).init({
   backend: {
-    loadPath: path.join(__dirname, '/files/locales/{{ns}}/{{lng}}.json'),
+    loadPath: path.join(__dirname, '/files/locales/{{lng}}.json'),
   },
-  ns: ['v5'],
   preload: ['de', 'en'],
 });
 

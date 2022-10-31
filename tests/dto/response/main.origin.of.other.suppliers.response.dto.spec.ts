@@ -9,8 +9,7 @@ describe('MainOriginOfOtherSuppliersesponseDTO', () => {
     };
     const mainOriginOfOtherSuppliersDTOResponse =
       MainOriginOfOtherSuppliersDTOResponse.fromMainOriginOfOtherSuppliers(
-        mainOriginOfOtherSuppliers,
-        'de'
+        mainOriginOfOtherSuppliers
       );
     expect(mainOriginOfOtherSuppliersDTOResponse).toBeDefined();
     expect(mainOriginOfOtherSuppliersDTOResponse).toMatchObject({

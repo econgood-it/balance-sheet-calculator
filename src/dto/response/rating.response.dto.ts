@@ -1,4 +1,3 @@
-import { staticTranslate, Translations } from '../../entities/Translations';
 import { isTopic, Rating } from '../../models/rating';
 
 export class RatingResponseDTO {
@@ -13,13 +12,10 @@ export class RatingResponseDTO {
     public readonly type: string
   ) {}
 
-  public static fromRating(
-    rating: Rating,
-    language: keyof Translations
-  ): RatingResponseDTO {
+  public static fromRating(rating: Rating): RatingResponseDTO {
     return new RatingResponseDTO(
       rating.shortName,
-      staticTranslate(language, rating.name),
+      rating.name,
       rating.weight,
       rating.estimations,
       rating.points,

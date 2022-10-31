@@ -13,7 +13,7 @@ describe('BalanceSheetResponseDTO', () => {
     const ratings: Rating[] = [
       {
         shortName: 'A1',
-        name: 'v5:compact.A1',
+        name: 'Human dignity in the supply chain',
         estimations: 2,
         points: 3,
         maxPoints: 51,
@@ -23,7 +23,7 @@ describe('BalanceSheetResponseDTO', () => {
       },
       {
         shortName: 'A1.1',
-        name: 'v5:compact.A1.1',
+        name: 'Working conditions and social impact in the supply chain',
         estimations: 2,
         points: 3,
         maxPoints: 51,
@@ -33,7 +33,7 @@ describe('BalanceSheetResponseDTO', () => {
       },
       {
         shortName: 'A2',
-        name: 'v5:compact.A2',
+        name: 'Solidarity and social justice in the supply chain',
         estimations: 2,
         points: 3,
         maxPoints: 51,
@@ -48,14 +48,13 @@ describe('BalanceSheetResponseDTO', () => {
     };
     const balanceSheetDTO = BalanceSheetDTOResponse.fromBalanceSheet(
       undefined,
-      balanceSheet,
-      'en'
+      balanceSheet
     );
     expect(balanceSheetDTO).toBeDefined();
     expect(balanceSheetDTO.ratings).toMatchObject([
       {
         shortName: 'A1',
-        name: 'Menschenwürde in der Zulieferkette',
+        name: 'Human dignity in the supply chain',
       },
       { shortName: 'A1.1' },
       {

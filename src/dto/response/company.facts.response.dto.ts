@@ -1,9 +1,9 @@
 import { SupplyFractionDTOResponse } from './supply.fraction.response.dto';
 import { EmployeesFractionDTOResponse } from './employees.fraction.response.dto';
 import { IndustrySectorDtoResponse } from './industry.sector.response.dto';
-import { Translations } from '../../entities/Translations';
 import { MainOriginOfOtherSuppliersDTOResponse } from './main.origin.of.other.suppliers.response.dto';
 import { CompanyFacts } from '../../models/company.facts';
+
 export class CompanyFactsDTOResponse {
   public constructor(
     public readonly totalPurchaseFromSuppliers: number,
@@ -26,8 +26,7 @@ export class CompanyFactsDTOResponse {
   ) {}
 
   public static fromCompanyFacts(
-    companyFacts: CompanyFacts,
-    language: keyof Translations
+    companyFacts: CompanyFacts
   ): CompanyFactsDTOResponse {
     return new CompanyFactsDTOResponse(
       companyFacts.totalPurchaseFromSuppliers,
@@ -44,17 +43,16 @@ export class CompanyFactsDTOResponse {
       companyFacts.averageJourneyToWorkForStaffInKm,
       companyFacts.isB2B,
       companyFacts.supplyFractions.map((sf) =>
-        SupplyFractionDTOResponse.fromSupplyFraction(sf, language)
+        SupplyFractionDTOResponse.fromSupplyFraction(sf)
       ),
       companyFacts.employeesFractions.map((ef) =>
-        EmployeesFractionDTOResponse.fromEmployeesFraction(ef, language)
+        EmployeesFractionDTOResponse.fromEmployeesFraction(ef)
       ),
       companyFacts.industrySectors.map((is) =>
         IndustrySectorDtoResponse.fromIndustrySector(is)
       ),
       MainOriginOfOtherSuppliersDTOResponse.fromMainOriginOfOtherSuppliers(
-        companyFacts.mainOriginOfOtherSuppliers,
-        language
+        companyFacts.mainOriginOfOtherSuppliers
       )
     );
   }

@@ -8,7 +8,6 @@ import { Connection, EntityManager } from 'typeorm';
 import { EntityWithDtoMerger } from '../merge/entity.with.dto.merger';
 import { MatrixDTO } from '../dto/matrix/matrix.dto';
 import { BalanceSheetDTOResponse } from '../dto/response/balance.sheet.response.dto';
-import { parseLanguageParameter } from '../entities/Translations';
 import { handle } from '../exceptions/error.handler';
 import { User } from '../entities/user';
 import { AccessCheckerService } from './access.checker.service';
@@ -16,10 +15,7 @@ import { CalculationService } from './calculation.service';
 import UnauthorizedException from '../exceptions/unauthorized.exception';
 import { NoAccessError } from '../exceptions/no.access.error';
 import { Workbook } from 'exceljs';
-import {
-  BalanceSheetReader,
-  readLanguage,
-} from '../reader/balanceSheetReader/balance.sheet.reader';
+import { BalanceSheetReader } from '../reader/balanceSheetReader/balance.sheet.reader';
 import { diffBetweenBalanceSheets } from '../dto/response/balance.sheet.diff.response';
 import { CalcResultsReader } from '../reader/balanceSheetReader/calc.results.reader';
 import { diff } from 'deep-diff';
@@ -30,6 +26,10 @@ import {
   BalanceSheetCreateRequestBodySchema,
   BalanceSheetPatchRequestBodySchema,
 } from '../dto/balance.sheet.dto';
+import {
+  parseLanguageParameter,
+  translateBalanceSheet,
+} from '../language/translations';
 
 export class BalanceSheetService {
   constructor(private connection: Connection) {}
@@ -63,8 +63,7 @@ export class BalanceSheetService {
         res.json(
           BalanceSheetDTOResponse.fromBalanceSheet(
             balanceSheetId,
-            updatedBalanceSheet,
-            language
+            translateBalanceSheet(updatedBalanceSheet, language)
           )
         );
       })
@@ -133,13 +132,13 @@ export class BalanceSheetService {
     res: Response,
     next: NextFunction
   ) {
+    const language = parseLanguageParameter(req.query.lng);
     const saveFlag = this.parseSaveFlag(req.query.save);
     this.connection.manager
       .transaction(async (entityManager) => {
         if (req.file) {
           const foundUser = await this.findUserOrFail(req, entityManager);
           const wb = await new Workbook().xlsx.load(req.file.buffer);
-          const language = readLanguage(wb);
           const balanceSheetReader = new BalanceSheetReader();
 
           const balanceSheet = balanceSheetReader.readFromWorkbook(wb);
@@ -160,8 +159,7 @@ export class BalanceSheetService {
           res.json(
             BalanceSheetDTOResponse.fromBalanceSheet(
               balanceSheetId,
-              updatedBalanceSheet,
-              language
+              translateBalanceSheet(updatedBalanceSheet, language)
             )
           );
         } else {
@@ -213,8 +211,7 @@ export class BalanceSheetService {
         res.json(
           BalanceSheetDTOResponse.fromBalanceSheet(
             balanceSheetId,
-            updatedBalanceSheet,
-            language
+            translateBalanceSheet(updatedBalanceSheet, language)
           )
         );
       })
@@ -272,8 +269,7 @@ export class BalanceSheetService {
         res.json(
           BalanceSheetDTOResponse.fromBalanceSheet(
             balanceSheetEntity.id,
-            balanceSheetEntity.toBalanceSheet(),
-            language
+            translateBalanceSheet(balanceSheetEntity.toBalanceSheet(), language)
           )
         );
       })
@@ -305,8 +301,7 @@ export class BalanceSheetService {
 
         res.json(
           MatrixDTO.fromBalanceSheet(
-            balanceSheetEntity.toBalanceSheet(),
-            language
+            translateBalanceSheet(balanceSheetEntity.toBalanceSheet(), language)
           )
         );
       })

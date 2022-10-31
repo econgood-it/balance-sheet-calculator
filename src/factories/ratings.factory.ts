@@ -1,23 +1,23 @@
 import * as path from 'path';
-import { RatingsReader } from '../reader/ratings.reader';
 import { BalanceSheetType, BalanceSheetVersion } from '../models/balance.sheet';
-import { Rating } from '../models/rating';
+import { Rating, RatingSchema } from '../models/rating';
+import fs from 'fs';
 
 export class RatingsFactory {
   public static async createDefaultRatings(
     balanceSheetType: BalanceSheetType,
     balanceSheetVersion: BalanceSheetVersion
   ): Promise<Rating[]> {
-    const ratingsReader = new RatingsReader();
-    const fileName = [
-      balanceSheetType.toLowerCase(),
-      balanceSheetVersion.toLowerCase(),
-      'rating.csv',
-    ].join('_');
-    const pathToCsv = path.join(
-      path.resolve(__dirname, '../files/factories'),
-      fileName
+    const pathToRatings = path.join(
+      path.resolve(__dirname, '../files/factories/'),
+      'ratings_5.08.json'
     );
-    return await ratingsReader.readRatingsFromCsv(pathToCsv);
+    return RatingsFactory.fromFile(pathToRatings);
+  }
+
+  private static fromFile(path: string): Rating[] {
+    const fileText = fs.readFileSync(path);
+    const jsonParsed = JSON.parse(fileText.toString());
+    return RatingSchema.array().parse(jsonParsed);
   }
 }

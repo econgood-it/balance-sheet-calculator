@@ -1,4 +1,3 @@
-import { Translations } from '../../entities/Translations';
 import { MainOriginOfOtherSuppliers } from '../../models/company.facts';
 
 export class MainOriginOfOtherSuppliersDTOResponse {
@@ -8,8 +7,7 @@ export class MainOriginOfOtherSuppliersDTOResponse {
   ) {}
 
   public static fromMainOriginOfOtherSuppliers(
-    mainOriginOfOtherSuppliers: MainOriginOfOtherSuppliers,
-    language: keyof Translations
+    mainOriginOfOtherSuppliers: MainOriginOfOtherSuppliers
   ): MainOriginOfOtherSuppliersDTOResponse {
     return new MainOriginOfOtherSuppliersDTOResponse(
       mainOriginOfOtherSuppliers.countryCode,
