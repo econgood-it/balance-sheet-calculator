@@ -2,12 +2,6 @@ import { BalanceSheetDTOResponse } from '../../../src/dto/response/balance.sheet
 import { balanceSheetFactory } from '../../testData/balance.sheet';
 import { Rating } from '../../../src/models/rating';
 
-jest.mock('../../../src/i18n', () => ({
-  init: () => {},
-  use: () => {},
-  t: (k: string) => 'Menschenwürde in der Zulieferkette',
-}));
-
 describe('BalanceSheetResponseDTO', () => {
   it('is created from balance sheet', async () => {
     const ratings: Rating[] = [

@@ -1,7 +1,5 @@
 import { balanceSheetFactory } from '../testData/balance.sheet';
 import { translateBalanceSheet } from '../../src/language/translations';
-import fs from 'fs';
-import path from 'path';
 
 jest.mock('../../src/i18n', () => ({
   init: () => {},
