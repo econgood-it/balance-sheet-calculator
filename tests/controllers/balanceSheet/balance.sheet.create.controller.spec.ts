@@ -8,13 +8,13 @@ import { companyFactsJsonFactory } from '../../testData/balance.sheet';
 import { TokenProvider } from '../../TokenProvider';
 import { BalanceSheetEntity } from '../../../src/entities/balance.sheet.entity';
 import { CORRELATION_HEADER_NAME } from '../../../src/middleware/correlation.id.middleware';
-import { RatingResponseDTO } from '../../../src/dto/response/rating.response.dto';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
 } from '../../../src/models/balance.sheet';
 import { Rating } from '../../../src/models/rating';
 import { INDUSTRY_CODE_FOR_FINANCIAL_SERVICES } from '../../../src/models/company.facts';
+import { RatingResponseBody } from '../../../src/dto/rating.dto';
 
 describe('Balance Sheet Controller', () => {
   let connection: Connection;
@@ -30,10 +30,10 @@ describe('Balance Sheet Controller', () => {
   const assertTopicWeight = (
     shortName: string,
     expectedWeight: number,
-    ratings: RatingResponseDTO[]
+    ratings: RatingResponseBody[]
   ) => {
     const topic = ratings.find(
-      (t: RatingResponseDTO) => t.shortName === shortName
+      (t: RatingResponseBody) => t.shortName === shortName
     );
     expect(topic).toBeDefined();
     expect(topic && topic.weight).toBe(expectedWeight);
@@ -75,7 +75,7 @@ describe('Balance Sheet Controller', () => {
     expect(response.body.companyFacts).toMatchObject(companyFacts);
     expect(
       response.body.ratings
-        .filter((r: RatingResponseDTO) => r.shortName.length === 2)
+        .filter((r: RatingResponseBody) => r.shortName.length === 2)
         .reduce((sum: number, current: Rating) => sum + current.maxPoints, 0)
     ).toBeCloseTo(999.9999999999998);
     const foundBalanceSheet = await balaneSheetRepository.findOne({
@@ -98,7 +98,7 @@ describe('Balance Sheet Controller', () => {
     expect(response.body.companyFacts).toMatchObject(companyFacts);
     expect(
       response.body.ratings
-        .filter((r: RatingResponseDTO) => r.shortName.length === 2)
+        .filter((r: RatingResponseBody) => r.shortName.length === 2)
         .reduce((sum: number, current: Rating) => sum + current.maxPoints, 0)
     ).toBeCloseTo(999.9999999999998);
     // Save flag is false such that balance sheet should not be saved

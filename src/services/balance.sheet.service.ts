@@ -7,7 +7,6 @@ import {
 import { Connection, EntityManager } from 'typeorm';
 import { EntityWithDtoMerger } from '../merge/entity.with.dto.merger';
 import { MatrixDTO } from '../dto/matrix/matrix.dto';
-import { BalanceSheetDTOResponse } from '../dto/response/balance.sheet.response.dto';
 import { handle } from '../exceptions/error.handler';
 import { User } from '../entities/user';
 import { AccessCheckerService } from './access.checker.service';
@@ -25,6 +24,7 @@ import { BalanceSheet } from '../models/balance.sheet';
 import {
   BalanceSheetCreateRequestBodySchema,
   BalanceSheetPatchRequestBodySchema,
+  BalanceSheetResponseBodySchema,
 } from '../dto/balance.sheet.dto';
 import {
   parseLanguageParameter,
@@ -61,10 +61,10 @@ export class BalanceSheetService {
           : undefined;
 
         res.json(
-          BalanceSheetDTOResponse.fromBalanceSheet(
-            balanceSheetId,
-            translateBalanceSheet(updatedBalanceSheet, language)
-          )
+          BalanceSheetResponseBodySchema.parse({
+            id: balanceSheetId,
+            ...translateBalanceSheet(updatedBalanceSheet, language),
+          })
         );
       })
       .catch((error) => {
@@ -157,10 +157,10 @@ export class BalanceSheetService {
             : undefined;
 
           res.json(
-            BalanceSheetDTOResponse.fromBalanceSheet(
-              balanceSheetId,
-              translateBalanceSheet(updatedBalanceSheet, language)
-            )
+            BalanceSheetResponseBodySchema.parse({
+              id: balanceSheetId,
+              ...translateBalanceSheet(updatedBalanceSheet, language),
+            })
           );
         } else {
           res.json({ message: 'File empty' });
@@ -209,10 +209,10 @@ export class BalanceSheetService {
         );
 
         res.json(
-          BalanceSheetDTOResponse.fromBalanceSheet(
-            balanceSheetId,
-            translateBalanceSheet(updatedBalanceSheet, language)
-          )
+          BalanceSheetResponseBodySchema.parse({
+            id: balanceSheetId,
+            ...translateBalanceSheet(updatedBalanceSheet, language),
+          })
         );
       })
       .catch((error) => {
@@ -267,10 +267,13 @@ export class BalanceSheetService {
           entityManager
         );
         res.json(
-          BalanceSheetDTOResponse.fromBalanceSheet(
-            balanceSheetEntity.id,
-            translateBalanceSheet(balanceSheetEntity.toBalanceSheet(), language)
-          )
+          BalanceSheetResponseBodySchema.parse({
+            id: balanceSheetEntity.id,
+            ...translateBalanceSheet(
+              balanceSheetEntity.toBalanceSheet(),
+              language
+            ),
+          })
         );
       })
       .catch((error) => {

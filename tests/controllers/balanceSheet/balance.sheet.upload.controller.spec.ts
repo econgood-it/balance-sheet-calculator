@@ -7,9 +7,9 @@ import { ConfigurationReader } from '../../../src/configuration.reader';
 
 import { TokenProvider } from '../../TokenProvider';
 import { BalanceSheetEntity } from '../../../src/entities/balance.sheet.entity';
-import { RatingResponseDTO } from '../../../src/dto/response/rating.response.dto';
 import path from 'path';
 import { Rating } from '../../../src/models/rating';
+import { RatingResponseBody } from '../../../src/dto/rating.dto';
 
 describe('Balance Sheet Controller', () => {
   let connection: Connection;
@@ -52,7 +52,7 @@ describe('Balance Sheet Controller', () => {
     expect(response.status).toEqual(200);
     expect(
       response.body.ratings
-        .filter((r: RatingResponseDTO) => r.shortName.length === 2)
+        .filter((r: RatingResponseBody) => r.shortName.length === 2)
         .reduce((sum: number, current: Rating) => sum + current.maxPoints, 0)
     ).toBeCloseTo(999.9999999999998);
     const foundBalanceSheet = await balaneSheetRepository.findOne({

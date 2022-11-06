@@ -14,28 +14,16 @@ const SupplyFractionRequestBodySchema = z.object({
   costs: isNonNegativeCurrency,
 });
 
-export type SupplyFractionRequestBody = z.infer<
-  typeof SupplyFractionRequestBodySchema
->;
-
 const EmployeesFractionRequestBodySchema = z.object({
   countryCode: isCountryCode,
   percentage: isPercentage,
 });
-
-export type EmployeesFractionRequestBody = z.infer<
-  typeof EmployeesFractionRequestBodySchema
->;
 
 const IndustrySectorRequestBodySchema = z.object({
   industryCode: isIndustryCode,
   amountOfTotalTurnover: isPercentage,
   description: z.string().default(''),
 });
-
-export type IndustrySectorRequestBody = z.infer<
-  typeof IndustrySectorRequestBodySchema
->;
 
 const CompanyFactsRequestBodySchema = z.object({
   totalPurchaseFromSuppliers: isNonNegativeCurrency,
@@ -73,3 +61,26 @@ export const CompanyFactsPatchRequestBodySchema =
 export type CompanyFactsPatchRequestBody = z.infer<
   typeof CompanyFactsPatchRequestBodySchema
 >;
+
+export const CompanyFactsResponseBodySchema = z.object({
+  totalPurchaseFromSuppliers: isNonNegativeCurrency,
+  totalStaffCosts: isNonNegativeCurrency,
+  profit: isCurrency,
+  financialCosts: isNonNegativeCurrency,
+  incomeFromFinancialInvestments: isCurrency,
+  additionsToFixedAssets: isCurrency,
+  turnover: isNonNegativeCurrency,
+  totalAssets: isNonNegativeCurrency,
+  financialAssetsAndCashBalance: isNonNegativeCurrency,
+  numberOfEmployees: isNonNegativeCurrency,
+  hasCanteen: z.boolean(),
+  averageJourneyToWorkForStaffInKm: z.number(),
+  isB2B: z.boolean(),
+  supplyFractions: SupplyFractionRequestBodySchema.array(),
+  employeesFractions: EmployeesFractionRequestBodySchema.array(),
+  industrySectors: IndustrySectorRequestBodySchema.array(),
+  mainOriginOfOtherSuppliers: z.object({
+    countryCode: z.string(),
+    costs: z.number(),
+  }),
+});

@@ -2,8 +2,13 @@ import { z } from 'zod';
 import {
   CompanyFactsCreateRequestBodySchema,
   CompanyFactsPatchRequestBodySchema,
+  CompanyFactsResponseBodySchema,
 } from './company.facts.dto';
-import { RatingRequestBody, RatingRequestBodySchema } from './rating.dto';
+import {
+  RatingRequestBody,
+  RatingRequestBodySchema,
+  RatingResponseBodySchema,
+} from './rating.dto';
 import { Rating } from '../models/rating';
 import { BalanceSheetType, BalanceSheetVersion } from '../models/balance.sheet';
 import { RatingsFactory } from '../factories/ratings.factory';
@@ -41,3 +46,11 @@ export const BalanceSheetPatchRequestBodySchema = z.object({
 export type BalanceSheetPatchRequestBody = z.infer<
   typeof BalanceSheetPatchRequestBodySchema
 >;
+
+export const BalanceSheetResponseBodySchema = z.object({
+  id: z.number().optional(),
+  type: z.nativeEnum(BalanceSheetType),
+  version: z.nativeEnum(BalanceSheetVersion),
+  ratings: RatingResponseBodySchema.array(),
+  companyFacts: CompanyFactsResponseBodySchema,
+});

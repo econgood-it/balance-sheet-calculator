@@ -1,5 +1,5 @@
-import { RegionResponseDTO } from '../../../src/dto/response/region.response.dto';
-import { Region } from '../../../src/models/region';
+import { Region } from '../../src/models/region';
+import { RegionResponseBodySchema } from '../../src/dto/region.dto';
 
 describe('Region DTO', () => {
   it('should be created from region entity', () => {
@@ -10,7 +10,7 @@ describe('Region DTO', () => {
       ituc: 3,
     };
 
-    const regionDTO = RegionResponseDTO.fromRegion(region);
+    const regionDTO = RegionResponseBodySchema.parse(region);
     expect(regionDTO).toMatchObject({
       countryCode: 'DEU',
       countryName: 'Germany',
