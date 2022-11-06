@@ -1,8 +1,14 @@
 import { z } from 'zod';
+import { Industry } from '../models/industry';
 
-export const IndustryResponseBodySchema = z
-  .object({
-    industryCode: z.string(),
-    name: z.string(),
-  })
-  .transform((i) => ({ industryCode: i.industryCode, industryName: i.name }));
+export function industryToResponse(industry: Industry) {
+  return IndustryResponseBodySchema.parse({
+    ...industry,
+    industryName: industry.name,
+  });
+}
+
+export const IndustryResponseBodySchema = z.object({
+  industryCode: z.string(),
+  industryName: z.string(),
+});

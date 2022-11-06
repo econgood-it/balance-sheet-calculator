@@ -6,7 +6,7 @@ import {
   BalanceSheetVersion,
   BalanceSheetVersionSchema,
 } from '../models/balance.sheet';
-import { IndustryResponseBodySchema } from '../dto/industry.dto';
+import { industryToResponse } from '../dto/industry.dto';
 
 export class IndustryService {
   public async getIndustries(req: Request, res: Response, next: NextFunction) {
@@ -15,9 +15,7 @@ export class IndustryService {
         BalanceSheetVersion.v5_0_8
       ).parse(req.query?.version);
       const industries = await IndustryProvider.fromVersion(version);
-      res.json(
-        IndustryResponseBodySchema.array().parse([...industries.values()])
-      );
+      res.json([...industries.values()].map((i) => industryToResponse(i)));
     } catch (error) {
       handle(error as Error, next);
     }

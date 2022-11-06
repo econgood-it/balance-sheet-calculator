@@ -1,5 +1,8 @@
 import { Industry } from '../../src/models/industry';
-import { IndustryResponseBodySchema } from '../../src/dto/industry.dto';
+import {
+  IndustryResponseBodySchema,
+  industryToResponse,
+} from '../../src/dto/industry.dto';
 
 describe('Industry DTO', () => {
   it('should be created from industry entity', () => {
@@ -9,7 +12,7 @@ describe('Industry DTO', () => {
       ecologicalDesignOfProductsAndServices: 3,
       ecologicalSupplyChainRisk: 4,
     };
-    const industryDTO = IndustryResponseBodySchema.parse(industry);
+    const industryDTO = industryToResponse(industry);
     expect(industryDTO).toMatchObject({
       industryCode: 'A',
       industryName: 'Agriculture',

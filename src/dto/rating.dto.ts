@@ -15,19 +15,15 @@ export const RatingRequestBodySchema = z.object({
 
 export type RatingRequestBody = z.infer<typeof RatingRequestBodySchema>;
 
-export const RatingResponseBodySchema = z
-  .object({
-    shortName: z.string(),
-    name: z.string(),
-    weight: z.number(),
-    estimations: z.number().nullable(),
-    points: z.number(),
-    maxPoints: z.number(),
-    isPositive: z.boolean(),
-  })
-  .transform((r) => ({
-    ...r,
-    type: isTopicShortName(r.shortName) ? 'topic' : 'aspect',
-  }));
+export const RatingResponseBodySchema = z.object({
+  shortName: z.string(),
+  name: z.string(),
+  weight: z.number(),
+  estimations: z.number().nullable(),
+  points: z.number(),
+  maxPoints: z.number(),
+  isPositive: z.boolean(),
+  type: z.string(),
+});
 
 export type RatingResponseBody = z.infer<typeof RatingResponseBodySchema>;
