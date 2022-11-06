@@ -1,5 +1,6 @@
 import { diff } from 'deep-diff';
-import { BalanceSheet } from '../../models/balance.sheet';
+import { BalanceSheet } from '../models/balance.sheet';
+import { z } from 'zod';
 
 export const diffBetweenBalanceSheets = (
   balanceSheet: BalanceSheet,
@@ -15,3 +16,14 @@ export const diffBetweenBalanceSheets = (
       : d
   );
 };
+
+const DiffSchema = z.any();
+
+export const BalanceSheetExcelDiffResponseBody = z.object({
+  lhs: z.string(),
+  rhs: z.string(),
+  diffStakeHolderWeights: DiffSchema.optional(),
+  diffTopicWeights: DiffSchema.optional(),
+  diffCalc: DiffSchema.optional(),
+  diff: DiffSchema.optional(),
+});

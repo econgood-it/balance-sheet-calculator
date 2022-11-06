@@ -15,7 +15,10 @@ import UnauthorizedException from '../exceptions/unauthorized.exception';
 import { NoAccessError } from '../exceptions/no.access.error';
 import { Workbook } from 'exceljs';
 import { BalanceSheetReader } from '../reader/balanceSheetReader/balance.sheet.reader';
-import { diffBetweenBalanceSheets } from '../dto/response/balance.sheet.diff.response';
+import {
+  BalanceSheetExcelDiffResponseBody,
+  diffBetweenBalanceSheets,
+} from '../dto/balance.sheet.diff.dto';
 import { CalcResultsReader } from '../reader/balanceSheetReader/calc.results.reader';
 import { diff } from 'deep-diff';
 import { TopicWeightsReader } from '../reader/balanceSheetReader/topic.weights.reader';
@@ -95,27 +98,29 @@ export class BalanceSheetService {
           topicWeights,
         } = await CalculationService.calculate(balanceSheetUpload);
 
-        res.json({
-          lhs: 'upload',
-          rhs: 'api',
-          diffStakeHolderWeights:
-            stakeholderWeightsUpload &&
-            diff(
-              Object.fromEntries(stakeholderWeightsUpload),
-              Object.fromEntries(stakeholderWeights)
+        res.json(
+          BalanceSheetExcelDiffResponseBody.parse({
+            lhs: 'upload',
+            rhs: 'api',
+            diffStakeHolderWeights:
+              stakeholderWeightsUpload &&
+              diff(
+                Object.fromEntries(stakeholderWeightsUpload),
+                Object.fromEntries(stakeholderWeights)
+              ),
+            diffTopicWeights:
+              topicWeightsUpload &&
+              diff(
+                Object.fromEntries(topicWeightsUpload),
+                Object.fromEntries(topicWeights)
+              ),
+            diffCalc: calcResultsUpload && diff(calcResultsUpload, calcResults),
+            diff: diffBetweenBalanceSheets(
+              balanceSheetUpload,
+              updatedBalanceSheet
             ),
-          diffTopicWeights:
-            topicWeightsUpload &&
-            diff(
-              Object.fromEntries(topicWeightsUpload),
-              Object.fromEntries(topicWeights)
-            ),
-          diffCalc: calcResultsUpload && diff(calcResultsUpload, calcResults),
-          diff: diffBetweenBalanceSheets(
-            balanceSheetUpload,
-            updatedBalanceSheet
-          ),
-        });
+          })
+        );
       } else {
         res.json({ message: 'File empty' });
       }
