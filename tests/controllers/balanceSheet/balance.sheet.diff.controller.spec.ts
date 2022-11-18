@@ -48,12 +48,8 @@ describe('Balance Sheet Controller', () => {
     expect(response.body).toMatchObject({ lhs: 'upload', rhs: 'api' });
     expect(response.body.diffTopicWeights).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({
-          kind: 'E',
-          path: ['A3'],
-          lhs: 1,
-          rhs: 2,
-        }),
+        expect.objectContaining({ kind: 'E', lhs: 1, path: ['A4'], rhs: 1.5 }),
+        expect.objectContaining({ kind: 'E', lhs: 1, path: ['E4'], rhs: 0.5 }),
       ])
     );
   });

@@ -69,6 +69,11 @@ export class SupplierCalc {
     companyFacts: CompanyFacts,
     supplyRiskSum: number
   ): number {
+    // TODO: EXCEL Limitation
+    if (companyFacts.supplyFractions.length < 5) {
+      return SupplierCalc.DEFAULT_SUPPLY_CHAIN_WEIGHT;
+    }
+
     let result: number = 0;
     let sumOfSupplyRisk: number = 0;
     for (const supplyFraction of companyFacts.supplyFractions) {

@@ -1,8 +1,5 @@
 import { Industry } from '../../src/models/industry';
-import {
-  IndustryResponseBodySchema,
-  industryToResponse,
-} from '../../src/dto/industry.dto';
+import { industryToResponse } from '../../src/dto/industry.dto';
 
 describe('Industry DTO', () => {
   it('should be created from industry entity', () => {

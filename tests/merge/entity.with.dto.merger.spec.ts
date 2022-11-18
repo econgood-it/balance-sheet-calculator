@@ -49,7 +49,7 @@ describe('EntityWithDTOMerger', () => {
       companyFacts.supplyFractions = [
         { countryCode: 'ALG', costs: 5, industryCode: 'Ce' },
       ];
-      const merged = await merge({ supplyFractions: supplyFractions });
+      const merged = await merge({ supplyFractions });
       expect(merged.supplyFractions).toMatchObject(supplyFractions);
     });
 
@@ -71,7 +71,7 @@ describe('EntityWithDTOMerger', () => {
       companyFacts.employeesFractions = [
         { countryCode: 'ALG', percentage: 0.4 },
       ];
-      const merged = await merge({ employeesFractions: employeesFractions });
+      const merged = await merge({ employeesFractions });
       expect(merged.employeesFractions).toMatchObject(employeesFractions);
     });
 

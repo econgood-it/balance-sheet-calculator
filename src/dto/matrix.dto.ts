@@ -37,7 +37,7 @@ export function ratingToMatrixRating(rating: Rating): MatrixRatingBody {
     name: rating.name,
     points: roundWithPrecision(rating.points),
     maxPoints: roundWithPrecision(rating.maxPoints),
-    percentageReached: percentageReached,
+    percentageReached,
     notApplicable: notApplicable(rating.weight),
   });
 }

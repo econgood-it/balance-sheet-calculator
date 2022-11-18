@@ -1,6 +1,5 @@
 import { WEIGHT_VALUES } from './validation.constants';
 import { z } from 'zod';
-import { isTopic, isTopicShortName } from '../models/rating';
 
 export const RatingRequestBodySchema = z.object({
   shortName: z.string(),

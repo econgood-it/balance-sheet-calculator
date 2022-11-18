@@ -67,7 +67,7 @@ export function balanceSheetToResponse(
 ) {
   const transBalanceSheet = translateBalanceSheet(balanceSheet, language);
   return BalanceSheetResponseBodySchema.parse({
-    id: id,
+    id,
     ...transBalanceSheet,
     ratings: sortRatings(
       transBalanceSheet.ratings.map((r) => ({

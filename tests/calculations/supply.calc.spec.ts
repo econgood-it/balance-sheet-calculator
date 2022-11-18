@@ -114,4 +114,23 @@ describe('Supply Calculator', () => {
     ).itucAverage(companyFacts, supplyRiskSum);
     expect(itucAverage).toBeCloseTo(3.7583636819215593, 13);
   });
+
+  it('should return default value for supply chain weight if not all 5 suppliers are given', async () => {
+    const companyFacts = useNonDefaultMainOriginOfOtherSuppliers({
+      ...companyFactsFactory.empty(),
+      supplyFractions: [
+        { countryCode: 'ABW', industryCode: 'A', costs: 20 },
+        { countryCode: 'AFG', industryCode: 'B', costs: 30 },
+      ],
+    });
+    regionProvider = await RegionProvider.fromVersion(
+      BalanceSheetVersion.v5_0_8
+    );
+    const supplierCalc = new SupplierCalc(regionProvider, industryProvider);
+    const supplyChainWeight = new SupplierCalc(
+      regionProvider,
+      industryProvider
+    ).supplyChainWeight(companyFacts, supplierCalc.supplyRiskSum(companyFacts));
+    expect(supplyChainWeight).toBe(1);
+  });
 });
