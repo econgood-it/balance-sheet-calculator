@@ -29,9 +29,11 @@ export class Value {
     return this.number;
   }
 
-  public get countryCode(): string {
+  public get countryCode(): string | undefined {
     const countryCode = this.splitAndGetFirst(' ');
-    return countryCode.length <= 3 ? countryCode : DEFAULT_COUNTRY_CODE;
+    return countryCode.length > 0 && countryCode.length <= 3
+      ? countryCode
+      : undefined;
   }
 
   public get industryCode(): string {

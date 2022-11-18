@@ -25,6 +25,13 @@ describe('Value', () => {
     expect(value.parseAsCompanySize()).toBe(CompanySize.large);
   });
 
+  it('should be parsed as country code', () => {
+    let value = new Value('AFG Afghanistan');
+    expect(value.countryCode).toBe('AFG');
+    value = new Value('');
+    expect(value.countryCode).toBeUndefined();
+  });
+
   it('should be parsed as optional number', async () => {
     let value = new Value('0.93');
     expect(value.parseAsOptionalNumber().get() as number).toBe(0.93);
