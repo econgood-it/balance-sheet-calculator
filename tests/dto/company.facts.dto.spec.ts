@@ -3,6 +3,7 @@ import {
   CompanyFactsPatchRequestBodySchema,
 } from '../../src/dto/company.facts.dto';
 import { DEFAULT_COUNTRY_CODE } from '../../src/models/region';
+import { companyFactsJsonFactory } from '../testData/balance.sheet';
 
 describe('CompanyFactsCreateRequestBodySchema', () => {
   it('parse json and returns a CompanyFacts entity', () => {
@@ -63,7 +64,7 @@ describe('CompanyFactsCreateRequestBodySchema', () => {
       totalPurchaseFromSuppliers: 500,
       supplyFractions,
       mainOriginOfOtherSuppliers: {
-        countryCode: DEFAULT_COUNTRY_CODE,
+        countryCode: undefined,
         costs: 200,
       },
     });
@@ -76,7 +77,7 @@ describe('CompanyFactsCreateRequestBodySchema', () => {
     });
     expect(result).toMatchObject({
       mainOriginOfOtherSuppliers: {
-        countryCode: DEFAULT_COUNTRY_CODE,
+        countryCode: undefined,
         costs: 500,
       },
     });
@@ -101,6 +102,34 @@ describe('CompanyFactsCreateRequestBodySchema', () => {
       additionsToFixedAssets: -70,
     });
     expect(result.success).toBeTruthy();
+  });
+
+  it('parse json where no country code for main origin of other suppliers is provided', () => {
+    const companyFactsJson = {
+      ...companyFactsJsonFactory.empty(),
+      totalPurchaseFromSuppliers: 9,
+      mainOriginOfOtherSuppliers: undefined,
+    };
+    const result =
+      CompanyFactsCreateRequestBodySchema.safeParse(companyFactsJson);
+
+    expect(result.success).toBeTruthy();
+    expect(result.success && result.data.mainOriginOfOtherSuppliers.costs).toBe(
+      9
+    );
+  });
+
+  it('parse json where some of the supplier country codes are missing', () => {
+    const companyFacts = {
+      ...companyFactsJsonFactory.empty(),
+      supplyFractions: [
+        { countryCode: 'ARE', costs: 5, industryCode: 'A' },
+        { costs: 7, industryCode: 'Be' },
+      ],
+    };
+    expect(
+      CompanyFactsCreateRequestBodySchema.safeParse(companyFacts).success
+    ).toBeTruthy();
   });
 });
 

@@ -22,11 +22,11 @@ const pharmaceuticCode = 'Ce';
 // ];
 
 export const balanceSheetFactory = {
-  emptyV508: async (): Promise<BalanceSheet> => ({
+  emptyV508: (): BalanceSheet => ({
     type: BalanceSheetType.Full,
     version: BalanceSheetVersion.v5_0_8,
     companyFacts: companyFactsFactory.empty(),
-    ratings: await RatingsFactory.createDefaultRatings(
+    ratings: RatingsFactory.createDefaultRatings(
       BalanceSheetType.Full,
       BalanceSheetVersion.v5_0_8
     ),

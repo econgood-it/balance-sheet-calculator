@@ -62,9 +62,10 @@ describe('Balance Sheet Controller', () => {
       .send(balanceSheetJson);
   };
 
-  it.only('get balance sheet by id where company facts fields are empty', async () => {
+  it('get balance sheet by id where company facts fields are empty', async () => {
     const testApp = supertest(app);
     const postResponse = await createBalanceSheet(token);
+    expect(postResponse.status).toEqual(200);
     const response = await testApp
       .get(`${endpointPath}/${postResponse.body.id}`)
       .set(authHeaderKey, token)

@@ -16,7 +16,11 @@ export interface SupplyCalcResults {
 
 export class SupplierCalc {
   private static readonly DEFAULT_SUPPLY_CHAIN_WEIGHT = 1;
+  private static readonly DEFAULT_ITUC = 2.99;
   private static readonly DEFAULT_ITUC_AVERAGE = 0;
+  // TODO: EXCEL Limitation Check what the meaning of this strange default value is
+  // In excel this is equal to the cell $'11.Region'.C243
+  private static readonly DEFAULT_PPP_INDEX = 1.00304566871495;
   constructor(
     private readonly regionProvider: RegionProvider,
     private readonly industryProvider: IndustryProvider
@@ -47,15 +51,17 @@ export class SupplierCalc {
   public supplyRiskSum(companyFacts: CompanyFacts): number {
     let result = 0;
     for (const supplyFraction of companyFacts.supplyFractions) {
-      const region: Region = this.regionProvider.getOrFail(
-        supplyFraction.countryCode
-      );
-      result += supplyFraction.costs * region.pppIndex;
+      const pppIndex = supplyFraction.countryCode
+        ? this.regionProvider.getOrFail(supplyFraction.countryCode).pppIndex
+        : SupplierCalc.DEFAULT_PPP_INDEX;
+      result += supplyFraction.costs * pppIndex;
     }
-    const region: Region = this.regionProvider.getOrFail(
-      companyFacts.mainOriginOfOtherSuppliers.countryCode
-    );
-    result += companyFacts.mainOriginOfOtherSuppliers.costs * region.pppIndex;
+    const pppIndex = companyFacts.mainOriginOfOtherSuppliers.countryCode
+      ? this.regionProvider.getOrFail(
+          companyFacts.mainOriginOfOtherSuppliers.countryCode
+        ).pppIndex
+      : SupplierCalc.DEFAULT_PPP_INDEX;
+    result += companyFacts.mainOriginOfOtherSuppliers.costs * pppIndex;
 
     return result;
   }
@@ -95,14 +101,18 @@ export class SupplierCalc {
   ): number {
     let result: number = 0;
     for (const supplyFraction of companyFacts.supplyFractions) {
-      const region = this.regionProvider.getOrFail(supplyFraction.countryCode);
-      result += region.ituc * this.supplyRisk(supplyFraction, supplyRiskSum);
+      const ituc = supplyFraction.countryCode
+        ? this.regionProvider.getOrFail(supplyFraction.countryCode).ituc
+        : SupplierCalc.DEFAULT_ITUC;
+      result += ituc * this.supplyRisk(supplyFraction, supplyRiskSum);
     }
-    const region: Region = this.regionProvider.getOrFail(
-      companyFacts.mainOriginOfOtherSuppliers.countryCode
-    );
+    const ituc = companyFacts.mainOriginOfOtherSuppliers.countryCode
+      ? this.regionProvider.getOrFail(
+          companyFacts.mainOriginOfOtherSuppliers.countryCode
+        ).ituc
+      : SupplierCalc.DEFAULT_ITUC;
     result +=
-      region.ituc *
+      ituc *
       this.supplyRisk(companyFacts.mainOriginOfOtherSuppliers, supplyRiskSum);
     return result;
   }
@@ -116,10 +126,10 @@ export class SupplierCalc {
     supplyFraction: SupplyFraction | MainOriginOfOtherSuppliers,
     supplyRiskSum: number
   ): number {
-    const region: Region = this.regionProvider.getOrFail(
-      supplyFraction.countryCode
-    );
-    return (supplyFraction.costs * region.pppIndex) / supplyRiskSum;
+    const pppIndex = supplyFraction.countryCode
+      ? this.regionProvider.getOrFail(supplyFraction.countryCode).pppIndex
+      : SupplierCalc.DEFAULT_PPP_INDEX;
+    return (supplyFraction.costs * pppIndex) / supplyRiskSum;
   }
 
   /**

@@ -4,10 +4,10 @@ import { Rating, RatingSchema } from '../models/rating';
 import fs from 'fs';
 
 export class RatingsFactory {
-  public static async createDefaultRatings(
+  public static createDefaultRatings(
     balanceSheetType: BalanceSheetType,
     balanceSheetVersion: BalanceSheetVersion
-  ): Promise<Rating[]> {
+  ): Rating[] {
     const pathToRatings = path.join(
       path.resolve(__dirname, '../files/factories/'),
       'ratings_5.08.json'

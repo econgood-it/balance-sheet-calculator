@@ -1,6 +1,13 @@
-import { companyFactsFactory } from '../testData/balance.sheet';
+import {
+  companyFactsFactory,
+  companyFactsJsonFactory,
+} from '../testData/balance.sheet';
 import { DEFAULT_COUNTRY_CODE } from '../../src/models/region';
-import { allValuesAreZero, CompanyFacts } from '../../src/models/company.facts';
+import {
+  allValuesAreZero,
+  CompanyFacts,
+  CompanyFactsSchema,
+} from '../../src/models/company.facts';
 
 describe('Company Facts', () => {
   it('allValuesAreZero should return true', () => {
@@ -37,5 +44,25 @@ describe('Company Facts', () => {
     };
 
     expect(allValuesAreZero(companyFacts)).toBeFalsy();
+  });
+
+  it('parse object where no country code for main origin of other suppliers is provided', () => {
+    const companyFacts = {
+      ...companyFactsJsonFactory.empty(),
+      mainOriginOfOtherSuppliers: { costs: 9 },
+    };
+    expect(CompanyFactsSchema.safeParse(companyFacts).success).toBeTruthy();
+  });
+
+  it('parse object where some of the supplier country codes are missing', () => {
+    const companyFacts = {
+      ...companyFactsJsonFactory.empty(),
+      supplyFractions: [
+        { countryCode: 'ARE', costs: 5, industryCode: 'A' },
+        { costs: 7, industryCode: 'Be' },
+      ],
+      mainOriginOfOtherSuppliers: { countryCode: 'DEU', costs: 9 },
+    };
+    expect(CompanyFactsSchema.safeParse(companyFacts).success).toBeTruthy();
   });
 });

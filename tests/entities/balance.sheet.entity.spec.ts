@@ -29,7 +29,7 @@ describe('Balance Sheet', () => {
   it(' does not cascades users on insert', async () => {
     const balanceSheetEntity = createFromBalanceSheet(
       undefined,
-      await balanceSheetFactory.emptyV508(),
+      balanceSheetFactory.emptyV508(),
       [new User(undefined, 'test@example.com', 'test1234', Role.User)]
     );
     const savedResult = await balanceSheetEntityRepository.save(
@@ -64,7 +64,7 @@ describe('Balance Sheet', () => {
       .save(new User(undefined, 'u@example.com', 'test1234', Role.User));
     const balanceSheetEntity = createFromBalanceSheet(
       undefined,
-      await balanceSheetFactory.emptyV508(),
+      balanceSheetFactory.emptyV508(),
       [user]
     );
     const savedResult = await balanceSheetEntityRepository.save(
@@ -100,7 +100,7 @@ describe('Balance Sheet', () => {
       .save(new User(undefined, email, 'test1234', Role.User));
     const balanceSheetEntity = createFromBalanceSheet(
       undefined,
-      await balanceSheetFactory.emptyV508(),
+      balanceSheetFactory.emptyV508(),
       [user]
     );
 

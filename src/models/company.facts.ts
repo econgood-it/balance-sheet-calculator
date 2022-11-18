@@ -1,7 +1,7 @@
 import { z } from 'zod';
-
+export const isCountryCode = z.string().min(3).max(3);
 const SupplyFractionSchema = z.object({
-  countryCode: z.string(),
+  countryCode: isCountryCode.optional(),
   industryCode: z.string(),
   costs: z.number(),
 });
@@ -18,7 +18,7 @@ const IndustrySectorSchema = z.object({
 });
 export type IndustrySector = z.infer<typeof IndustrySectorSchema>;
 const MainOriginOfOtherSuppliersSchema = z.object({
-  countryCode: z.string(),
+  countryCode: isCountryCode.optional(),
   costs: z.number(),
 });
 export type MainOriginOfOtherSuppliers = z.infer<
@@ -58,7 +58,7 @@ export const computeCostsOfMainOriginOfOtherSuppliers = (
   );
 };
 export const computeCostsAndCreateMainOriginOfOtherSuppliers = (
-  countryCode: string,
+  countryCode: string | undefined,
   totalPurchaseFromSuppliers: number,
   supplyFractions: SupplyFraction[]
 ): MainOriginOfOtherSuppliers => {

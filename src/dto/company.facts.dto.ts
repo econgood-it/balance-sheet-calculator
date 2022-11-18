@@ -1,15 +1,16 @@
 import { z } from 'zod';
-import { DEFAULT_COUNTRY_CODE } from '../models/region';
-import { computeCostsAndCreateMainOriginOfOtherSuppliers } from '../models/company.facts';
+import {
+  computeCostsAndCreateMainOriginOfOtherSuppliers,
+  isCountryCode,
+} from '../models/company.facts';
 
-const isCountryCode = z.string().min(3).max(3);
 const isIndustryCode = z.string().min(1).max(4);
 const isCurrency = z.number().default(0);
 const isNonNegativeCurrency = z.number().nonnegative().default(0);
 const isPercentage = z.number().min(0).max(1);
 
 const SupplyFractionRequestBodySchema = z.object({
-  countryCode: isCountryCode,
+  countryCode: isCountryCode.optional(),
   industryCode: isIndustryCode,
   costs: isNonNegativeCurrency,
 });
@@ -42,7 +43,7 @@ const CompanyFactsRequestBodySchema = z.object({
   supplyFractions: SupplyFractionRequestBodySchema.array().default([]),
   employeesFractions: EmployeesFractionRequestBodySchema.array().default([]),
   industrySectors: IndustrySectorRequestBodySchema.array().default([]),
-  mainOriginOfOtherSuppliers: isCountryCode.default(DEFAULT_COUNTRY_CODE),
+  mainOriginOfOtherSuppliers: isCountryCode.optional(),
 });
 
 export const CompanyFactsCreateRequestBodySchema =
@@ -80,7 +81,7 @@ export const CompanyFactsResponseBodySchema = z.object({
   employeesFractions: EmployeesFractionRequestBodySchema.array(),
   industrySectors: IndustrySectorRequestBodySchema.array(),
   mainOriginOfOtherSuppliers: z.object({
-    countryCode: z.string(),
+    countryCode: isCountryCode.optional(),
     costs: z.number(),
   }),
 });

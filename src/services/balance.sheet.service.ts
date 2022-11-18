@@ -47,8 +47,9 @@ export class BalanceSheetService {
     this.connection.manager
       .transaction(async (entityManager) => {
         const foundUser = await this.findUserOrFail(req, entityManager);
-        const balanceSheet =
-          await BalanceSheetCreateRequestBodySchema.parseAsync(req.body);
+        const balanceSheet = BalanceSheetCreateRequestBodySchema.parse(
+          req.body
+        );
 
         const { updatedBalanceSheet } = await CalculationService.calculate(
           balanceSheet

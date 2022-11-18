@@ -5,8 +5,8 @@ import {
 } from '../../src/models/balance.sheet';
 
 describe('Ratings factory', () => {
-  it('should create a default rating for a full balance sheet', async () => {
-    const ratings = await RatingsFactory.createDefaultRatings(
+  it('should create a default rating for a full balance sheet', () => {
+    const ratings = RatingsFactory.createDefaultRatings(
       BalanceSheetType.Full,
       BalanceSheetVersion.v5_0_4
     );

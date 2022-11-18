@@ -1,12 +1,17 @@
-import { BalanceSheetCreateRequestBodySchema } from '../../src/dto/balance.sheet.dto';
+import {
+  BalanceSheetCreateRequestBodySchema,
+  BalanceSheetResponseBodySchema,
+  balanceSheetToResponse,
+} from '../../src/dto/balance.sheet.dto';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
 } from '../../src/models/balance.sheet';
 import { RatingsFactory } from '../../src/factories/ratings.factory';
+import { balanceSheetFactory } from '../testData/balance.sheet';
 
 describe('BalanceSheetCreateRequestBodySchema', () => {
-  it('parse json with a merged rating entity', async () => {
+  it('parse json with a merged rating entity', () => {
     const json = {
       type: BalanceSheetType.Full,
       version: BalanceSheetVersion.v5_0_4,
@@ -17,9 +22,9 @@ describe('BalanceSheetCreateRequestBodySchema', () => {
         { shortName: 'E2.1', estimations: 3 },
       ],
     };
-    const result = await BalanceSheetCreateRequestBodySchema.parseAsync(json);
+    const result = BalanceSheetCreateRequestBodySchema.parse(json);
 
-    const defaultRatings = await RatingsFactory.createDefaultRatings(
+    const defaultRatings = RatingsFactory.createDefaultRatings(
       json.type,
       json.version
     );
@@ -67,10 +72,54 @@ describe('BalanceSheetCreateRequestBodySchema', () => {
     };
     const result = await BalanceSheetCreateRequestBodySchema.parseAsync(json);
 
-    const expectedRatings = await RatingsFactory.createDefaultRatings(
+    const expectedRatings = RatingsFactory.createDefaultRatings(
       json.type,
       json.version
     );
     expect(result.ratings).toMatchObject(expectedRatings);
+  });
+});
+
+describe('balanceSheetToResponse', () => {
+  it('parse balanceSheet where country code of main origin of suppliers is not provided', () => {
+    const balanceSheet = {
+      ...balanceSheetFactory.emptyV508(),
+      companyFacts: {
+        ...balanceSheetFactory.emptyV508().companyFacts,
+        mainOriginOfOtherSuppliers: { costs: 9 },
+      },
+    };
+    const balanceSheetResponse = balanceSheetToResponse(
+      undefined,
+      balanceSheet,
+      'en'
+    );
+    expect(
+      balanceSheetResponse.companyFacts.mainOriginOfOtherSuppliers.countryCode
+    ).toBeUndefined();
+  });
+
+  it('parse balanceSheet where country code of some suppliers is missing', () => {
+    const balanceSheet = {
+      ...balanceSheetFactory.emptyV508(),
+      companyFacts: {
+        ...balanceSheetFactory.emptyV508().companyFacts,
+        supplyFractions: [
+          { countryCode: 'ARE', industryCode: 'A', costs: 9 },
+          { industryCode: 'Be', costs: 7 },
+        ],
+        mainOriginOfOtherSuppliers: { costs: 9, countryCode: 'DEU' },
+      },
+    };
+    const balanceSheetResponse = balanceSheetToResponse(
+      undefined,
+      balanceSheet,
+      'en'
+    );
+    expect(
+      balanceSheetResponse.companyFacts.supplyFractions.some(
+        (s) => s.countryCode === undefined
+      )
+    ).toBeTruthy();
   });
 });

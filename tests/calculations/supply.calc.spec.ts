@@ -13,6 +13,7 @@ import {
 } from '../../src/models/company.facts';
 
 describe('Supply Calculator', () => {
+  const defaultPPPIndex = 1.00304566871495;
   let companyFactsWithSupplyFractions: CompanyFacts;
   let regionProvider: RegionProvider;
   let industryProvider: IndustryProvider;
@@ -113,6 +114,84 @@ describe('Supply Calculator', () => {
       industryProvider
     ).itucAverage(companyFacts, supplyRiskSum);
     expect(itucAverage).toBeCloseTo(3.7583636819215593, 13);
+  });
+
+  it('should use default value for ituc if country code not provided in itucAverage calculation', async () => {
+    const supplyFractions = [
+      { countryCode: 'ABW', industryCode: 'A', costs: 20 },
+      { countryCode: 'AFG', industryCode: 'B', costs: 30 },
+    ];
+    const totalPurchaseFromSuppliers = 89;
+    // country code of main origin not provided
+    const companyFacts: CompanyFacts = {
+      ...companyFactsFactory.empty(),
+      supplyFractions: supplyFractions,
+      totalPurchaseFromSuppliers: totalPurchaseFromSuppliers,
+      mainOriginOfOtherSuppliers: {
+        costs: computeCostsOfMainOriginOfOtherSuppliers(
+          totalPurchaseFromSuppliers,
+          supplyFractions
+        ),
+      },
+    };
+    regionProvider = await RegionProvider.fromVersion(
+      BalanceSheetVersion.v5_0_8
+    );
+    const supplyRiskSum = new SupplierCalc(
+      regionProvider,
+      industryProvider
+    ).supplyRiskSum(companyFacts);
+    const itucAverage = new SupplierCalc(
+      regionProvider,
+      industryProvider
+    ).itucAverage(companyFacts, supplyRiskSum);
+    expect(itucAverage).toBeCloseTo(4.285944815273135, 13);
+  });
+
+  it('should use default ppp index if country code not provided in supplyRiskSum calculation', async () => {
+    const supplyFractions = [
+      { countryCode: 'ABW', industryCode: 'A', costs: 20 },
+      { countryCode: 'AFG', industryCode: 'B', costs: 30 },
+    ];
+    const totalPurchaseFromSuppliers = 89;
+    // country code of main origin not provided
+    const companyFacts: CompanyFacts = {
+      ...companyFactsFactory.empty(),
+      supplyFractions: supplyFractions,
+      totalPurchaseFromSuppliers: totalPurchaseFromSuppliers,
+      mainOriginOfOtherSuppliers: {
+        costs: computeCostsOfMainOriginOfOtherSuppliers(
+          totalPurchaseFromSuppliers,
+          supplyFractions
+        ),
+      },
+    };
+    regionProvider = await RegionProvider.fromVersion(
+      BalanceSheetVersion.v5_0_8
+    );
+    const supplyRiskSum = new SupplierCalc(
+      regionProvider,
+      industryProvider
+    ).supplyRiskSum(companyFacts);
+    expect(supplyRiskSum).toBeCloseTo(173.92816740603752, 13);
+  });
+
+  it('should use default ppp index if country code not provided in supplyRisk calculation', async () => {
+    const supplyFraction = { industryCode: 'A', costs: 20 };
+    // country code of main origin not provided
+    const regionProvider = await RegionProvider.fromVersion(
+      BalanceSheetVersion.v5_0_8
+    );
+    const supplyRiskSum = 9;
+    const supplyRisk = new SupplierCalc(
+      regionProvider,
+      industryProvider
+    ).supplyRisk(supplyFraction, supplyRiskSum);
+
+    expect(supplyRisk).toBeCloseTo(
+      (supplyFraction.costs * defaultPPPIndex) / supplyRiskSum,
+      13
+    );
   });
 
   it('should return default value for supply chain weight if not all 5 suppliers are given', async () => {

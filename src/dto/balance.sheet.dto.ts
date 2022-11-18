@@ -19,15 +19,12 @@ import { RatingsFactory } from '../factories/ratings.factory';
 import { mergeRatingsWithRequestBodies } from '../merge/ratingsWithDtoMerger';
 import { translateBalanceSheet, Translations } from '../language/translations';
 
-async function mergeWithDefaultRatings(
+function mergeWithDefaultRatings(
   ratingRequestBodies: RatingRequestBody[],
   type: BalanceSheetType,
   version: BalanceSheetVersion
-): Promise<Rating[]> {
-  const defaultRatings = await RatingsFactory.createDefaultRatings(
-    type,
-    version
-  );
+): Rating[] {
+  const defaultRatings = RatingsFactory.createDefaultRatings(type, version);
   return mergeRatingsWithRequestBodies(defaultRatings, ratingRequestBodies);
 }
 
@@ -38,9 +35,9 @@ export const BalanceSheetCreateRequestBodySchema = z
     companyFacts: CompanyFactsCreateRequestBodySchema.default({}),
     ratings: RatingRequestBodySchema.array().default([]),
   })
-  .transform(async (b) => ({
+  .transform((b) => ({
     ...b,
-    ratings: await mergeWithDefaultRatings(b.ratings, b.type, b.version),
+    ratings: mergeWithDefaultRatings(b.ratings, b.type, b.version),
   }));
 
 export const BalanceSheetPatchRequestBodySchema = z.object({

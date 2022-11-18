@@ -9,8 +9,8 @@ import { Rating } from '../../src/models/rating';
 describe('Matrix DTO', () => {
   let balanceSheet: BalanceSheet;
 
-  beforeEach(async () => {
-    balanceSheet = await balanceSheetFactory.emptyV508();
+  beforeEach(() => {
+    balanceSheet = balanceSheetFactory.emptyV508();
   });
 
   it('is created from rating', async () => {

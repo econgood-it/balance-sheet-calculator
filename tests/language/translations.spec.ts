@@ -12,7 +12,7 @@ jest.mock('../../src/i18n', () => ({
 
 describe('Translations', () => {
   it('should translate balance sheet', async function () {
-    const balanceSheet = await balanceSheetFactory.emptyV508();
+    const balanceSheet = balanceSheetFactory.emptyV508();
     const translatedBalanceSheet = translateBalanceSheet(balanceSheet, 'de');
     expect(
       translatedBalanceSheet.ratings.filter((r) => r.shortName === 'A1.1')[0]
