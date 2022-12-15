@@ -98,6 +98,22 @@ describe('balanceSheetToResponse', () => {
     ).toBeUndefined();
   });
 
+  it('parse balanceSheet where hasCanteen is undefined', () => {
+    const balanceSheet = {
+      ...balanceSheetFactory.emptyV508(),
+      companyFacts: {
+        ...balanceSheetFactory.emptyV508().companyFacts,
+        hasCanteen: undefined,
+      },
+    };
+    const balanceSheetResponse = balanceSheetToResponse(
+      undefined,
+      balanceSheet,
+      'en'
+    );
+    expect(balanceSheetResponse.companyFacts.hasCanteen).toBeUndefined();
+  });
+
   it('parse balanceSheet where country code of some suppliers is missing', () => {
     const balanceSheet = {
       ...balanceSheetFactory.emptyV508(),

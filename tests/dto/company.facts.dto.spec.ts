@@ -41,7 +41,6 @@ describe('CompanyFactsCreateRequestBodySchema', () => {
       totalAssets: 0,
       financialAssetsAndCashBalance: 0,
       numberOfEmployees: 0,
-      hasCanteen: false,
       averageJourneyToWorkForStaffInKm: 0,
       isB2B: false,
       supplyFractions: [],
@@ -129,6 +128,12 @@ describe('CompanyFactsCreateRequestBodySchema', () => {
     expect(
       CompanyFactsCreateRequestBodySchema.safeParse(companyFacts).success
     ).toBeTruthy();
+  });
+  it('parse json where hasCanteen is not provided', () => {
+    const result = CompanyFactsCreateRequestBodySchema.parse({
+      totalPurchaseFromSuppliers: 9,
+    });
+    expect(result.hasCanteen).toBeUndefined();
   });
 });
 

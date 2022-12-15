@@ -47,7 +47,7 @@ export class BalanceSheetReader {
       totalAssets: cr.read(sheet, 21, valueColumn).number,
       financialAssetsAndCashBalance: cr.read(sheet, 23, valueColumn).number,
       numberOfEmployees: cr.read(sheet, 26, valueColumn).number,
-      hasCanteen: cr.read(sheet, 26, valueColumn).boolean,
+      hasCanteen: cr.read(sheet, 26, valueColumn).parseAsOptionalBoolean(),
       averageJourneyToWorkForStaffInKm: cr.read(sheet, 33, valueColumn).number,
       isB2B: cr.read(sheet, 38, valueColumn).boolean,
       supplyFractions: filterUndef(

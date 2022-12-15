@@ -13,6 +13,17 @@ export class Value {
     return Number.parseFloat(this.value);
   }
 
+  public parseAsOptionalBoolean(): boolean | undefined {
+    switch (this.value) {
+      case 'yes':
+        return true;
+      case 'ja':
+        return true;
+      default:
+        return undefined;
+    }
+  }
+
   public get boolean(): boolean {
     switch (this.value) {
       case 'yes':

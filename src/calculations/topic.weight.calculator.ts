@@ -2,6 +2,7 @@ import { CalcResults } from './calculator';
 import { CompanySize } from './employees.calc';
 import Provider from '../providers/provider';
 import { allValuesAreZero, CompanyFacts } from '../models/company.facts';
+import { z } from 'zod';
 
 export class TopicWeightCalculator {
   public calcTopicWeights(
@@ -126,6 +127,7 @@ export class TopicWeightCalculator {
   public calculateTopicWeightOfC3(companyFacts: CompanyFacts): number {
     if (
       companyFacts.averageJourneyToWorkForStaffInKm < 10 &&
+      companyFacts.hasCanteen !== undefined &&
       !companyFacts.hasCanteen
     ) {
       return 0.5;

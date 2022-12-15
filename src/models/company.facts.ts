@@ -35,7 +35,7 @@ export const CompanyFactsSchema = z.object({
   totalAssets: z.number(),
   financialAssetsAndCashBalance: z.number(),
   numberOfEmployees: z.number(),
-  hasCanteen: z.boolean(),
+  hasCanteen: z.boolean().optional(),
   isB2B: z.boolean(),
   averageJourneyToWorkForStaffInKm: z.number(),
   mainOriginOfOtherSuppliers: MainOriginOfOtherSuppliersSchema,

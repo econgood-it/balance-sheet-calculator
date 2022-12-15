@@ -65,4 +65,15 @@ describe('Company Facts', () => {
     };
     expect(CompanyFactsSchema.safeParse(companyFacts).success).toBeTruthy();
   });
+
+  it('parse object where hasCanteen is undefined', () => {
+    const companyFacts = {
+      ...companyFactsJsonFactory.empty(),
+      hasCanteen: undefined,
+      mainOriginOfOtherSuppliers: { countryCode: 'DEU', costs: 9 },
+    };
+    const result = CompanyFactsSchema.safeParse(companyFacts);
+    expect(result.success).toBeTruthy();
+    expect(result.success && result.data.hasCanteen).toBeUndefined();
+  });
 });

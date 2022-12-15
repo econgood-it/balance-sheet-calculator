@@ -197,6 +197,11 @@ describe('Topic Weight Calculator', () => {
     let result = await calc(topicShortName, calcResults, companyFacts);
     expect(result).toBeCloseTo(0.5, numDigits);
 
+    companyFacts.hasCanteen = undefined;
+    companyFacts.averageJourneyToWorkForStaffInKm = 9;
+    result = await calc(topicShortName, calcResults, companyFacts);
+    expect(result).toBeCloseTo(1, numDigits);
+
     companyFacts.hasCanteen = true;
     companyFacts.averageJourneyToWorkForStaffInKm = 9;
     result = await calc(topicShortName, calcResults, companyFacts);
