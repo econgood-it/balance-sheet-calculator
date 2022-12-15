@@ -2,7 +2,6 @@ import {
   CompanyFactsCreateRequestBodySchema,
   CompanyFactsPatchRequestBodySchema,
 } from '../../src/dto/company.facts.dto';
-import { DEFAULT_COUNTRY_CODE } from '../../src/models/region';
 import { companyFactsJsonFactory } from '../testData/balance.sheet';
 
 describe('CompanyFactsCreateRequestBodySchema', () => {

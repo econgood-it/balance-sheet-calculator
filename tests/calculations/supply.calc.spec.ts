@@ -125,8 +125,8 @@ describe('Supply Calculator', () => {
     // country code of main origin not provided
     const companyFacts: CompanyFacts = {
       ...companyFactsFactory.empty(),
-      supplyFractions: supplyFractions,
-      totalPurchaseFromSuppliers: totalPurchaseFromSuppliers,
+      supplyFractions,
+      totalPurchaseFromSuppliers,
       mainOriginOfOtherSuppliers: {
         costs: computeCostsOfMainOriginOfOtherSuppliers(
           totalPurchaseFromSuppliers,
@@ -157,8 +157,8 @@ describe('Supply Calculator', () => {
     // country code of main origin not provided
     const companyFacts: CompanyFacts = {
       ...companyFactsFactory.empty(),
-      supplyFractions: supplyFractions,
-      totalPurchaseFromSuppliers: totalPurchaseFromSuppliers,
+      supplyFractions,
+      totalPurchaseFromSuppliers,
       mainOriginOfOtherSuppliers: {
         costs: computeCostsOfMainOriginOfOtherSuppliers(
           totalPurchaseFromSuppliers,

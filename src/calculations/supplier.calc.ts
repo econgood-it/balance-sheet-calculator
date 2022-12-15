@@ -1,6 +1,5 @@
 import { RegionProvider } from '../providers/region.provider';
 import { IndustryProvider } from '../providers/industry.provider';
-import { Region } from '../models/region';
 import { Industry } from '../models/industry';
 import {
   CompanyFacts,
