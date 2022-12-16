@@ -106,7 +106,7 @@ export function allValuesAreZero(companyFacts: CompanyFacts): boolean {
       (value) =>
         value === 0 &&
         [companyFacts.isB2B, companyFacts.hasCanteen].every(
-          (value) => value === false
+          (value) => value === false || value === undefined
         )
     )
   ) {

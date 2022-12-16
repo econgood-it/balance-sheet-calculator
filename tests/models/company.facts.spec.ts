@@ -13,6 +13,15 @@ describe('Company Facts', () => {
   it('allValuesAreZero should return true', () => {
     expect(allValuesAreZero(companyFactsFactory.empty())).toBeTruthy();
   });
+
+  it('allValuesAreZero should return true if hasCanteen is undefined', () => {
+    expect(
+      allValuesAreZero({
+        ...companyFactsFactory.empty(),
+        hasCanteen: undefined,
+      })
+    ).toBeTruthy();
+  });
   it('allValuesAreZero should return false', () => {
     const value = 3;
 
