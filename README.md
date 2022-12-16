@@ -13,6 +13,14 @@ sudo npm install -g n
 sudo n stable
 ```
 
+# Install docker and docker-compose
+```
+sudo snap install docker
+sudo apt  install docker-compose
+sudo groupadd docker
+sudo usermod -aG docker $USER
+```
+
 # Description
 
 At the moment a [ECG balance sheet](https://www.ecogood.org/en/our-work/common-good-balance-sheet/) consists of two files. One is the [common good report](https://www.ecogood.org/media/filer_public/93/5e/935e2c4e-8d87-44b3-afce-70818212bcc3/full-report-template.docx)
@@ -27,7 +35,17 @@ For type safety it is written in [typescript](https://www.typescriptlang.org/).
 
 # Local Development
 
+## Run database
+Our application uses a postgresql database to store the data. To run the database locally, you can use
+the docker-compose.yml file. If docker-compose is not installed yet see [the installation guide](#Install docker and docker-compose).
+
+```shell script
+docker-compose -f docker-compose.yml up
+```
+
 ## Run application
+
+If no database is running follow the steps of [Run Database](#Run database).
 
 First you have to install all dependicies via:
 
@@ -54,6 +72,7 @@ application on a different port just replace the _4000_ by the your port.
     "ADMIN_PASSWORD": "adminpwd",
     "DOCS_USER": "docsuser",
     "DOCS_PASSWORD": "docspwd",
+    "JWT_SECRET": "6,AfDvPl<#{qPYu?-~",
     "PORT": 4000
   }
 }
