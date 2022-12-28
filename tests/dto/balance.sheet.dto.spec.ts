@@ -137,4 +137,28 @@ describe('balanceSheetToResponse', () => {
       )
     ).toBeTruthy();
   });
+
+  it('parse balanceSheet where country code of some employees is missing', () => {
+    const balanceSheet = {
+      ...balanceSheetFactory.emptyV508(),
+      companyFacts: {
+        ...balanceSheetFactory.emptyV508().companyFacts,
+        employeesFractions: [
+          { countryCode: 'ARE', percentage: 0.3 },
+          { percentage: 0.5 },
+        ],
+        mainOriginOfOtherSuppliers: { costs: 9, countryCode: 'DEU' },
+      },
+    };
+    const balanceSheetResponse = balanceSheetToResponse(
+      undefined,
+      balanceSheet,
+      'en'
+    );
+    expect(
+      balanceSheetResponse.companyFacts.employeesFractions.some(
+        (s) => s.countryCode === undefined
+      )
+    ).toBeTruthy();
+  });
 });

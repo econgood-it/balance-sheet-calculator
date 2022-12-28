@@ -3,6 +3,7 @@ import {
   CompanyFactsPatchRequestBodySchema,
 } from '../../src/dto/company.facts.dto';
 import { companyFactsJsonFactory } from '../testData/balance.sheet';
+import { EmployeesFraction } from '../../src/models/company.facts';
 
 describe('CompanyFactsCreateRequestBodySchema', () => {
   it('parse json and returns a CompanyFacts entity', () => {
@@ -223,6 +224,16 @@ describe('CompanyFactsPatchRequestBodySchema', () => {
       const companyFactsPatchRequestBody =
         CompanyFactsPatchRequestBodySchema.parse(json);
       expect(companyFactsPatchRequestBody.isB2B).toBeUndefined();
+    });
+  });
+
+  it('parse with employees fractions with missing country code', () => {
+    const employeesFractions = [{ percentage: 0.8 }];
+    const result = CompanyFactsCreateRequestBodySchema.parse({
+      employeesFractions,
+    });
+    expect(result).toMatchObject({
+      employeesFractions,
     });
   });
 });

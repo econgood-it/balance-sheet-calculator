@@ -38,6 +38,15 @@ describe('Employees Calculator', () => {
       expect(employeesCalcResults.itucAverage).toBeCloseTo(9);
     });
 
+    it('when employeesFractions contains item without country code', async () => {
+      const companyFacts: CompanyFacts = {
+        ...companyFactsFactory.empty(),
+        employeesFractions: [{ percentage: 3 }],
+      };
+      const employeesCalcResults = await calc(companyFacts);
+      expect(employeesCalcResults.itucAverage).toBeCloseTo(0);
+    });
+
     it('when employeesFractions array has size > 1', async () => {
       const companyFacts: CompanyFacts = {
         ...companyFactsFactory.empty(),
@@ -268,6 +277,24 @@ describe('Employees Calculator', () => {
       const employeesCalcResults = await calc(companyFacts);
       expect(employeesCalcResults.normedEmployeesRisk).toBeCloseTo(
         16_188.335653275537,
+        10
+      );
+    });
+    it('when employeesFractions contains item without country code', async () => {
+      const companyFacts: CompanyFacts = {
+        ...companyFactsFactory.empty(),
+        totalStaffCosts: 8_999,
+        employeesFractions: [
+          {
+            countryCode: 'ALB',
+            percentage: 0.8,
+          },
+          { percentage: 0.1 },
+        ],
+      };
+      const employeesCalcResults = await calc(companyFacts);
+      expect(employeesCalcResults.normedEmployeesRisk).toBeCloseTo(
+        20_746.732616115143,
         10
       );
     });

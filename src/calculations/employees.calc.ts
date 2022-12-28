@@ -1,6 +1,7 @@
 import { RegionProvider } from '../providers/region.provider';
 import { Region } from '../models/region';
 import { CompanyFacts } from '../models/company.facts';
+import { SupplierCalc } from './supplier.calc';
 
 export enum CompanySize {
   micro = 'micro',
@@ -16,7 +17,9 @@ export interface EmployeesCalcResults {
 }
 
 export class EmployeesCalc {
-  private static readonly PPP_INDEX_FOR_NORMALIZATION = 1.00304566871495;
+  private static readonly DEFAULT_PPP_INDEX = 1.00304566871495;
+  private static readonly DEFAULT_ITUC_AVERAGE = 0;
+
   constructor(private readonly regionProvider: RegionProvider) {}
 
   public calculate(companyFacts: CompanyFacts): EmployeesCalcResults {
@@ -38,13 +41,11 @@ export class EmployeesCalc {
   private employeesRisks(companyFacts: CompanyFacts): number {
     let result: number = 0;
     for (const employeesFraction of companyFacts.employeesFractions) {
-      const region: Region = this.regionProvider.getOrFail(
-        employeesFraction.countryCode
-      );
+      const pppIndex = employeesFraction.countryCode
+        ? this.regionProvider.getOrFail(employeesFraction.countryCode).pppIndex
+        : EmployeesCalc.DEFAULT_PPP_INDEX;
       result +=
-        companyFacts.totalStaffCosts *
-        employeesFraction.percentage *
-        region.pppIndex;
+        companyFacts.totalStaffCosts * employeesFraction.percentage * pppIndex;
     }
     return result;
   }
@@ -63,7 +64,8 @@ export class EmployeesCalc {
 
     return (
       (1 - sumEmployeesPercentage) *
-      EmployeesCalc.PPP_INDEX_FOR_NORMALIZATION *
+      //0.978035862587365 *
+      EmployeesCalc.DEFAULT_PPP_INDEX *
       companyFacts.totalStaffCosts
     );
   }
@@ -78,9 +80,10 @@ export class EmployeesCalc {
   private calculateItucAverage(companyFacts: CompanyFacts): number {
     let result = 0;
     for (const employeesFraction of companyFacts.employeesFractions) {
-      result +=
-        employeesFraction.percentage *
-        this.regionProvider.getOrFail(employeesFraction.countryCode).ituc;
+      result += employeesFraction.countryCode
+        ? employeesFraction.percentage *
+          this.regionProvider.getOrFail(employeesFraction.countryCode).ituc
+        : EmployeesCalc.DEFAULT_ITUC_AVERAGE;
     }
     return result;
   }

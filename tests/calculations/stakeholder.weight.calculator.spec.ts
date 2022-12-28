@@ -32,7 +32,7 @@ describe('Stakeholder Weight Calculator', () => {
       await stakeholderWeightCalculator.calculateSupplierAndEmployeesRiskRatio(
         precalculations
       );
-    expect(result).toBeCloseTo(17.8789386768471, 13);
+    expect(result).toBeCloseTo(17.906127839775003, 13);
   });
 
   it('should calculate employees risk', async () => {
@@ -44,7 +44,7 @@ describe('Stakeholder Weight Calculator', () => {
     const result = await stakeholderWeightCalculator.calculateEmployeesRisk(
       precalculations
     );
-    expect(result).toBeCloseTo(497.599891781823, 12);
+    expect(result).toBeCloseTo(497.44416815211025, 12);
   });
 
   it('should calculate financial risk', async () => {
@@ -56,7 +56,7 @@ describe('Stakeholder Weight Calculator', () => {
     const result = await stakeholderWeightCalculator.calculateFinancialRisk(
       precalculations
     );
-    expect(result).toBeCloseTo(66.6422308644823, 13);
+    expect(result).toBeCloseTo(66.74357616833971, 13);
   });
 
   it('should map to value between 60 and 300', () => {

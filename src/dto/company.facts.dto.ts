@@ -16,7 +16,7 @@ const SupplyFractionRequestBodySchema = z.object({
 });
 
 const EmployeesFractionRequestBodySchema = z.object({
-  countryCode: isCountryCode,
+  countryCode: isCountryCode.optional(),
   percentage: isPercentage,
 });
 

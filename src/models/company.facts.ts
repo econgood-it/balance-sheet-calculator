@@ -7,7 +7,7 @@ const SupplyFractionSchema = z.object({
 });
 export type SupplyFraction = z.infer<typeof SupplyFractionSchema>;
 const EmployeesFractionSchema = z.object({
-  countryCode: z.string(),
+  countryCode: isCountryCode.optional(),
   percentage: z.number(),
 });
 export type EmployeesFraction = z.infer<typeof EmployeesFractionSchema>;
