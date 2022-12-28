@@ -16,6 +16,7 @@ export interface EmployeesCalcResults {
 }
 
 export class EmployeesCalc {
+  private static readonly PPP_INDEX_FOR_NORMALIZATION = 1.00304566871495;
   constructor(private readonly regionProvider: RegionProvider) {}
 
   public calculate(companyFacts: CompanyFacts): EmployeesCalcResults {
@@ -29,6 +30,11 @@ export class EmployeesCalc {
     };
   }
 
+  /***
+   * In excel this is equal to the cells $'11.Region'.F10 - F12
+   * @param companyFacts
+   * @private
+   */
   private employeesRisks(companyFacts: CompanyFacts): number {
     let result: number = 0;
     for (const employeesFraction of companyFacts.employeesFractions) {
@@ -43,15 +49,21 @@ export class EmployeesCalc {
     return result;
   }
 
+  /***
+   * In excel this is equal to the cells $'11.Region'.F13
+   * @param companyFacts
+   * @private
+   */
   private employeesRisksNormalizer(companyFacts: CompanyFacts): number {
     const sumEmployeesPercentage: number =
       companyFacts.employeesFractions.reduce(
         (sum: number, ef) => sum + ef.percentage,
         0
       );
+
     return (
       (1 - sumEmployeesPercentage) *
-      0.978035862587365 *
+      EmployeesCalc.PPP_INDEX_FOR_NORMALIZATION *
       companyFacts.totalStaffCosts
     );
   }

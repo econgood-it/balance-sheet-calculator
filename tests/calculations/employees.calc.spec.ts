@@ -240,4 +240,36 @@ describe('Employees Calculator', () => {
       });
     });
   });
+
+  describe('should calculate the normedEmployeesRisk ', () => {
+    let regionProvider: RegionProvider;
+
+    const calc = async (
+      companyFacts: CompanyFacts
+    ): Promise<EmployeesCalcResults> => {
+      regionProvider = await RegionProvider.fromVersion(
+        BalanceSheetVersion.v5_0_8
+      );
+      return new EmployeesCalc(regionProvider).calculate(companyFacts);
+    };
+
+    it('when employeesFractions array empty', async () => {
+      const companyFacts: CompanyFacts = {
+        ...companyFactsFactory.empty(),
+        totalStaffCosts: 8_999,
+        employeesFractions: [
+          {
+            countryCode: 'AGO',
+            percentage: 0.8,
+          },
+        ],
+      };
+
+      const employeesCalcResults = await calc(companyFacts);
+      expect(employeesCalcResults.normedEmployeesRisk).toBeCloseTo(
+        16_188.335653275537,
+        10
+      );
+    });
+  });
 });
