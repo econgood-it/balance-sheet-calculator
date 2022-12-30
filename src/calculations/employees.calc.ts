@@ -1,7 +1,6 @@
 import { RegionProvider } from '../providers/region.provider';
-import { Region } from '../models/region';
 import { CompanyFacts } from '../models/company.facts';
-import { SupplierCalc } from './supplier.calc';
+import { AVERAGE_REGION_NAME_TO_COUNTRY_CODE } from '../models/region';
 
 export enum CompanySize {
   micro = 'micro',
@@ -79,10 +78,22 @@ export class EmployeesCalc {
   private calculateItucAverage(companyFacts: CompanyFacts): number {
     let result = 0;
     for (const employeesFraction of companyFacts.employeesFractions) {
-      result += employeesFraction.countryCode
-        ? employeesFraction.percentage *
-          this.regionProvider.getOrFail(employeesFraction.countryCode).ituc
-        : EmployeesCalc.DEFAULT_ITUC_AVERAGE;
+      if (!employeesFraction.countryCode) {
+        result += EmployeesCalc.DEFAULT_ITUC_AVERAGE;
+      } else if (employeesFraction.countryCode.localeCompare('LKA') === 1) {
+        // TODO: EXCEL Limitation (see issue https://git.ecogood.org/services/balance-sheet-calculator/issues/138)
+        result += EmployeesCalc.DEFAULT_ITUC_AVERAGE;
+      } else if (
+        [...AVERAGE_REGION_NAME_TO_COUNTRY_CODE.values()].includes(
+          employeesFraction.countryCode
+        ) // TODO: EXCEL Limitation (see issue https://git.ecogood.org/services/balance-sheet-calculator/issues/138)
+      ) {
+        result += EmployeesCalc.DEFAULT_ITUC_AVERAGE;
+      } else {
+        result +=
+          employeesFraction.percentage *
+          this.regionProvider.getOrFail(employeesFraction.countryCode).ituc;
+      }
     }
     return result;
   }

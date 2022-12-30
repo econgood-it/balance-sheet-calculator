@@ -1,14 +1,7 @@
 import { CompanySize } from '../../calculations/employees.calc';
 import { none, Option, some } from '../../calculations/option';
 import { BalanceSheetVersion } from '../../models/balance.sheet';
-
-const REGION_NAME_TO_COUNTRY_CODE = new Map([
-  ['Average Oceania', 'AOC'],
-  ['Average Europe', 'AEU'],
-  ['Average Asia', 'AAS'],
-  ['Average Americas', 'AAM'],
-  ['Average Africa', 'AAF'],
-]);
+import { AVERAGE_REGION_NAME_TO_COUNTRY_CODE } from '../../models/region';
 
 export class Value {
   constructor(public readonly value: string) {}
@@ -48,8 +41,8 @@ export class Value {
   }
 
   public get countryCode(): string | undefined {
-    if (REGION_NAME_TO_COUNTRY_CODE.has(this.value)) {
-      return REGION_NAME_TO_COUNTRY_CODE.get(this.value);
+    if (AVERAGE_REGION_NAME_TO_COUNTRY_CODE.has(this.value)) {
+      return AVERAGE_REGION_NAME_TO_COUNTRY_CODE.get(this.value);
     }
     const countryCode = this.splitAndGetFirst(' ');
     return countryCode.length > 0 && countryCode.length <= 3

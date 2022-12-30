@@ -41,7 +41,27 @@ describe('Employees Calculator', () => {
     it('when employeesFractions contains item without country code', async () => {
       const companyFacts: CompanyFacts = {
         ...companyFactsFactory.empty(),
-        employeesFractions: [{ percentage: 3 }],
+        employeesFractions: [{ percentage: 1 }],
+      };
+      const employeesCalcResults = await calc(companyFacts);
+      expect(employeesCalcResults.itucAverage).toBeCloseTo(0);
+    });
+
+    it('when employeesFractions contains item with average country code like AAF', async () => {
+      // TODO: EXCEL Limitation (see issue https://git.ecogood.org/services/balance-sheet-calculator/issues/138)
+      const companyFacts: CompanyFacts = {
+        ...companyFactsFactory.empty(),
+        employeesFractions: [{ countryCode: 'AAF', percentage: 1 }],
+      };
+      const employeesCalcResults = await calc(companyFacts);
+      expect(employeesCalcResults.itucAverage).toBeCloseTo(0);
+    });
+
+    it('when employeesFractions contains item with country code > LKA', async () => {
+      // TODO: EXCEL Limitation (see issue https://git.ecogood.org/services/balance-sheet-calculator/issues/138)
+      const companyFacts: CompanyFacts = {
+        ...companyFactsFactory.empty(),
+        employeesFractions: [{ countryCode: 'LSO', percentage: 1 }],
       };
       const employeesCalcResults = await calc(companyFacts);
       expect(employeesCalcResults.itucAverage).toBeCloseTo(0);
