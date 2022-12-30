@@ -37,6 +37,9 @@ describe('Value', () => {
   it('should be parsed as country code', () => {
     let value = new Value('AFG Afghanistan');
     expect(value.countryCode).toBe('AFG');
+    value = new Value('Average Africa');
+    expect(value.countryCode).toBe('AAF');
+
     value = new Value('');
     expect(value.countryCode).toBeUndefined();
   });

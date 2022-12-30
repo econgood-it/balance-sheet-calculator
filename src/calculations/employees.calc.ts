@@ -64,7 +64,6 @@ export class EmployeesCalc {
 
     return (
       (1 - sumEmployeesPercentage) *
-      //0.978035862587365 *
       EmployeesCalc.DEFAULT_PPP_INDEX *
       companyFacts.totalStaffCosts
     );

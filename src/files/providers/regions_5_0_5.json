@@ -1,1 +1,1334 @@
-[{"pppIndex":1.53937701809995,"countryCode":"ABW","countryName":"Aruba","ituc":3.52},{"pppIndex":3.46739486547185,"countryCode":"AFG","countryName":"Afghanistan","ituc":5},{"pppIndex":1.9978683824206,"countryCode":"AGO","countryName":"Angola","ituc":4},{"pppIndex":2.63104942515307,"countryCode":"ALB","countryName":"Albania","ituc":3},{"pppIndex":1.03314026740667,"countryCode":"AND","countryName":"Andorra","ituc":2.55},{"pppIndex":1.84087197184959,"countryCode":"ARE","countryName":"United Arab Emirates","ituc":5},{"pppIndex":2.05212834166951,"countryCode":"ARG","countryName":"Argentina","ituc":4},{"pppIndex":2.34714423235579,"countryCode":"ARM","countryName":"Armenia","ituc":4.47},{"pppIndex":1.49858687129258,"countryCode":"ASM","countryName":"American Samoa","ituc":4.05},{"pppIndex":1.77524540295726,"countryCode":"ATG","countryName":"Antigua and Barbuda","ituc":3.52},{"pppIndex":0.908889332149716,"countryCode":"AUS","countryName":"Australia","ituc":3},{"pppIndex":1.10865320237076,"countryCode":"AUT","countryName":"Austria","ituc":1},{"pppIndex":3.12777960445176,"countryCode":"AZE","countryName":"Azerbaijan","ituc":4.47},{"pppIndex":3.53020471512507,"countryCode":"BDI","countryName":"Burundi","ituc":6},{"pppIndex":1.08992643901192,"countryCode":"BEL","countryName":"Belgium","ituc":2},{"pppIndex":2.70258485622299,"countryCode":"BEN","countryName":"Benin","ituc":4},{"pppIndex":2.78761756610312,"countryCode":"BFA","countryName":"Burkina Faso","ituc":3},{"pppIndex":3.63339086529371,"countryCode":"BGD","countryName":"Bangladesh","ituc":5},{"pppIndex":2.53844980855237,"countryCode":"BGR","countryName":"Bulgaria","ituc":3},{"pppIndex":2.20646254670723,"countryCode":"BHR","countryName":"Bahrain","ituc":5},{"pppIndex":1.17704694248602,"countryCode":"BHS","countryName":"Bahamas, The","ituc":3},{"pppIndex":2.42425019990565,"countryCode":"BIH","countryName":"Bosnia and Herzegovina","ituc":4},{"pppIndex":2.96460938882835,"countryCode":"BLR","countryName":"Belarus","ituc":5},{"pppIndex":2.0353237754933,"countryCode":"BLZ","countryName":"Belize","ituc":3},{"pppIndex":1.00304566871495,"countryCode":"BMU","countryName":"Bermuda","ituc":3.52},{"pppIndex":3.07604275552633,"countryCode":"BOL","countryName":"Bolivia","ituc":3},{"pppIndex":1.45982666767782,"countryCode":"BRA","countryName":"Brazil","ituc":5},{"pppIndex":1.15832698490788,"countryCode":"BRB","countryName":"Barbados","ituc":2},{"pppIndex":2.57404930341752,"countryCode":"BRN","countryName":"Brunei Darussalam","ituc":4.47},{"pppIndex":3.25061736452824,"countryCode":"BTN","countryName":"Bhutan","ituc":4.47},{"pppIndex":2.31798796412646,"countryCode":"BWA","countryName":"Botswana","ituc":4},{"pppIndex":2.26898769350892,"countryCode":"CAF","countryName":"Central African Republic","ituc":6},{"pppIndex":0.93653738034464,"countryCode":"CAN","countryName":"Canada","ituc":3},{"pppIndex":0.859199588564566,"countryCode":"CHE","countryName":"Switzerland","ituc":2},{"pppIndex":1.66703704665635,"countryCode":"CHL","countryName":"Chile","ituc":4},{"pppIndex":2.35233446735832,"countryCode":"CHN","countryName":"China","ituc":5},{"pppIndex":2.48565801976196,"countryCode":"CIV","countryName":"Cote d'Ivoire","ituc":4},{"pppIndex":2.52220307190023,"countryCode":"CMR","countryName":"Cameroon","ituc":4},{"pppIndex":2.22614288567992,"countryCode":"COD","countryName":"Congo, Dem. Rep.","ituc":2},{"pppIndex":2.13525733488785,"countryCode":"COG","countryName":"Congo, Rep.","ituc":3.79},{"pppIndex":1.95182356759191,"countryCode":"COL","countryName":"Colombia","ituc":5},{"pppIndex":2.0789532636991,"countryCode":"COM","countryName":"Comoros","ituc":3.79},{"pppIndex":1.98269938566558,"countryCode":"CPV","countryName":"Cabo Verde","ituc":3.79},{"pppIndex":1.78681027733193,"countryCode":"CRI","countryName":"Costa Rica","ituc":2},{"pppIndex":1.83434611496898,"countryCode":"CUB","countryName":"Cuba","ituc":3.52},{"pppIndex":1.83434611496898,"countryCode":"CUW","countryName":"Curacao","ituc":3.52},{"pppIndex":0.895014031969163,"countryCode":"CYM","countryName":"Cayman Islands","ituc":3.52},{"pppIndex":1.22233402594704,"countryCode":"CYP","countryName":"Cyprus","ituc":4.47},{"pppIndex":1.70143470418326,"countryCode":"CZE","countryName":"Czech Republic","ituc":2},{"pppIndex":1.11788030334198,"countryCode":"DEU","countryName":"Germany","ituc":1},{"pppIndex":2.51455039477944,"countryCode":"DJI","countryName":"Djibouti","ituc":4},{"pppIndex":1.66257623602982,"countryCode":"DMA","countryName":"Dominica","ituc":2},{"pppIndex":0.871585189949068,"countryCode":"DNK","countryName":"Denmark","ituc":1},{"pppIndex":2.30564075665491,"countryCode":"DOM","countryName":"Dominican Republic","ituc":2},{"pppIndex":3.249489293279,"countryCode":"DZA","countryName":"Algeria","ituc":5},{"pppIndex":2.26310133150859,"countryCode":"ECU","countryName":"Ecuador","ituc":5},{"pppIndex":4.26933385807462,"countryCode":"EGY","countryName":"Egypt, Arab Rep.","ituc":5},{"pppIndex":2.51455039477944,"countryCode":"ERI","countryName":"Eritrea","ituc":5},{"pppIndex":1.20533969388003,"countryCode":"ESP","countryName":"Spain","ituc":3},{"pppIndex":1.80282358890045,"countryCode":"EST","countryName":"Estonia","ituc":2},{"pppIndex":3.54570898327038,"countryCode":"ETH","countryName":"Ethiopia","ituc":4},{"pppIndex":0.99318659849216,"countryCode":"FIN","countryName":"Finland","ituc":1},{"pppIndex":2.26882944235556,"countryCode":"FJI","countryName":"Fiji","ituc":4},{"pppIndex":1.03844876263106,"countryCode":"FRA","countryName":"France","ituc":2},{"pppIndex":1.03314026740667,"countryCode":"FRO","countryName":"Faroe Islands","ituc":2.55},{"pppIndex":1.30214362287214,"countryCode":"FSM","countryName":"Micronesia, Fed. Sts.","ituc":4.05},{"pppIndex":1.97686928234173,"countryCode":"GAB","countryName":"Gabon","ituc":3.79},{"pppIndex":1.06114265254678,"countryCode":"GBR","countryName":"United Kingdom","ituc":3},{"pppIndex":2.54264005531634,"countryCode":"GEO","countryName":"Georgia","ituc":3},{"pppIndex":2.62673939905566,"countryCode":"GHA","countryName":"Ghana","ituc":3},{"pppIndex":1.03314026740667,"countryCode":"GIB","countryName":"Gibraltar","ituc":2.55},{"pppIndex":2.79303235967263,"countryCode":"GIN","countryName":"Guinea","ituc":3.79},{"pppIndex":3.32157916601544,"countryCode":"GMB","countryName":"Gambia, The","ituc":3.79},{"pppIndex":2.89202095548155,"countryCode":"GNB","countryName":"Guinea-Bissau","ituc":3.79},{"pppIndex":2.21782929320958,"countryCode":"GNQ","countryName":"Equatorial Guinea","ituc":3.79},{"pppIndex":1.25613579025947,"countryCode":"GRC","countryName":"Greece","ituc":5},{"pppIndex":1.71031010381376,"countryCode":"GRD","countryName":"Grenada","ituc":3.52},{"pppIndex":1.00304566871495,"countryCode":"GRL","countryName":"Greenland","ituc":3.52},{"pppIndex":2.67799402023614,"countryCode":"GTM","countryName":"Guatemala","ituc":5},{"pppIndex":1.49858687129258,"countryCode":"GUM","countryName":"Guam","ituc":4.05},{"pppIndex":2.16439069544639,"countryCode":"GUY","countryName":"Guyana","ituc":3.52},{"pppIndex":1.66564182487958,"countryCode":"HKG","countryName":"Hong Kong SAR, China","ituc":5},{"pppIndex":2.31546294959604,"countryCode":"HND","countryName":"Honduras","ituc":5},{"pppIndex":1.73571229237781,"countryCode":"HRV","countryName":"Croatia","ituc":2},{"pppIndex":2.55597150548489,"countryCode":"HTI","countryName":"Haiti","ituc":4},{"pppIndex":1.86827096640336,"countryCode":"HUN","countryName":"Hungary","ituc":3},{"pppIndex":3.05266744232118,"countryCode":"IDN","countryName":"Indonesia","ituc":5},{"pppIndex":3.15826638831551,"countryCode":"IMN","countryName":"Isle of Man","ituc":2.55},{"pppIndex":3.69520129739433,"countryCode":"IND","countryName":"India","ituc":5},{"pppIndex":1.08223882097464,"countryCode":"IRL","countryName":"Ireland","ituc":1},{"pppIndex":3.73351533702455,"countryCode":"IRN","countryName":"Iran, Islamic Rep.","ituc":5},{"pppIndex":3.18306336487877,"countryCode":"IRQ","countryName":"Iraq","ituc":5},{"pppIndex":1.09979988644301,"countryCode":"ISL","countryName":"Iceland","ituc":1},{"pppIndex":1.14889304611276,"countryCode":"ISR","countryName":"Israel","ituc":2},{"pppIndex":1.18058804707867,"countryCode":"ITA","countryName":"Italy","ituc":1},{"pppIndex":1.92093936900476,"countryCode":"JAM","countryName":"Jamaica","ituc":2},{"pppIndex":2.90163414252058,"countryCode":"JOR","countryName":"Jordan","ituc":3},{"pppIndex":0.874849436069055,"countryCode":"JPN","countryName":"Japan","ituc":2},{"pppIndex":2.49694516023884,"countryCode":"KAZ","countryName":"Kazakhstan","ituc":5},{"pppIndex":2.88450313953267,"countryCode":"KEN","countryName":"Kenya","ituc":4},{"pppIndex":3.57311837466336,"countryCode":"KGZ","countryName":"Kyrgyz Republic","ituc":4.47},{"pppIndex":3.618843357773,"countryCode":"KHM","countryName":"Cambodia","ituc":5},{"pppIndex":1.30165845967961,"countryCode":"KIR","countryName":"Kiribati","ituc":4.05},{"pppIndex":1.7829419212009,"countryCode":"KNA","countryName":"St. Kitts and Nevis","ituc":3.52},{"pppIndex":1.49883654502849,"countryCode":"KOR","countryName":"Korea, Rep.","ituc":5},{"pppIndex":2.20153645956369,"countryCode":"KWT","countryName":"Kuwait","ituc":5},{"pppIndex":4.16649643284694,"countryCode":"LAO","countryName":"Lao PDR","ituc":5},{"pppIndex":2.09305533885327,"countryCode":"LBN","countryName":"Lebanon","ituc":4},{"pppIndex":2.41769603819921,"countryCode":"LBR","countryName":"Liberia","ituc":3},{"pppIndex":2.75505386637709,"countryCode":"LBY","countryName":"Libya","ituc":6},{"pppIndex":1.63593725708704,"countryCode":"LCA","countryName":"St. Lucia","ituc":3.52},{"pppIndex":1.03314026740667,"countryCode":"LIE","countryName":"Liechtenstein","ituc":2.55},{"pppIndex":3.28427162595014,"countryCode":"LKA","countryName":"Sri Lanka","ituc":4},{"pppIndex":2.47811985555268,"countryCode":"LSO","countryName":"Lesotho","ituc":3},{"pppIndex":1.85143851546861,"countryCode":"LTU","countryName":"Lithuania","ituc":2},{"pppIndex":0.971686636469735,"countryCode":"LUX","countryName":"Luxembourg","ituc":2.55},{"pppIndex":1.69674161653491,"countryCode":"LVA","countryName":"Latvia","ituc":2},{"pppIndex":1.42064266001028,"countryCode":"MAC","countryName":"Macao SAR, China","ituc":4.47},{"pppIndex":1.00304566871495,"countryCode":"MAF","countryName":"St. Martin (French part)","ituc":3.52},{"pppIndex":2.67261750909284,"countryCode":"MAR","countryName":"Morocco","ituc":3},{"pppIndex":1.03314026740667,"countryCode":"MCO","countryName":"Monaco","ituc":2.55},{"pppIndex":2.25315726743438,"countryCode":"MDA","countryName":"Moldova","ituc":2},{"pppIndex":3.58543328949212,"countryCode":"MDG","countryName":"Madagascar","ituc":3},{"pppIndex":1.48178216180297,"countryCode":"MDV","countryName":"Maldives","ituc":4.47},{"pppIndex":2.05145616578543,"countryCode":"MEX","countryName":"Mexico","ituc":4},{"pppIndex":1.05302676594396,"countryCode":"MHL","countryName":"Marshall Islands","ituc":4.05},{"pppIndex":2.68892468375959,"countryCode":"MKD","countryName":"Macedonia, FYR","ituc":4},{"pppIndex":2.57503438687046,"countryCode":"MLI","countryName":"Mali","ituc":4},{"pppIndex":1.41473510043781,"countryCode":"MLT","countryName":"Malta","ituc":2.55},{"pppIndex":5.03338280567596,"countryCode":"MMR","countryName":"Myanmar","ituc":4},{"pppIndex":2.33937498344094,"countryCode":"MNE","countryName":"Montenegro","ituc":2},{"pppIndex":3.34808361915383,"countryCode":"MNG","countryName":"Mongolia","ituc":4.47},{"pppIndex":1.49858687129258,"countryCode":"MNP","countryName":"Northern Mariana Islands","ituc":4.05},{"pppIndex":2.92549812679193,"countryCode":"MOZ","countryName":"Mozambique","ituc":3},{"pppIndex":3.49162557138053,"countryCode":"MRT","countryName":"Mauritania","ituc":4},{"pppIndex":2.11332345722178,"countryCode":"MUS","countryName":"Mauritius","ituc":3},{"pppIndex":3.36672361772536,"countryCode":"MWI","countryName":"Malawi","ituc":2},{"pppIndex":2.79446955409586,"countryCode":"MYS","countryName":"Malaysia","ituc":4},{"pppIndex":1.87168719422053,"countryCode":"NAM","countryName":"Namibia","ituc":3},{"pppIndex":1.49858687129258,"countryCode":"NCL","countryName":"New Caledonia","ituc":4.05},{"pppIndex":2.56877399237927,"countryCode":"NER","countryName":"Niger","ituc":3.79},{"pppIndex":2.95380321903588,"countryCode":"NGA","countryName":"Nigeria","ituc":4},{"pppIndex":2.72737215620373,"countryCode":"NIC","countryName":"Nicaragua","ituc":3.52},{"pppIndex":1.06232796908283,"countryCode":"NLD","countryName":"Netherlands","ituc":1},{"pppIndex":0.801870179165357,"countryCode":"NOR","countryName":"Norway","ituc":1},{"pppIndex":2.98821859576289,"countryCode":"NPL","countryName":"Nepal","ituc":3},{"pppIndex":1.6689691083596,"countryCode":"NRU","countryName":"Nauru","ituc":4.05},{"pppIndex":0.977592004614039,"countryCode":"NZL","countryName":"New Zealand","ituc":2},{"pppIndex":2.55007818491257,"countryCode":"OMN","countryName":"Oman","ituc":4},{"pppIndex":3.75542640637986,"countryCode":"PAK","countryName":"Pakistan","ituc":4},{"pppIndex":1.64067914480798,"countryCode":"PAN","countryName":"Panama","ituc":4},{"pppIndex":2.07716190378341,"countryCode":"PER","countryName":"Peru","ituc":4},{"pppIndex":2.8849218750079,"countryCode":"PHL","countryName":"Philippines","ituc":5},{"pppIndex":1.16714219795955,"countryCode":"PLW","countryName":"Palau","ituc":4.05},{"pppIndex":1.58820813865067,"countryCode":"PNG","countryName":"Papua New Guinea","ituc":4.05},{"pppIndex":2.03208508009455,"countryCode":"POL","countryName":"Poland","ituc":3},{"pppIndex":1.24925443116417,"countryCode":"PRI","countryName":"Puerto Rico","ituc":3.52},{"pppIndex":3.72318750786458,"countryCode":"PRK","countryName":"Korea, Dem. People’s Rep.","ituc":4.47},{"pppIndex":1.42752782159009,"countryCode":"PRT","countryName":"Portugal","ituc":2},{"pppIndex":2.33602890935735,"countryCode":"PRY","countryName":"Paraguay","ituc":4},{"pppIndex":1.61231121877747,"countryCode":"PSE","countryName":"West Bank and Gaza","ituc":6},{"pppIndex":1.49858687129258,"countryCode":"PYF","countryName":"French Polynesia","ituc":4.05},{"pppIndex":1.84462051287982,"countryCode":"QAT","countryName":"Qatar","ituc":4.47},{"pppIndex":2.29297858960098,"countryCode":"ROU","countryName":"Romania","ituc":4},{"pppIndex":2.44383226979666,"countryCode":"RUS","countryName":"Russian Federation","ituc":3},{"pppIndex":2.91296012217994,"countryCode":"RWA","countryName":"Rwanda","ituc":3},{"pppIndex":2.10380621362264,"countryCode":"SAU","countryName":"Saudi Arabia","ituc":5},{"pppIndex":4.32886318784679,"countryCode":"SDN","countryName":"Sudan","ituc":6},{"pppIndex":2.48531803232177,"countryCode":"SEN","countryName":"Senegal","ituc":4},{"pppIndex":1.57213648135379,"countryCode":"SGP","countryName":"Singapore","ituc":2},{"pppIndex":1.13338170853637,"countryCode":"SLB","countryName":"Solomon Islands","ituc":4.05},{"pppIndex":3.0000008915523,"countryCode":"SLE","countryName":"Sierra Leone","ituc":5},{"pppIndex":2.05305221068972,"countryCode":"SLV","countryName":"El Salvador","ituc":3},{"pppIndex":1.29987874036966,"countryCode":"SMR","countryName":"San Marino","ituc":2.55},{"pppIndex":2.51455039477944,"countryCode":"SOM","countryName":"Somalia","ituc":6},{"pppIndex":2.40590061193751,"countryCode":"SRB","countryName":"Serbia","ituc":4},{"pppIndex":2.51455039477944,"countryCode":"SSD","countryName":"South Sudan","ituc":6},{"pppIndex":1.70831895243272,"countryCode":"STP","countryName":"Sao Tome and Principe","ituc":3.79},{"pppIndex":2.488025804897,"countryCode":"SUR","countryName":"Suriname","ituc":3.52},{"pppIndex":1.73517006069125,"countryCode":"SVK","countryName":"Slovak Republic","ituc":1},{"pppIndex":1.45647001674854,"countryCode":"SVN","countryName":"Slovenia","ituc":2.55},{"pppIndex":0.974372497401772,"countryCode":"SWE","countryName":"Sweden","ituc":1},{"pppIndex":2.56582444585392,"countryCode":"SWZ","countryName":"Swaziland","ituc":3.79},{"pppIndex":1.00304566871495,"countryCode":"SXM","countryName":"Sint Maarten (Dutch part)","ituc":3.52},{"pppIndex":1.85938883074535,"countryCode":"SYC","countryName":"Seychelles","ituc":3.79},{"pppIndex":2.57526049680317,"countryCode":"SYR","countryName":"Syrian Arab Republic","ituc":4.47},{"pppIndex":0.934732908630035,"countryCode":"TCA","countryName":"Turks and Caicos Islands","ituc":3.52},{"pppIndex":2.70237734914943,"countryCode":"TCD","countryName":"Chad","ituc":4},{"pppIndex":2.61152467089072,"countryCode":"TGO","countryName":"Togo","ituc":2},{"pppIndex":2.61925727991692,"countryCode":"THA","countryName":"Thailand","ituc":5},{"pppIndex":4.17334800551519,"countryCode":"TJK","countryName":"Tajikistan","ituc":4.47},{"pppIndex":2.77093606426033,"countryCode":"TKM","countryName":"Turkmenistan","ituc":4.47},{"pppIndex":3.76237161540844,"countryCode":"TLS","countryName":"Timor-Leste","ituc":4.47},{"pppIndex":1.47102174317472,"countryCode":"TON","countryName":"Tonga","ituc":4.05},{"pppIndex":1.86894019616355,"countryCode":"TTO","countryName":"Trinidad and Tobago","ituc":4},{"pppIndex":3.62662552660372,"countryCode":"TUN","countryName":"Tunisia","ituc":4},{"pppIndex":2.99555295262108,"countryCode":"TUR","countryName":"Turkey","ituc":5},{"pppIndex":1.09426667819879,"countryCode":"TUV","countryName":"Tuvalu","ituc":4.05},{"pppIndex":3.05398622361057,"countryCode":"TZA","countryName":"Tanzania","ituc":4},{"pppIndex":3.17073371129007,"countryCode":"UGA","countryName":"Uganda","ituc":4},{"pppIndex":2.98835005343827,"countryCode":"UKR","countryName":"Ukraine","ituc":5},{"pppIndex":1.36429090407299,"countryCode":"URY","countryName":"Uruguay","ituc":1},{"pppIndex":1,"countryCode":"USA","countryName":"United States","ituc":4},{"pppIndex":5.58353540583748,"countryCode":"UZB","countryName":"Uzbekistan","ituc":4.47},{"pppIndex":1.66924415185691,"countryCode":"VCT","countryName":"St. Vincent and the Grenadines","ituc":3.52},{"pppIndex":1.83434611496898,"countryCode":"VEN","countryName":"Venezuela, RB","ituc":4},{"pppIndex":1.00304566871495,"countryCode":"VGB","countryName":"British Virgin Islands","ituc":3.52},{"pppIndex":1.00304566871495,"countryCode":"VIR","countryName":"Virgin Islands (U.S.)","ituc":3.52},{"pppIndex":2.90182466524532,"countryCode":"VNM","countryName":"Vietnam","ituc":5},{"pppIndex":1.03113308124574,"countryCode":"VUT","countryName":"Vanuatu","ituc":4.05},{"pppIndex":1.5498211813476,"countryCode":"WSM","countryName":"Samoa","ituc":4.05},{"pppIndex":2.63775782301912,"countryCode":"XKX","countryName":"Kosovo","ituc":2.55},{"pppIndex":2.72670818512769,"countryCode":"YEM","countryName":"Yemen, Rep.","ituc":6},{"pppIndex":2.14728927155068,"countryCode":"ZAF","countryName":"South Africa","ituc":2},{"pppIndex":2.74297454566507,"countryCode":"ZMB","countryName":"Zambia","ituc":4},{"pppIndex":1.41117750678159,"countryCode":"ZWE","countryName":"Zimbabwe","ituc":5},{"pppIndex":2.51455039477944,"countryCode":"AAF","countryName":"Africa","ituc":3.79},{"pppIndex":1.17486233777459,"countryCode":"AAM","countryName":"Americas","ituc":3.52},{"pppIndex":2.57526049680317,"countryCode":"AAS","countryName":"Asia","ituc":4.47},{"pppIndex":1.03314026740667,"countryCode":"AEU","countryName":"Europe","ituc":2.55},{"pppIndex":1.49858687129258,"countryCode":"AOC","countryName":"Oceania","ituc":4.05},{"pppIndex":1.00304566871495,"countryCode":"AWO","countryName":"World","ituc":3.23809523809524}]
+[
+  {
+    "pppIndex": 1.53937701809995,
+    "countryCode": "ABW",
+    "countryName": "Aruba",
+    "ituc": 3.52
+  },
+  {
+    "pppIndex": 3.46739486547185,
+    "countryCode": "AFG",
+    "countryName": "Afghanistan",
+    "ituc": 5
+  },
+  {
+    "pppIndex": 1.9978683824206,
+    "countryCode": "AGO",
+    "countryName": "Angola",
+    "ituc": 4
+  },
+  {
+    "pppIndex": 2.63104942515307,
+    "countryCode": "ALB",
+    "countryName": "Albania",
+    "ituc": 3
+  },
+  {
+    "pppIndex": 1.03314026740667,
+    "countryCode": "AND",
+    "countryName": "Andorra",
+    "ituc": 2.55
+  },
+  {
+    "pppIndex": 1.84087197184959,
+    "countryCode": "ARE",
+    "countryName": "United Arab Emirates",
+    "ituc": 5
+  },
+  {
+    "pppIndex": 2.05212834166951,
+    "countryCode": "ARG",
+    "countryName": "Argentina",
+    "ituc": 4
+  },
+  {
+    "pppIndex": 2.34714423235579,
+    "countryCode": "ARM",
+    "countryName": "Armenia",
+    "ituc": 4.47
+  },
+  {
+    "pppIndex": 1.49858687129258,
+    "countryCode": "ASM",
+    "countryName": "American Samoa",
+    "ituc": 4.05
+  },
+  {
+    "pppIndex": 1.77524540295726,
+    "countryCode": "ATG",
+    "countryName": "Antigua and Barbuda",
+    "ituc": 3.52
+  },
+  {
+    "pppIndex": 0.908889332149716,
+    "countryCode": "AUS",
+    "countryName": "Australia",
+    "ituc": 3
+  },
+  {
+    "pppIndex": 1.10865320237076,
+    "countryCode": "AUT",
+    "countryName": "Austria",
+    "ituc": 1
+  },
+  {
+    "pppIndex": 3.12777960445176,
+    "countryCode": "AZE",
+    "countryName": "Azerbaijan",
+    "ituc": 4.47
+  },
+  {
+    "pppIndex": 3.53020471512507,
+    "countryCode": "BDI",
+    "countryName": "Burundi",
+    "ituc": 6
+  },
+  {
+    "pppIndex": 1.08992643901192,
+    "countryCode": "BEL",
+    "countryName": "Belgium",
+    "ituc": 2
+  },
+  {
+    "pppIndex": 2.70258485622299,
+    "countryCode": "BEN",
+    "countryName": "Benin",
+    "ituc": 4
+  },
+  {
+    "pppIndex": 2.78761756610312,
+    "countryCode": "BFA",
+    "countryName": "Burkina Faso",
+    "ituc": 3
+  },
+  {
+    "pppIndex": 3.63339086529371,
+    "countryCode": "BGD",
+    "countryName": "Bangladesh",
+    "ituc": 5
+  },
+  {
+    "pppIndex": 2.53844980855237,
+    "countryCode": "BGR",
+    "countryName": "Bulgaria",
+    "ituc": 3
+  },
+  {
+    "pppIndex": 2.20646254670723,
+    "countryCode": "BHR",
+    "countryName": "Bahrain",
+    "ituc": 5
+  },
+  {
+    "pppIndex": 1.17704694248602,
+    "countryCode": "BHS",
+    "countryName": "Bahamas, The",
+    "ituc": 3
+  },
+  {
+    "pppIndex": 2.42425019990565,
+    "countryCode": "BIH",
+    "countryName": "Bosnia and Herzegovina",
+    "ituc": 4
+  },
+  {
+    "pppIndex": 2.96460938882835,
+    "countryCode": "BLR",
+    "countryName": "Belarus",
+    "ituc": 5
+  },
+  {
+    "pppIndex": 2.0353237754933,
+    "countryCode": "BLZ",
+    "countryName": "Belize",
+    "ituc": 3
+  },
+  {
+    "pppIndex": 1.00304566871495,
+    "countryCode": "BMU",
+    "countryName": "Bermuda",
+    "ituc": 3.52
+  },
+  {
+    "pppIndex": 3.07604275552633,
+    "countryCode": "BOL",
+    "countryName": "Bolivia",
+    "ituc": 3
+  },
+  {
+    "pppIndex": 1.45982666767782,
+    "countryCode": "BRA",
+    "countryName": "Brazil",
+    "ituc": 5
+  },
+  {
+    "pppIndex": 1.15832698490788,
+    "countryCode": "BRB",
+    "countryName": "Barbados",
+    "ituc": 2
+  },
+  {
+    "pppIndex": 2.57404930341752,
+    "countryCode": "BRN",
+    "countryName": "Brunei Darussalam",
+    "ituc": 4.47
+  },
+  {
+    "pppIndex": 3.25061736452824,
+    "countryCode": "BTN",
+    "countryName": "Bhutan",
+    "ituc": 4.47
+  },
+  {
+    "pppIndex": 2.31798796412646,
+    "countryCode": "BWA",
+    "countryName": "Botswana",
+    "ituc": 4
+  },
+  {
+    "pppIndex": 2.26898769350892,
+    "countryCode": "CAF",
+    "countryName": "Central African Republic",
+    "ituc": 6
+  },
+  {
+    "pppIndex": 0.93653738034464,
+    "countryCode": "CAN",
+    "countryName": "Canada",
+    "ituc": 3
+  },
+  {
+    "pppIndex": 0.859199588564566,
+    "countryCode": "CHE",
+    "countryName": "Switzerland",
+    "ituc": 2
+  },
+  {
+    "pppIndex": 1.66703704665635,
+    "countryCode": "CHL",
+    "countryName": "Chile",
+    "ituc": 4
+  },
+  {
+    "pppIndex": 2.35233446735832,
+    "countryCode": "CHN",
+    "countryName": "China",
+    "ituc": 5
+  },
+  {
+    "pppIndex": 2.48565801976196,
+    "countryCode": "CIV",
+    "countryName": "Cote d'Ivoire",
+    "ituc": 4
+  },
+  {
+    "pppIndex": 2.52220307190023,
+    "countryCode": "CMR",
+    "countryName": "Cameroon",
+    "ituc": 4
+  },
+  {
+    "pppIndex": 2.22614288567992,
+    "countryCode": "COD",
+    "countryName": "Congo, Dem. Rep.",
+    "ituc": 2
+  },
+  {
+    "pppIndex": 2.13525733488785,
+    "countryCode": "COG",
+    "countryName": "Congo, Rep.",
+    "ituc": 3.79
+  },
+  {
+    "pppIndex": 1.95182356759191,
+    "countryCode": "COL",
+    "countryName": "Colombia",
+    "ituc": 5
+  },
+  {
+    "pppIndex": 2.0789532636991,
+    "countryCode": "COM",
+    "countryName": "Comoros",
+    "ituc": 3.79
+  },
+  {
+    "pppIndex": 1.98269938566558,
+    "countryCode": "CPV",
+    "countryName": "Cabo Verde",
+    "ituc": 3.79
+  },
+  {
+    "pppIndex": 1.78681027733193,
+    "countryCode": "CRI",
+    "countryName": "Costa Rica",
+    "ituc": 2
+  },
+  {
+    "pppIndex": 1.83434611496898,
+    "countryCode": "CUB",
+    "countryName": "Cuba",
+    "ituc": 3.52
+  },
+  {
+    "pppIndex": 1.83434611496898,
+    "countryCode": "CUW",
+    "countryName": "Curacao",
+    "ituc": 3.52
+  },
+  {
+    "pppIndex": 0.895014031969163,
+    "countryCode": "CYM",
+    "countryName": "Cayman Islands",
+    "ituc": 3.52
+  },
+  {
+    "pppIndex": 1.22233402594704,
+    "countryCode": "CYP",
+    "countryName": "Cyprus",
+    "ituc": 4.47
+  },
+  {
+    "pppIndex": 1.70143470418326,
+    "countryCode": "CZE",
+    "countryName": "Czech Republic",
+    "ituc": 2
+  },
+  {
+    "pppIndex": 1.11788030334198,
+    "countryCode": "DEU",
+    "countryName": "Germany",
+    "ituc": 1
+  },
+  {
+    "pppIndex": 2.51455039477944,
+    "countryCode": "DJI",
+    "countryName": "Djibouti",
+    "ituc": 4
+  },
+  {
+    "pppIndex": 1.66257623602982,
+    "countryCode": "DMA",
+    "countryName": "Dominica",
+    "ituc": 2
+  },
+  {
+    "pppIndex": 0.871585189949068,
+    "countryCode": "DNK",
+    "countryName": "Denmark",
+    "ituc": 1
+  },
+  {
+    "pppIndex": 2.30564075665491,
+    "countryCode": "DOM",
+    "countryName": "Dominican Republic",
+    "ituc": 2
+  },
+  {
+    "pppIndex": 3.249489293279,
+    "countryCode": "DZA",
+    "countryName": "Algeria",
+    "ituc": 5
+  },
+  {
+    "pppIndex": 2.26310133150859,
+    "countryCode": "ECU",
+    "countryName": "Ecuador",
+    "ituc": 5
+  },
+  {
+    "pppIndex": 4.26933385807462,
+    "countryCode": "EGY",
+    "countryName": "Egypt, Arab Rep.",
+    "ituc": 5
+  },
+  {
+    "pppIndex": 2.51455039477944,
+    "countryCode": "ERI",
+    "countryName": "Eritrea",
+    "ituc": 5
+  },
+  {
+    "pppIndex": 1.20533969388003,
+    "countryCode": "ESP",
+    "countryName": "Spain",
+    "ituc": 3
+  },
+  {
+    "pppIndex": 1.80282358890045,
+    "countryCode": "EST",
+    "countryName": "Estonia",
+    "ituc": 2
+  },
+  {
+    "pppIndex": 3.54570898327038,
+    "countryCode": "ETH",
+    "countryName": "Ethiopia",
+    "ituc": 4
+  },
+  {
+    "pppIndex": 0.99318659849216,
+    "countryCode": "FIN",
+    "countryName": "Finland",
+    "ituc": 1
+  },
+  {
+    "pppIndex": 2.26882944235556,
+    "countryCode": "FJI",
+    "countryName": "Fiji",
+    "ituc": 4
+  },
+  {
+    "pppIndex": 1.03844876263106,
+    "countryCode": "FRA",
+    "countryName": "France",
+    "ituc": 2
+  },
+  {
+    "pppIndex": 1.03314026740667,
+    "countryCode": "FRO",
+    "countryName": "Faroe Islands",
+    "ituc": 2.55
+  },
+  {
+    "pppIndex": 1.30214362287214,
+    "countryCode": "FSM",
+    "countryName": "Micronesia, Fed. Sts.",
+    "ituc": 4.05
+  },
+  {
+    "pppIndex": 1.97686928234173,
+    "countryCode": "GAB",
+    "countryName": "Gabon",
+    "ituc": 3.79
+  },
+  {
+    "pppIndex": 1.06114265254678,
+    "countryCode": "GBR",
+    "countryName": "United Kingdom",
+    "ituc": 3
+  },
+  {
+    "pppIndex": 2.54264005531634,
+    "countryCode": "GEO",
+    "countryName": "Georgia",
+    "ituc": 3
+  },
+  {
+    "pppIndex": 2.62673939905566,
+    "countryCode": "GHA",
+    "countryName": "Ghana",
+    "ituc": 3
+  },
+  {
+    "pppIndex": 1.03314026740667,
+    "countryCode": "GIB",
+    "countryName": "Gibraltar",
+    "ituc": 2.55
+  },
+  {
+    "pppIndex": 2.79303235967263,
+    "countryCode": "GIN",
+    "countryName": "Guinea",
+    "ituc": 3.79
+  },
+  {
+    "pppIndex": 3.32157916601544,
+    "countryCode": "GMB",
+    "countryName": "Gambia, The",
+    "ituc": 3.79
+  },
+  {
+    "pppIndex": 2.89202095548155,
+    "countryCode": "GNB",
+    "countryName": "Guinea-Bissau",
+    "ituc": 3.79
+  },
+  {
+    "pppIndex": 2.21782929320958,
+    "countryCode": "GNQ",
+    "countryName": "Equatorial Guinea",
+    "ituc": 3.79
+  },
+  {
+    "pppIndex": 1.25613579025947,
+    "countryCode": "GRC",
+    "countryName": "Greece",
+    "ituc": 5
+  },
+  {
+    "pppIndex": 1.71031010381376,
+    "countryCode": "GRD",
+    "countryName": "Grenada",
+    "ituc": 3.52
+  },
+  {
+    "pppIndex": 1.00304566871495,
+    "countryCode": "GRL",
+    "countryName": "Greenland",
+    "ituc": 3.52
+  },
+  {
+    "pppIndex": 2.67799402023614,
+    "countryCode": "GTM",
+    "countryName": "Guatemala",
+    "ituc": 5
+  },
+  {
+    "pppIndex": 1.49858687129258,
+    "countryCode": "GUM",
+    "countryName": "Guam",
+    "ituc": 4.05
+  },
+  {
+    "pppIndex": 2.16439069544639,
+    "countryCode": "GUY",
+    "countryName": "Guyana",
+    "ituc": 3.52
+  },
+  {
+    "pppIndex": 1.66564182487958,
+    "countryCode": "HKG",
+    "countryName": "Hong Kong SAR, China",
+    "ituc": 5
+  },
+  {
+    "pppIndex": 2.31546294959604,
+    "countryCode": "HND",
+    "countryName": "Honduras",
+    "ituc": 5
+  },
+  {
+    "pppIndex": 1.73571229237781,
+    "countryCode": "HRV",
+    "countryName": "Croatia",
+    "ituc": 2
+  },
+  {
+    "pppIndex": 2.55597150548489,
+    "countryCode": "HTI",
+    "countryName": "Haiti",
+    "ituc": 4
+  },
+  {
+    "pppIndex": 1.86827096640336,
+    "countryCode": "HUN",
+    "countryName": "Hungary",
+    "ituc": 3
+  },
+  {
+    "pppIndex": 3.05266744232118,
+    "countryCode": "IDN",
+    "countryName": "Indonesia",
+    "ituc": 5
+  },
+  {
+    "pppIndex": 3.15826638831551,
+    "countryCode": "IMN",
+    "countryName": "Isle of Man",
+    "ituc": 2.55
+  },
+  {
+    "pppIndex": 3.69520129739433,
+    "countryCode": "IND",
+    "countryName": "India",
+    "ituc": 5
+  },
+  {
+    "pppIndex": 1.08223882097464,
+    "countryCode": "IRL",
+    "countryName": "Ireland",
+    "ituc": 1
+  },
+  {
+    "pppIndex": 3.73351533702455,
+    "countryCode": "IRN",
+    "countryName": "Iran, Islamic Rep.",
+    "ituc": 5
+  },
+  {
+    "pppIndex": 3.18306336487877,
+    "countryCode": "IRQ",
+    "countryName": "Iraq",
+    "ituc": 5
+  },
+  {
+    "pppIndex": 1.09979988644301,
+    "countryCode": "ISL",
+    "countryName": "Iceland",
+    "ituc": 1
+  },
+  {
+    "pppIndex": 1.14889304611276,
+    "countryCode": "ISR",
+    "countryName": "Israel",
+    "ituc": 2
+  },
+  {
+    "pppIndex": 1.18058804707867,
+    "countryCode": "ITA",
+    "countryName": "Italy",
+    "ituc": 1
+  },
+  {
+    "pppIndex": 1.92093936900476,
+    "countryCode": "JAM",
+    "countryName": "Jamaica",
+    "ituc": 2
+  },
+  {
+    "pppIndex": 2.90163414252058,
+    "countryCode": "JOR",
+    "countryName": "Jordan",
+    "ituc": 3
+  },
+  {
+    "pppIndex": 0.874849436069055,
+    "countryCode": "JPN",
+    "countryName": "Japan",
+    "ituc": 2
+  },
+  {
+    "pppIndex": 2.49694516023884,
+    "countryCode": "KAZ",
+    "countryName": "Kazakhstan",
+    "ituc": 5
+  },
+  {
+    "pppIndex": 2.88450313953267,
+    "countryCode": "KEN",
+    "countryName": "Kenya",
+    "ituc": 4
+  },
+  {
+    "pppIndex": 3.57311837466336,
+    "countryCode": "KGZ",
+    "countryName": "Kyrgyz Republic",
+    "ituc": 4.47
+  },
+  {
+    "pppIndex": 3.618843357773,
+    "countryCode": "KHM",
+    "countryName": "Cambodia",
+    "ituc": 5
+  },
+  {
+    "pppIndex": 1.30165845967961,
+    "countryCode": "KIR",
+    "countryName": "Kiribati",
+    "ituc": 4.05
+  },
+  {
+    "pppIndex": 1.7829419212009,
+    "countryCode": "KNA",
+    "countryName": "St. Kitts and Nevis",
+    "ituc": 3.52
+  },
+  {
+    "pppIndex": 1.49883654502849,
+    "countryCode": "KOR",
+    "countryName": "Korea, Rep.",
+    "ituc": 5
+  },
+  {
+    "pppIndex": 2.20153645956369,
+    "countryCode": "KWT",
+    "countryName": "Kuwait",
+    "ituc": 5
+  },
+  {
+    "pppIndex": 4.16649643284694,
+    "countryCode": "LAO",
+    "countryName": "Lao PDR",
+    "ituc": 5
+  },
+  {
+    "pppIndex": 2.09305533885327,
+    "countryCode": "LBN",
+    "countryName": "Lebanon",
+    "ituc": 4
+  },
+  {
+    "pppIndex": 2.41769603819921,
+    "countryCode": "LBR",
+    "countryName": "Liberia",
+    "ituc": 3
+  },
+  {
+    "pppIndex": 2.75505386637709,
+    "countryCode": "LBY",
+    "countryName": "Libya",
+    "ituc": 6
+  },
+  {
+    "pppIndex": 1.63593725708704,
+    "countryCode": "LCA",
+    "countryName": "St. Lucia",
+    "ituc": 3.52
+  },
+  {
+    "pppIndex": 1.03314026740667,
+    "countryCode": "LIE",
+    "countryName": "Liechtenstein",
+    "ituc": 2.55
+  },
+  {
+    "pppIndex": 3.28427162595014,
+    "countryCode": "LKA",
+    "countryName": "Sri Lanka",
+    "ituc": 4
+  },
+  {
+    "pppIndex": 2.47811985555268,
+    "countryCode": "LSO",
+    "countryName": "Lesotho",
+    "ituc": 3
+  },
+  {
+    "pppIndex": 1.85143851546861,
+    "countryCode": "LTU",
+    "countryName": "Lithuania",
+    "ituc": 2
+  },
+  {
+    "pppIndex": 0.971686636469735,
+    "countryCode": "LUX",
+    "countryName": "Luxembourg",
+    "ituc": 2.55
+  },
+  {
+    "pppIndex": 1.69674161653491,
+    "countryCode": "LVA",
+    "countryName": "Latvia",
+    "ituc": 2
+  },
+  {
+    "pppIndex": 1.42064266001028,
+    "countryCode": "MAC",
+    "countryName": "Macao SAR, China",
+    "ituc": 4.47
+  },
+  {
+    "pppIndex": 1.00304566871495,
+    "countryCode": "MAF",
+    "countryName": "St. Martin (French part)",
+    "ituc": 3.52
+  },
+  {
+    "pppIndex": 2.67261750909284,
+    "countryCode": "MAR",
+    "countryName": "Morocco",
+    "ituc": 3
+  },
+  {
+    "pppIndex": 1.03314026740667,
+    "countryCode": "MCO",
+    "countryName": "Monaco",
+    "ituc": 2.55
+  },
+  {
+    "pppIndex": 2.25315726743438,
+    "countryCode": "MDA",
+    "countryName": "Moldova",
+    "ituc": 2
+  },
+  {
+    "pppIndex": 3.58543328949212,
+    "countryCode": "MDG",
+    "countryName": "Madagascar",
+    "ituc": 3
+  },
+  {
+    "pppIndex": 1.48178216180297,
+    "countryCode": "MDV",
+    "countryName": "Maldives",
+    "ituc": 4.47
+  },
+  {
+    "pppIndex": 2.05145616578543,
+    "countryCode": "MEX",
+    "countryName": "Mexico",
+    "ituc": 4
+  },
+  {
+    "pppIndex": 1.05302676594396,
+    "countryCode": "MHL",
+    "countryName": "Marshall Islands",
+    "ituc": 4.05
+  },
+  {
+    "pppIndex": 2.68892468375959,
+    "countryCode": "MKD",
+    "countryName": "Macedonia, FYR",
+    "ituc": 4
+  },
+  {
+    "pppIndex": 2.57503438687046,
+    "countryCode": "MLI",
+    "countryName": "Mali",
+    "ituc": 4
+  },
+  {
+    "pppIndex": 1.41473510043781,
+    "countryCode": "MLT",
+    "countryName": "Malta",
+    "ituc": 2.55
+  },
+  {
+    "pppIndex": 5.03338280567596,
+    "countryCode": "MMR",
+    "countryName": "Myanmar",
+    "ituc": 4
+  },
+  {
+    "pppIndex": 2.33937498344094,
+    "countryCode": "MNE",
+    "countryName": "Montenegro",
+    "ituc": 2
+  },
+  {
+    "pppIndex": 3.34808361915383,
+    "countryCode": "MNG",
+    "countryName": "Mongolia",
+    "ituc": 4.47
+  },
+  {
+    "pppIndex": 1.49858687129258,
+    "countryCode": "MNP",
+    "countryName": "Northern Mariana Islands",
+    "ituc": 4.05
+  },
+  {
+    "pppIndex": 2.92549812679193,
+    "countryCode": "MOZ",
+    "countryName": "Mozambique",
+    "ituc": 3
+  },
+  {
+    "pppIndex": 3.49162557138053,
+    "countryCode": "MRT",
+    "countryName": "Mauritania",
+    "ituc": 4
+  },
+  {
+    "pppIndex": 2.11332345722178,
+    "countryCode": "MUS",
+    "countryName": "Mauritius",
+    "ituc": 3
+  },
+  {
+    "pppIndex": 3.36672361772536,
+    "countryCode": "MWI",
+    "countryName": "Malawi",
+    "ituc": 2
+  },
+  {
+    "pppIndex": 2.79446955409586,
+    "countryCode": "MYS",
+    "countryName": "Malaysia",
+    "ituc": 4
+  },
+  {
+    "pppIndex": 1.87168719422053,
+    "countryCode": "NAM",
+    "countryName": "Namibia",
+    "ituc": 3
+  },
+  {
+    "pppIndex": 1.49858687129258,
+    "countryCode": "NCL",
+    "countryName": "New Caledonia",
+    "ituc": 4.05
+  },
+  {
+    "pppIndex": 2.56877399237927,
+    "countryCode": "NER",
+    "countryName": "Niger",
+    "ituc": 3.79
+  },
+  {
+    "pppIndex": 2.95380321903588,
+    "countryCode": "NGA",
+    "countryName": "Nigeria",
+    "ituc": 4
+  },
+  {
+    "pppIndex": 2.72737215620373,
+    "countryCode": "NIC",
+    "countryName": "Nicaragua",
+    "ituc": 3.52
+  },
+  {
+    "pppIndex": 1.06232796908283,
+    "countryCode": "NLD",
+    "countryName": "Netherlands",
+    "ituc": 1
+  },
+  {
+    "pppIndex": 0.801870179165357,
+    "countryCode": "NOR",
+    "countryName": "Norway",
+    "ituc": 1
+  },
+  {
+    "pppIndex": 2.98821859576289,
+    "countryCode": "NPL",
+    "countryName": "Nepal",
+    "ituc": 3
+  },
+  {
+    "pppIndex": 1.6689691083596,
+    "countryCode": "NRU",
+    "countryName": "Nauru",
+    "ituc": 4.05
+  },
+  {
+    "pppIndex": 0.977592004614039,
+    "countryCode": "NZL",
+    "countryName": "New Zealand",
+    "ituc": 2
+  },
+  {
+    "pppIndex": 2.55007818491257,
+    "countryCode": "OMN",
+    "countryName": "Oman",
+    "ituc": 4
+  },
+  {
+    "pppIndex": 3.75542640637986,
+    "countryCode": "PAK",
+    "countryName": "Pakistan",
+    "ituc": 4
+  },
+  {
+    "pppIndex": 1.64067914480798,
+    "countryCode": "PAN",
+    "countryName": "Panama",
+    "ituc": 4
+  },
+  {
+    "pppIndex": 2.07716190378341,
+    "countryCode": "PER",
+    "countryName": "Peru",
+    "ituc": 4
+  },
+  {
+    "pppIndex": 2.8849218750079,
+    "countryCode": "PHL",
+    "countryName": "Philippines",
+    "ituc": 5
+  },
+  {
+    "pppIndex": 1.16714219795955,
+    "countryCode": "PLW",
+    "countryName": "Palau",
+    "ituc": 4.05
+  },
+  {
+    "pppIndex": 1.58820813865067,
+    "countryCode": "PNG",
+    "countryName": "Papua New Guinea",
+    "ituc": 4.05
+  },
+  {
+    "pppIndex": 2.03208508009455,
+    "countryCode": "POL",
+    "countryName": "Poland",
+    "ituc": 3
+  },
+  {
+    "pppIndex": 1.24925443116417,
+    "countryCode": "PRI",
+    "countryName": "Puerto Rico",
+    "ituc": 3.52
+  },
+  {
+    "pppIndex": 3.72318750786458,
+    "countryCode": "PRK",
+    "countryName": "Korea, Dem. People’s Rep.",
+    "ituc": 4.47
+  },
+  {
+    "pppIndex": 1.42752782159009,
+    "countryCode": "PRT",
+    "countryName": "Portugal",
+    "ituc": 2
+  },
+  {
+    "pppIndex": 2.33602890935735,
+    "countryCode": "PRY",
+    "countryName": "Paraguay",
+    "ituc": 4
+  },
+  {
+    "pppIndex": 1.61231121877747,
+    "countryCode": "PSE",
+    "countryName": "West Bank and Gaza",
+    "ituc": 6
+  },
+  {
+    "pppIndex": 1.49858687129258,
+    "countryCode": "PYF",
+    "countryName": "French Polynesia",
+    "ituc": 4.05
+  },
+  {
+    "pppIndex": 1.84462051287982,
+    "countryCode": "QAT",
+    "countryName": "Qatar",
+    "ituc": 4.47
+  },
+  {
+    "pppIndex": 2.29297858960098,
+    "countryCode": "ROU",
+    "countryName": "Romania",
+    "ituc": 4
+  },
+  {
+    "pppIndex": 2.44383226979666,
+    "countryCode": "RUS",
+    "countryName": "Russian Federation",
+    "ituc": 3
+  },
+  {
+    "pppIndex": 2.91296012217994,
+    "countryCode": "RWA",
+    "countryName": "Rwanda",
+    "ituc": 3
+  },
+  {
+    "pppIndex": 2.10380621362264,
+    "countryCode": "SAU",
+    "countryName": "Saudi Arabia",
+    "ituc": 5
+  },
+  {
+    "pppIndex": 4.32886318784679,
+    "countryCode": "SDN",
+    "countryName": "Sudan",
+    "ituc": 6
+  },
+  {
+    "pppIndex": 2.48531803232177,
+    "countryCode": "SEN",
+    "countryName": "Senegal",
+    "ituc": 4
+  },
+  {
+    "pppIndex": 1.57213648135379,
+    "countryCode": "SGP",
+    "countryName": "Singapore",
+    "ituc": 2
+  },
+  {
+    "pppIndex": 1.13338170853637,
+    "countryCode": "SLB",
+    "countryName": "Solomon Islands",
+    "ituc": 4.05
+  },
+  {
+    "pppIndex": 3.0000008915523,
+    "countryCode": "SLE",
+    "countryName": "Sierra Leone",
+    "ituc": 5
+  },
+  {
+    "pppIndex": 2.05305221068972,
+    "countryCode": "SLV",
+    "countryName": "El Salvador",
+    "ituc": 3
+  },
+  {
+    "pppIndex": 1.29987874036966,
+    "countryCode": "SMR",
+    "countryName": "San Marino",
+    "ituc": 2.55
+  },
+  {
+    "pppIndex": 2.51455039477944,
+    "countryCode": "SOM",
+    "countryName": "Somalia",
+    "ituc": 6
+  },
+  {
+    "pppIndex": 2.40590061193751,
+    "countryCode": "SRB",
+    "countryName": "Serbia",
+    "ituc": 4
+  },
+  {
+    "pppIndex": 2.51455039477944,
+    "countryCode": "SSD",
+    "countryName": "South Sudan",
+    "ituc": 6
+  },
+  {
+    "pppIndex": 1.70831895243272,
+    "countryCode": "STP",
+    "countryName": "Sao Tome and Principe",
+    "ituc": 3.79
+  },
+  {
+    "pppIndex": 2.488025804897,
+    "countryCode": "SUR",
+    "countryName": "Suriname",
+    "ituc": 3.52
+  },
+  {
+    "pppIndex": 1.73517006069125,
+    "countryCode": "SVK",
+    "countryName": "Slovak Republic",
+    "ituc": 1
+  },
+  {
+    "pppIndex": 1.45647001674854,
+    "countryCode": "SVN",
+    "countryName": "Slovenia",
+    "ituc": 2.55
+  },
+  {
+    "pppIndex": 0.974372497401772,
+    "countryCode": "SWE",
+    "countryName": "Sweden",
+    "ituc": 1
+  },
+  {
+    "pppIndex": 2.56582444585392,
+    "countryCode": "SWZ",
+    "countryName": "Swaziland",
+    "ituc": 3.79
+  },
+  {
+    "pppIndex": 1.00304566871495,
+    "countryCode": "SXM",
+    "countryName": "Sint Maarten (Dutch part)",
+    "ituc": 3.52
+  },
+  {
+    "pppIndex": 1.85938883074535,
+    "countryCode": "SYC",
+    "countryName": "Seychelles",
+    "ituc": 3.79
+  },
+  {
+    "pppIndex": 2.57526049680317,
+    "countryCode": "SYR",
+    "countryName": "Syrian Arab Republic",
+    "ituc": 4.47
+  },
+  {
+    "pppIndex": 0.934732908630035,
+    "countryCode": "TCA",
+    "countryName": "Turks and Caicos Islands",
+    "ituc": 3.52
+  },
+  {
+    "pppIndex": 2.70237734914943,
+    "countryCode": "TCD",
+    "countryName": "Chad",
+    "ituc": 4
+  },
+  {
+    "pppIndex": 2.61152467089072,
+    "countryCode": "TGO",
+    "countryName": "Togo",
+    "ituc": 2
+  },
+  {
+    "pppIndex": 2.61925727991692,
+    "countryCode": "THA",
+    "countryName": "Thailand",
+    "ituc": 5
+  },
+  {
+    "pppIndex": 4.17334800551519,
+    "countryCode": "TJK",
+    "countryName": "Tajikistan",
+    "ituc": 4.47
+  },
+  {
+    "pppIndex": 2.77093606426033,
+    "countryCode": "TKM",
+    "countryName": "Turkmenistan",
+    "ituc": 4.47
+  },
+  {
+    "pppIndex": 3.76237161540844,
+    "countryCode": "TLS",
+    "countryName": "Timor-Leste",
+    "ituc": 4.47
+  },
+  {
+    "pppIndex": 1.47102174317472,
+    "countryCode": "TON",
+    "countryName": "Tonga",
+    "ituc": 4.05
+  },
+  {
+    "pppIndex": 1.86894019616355,
+    "countryCode": "TTO",
+    "countryName": "Trinidad and Tobago",
+    "ituc": 4
+  },
+  {
+    "pppIndex": 3.62662552660372,
+    "countryCode": "TUN",
+    "countryName": "Tunisia",
+    "ituc": 4
+  },
+  {
+    "pppIndex": 2.99555295262108,
+    "countryCode": "TUR",
+    "countryName": "Turkey",
+    "ituc": 5
+  },
+  {
+    "pppIndex": 1.09426667819879,
+    "countryCode": "TUV",
+    "countryName": "Tuvalu",
+    "ituc": 4.05
+  },
+  {
+    "pppIndex": 3.05398622361057,
+    "countryCode": "TZA",
+    "countryName": "Tanzania",
+    "ituc": 4
+  },
+  {
+    "pppIndex": 3.17073371129007,
+    "countryCode": "UGA",
+    "countryName": "Uganda",
+    "ituc": 4
+  },
+  {
+    "pppIndex": 2.98835005343827,
+    "countryCode": "UKR",
+    "countryName": "Ukraine",
+    "ituc": 5
+  },
+  {
+    "pppIndex": 1.36429090407299,
+    "countryCode": "URY",
+    "countryName": "Uruguay",
+    "ituc": 1
+  },
+  {
+    "pppIndex": 1,
+    "countryCode": "USA",
+    "countryName": "United States",
+    "ituc": 4
+  },
+  {
+    "pppIndex": 5.58353540583748,
+    "countryCode": "UZB",
+    "countryName": "Uzbekistan",
+    "ituc": 4.47
+  },
+  {
+    "pppIndex": 1.66924415185691,
+    "countryCode": "VCT",
+    "countryName": "St. Vincent and the Grenadines",
+    "ituc": 3.52
+  },
+  {
+    "pppIndex": 1.83434611496898,
+    "countryCode": "VEN",
+    "countryName": "Venezuela, RB",
+    "ituc": 4
+  },
+  {
+    "pppIndex": 1.00304566871495,
+    "countryCode": "VGB",
+    "countryName": "British Virgin Islands",
+    "ituc": 3.52
+  },
+  {
+    "pppIndex": 1.00304566871495,
+    "countryCode": "VIR",
+    "countryName": "Virgin Islands (U.S.)",
+    "ituc": 3.52
+  },
+  {
+    "pppIndex": 2.90182466524532,
+    "countryCode": "VNM",
+    "countryName": "Vietnam",
+    "ituc": 5
+  },
+  {
+    "pppIndex": 1.03113308124574,
+    "countryCode": "VUT",
+    "countryName": "Vanuatu",
+    "ituc": 4.05
+  },
+  {
+    "pppIndex": 1.5498211813476,
+    "countryCode": "WSM",
+    "countryName": "Samoa",
+    "ituc": 4.05
+  },
+  {
+    "pppIndex": 2.63775782301912,
+    "countryCode": "XKX",
+    "countryName": "Kosovo",
+    "ituc": 2.55
+  },
+  {
+    "pppIndex": 2.72670818512769,
+    "countryCode": "YEM",
+    "countryName": "Yemen, Rep.",
+    "ituc": 6
+  },
+  {
+    "pppIndex": 2.14728927155068,
+    "countryCode": "ZAF",
+    "countryName": "South Africa",
+    "ituc": 2
+  },
+  {
+    "pppIndex": 2.74297454566507,
+    "countryCode": "ZMB",
+    "countryName": "Zambia",
+    "ituc": 4
+  },
+  {
+    "pppIndex": 1.41117750678159,
+    "countryCode": "ZWE",
+    "countryName": "Zimbabwe",
+    "ituc": 5
+  },
+  {
+    "pppIndex": 2.51455039477944,
+    "countryCode": "AAF",
+    "countryName": "Africa",
+    "ituc": 3.79
+  },
+  {
+    "pppIndex": 1.17486233777459,
+    "countryCode": "AAM",
+    "countryName": "Americas",
+    "ituc": 3.52
+  },
+  {
+    "pppIndex": 2.57526049680317,
+    "countryCode": "AAS",
+    "countryName": "Asia",
+    "ituc": 4.47
+  },
+  {
+    "pppIndex": 1.03314026740667,
+    "countryCode": "AEU",
+    "countryName": "Europe",
+    "ituc": 2.55
+  },
+  {
+    "pppIndex": 1.49858687129258,
+    "countryCode": "AOC",
+    "countryName": "Oceania",
+    "ituc": 4.05
+  },
+  {
+    "pppIndex": 1.00304566871495,
+    "countryCode": "AWO",
+    "countryName": "World",
+    "ituc": 3.23809523809524
+  }
+]

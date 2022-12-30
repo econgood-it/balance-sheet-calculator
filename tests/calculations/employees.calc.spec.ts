@@ -298,5 +298,24 @@ describe('Employees Calculator', () => {
         10
       );
     });
+
+    it('when employeesFractions contains item with average country code like AEU', async () => {
+      const companyFacts: CompanyFacts = {
+        ...companyFactsFactory.empty(),
+        totalStaffCosts: 8_999,
+        employeesFractions: [
+          {
+            countryCode: 'ALB',
+            percentage: 0.8,
+          },
+          { countryCode: 'AAF', percentage: 0.1 },
+        ],
+      };
+      const employeesCalcResults = await calc(companyFacts);
+      expect(employeesCalcResults.normedEmployeesRisk).toBeCloseTo(
+        22_106.9357191006,
+        10
+      );
+    });
   });
 });
