@@ -17,6 +17,10 @@ export class UserController {
       this.userService.resetPassword.bind(this.userService)
     );
     this.app.post(
+      '/v1/users/:id/apikeys',
+      this.userService.createApiKey.bind(this.userService)
+    );
+    this.app.post(
       '/v1/users',
       allowAdminOnly,
       this.userService.createUser.bind(this.userService)

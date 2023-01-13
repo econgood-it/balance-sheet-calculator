@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { Connection } from 'typeorm';
 import * as jwt from 'jwt-simple';
 import * as moment from 'moment';
-import { User } from '../entities/user';
+import { User, USER_RELATIONS } from '../entities/user';
 import BadRequestException from '../exceptions/bad.request.exception';
 import { handle } from '../exceptions/error.handler';
 import {
@@ -109,6 +109,30 @@ export class UserService {
         foundUser.password = passwordResetRequestBody.password;
         await userRepository.save(foundUser);
         res.json({ message: 'Password has been reset to new one' });
+      })
+      .catch((error) => {
+        handle(error, next);
+      });
+  }
+
+  public async createApiKey(req: Request, res: Response, next: NextFunction) {
+    this.connection.manager
+      .transaction(async (entityManager) => {
+        if (req.userInfo === undefined || req.userInfo.id === undefined) {
+          throw new Error('User undefined');
+        }
+        const userId = req.userInfo.id;
+
+        const userRepository = entityManager.getRepository(User);
+        const foundUser = await userRepository.findOneOrFail({
+          where: { id: userId },
+          relations: USER_RELATIONS,
+        });
+        foundUser.addApiKey();
+        const result = await userRepository.save(foundUser);
+        res.json({
+          apiKey: result.getApiKeys()[result.getApiKeys().length - 1].value,
+        });
       })
       .catch((error) => {
         handle(error, next);

@@ -1,15 +1,19 @@
 import {
-  PrimaryGeneratedColumn,
+  BeforeInsert,
+  BeforeUpdate,
   Column,
   Entity,
   Index,
-  BeforeUpdate,
-  BeforeInsert,
   ManyToMany,
+  OneToMany,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Role } from './enums';
 import { BalanceSheetEntity } from './balance.sheet.entity';
+import { ApiKey } from './api.key';
+
+export const USER_RELATIONS = ['apiKeys'];
 
 @Entity()
 export class User {
@@ -28,6 +32,9 @@ export class User {
   @Column('text')
   public role: Role;
 
+  @OneToMany((type) => ApiKey, (apiKey) => apiKey.user, { cascade: true })
+  apiKeys!: ApiKey[];
+
   @ManyToMany(
     (type) => BalanceSheetEntity,
     (balanceSheetEntity) => balanceSheetEntity.users
@@ -44,6 +51,22 @@ export class User {
     this.email = email;
     this.password = password;
     this.role = role;
+  }
+
+  public getApiKeys(): ApiKey[] {
+    return this.apiKeys;
+  }
+
+  public addApiKey() {
+    if (!this.apiKeys) {
+      this.apiKeys = [];
+    }
+    const apiKey = new ApiKey();
+    this.apiKeys.push(apiKey);
+  }
+
+  public removeApiKey(apiKey: ApiKey) {
+    this.apiKeys = this.apiKeys.filter((ak) => ak.id !== apiKey.id);
   }
 
   @BeforeInsert()

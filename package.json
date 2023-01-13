@@ -46,10 +46,12 @@
     "swagger-jsdoc": "^6.2.5",
     "swagger-ui-express": "^4.5.0",
     "typeorm": "^0.3.7",
+    "uuid": "^9.0.0",
     "winston": "^3.8.1",
     "zod": "^3.19.1"
   },
   "devDependencies": {
+    "@types/uuid": "^9.0.0",
     "@types/bcrypt": "^5.0.0",
     "@types/correlation-id": "^2.1.2",
     "@types/cors": "^2.8.12",
