@@ -1,6 +1,5 @@
 import { RegionProvider } from '../providers/region.provider';
 import { IndustryProvider } from '../providers/industry.provider';
-import { Industry } from '../models/industry';
 import {
   CompanyFacts,
   MainOriginOfOtherSuppliers,
@@ -79,12 +78,19 @@ export class SupplierCalc {
       return SupplierCalc.DEFAULT_SUPPLY_CHAIN_WEIGHT;
     }
 
+    // TODO: If ecologicalSupplyChainRisk undefined cause of undefined industry code => supplyChainWeight = 1
     let result: number = 0;
     let sumOfSupplyRisk: number = 0;
     for (const supplyFraction of companyFacts.supplyFractions) {
       const supplyRisk = this.supplyRisk(supplyFraction, supplyRiskSum);
       sumOfSupplyRisk += supplyRisk;
-      result += supplyRisk * this.ecologicalSupplyChainRisk(supplyFraction);
+      const ecologicalSupplyChainRisk =
+        this.ecologicalSupplyChainRisk(supplyFraction);
+      if (!ecologicalSupplyChainRisk) {
+        return SupplierCalc.DEFAULT_SUPPLY_CHAIN_WEIGHT;
+      } else {
+        result += supplyRisk * ecologicalSupplyChainRisk;
+      }
     }
     return result / sumOfSupplyRisk;
   }
@@ -135,10 +141,12 @@ export class SupplierCalc {
    * In excel this is equal to the cell $'11.Region'.M[3-7]
    * @param supplyFraction
    */
-  public ecologicalSupplyChainRisk(supplyFraction: SupplyFraction): number {
-    const industry: Industry = this.industryProvider.getOrFail(
-      supplyFraction.industryCode
-    );
-    return industry.ecologicalSupplyChainRisk;
+  public ecologicalSupplyChainRisk(
+    supplyFraction: SupplyFraction
+  ): number | undefined {
+    return supplyFraction.industryCode
+      ? this.industryProvider.getOrFail(supplyFraction.industryCode)
+          .ecologicalSupplyChainRisk
+      : undefined;
   }
 }

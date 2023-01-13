@@ -75,6 +75,18 @@ describe('Company Facts', () => {
     expect(CompanyFactsSchema.safeParse(companyFacts).success).toBeTruthy();
   });
 
+  it('parse object where some of the supplier industry codes are missing', () => {
+    const companyFacts = {
+      ...companyFactsJsonFactory.empty(),
+      supplyFractions: [
+        { countryCode: 'ARE', costs: 5, industryCode: 'A' },
+        { countryCode: 'ARE', costs: 7 },
+      ],
+      mainOriginOfOtherSuppliers: { countryCode: 'DEU', costs: 9 },
+    };
+    expect(CompanyFactsSchema.safeParse(companyFacts).success).toBeTruthy();
+  });
+
   it('parse object where hasCanteen is undefined', () => {
     const companyFacts = {
       ...companyFactsJsonFactory.empty(),

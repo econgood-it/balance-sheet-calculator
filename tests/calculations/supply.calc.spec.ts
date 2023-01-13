@@ -212,4 +212,12 @@ describe('Supply Calculator', () => {
     ).supplyChainWeight(companyFacts, supplierCalc.supplyRiskSum(companyFacts));
     expect(supplyChainWeight).toBe(1);
   });
+
+  it('should return none for ecologicalSupplyChainRisk if industryCode of supply fraction is undefined', async () => {
+    const ecologicalSupplyChainRisk = new SupplierCalc(
+      regionProvider,
+      industryProvider
+    ).ecologicalSupplyChainRisk({ countryCode: 'DEU', costs: 9 });
+    expect(ecologicalSupplyChainRisk).toBeUndefined();
+  });
 });

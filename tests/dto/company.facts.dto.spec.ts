@@ -3,7 +3,6 @@ import {
   CompanyFactsPatchRequestBodySchema,
 } from '../../src/dto/company.facts.dto';
 import { companyFactsJsonFactory } from '../testData/balance.sheet';
-import { EmployeesFraction } from '../../src/models/company.facts';
 
 describe('CompanyFactsCreateRequestBodySchema', () => {
   it('parse json and returns a CompanyFacts entity', () => {
@@ -234,6 +233,16 @@ describe('CompanyFactsPatchRequestBodySchema', () => {
     });
     expect(result).toMatchObject({
       employeesFractions,
+    });
+  });
+
+  it('parse with supply fraction with missing industry code', () => {
+    const supplyFractions = [{ costs: 0.8, countryCode: 'DEU' }];
+    const result = CompanyFactsCreateRequestBodySchema.parse({
+      supplyFractions,
+    });
+    expect(result).toMatchObject({
+      supplyFractions,
     });
   });
 });
