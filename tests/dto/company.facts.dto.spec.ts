@@ -3,7 +3,6 @@ import {
   CompanyFactsPatchRequestBodySchema,
 } from '../../src/dto/company.facts.dto';
 import { companyFactsJsonFactory } from '../testData/balance.sheet';
-import { EmployeesFraction } from '../../src/models/company.facts';
 
 describe('CompanyFactsCreateRequestBodySchema', () => {
   it('parse json and returns a CompanyFacts entity', () => {

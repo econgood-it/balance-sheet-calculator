@@ -4,10 +4,7 @@ import { Application } from 'express';
 import { ConfigurationReader } from '../../src/configuration.reader';
 import { DatabaseConnectionCreator } from '../../src/database.connection.creator';
 import App from '../../src/app';
-import {
-  balanceSheetFactory,
-  balanceSheetJsonFactory,
-} from '../testData/balance.sheet';
+import { balanceSheetJsonFactory } from '../testData/balance.sheet';
 import { TokenProvider } from '../TokenProvider';
 
 describe('Authentication', () => {
