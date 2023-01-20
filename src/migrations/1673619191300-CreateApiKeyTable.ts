@@ -11,7 +11,7 @@ export class CreateApiKeyColumn1673619191300 implements MigrationInterface {
                        "value"     character varying NOT NULL, 
                        CONSTRAINT "PK_api_key" PRIMARY KEY ("id")
                    )`,
-      `ALTER TABLE "api_key" ADD CONSTRAINT "FK_users_api_keys" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE`,
+      `ALTER TABLE "api_key" ADD CONSTRAINT "FK_users_api_keys" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE NO ACTION `,
     ];
     for (const query of queries) {
       await queryRunner.query(query);

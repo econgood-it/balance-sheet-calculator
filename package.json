@@ -39,6 +39,7 @@
     "multer": "^1.4.4",
     "npm-check-updates": "^16.0.5",
     "passport": "^0.6.0",
+    "passport-headerapikey": "^1.2.2",
     "passport-http": "^0.3.0",
     "passport-jwt": "^4.0.0",
     "pg": "^8.7.3",
@@ -51,7 +52,6 @@
     "zod": "^3.19.1"
   },
   "devDependencies": {
-    "@types/uuid": "^9.0.0",
     "@types/bcrypt": "^5.0.0",
     "@types/correlation-id": "^2.1.2",
     "@types/cors": "^2.8.12",
@@ -69,6 +69,7 @@
     "@types/passport-jwt": "^3.0.6",
     "@types/supertest": "^2.0.12",
     "@types/swagger-jsdoc": "^6.0.1",
+    "@types/uuid": "^9.0.0",
     "@types/winston": "^2.4.4",
     "@typescript-eslint/eslint-plugin": "^5.33.0",
     "@typescript-eslint/parser": "^5.33.0",

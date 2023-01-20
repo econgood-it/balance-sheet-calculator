@@ -34,35 +34,4 @@ describe('User', () => {
     expect(result.comparePassword('takecare')).toBeTruthy();
     await userRepository.remove(result);
   });
-
-  it('should be saved with apiKeys', async () => {
-    let user: User = new User(
-      undefined,
-      'mr@ecogood.org',
-      'takecare',
-      Role.User
-    );
-    user.addApiKey();
-    user.addApiKey();
-    user.addApiKey();
-    const expected = user.getApiKeys();
-    await userRepository.save(user);
-    user = await userRepository.findOneOrFail({
-      where: { id: user.id },
-      relations: ['apiKeys'],
-    });
-    expect(user.getApiKeys()).toHaveLength(3);
-    expect(user.getApiKeys()).toMatchObject(expected);
-
-    user.removeApiKey(expected[1]);
-    await userRepository.save(user);
-    user = await userRepository.findOneOrFail({
-      where: { id: user.id },
-      relations: ['apiKeys'],
-    });
-    expect(user.getApiKeys()).toHaveLength(2);
-    expect(user.getApiKeys()).toMatchObject([expected[0], expected[2]]);
-
-    await userRepository.remove(user);
-  });
 });

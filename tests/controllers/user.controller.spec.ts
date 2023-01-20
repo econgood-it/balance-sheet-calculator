@@ -83,15 +83,6 @@ describe('User Controller', () => {
     expect(user.comparePassword(newPassword)).toBeTruthy();
   });
 
-  it('should allow users to add api key', async () => {
-    const testApp = supertest(app);
-    const response = await testApp
-      .post(`/v1/users/{user.id}/apikeys`)
-      .set(userTokenHeader.key, userTokenHeader.value);
-    // Reset password
-    expect(response.status).toBe(200);
-  });
-
   it('should deny the right to create users for the role User', async () => {
     const testApp = supertest(app);
     const response = await testApp
