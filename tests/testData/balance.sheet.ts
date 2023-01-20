@@ -33,6 +33,18 @@ export const balanceSheetFactory = {
   }),
 };
 
+export const balanceSheetJsonFactory = {
+  emptyV508: (): BalanceSheet => ({
+    type: BalanceSheetType.Full,
+    version: BalanceSheetVersion.v5_0_8,
+    companyFacts: companyFactsJsonFactory.empty(),
+    ratings: RatingsFactory.createDefaultRatings(
+      BalanceSheetType.Full,
+      BalanceSheetVersion.v5_0_8
+    ),
+  }),
+};
+
 export const companyFactsFactory = {
   empty: (): CompanyFacts => ({
     totalPurchaseFromSuppliers: 0,
