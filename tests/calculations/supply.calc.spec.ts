@@ -220,4 +220,20 @@ describe('Supply Calculator', () => {
     ).ecologicalSupplyChainRisk({ countryCode: 'DEU', costs: 9 });
     expect(ecologicalSupplyChainRisk).toBeUndefined();
   });
+
+  it('should return default supply chain weight if industryCode of any supply fraction is undefined', async () => {
+    const companyFacts = {
+      ...companyFactsFactory.empty(),
+      supplyFractions: [
+        { countryCode: 'BEL', industryCode: 'A', costs: 7 },
+        { countryCode: 'DEU', costs: 9 },
+      ],
+    };
+    const dummyRiskSum = 10;
+    const supplyChainWeight = new SupplierCalc(
+      regionProvider,
+      industryProvider
+    ).supplyChainWeight(companyFacts, dummyRiskSum);
+    expect(supplyChainWeight).toBe(1);
+  });
 });
