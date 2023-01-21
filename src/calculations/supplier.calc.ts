@@ -78,7 +78,6 @@ export class SupplierCalc {
       return SupplierCalc.DEFAULT_SUPPLY_CHAIN_WEIGHT;
     }
 
-    // TODO: If ecologicalSupplyChainRisk undefined cause of undefined industry code => supplyChainWeight = 1
     let result: number = 0;
     let sumOfSupplyRisk: number = 0;
     for (const supplyFraction of companyFacts.supplyFractions) {

@@ -21,7 +21,7 @@ const EmployeesFractionRequestBodySchema = z.object({
 });
 
 const IndustrySectorRequestBodySchema = z.object({
-  industryCode: isIndustryCode,
+  industryCode: isIndustryCode.optional(),
   amountOfTotalTurnover: isPercentage,
   description: z.string().default(''),
 });

@@ -97,4 +97,20 @@ describe('Company Facts', () => {
     expect(result.success).toBeTruthy();
     expect(result.success && result.data.hasCanteen).toBeUndefined();
   });
+
+  it('parse object where the industry codes of some industry sectors are missing', () => {
+    const companyFacts = {
+      ...companyFactsJsonFactory.empty(),
+      industrySectors: [
+        { amountOfTotalTurnover: 0.4, description: 'desc', industryCode: 'A' },
+        { amountOfTotalTurnover: 0.6, description: 'desc' },
+      ],
+      mainOriginOfOtherSuppliers: { countryCode: 'DEU', costs: 9 },
+    };
+    const result = CompanyFactsSchema.safeParse(companyFacts);
+    expect(result.success).toBeTruthy();
+    expect(
+      result.success && result.data.industrySectors[1].industryCode
+    ).toBeUndefined();
+  });
 });

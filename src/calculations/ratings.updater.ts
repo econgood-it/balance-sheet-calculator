@@ -13,7 +13,6 @@ export class RatingsUpdater {
     // Compute sum of topic weights
     const topics = filterTopics(balanceSheet.ratings);
     const topicsWithUpdatedWeight = topics.map((t) =>
-      // TODO: Debug topic weights further:
       // Topic wheigt is set to 1 if data of company facts is empty.
       // See Weighting G69
       ({

@@ -13,7 +13,7 @@ const EmployeesFractionSchema = z.object({
 });
 export type EmployeesFraction = z.infer<typeof EmployeesFractionSchema>;
 const IndustrySectorSchema = z.object({
-  industryCode: z.string(),
+  industryCode: isIndustryCode.optional(),
   amountOfTotalTurnover: z.number(),
   description: z.string(),
 });
