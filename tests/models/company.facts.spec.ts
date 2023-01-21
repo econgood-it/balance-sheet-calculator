@@ -75,6 +75,18 @@ describe('Company Facts', () => {
     expect(CompanyFactsSchema.safeParse(companyFacts).success).toBeTruthy();
   });
 
+  it('parse object where some of the supplier industry codes are missing', () => {
+    const companyFacts = {
+      ...companyFactsJsonFactory.empty(),
+      supplyFractions: [
+        { countryCode: 'ARE', costs: 5, industryCode: 'A' },
+        { countryCode: 'ARE', costs: 7 },
+      ],
+      mainOriginOfOtherSuppliers: { countryCode: 'DEU', costs: 9 },
+    };
+    expect(CompanyFactsSchema.safeParse(companyFacts).success).toBeTruthy();
+  });
+
   it('parse object where hasCanteen is undefined', () => {
     const companyFacts = {
       ...companyFactsJsonFactory.empty(),
@@ -84,5 +96,21 @@ describe('Company Facts', () => {
     const result = CompanyFactsSchema.safeParse(companyFacts);
     expect(result.success).toBeTruthy();
     expect(result.success && result.data.hasCanteen).toBeUndefined();
+  });
+
+  it('parse object where the industry codes of some industry sectors are missing', () => {
+    const companyFacts = {
+      ...companyFactsJsonFactory.empty(),
+      industrySectors: [
+        { amountOfTotalTurnover: 0.4, description: 'desc', industryCode: 'A' },
+        { amountOfTotalTurnover: 0.6, description: 'desc' },
+      ],
+      mainOriginOfOtherSuppliers: { countryCode: 'DEU', costs: 9 },
+    };
+    const result = CompanyFactsSchema.safeParse(companyFacts);
+    expect(result.success).toBeTruthy();
+    expect(
+      result.success && result.data.industrySectors[1].industryCode
+    ).toBeUndefined();
   });
 });

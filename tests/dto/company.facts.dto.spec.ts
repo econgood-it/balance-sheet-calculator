@@ -117,6 +117,27 @@ describe('CompanyFactsCreateRequestBodySchema', () => {
     );
   });
 
+  it('parse json where industry codes of some industry sectors are missing', () => {
+    const companyFactsJson = {
+      ...companyFactsJsonFactory.empty(),
+      totalPurchaseFromSuppliers: 9,
+      mainOriginOfOtherSuppliers: undefined,
+      industrySectors: [
+        {
+          description: 'debe',
+          amountOfTotalTurnover: 0.6,
+        },
+      ],
+    };
+    const result =
+      CompanyFactsCreateRequestBodySchema.safeParse(companyFactsJson);
+
+    expect(result.success).toBeTruthy();
+    expect(
+      result.success && result.data.industrySectors[0].industryCode
+    ).toBeUndefined();
+  });
+
   it('parse json where some of the supplier country codes are missing', () => {
     const companyFacts = {
       ...companyFactsJsonFactory.empty(),
@@ -233,6 +254,16 @@ describe('CompanyFactsPatchRequestBodySchema', () => {
     });
     expect(result).toMatchObject({
       employeesFractions,
+    });
+  });
+
+  it('parse with supply fraction with missing industry code', () => {
+    const supplyFractions = [{ costs: 0.8, countryCode: 'DEU' }];
+    const result = CompanyFactsCreateRequestBodySchema.parse({
+      supplyFractions,
+    });
+    expect(result).toMatchObject({
+      supplyFractions,
     });
   });
 });

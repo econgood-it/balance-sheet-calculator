@@ -39,4 +39,23 @@ describe('Customer Calculator', () => {
       customerCalcResults.sumOfEcologicalDesignOfProductsAndService
     ).toBeCloseTo(1.2, 1);
   });
+
+  it('should calculate when industry codes of some industry sectors are missing', async () => {
+    const companyFacts = {
+      ...companyFactsFactory.empty(),
+      industrySectors: [
+        { industryCode: 'L', amountOfTotalTurnover: 0.8, description: '' },
+        { amountOfTotalTurnover: 0.2, description: '' },
+      ],
+    };
+    industryProvider = await IndustryProvider.fromVersion(
+      BalanceSheetVersion.v5_0_8
+    );
+    const customerCalcResults = await new CustomerCalc(
+      industryProvider
+    ).calculate(companyFacts);
+    expect(
+      customerCalcResults.sumOfEcologicalDesignOfProductsAndService
+    ).toBeCloseTo(1.8, 2);
+  });
 });

@@ -6,6 +6,7 @@ export interface CustomerCalcResults {
 }
 
 export class CustomerCalc {
+  private static readonly DEFAULT_ECOLOGICAL_DESIGN_OF_PRODUCTS: number = 1;
   constructor(private readonly industryProvider: IndustryProvider) {}
 
   public calculate(companyFacts: CompanyFacts): CustomerCalcResults {
@@ -27,11 +28,12 @@ export class CustomerCalc {
     let result = 0;
     let sumAmountOfTotalTurnover = 0;
     for (const industrySector of companyFacts.industrySectors) {
-      const industry = this.industryProvider.getOrFail(
-        industrySector.industryCode
-      );
+      const ecologicalDesignOfProductsAndServices = industrySector.industryCode
+        ? this.industryProvider.getOrFail(industrySector.industryCode)
+            .ecologicalDesignOfProductsAndServices
+        : CustomerCalc.DEFAULT_ECOLOGICAL_DESIGN_OF_PRODUCTS;
       result +=
-        industry.ecologicalDesignOfProductsAndServices *
+        ecologicalDesignOfProductsAndServices *
         industrySector.amountOfTotalTurnover;
       sumAmountOfTotalTurnover += industrySector.amountOfTotalTurnover;
     }

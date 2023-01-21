@@ -2,16 +2,16 @@ import { z } from 'zod';
 import {
   computeCostsAndCreateMainOriginOfOtherSuppliers,
   isCountryCode,
+  isIndustryCode,
 } from '../models/company.facts';
 
-const isIndustryCode = z.string().min(1).max(4);
 const isCurrency = z.number().default(0);
 const isNonNegativeCurrency = z.number().nonnegative().default(0);
 const isPercentage = z.number().min(0).max(1);
 
 const SupplyFractionRequestBodySchema = z.object({
   countryCode: isCountryCode.optional(),
-  industryCode: isIndustryCode,
+  industryCode: isIndustryCode.optional(),
   costs: isNonNegativeCurrency,
 });
 
@@ -21,7 +21,7 @@ const EmployeesFractionRequestBodySchema = z.object({
 });
 
 const IndustrySectorRequestBodySchema = z.object({
-  industryCode: isIndustryCode,
+  industryCode: isIndustryCode.optional(),
   amountOfTotalTurnover: isPercentage,
   description: z.string().default(''),
 });
