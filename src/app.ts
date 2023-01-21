@@ -18,6 +18,8 @@ import { RegionService } from './services/region.service';
 import { RegionController } from './controllers/region.controller';
 import { IndustryController } from './controllers/industry.controller';
 import { IndustryService } from './services/industry.service';
+import { ApiKeyController } from './controllers/api.key.controller';
+import { ApiKeyService } from './services/api.key.service';
 
 class App {
   public readonly app: Application;
@@ -26,6 +28,7 @@ class App {
   private regionController: RegionController;
   private industryController: IndustryController;
   private userController: UserController;
+  private apiKeyController: ApiKeyController;
   private healthCheckController: HealthCheckController;
   private docsController: DocsController;
   private authentication: Authentication;
@@ -35,10 +38,7 @@ class App {
     this.setConfig();
     this.authentication = new Authentication(connection);
     this.authentication.addBasicAuthToDocsEndpoint(this.app, configuration);
-    this.authentication.addJwtAuthToApplication(
-      this.app,
-      configuration.jwtSecret
-    );
+    this.authentication.addAuthToApplication(this.app, configuration.jwtSecret);
     // Creating controllers
     const balanceSheetService = new BalanceSheetService(connection);
     this.balanceSheetController = new BalanceSheetController(
@@ -53,6 +53,8 @@ class App {
     );
     const userService = new UserService(connection, configuration.jwtSecret);
     this.userController = new UserController(this.app, userService);
+    const apiKeyService = new ApiKeyService(connection);
+    this.apiKeyController = new ApiKeyController(this.app, apiKeyService);
     this.healthCheckController = new HealthCheckController(
       this.app,
       new HealthCheckService()

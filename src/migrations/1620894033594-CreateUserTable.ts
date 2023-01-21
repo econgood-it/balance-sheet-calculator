@@ -5,7 +5,7 @@ export class CreateUserTable1620894033594 implements MigrationInterface {
     let query = `CREATE TABLE IF NOT EXISTS "user" (
             "id" SERIAL NOT NULL, 
             "email" character varying NOT NULL, 
-            "password" character varying NOT NULL,
+            "password" character varying NOT NULL, 
             "role" character varying NOT NULL, 
             CONSTRAINT "PK_user" PRIMARY KEY ("id")
         )`;
