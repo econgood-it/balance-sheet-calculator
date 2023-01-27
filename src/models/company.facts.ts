@@ -1,8 +1,9 @@
 import { z } from 'zod';
 export const isCountryCode = z.string().min(3).max(3);
+export const isIndustryCode = z.string().min(1).max(4);
 const SupplyFractionSchema = z.object({
   countryCode: isCountryCode.optional(),
-  industryCode: z.string(),
+  industryCode: isIndustryCode.optional(),
   costs: z.number(),
 });
 export type SupplyFraction = z.infer<typeof SupplyFractionSchema>;
@@ -12,7 +13,7 @@ const EmployeesFractionSchema = z.object({
 });
 export type EmployeesFraction = z.infer<typeof EmployeesFractionSchema>;
 const IndustrySectorSchema = z.object({
-  industryCode: z.string(),
+  industryCode: isIndustryCode.optional(),
   amountOfTotalTurnover: z.number(),
   description: z.string(),
 });
