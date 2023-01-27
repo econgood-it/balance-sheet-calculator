@@ -115,7 +115,6 @@ date +%s%3N
 To deploy the application use the docker commands explained below:
 
 ```
-docker build -t deployment_server . -f Dockerfile_Deployment
-docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock -v /usr/bin/docker:/usr/bin/docker -v ~/.ssh:/root/.ssh:ro deployment_server
+docker build -t deployment_server . -f Dockerfile_Deployment && docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock -v /usr/bin/docker:/usr/bin/docker -v ~/.ssh:/root/.ssh:ro -e ENVIRONMENT=test deployment_server
 ```
 

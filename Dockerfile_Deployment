@@ -29,8 +29,10 @@ ENV PATH="${NVM_DIR}/versions/node/v${NODE_VERSION}/bin/:${PATH}"
 
 ENV PROJECT_DIR /balance-sheet-calculator
 
+ENV ENVIRONMENT test
+
 COPY . $PROJECT_DIR
 
 WORKDIR $PROJECT_DIR
 
-CMD ["/bin/bash", "-c", "python3 deploy_to_server.py test"]
+CMD ["/bin/bash", "-c", "python3 deploy_to_server.py $ENVIRONMENT"]
