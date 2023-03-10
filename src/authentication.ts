@@ -77,7 +77,6 @@ class JWTAuthentication {
 }
 
 class ApiKeyAuthentication {
-  public static readonly API_KEY_PREFIX = 'Api-Key';
   constructor(private connection: Connection) {}
 
   public initialize() {
@@ -87,7 +86,7 @@ class ApiKeyAuthentication {
 
   private getStrategy(): Strategy {
     return new HeaderAPIKeyStrategy(
-      { header: 'Authorization', prefix: ApiKeyAuthentication.API_KEY_PREFIX },
+      { header: 'Api-Key', prefix: '' },
       false,
       (apikey: string, done: any) => {
         this.connection.manager
@@ -189,11 +188,9 @@ export class Authentication {
       ) {
         return next();
       }
-      return req.headers.authorization?.startsWith(
-        ApiKeyAuthentication.API_KEY_PREFIX
-      )
-        ? this.apiKeyAuthentication.authenticate(req, res, next)
-        : this.jwtAuthentication.authenticate(req, res, next);
+      return req.headers.authorization
+        ? this.jwtAuthentication.authenticate(req, res, next)
+        : this.apiKeyAuthentication.authenticate(req, res, next);
     });
   }
 }
