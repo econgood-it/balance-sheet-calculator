@@ -19,7 +19,7 @@ export function registerSchemas(registry: OpenAPIRegistry): OpenApiSchemas {
     BalanceSheetPatchRequestBodySchema
   );
   return {
-    BalanceSheetCreateRequestApiSchema: BalanceSheetCreateRequestApiSchema,
-    BalanceSheetPatchRequestApiSchema: BalanceSheetPatchRequestApiSchema,
+    BalanceSheetCreateRequestApiSchema,
+    BalanceSheetPatchRequestApiSchema,
   };
 }

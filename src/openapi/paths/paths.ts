@@ -1,15 +1,5 @@
 import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
-import { BalanceSheetPaths } from '../../controllers/balance.sheet.controller';
-import { z } from 'zod';
-import { balanceSheetJsonFactory } from '../examples';
-import {
-  BalanceSheetType,
-  BalanceSheetVersion,
-} from '../../models/balance.sheet';
-import {
-  BalanceSheetIdsResponseSchema,
-  BalanceSheetResponseBodySchema,
-} from '../../dto/balance.sheet.dto';
+
 import { OpenApiSchemas } from '../schemas';
 import { OpenApiParams } from '../params';
 import { registerBalanceSheetPost } from './balancesheet.post';

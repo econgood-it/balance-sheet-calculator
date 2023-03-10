@@ -59,7 +59,7 @@ class App {
       this.app,
       new HealthCheckService()
     );
-    this.docsController = new DocsController(this.app);
+    this.docsController = new DocsController(this.app, configuration);
     this.app.use(errorMiddleware);
   }
 

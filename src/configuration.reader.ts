@@ -1,5 +1,6 @@
-enum Environment {
+export enum Environment {
   DEV,
+  TEST,
   PROD,
 }
 
@@ -20,8 +21,14 @@ export class Configuration {
     public readonly docsUser: string,
     public readonly docsPassword: string
   ) {
-    const basePath = environment === Environment.PROD ? 'dist/' : 'src/';
-    const fileExtension = environment === Environment.PROD ? 'js' : 'ts';
+    const basePath = [Environment.TEST, Environment.PROD].includes(environment)
+      ? 'dist/'
+      : 'src/';
+    const fileExtension = [Environment.TEST, Environment.PROD].includes(
+      environment
+    )
+      ? 'js'
+      : 'ts';
     this.entityRegex = basePath + 'entities/**/*.' + fileExtension;
     this.migrationRegex = basePath + 'migrations/**/*.' + fileExtension;
   }
@@ -74,11 +81,13 @@ export class ConfigurationReader {
     let environmentAsEnum: Environment;
     if (environment === 'DEV') {
       environmentAsEnum = Environment.DEV;
+    } else if (environment === 'TEST') {
+      environmentAsEnum = Environment.TEST;
     } else if (environment === 'PROD') {
       environmentAsEnum = Environment.PROD;
     } else {
       throw Error(
-        'Unsupported value for ENVIRONMENT. Allowed are only DEV and PROD'
+        'Unsupported value for ENVIRONMENT. Allowed are only DEV, TEST and PROD'
       );
     }
     return new Configuration(

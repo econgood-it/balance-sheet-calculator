@@ -3,11 +3,15 @@ import { OpenAPIObject } from 'openapi3-ts';
 import { buildSwaggerDoc } from '../openapi/swagger.doc';
 import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
 import { z } from 'zod';
+import { Configuration } from '../configuration.reader';
 
 extendZodWithOpenApi(z);
 
 export class DocsService {
-  private swaggerDocument: OpenAPIObject = buildSwaggerDoc();
+  private swaggerDocument: OpenAPIObject;
+  constructor(configuration: Configuration) {
+    this.swaggerDocument = buildSwaggerDoc(configuration);
+  }
 
   public download(req: Request, res: Response) {
     const json = JSON.stringify(this.swaggerDocument);

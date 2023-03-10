@@ -1,9 +1,6 @@
 import { BalanceSheetPaths } from '../../controllers/balance.sheet.controller';
 import { z } from 'zod';
-import {
-  BalanceSheetIdsResponseSchema,
-  BalanceSheetResponseBodySchema,
-} from '../../dto/balance.sheet.dto';
+
 import {
   applicationJson,
   HttpCodes,

@@ -64,9 +64,9 @@ export function registerParams(registry: OpenAPIRegistry) {
       })
   );
   return {
-    CorrelationIdHeader: CorrelationIdHeader,
-    SaveFlagParam: SaveFlagParam,
-    LanguageParam: LanguageParam,
-    BalanceSheetIdParam: BalanceSheetIdParam,
+    CorrelationIdHeader,
+    SaveFlagParam,
+    LanguageParam,
+    BalanceSheetIdParam,
   };
 }

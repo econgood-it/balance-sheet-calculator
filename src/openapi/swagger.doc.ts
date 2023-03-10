@@ -6,8 +6,9 @@ import { OpenAPIObject } from 'openapi3-ts';
 import { registerSchemas } from './schemas';
 import { registerParams } from './params';
 import { registerPaths } from './paths/paths';
+import { Configuration, Environment } from '../configuration.reader';
 
-export function buildSwaggerDoc(): OpenAPIObject {
+export function buildSwaggerDoc(configuration: Configuration): OpenAPIObject {
   const registry = new OpenAPIRegistry();
 
   const apiKeyAuth = registry.registerComponent('securitySchemes', 'apiKey', {
@@ -25,6 +26,26 @@ export function buildSwaggerDoc(): OpenAPIObject {
 
   const version = '3.4.0';
 
+  const devServer = {
+    url: 'http://localhost:4000',
+    description: 'Local development server',
+  };
+  const testServer = {
+    url: 'https://calculator.test.ecogood.org',
+    description: 'Test server',
+  };
+  const prodServer = {
+    url: 'https://calculator.ecogood.org',
+    description: 'Production server',
+  };
+
+  const servers =
+    configuration.environment === Environment.DEV
+      ? [devServer, testServer, prodServer]
+      : configuration.environment === Environment.TEST
+      ? [testServer, prodServer]
+      : [prodServer, testServer];
+
   return generator.generateDocument({
     info: {
       title: `ECG Balance Calculator ${version}`,
@@ -35,17 +56,7 @@ export function buildSwaggerDoc(): OpenAPIObject {
     externalDocs: {
       url: 'https://wiki.ecogood.org/pages/viewpage.action?pageId=69436026&scmLanguageKey=en',
     },
-    servers: [
-      { url: 'http://localhost:4000', description: 'Local development server' },
-      {
-        url: 'https://calculator.test.ecogood.org',
-        description: 'Test server',
-      },
-      {
-        url: 'https://calculator.ecogood.org',
-        description: 'Production server',
-      },
-    ],
+    servers,
     security: [{ [apiKeyAuth.name]: [] }],
   });
 }
