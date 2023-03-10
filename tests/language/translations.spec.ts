@@ -1,5 +1,5 @@
-import { balanceSheetFactory } from '../testData/balance.sheet';
 import { translateBalanceSheet } from '../../src/language/translations';
+import { balanceSheetFactory } from '../../src/openapi/examples';
 
 jest.mock('../../src/i18n', () => ({
   init: () => {},

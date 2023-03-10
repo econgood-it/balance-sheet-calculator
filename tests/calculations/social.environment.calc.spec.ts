@@ -1,6 +1,6 @@
 import { SocialEnvironmentCalc } from '../../src/calculations/social.environment.calc';
-import { companyFactsFactory } from '../testData/balance.sheet';
 import { CompanyFacts } from '../../src/models/company.facts';
+import { companyFactsFactory } from '../../src/openapi/examples';
 
 describe('Social Environment Calculator', () => {
   it('should return empty option if turnover is zero', async () => {

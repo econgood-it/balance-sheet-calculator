@@ -13,6 +13,16 @@ const upload = multer({
   },
 });
 
+const resourceUrl = '/v1/balancesheets';
+export const BalanceSheetPaths = {
+  postUpload: `${resourceUrl}/upload`,
+  post: `${resourceUrl}`,
+  patch: `${resourceUrl}/:id`,
+  getAll: `${resourceUrl}`,
+  get: `${resourceUrl}/:id`,
+  delete: `${resourceUrl}/:id`,
+};
+
 export class BalanceSheetController {
   constructor(
     private app: Application,
@@ -24,7 +34,7 @@ export class BalanceSheetController {
 
   public routes() {
     this.app.post(
-      '/v1/balancesheets/upload',
+      BalanceSheetPaths.postUpload,
       allowUserOnly,
       upload.single('balanceSheet'),
       this.balanceSheetService.uploadBalanceSheet.bind(this.balanceSheetService)
@@ -38,14 +48,14 @@ export class BalanceSheetController {
       )
     );
     this.app.get(
-      '/v1/balancesheets',
+      BalanceSheetPaths.getAll,
       allowUserOnly,
       this.balanceSheetService.getBalanceSheetsOfUser.bind(
         this.balanceSheetService
       )
     );
     this.app.get(
-      '/v1/balancesheets/:id',
+      BalanceSheetPaths.get,
       allowUserOnly,
       this.balanceSheetService.getBalanceSheet.bind(this.balanceSheetService)
     );
@@ -57,17 +67,17 @@ export class BalanceSheetController {
       )
     );
     this.app.post(
-      '/v1/balancesheets',
+      BalanceSheetPaths.post,
       allowUserOnly,
       this.balanceSheetService.createBalanceSheet.bind(this.balanceSheetService)
     );
     this.app.patch(
-      '/v1/balancesheets/:id',
+      BalanceSheetPaths.patch,
       allowUserOnly,
       this.balanceSheetService.updateBalanceSheet.bind(this.balanceSheetService)
     );
     this.app.delete(
-      '/v1/balancesheets/:id',
+      BalanceSheetPaths.delete,
       allowUserOnly,
       this.balanceSheetService.deleteBalanceSheet.bind(this.balanceSheetService)
     );

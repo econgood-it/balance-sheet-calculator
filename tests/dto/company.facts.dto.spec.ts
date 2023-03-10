@@ -1,8 +1,8 @@
 import {
-  CompanyFactsCreateRequestBodySchema,
+  CompanyFactsCreateRequestBodyTransformedSchema,
   CompanyFactsPatchRequestBodySchema,
 } from '../../src/dto/company.facts.dto';
-import { companyFactsJsonFactory } from '../testData/balance.sheet';
+import { companyFactsJsonFactory } from '../../src/openapi/examples';
 
 describe('CompanyFactsCreateRequestBodySchema', () => {
   it('parse json and returns a CompanyFacts entity', () => {
@@ -24,12 +24,12 @@ describe('CompanyFactsCreateRequestBodySchema', () => {
       employeesFractions: [],
       industrySectors: [],
     };
-    const result = CompanyFactsCreateRequestBodySchema.parse(json);
+    const result = CompanyFactsCreateRequestBodyTransformedSchema.parse(json);
     expect(result).toMatchObject(json);
   });
 
   it('parse json using default values', () => {
-    const result = CompanyFactsCreateRequestBodySchema.parse({});
+    const result = CompanyFactsCreateRequestBodyTransformedSchema.parse({});
     expect(result).toMatchObject({
       totalPurchaseFromSuppliers: 0,
       totalStaffCosts: 0,
@@ -54,7 +54,7 @@ describe('CompanyFactsCreateRequestBodySchema', () => {
       { industryCode: 'A', countryCode: 'DEU', costs: 200 },
       { industryCode: 'A', countryCode: 'DEU', costs: 100 },
     ];
-    const result = CompanyFactsCreateRequestBodySchema.parse({
+    const result = CompanyFactsCreateRequestBodyTransformedSchema.parse({
       totalPurchaseFromSuppliers: 500,
       supplyFractions,
     });
@@ -69,7 +69,7 @@ describe('CompanyFactsCreateRequestBodySchema', () => {
   });
 
   it('parse json where mainOriginOfOtherSuppliers costs is equal to totalPurchaseFromSuppliers', () => {
-    const result = CompanyFactsCreateRequestBodySchema.parse({
+    const result = CompanyFactsCreateRequestBodyTransformedSchema.parse({
       totalPurchaseFromSuppliers: 500,
       supplyFractions: [],
     });
@@ -81,7 +81,7 @@ describe('CompanyFactsCreateRequestBodySchema', () => {
     });
   });
   it('parse json where country code of mainOriginOfOtherSuppliers is provided', () => {
-    const result = CompanyFactsCreateRequestBodySchema.parse({
+    const result = CompanyFactsCreateRequestBodyTransformedSchema.parse({
       totalPurchaseFromSuppliers: 500,
       supplyFractions: [],
       mainOriginOfOtherSuppliers: 'DEU',
@@ -95,7 +95,7 @@ describe('CompanyFactsCreateRequestBodySchema', () => {
   });
 
   it('allows negative values for incomeFromFinancialInvestments and additionsToFixedAssets', async () => {
-    const result = CompanyFactsCreateRequestBodySchema.safeParse({
+    const result = CompanyFactsCreateRequestBodyTransformedSchema.safeParse({
       incomeFromFinancialInvestments: -20,
       additionsToFixedAssets: -70,
     });
@@ -109,7 +109,9 @@ describe('CompanyFactsCreateRequestBodySchema', () => {
       mainOriginOfOtherSuppliers: undefined,
     };
     const result =
-      CompanyFactsCreateRequestBodySchema.safeParse(companyFactsJson);
+      CompanyFactsCreateRequestBodyTransformedSchema.safeParse(
+        companyFactsJson
+      );
 
     expect(result.success).toBeTruthy();
     expect(result.success && result.data.mainOriginOfOtherSuppliers.costs).toBe(
@@ -130,7 +132,9 @@ describe('CompanyFactsCreateRequestBodySchema', () => {
       ],
     };
     const result =
-      CompanyFactsCreateRequestBodySchema.safeParse(companyFactsJson);
+      CompanyFactsCreateRequestBodyTransformedSchema.safeParse(
+        companyFactsJson
+      );
 
     expect(result.success).toBeTruthy();
     expect(
@@ -147,11 +151,12 @@ describe('CompanyFactsCreateRequestBodySchema', () => {
       ],
     };
     expect(
-      CompanyFactsCreateRequestBodySchema.safeParse(companyFacts).success
+      CompanyFactsCreateRequestBodyTransformedSchema.safeParse(companyFacts)
+        .success
     ).toBeTruthy();
   });
   it('parse json where hasCanteen is not provided', () => {
-    const result = CompanyFactsCreateRequestBodySchema.parse({
+    const result = CompanyFactsCreateRequestBodyTransformedSchema.parse({
       totalPurchaseFromSuppliers: 9,
     });
     expect(result.hasCanteen).toBeUndefined();
@@ -249,7 +254,7 @@ describe('CompanyFactsPatchRequestBodySchema', () => {
 
   it('parse with employees fractions with missing country code', () => {
     const employeesFractions = [{ percentage: 0.8 }];
-    const result = CompanyFactsCreateRequestBodySchema.parse({
+    const result = CompanyFactsCreateRequestBodyTransformedSchema.parse({
       employeesFractions,
     });
     expect(result).toMatchObject({
@@ -259,7 +264,7 @@ describe('CompanyFactsPatchRequestBodySchema', () => {
 
   it('parse with supply fraction with missing industry code', () => {
     const supplyFractions = [{ costs: 0.8, countryCode: 'DEU' }];
-    const result = CompanyFactsCreateRequestBodySchema.parse({
+    const result = CompanyFactsCreateRequestBodyTransformedSchema.parse({
       supplyFractions,
     });
     expect(result).toMatchObject({

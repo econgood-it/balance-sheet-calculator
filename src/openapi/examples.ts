@@ -1,38 +1,16 @@
-import { DEFAULT_COUNTRY_CODE } from '../../src/models/region';
 import {
   BalanceSheet,
   BalanceSheetType,
   BalanceSheetVersion,
-} from '../../src/models/balance.sheet';
-import { RatingsFactory } from '../../src/factories/ratings.factory';
-import { CompanyFacts } from '../../src/models/company.facts';
+} from '../models/balance.sheet';
+import { RatingsFactory } from '../factories/ratings.factory';
+import { CompanyFacts } from '../models/company.facts';
+import { DEFAULT_COUNTRY_CODE } from '../models/region';
 
 const arabEmiratesCode = 'ARE';
 const afghanistanCode = 'AFG';
 const agricultureCode = 'A';
 const pharmaceuticCode = 'Ce';
-
-// const supplyFractions: SupplyFraction[] = [
-//   new SupplyFraction(undefined, agricultureCode, arabEmiratesCode, 500),
-//   new SupplyFraction(undefined, pharmaceuticCode, afghanistanCode, 600),
-// ];
-// const employeesFractions: EmployeesFraction[] = [
-//   new EmployeesFraction(undefined, arabEmiratesCode, 0.5),
-//   new EmployeesFraction(undefined, afghanistanCode, 0.5),
-// ];
-
-export const balanceSheetFactory = {
-  emptyV508: (): BalanceSheet => ({
-    type: BalanceSheetType.Full,
-    version: BalanceSheetVersion.v5_0_8,
-    companyFacts: companyFactsFactory.empty(),
-    ratings: RatingsFactory.createDefaultRatings(
-      BalanceSheetType.Full,
-      BalanceSheetVersion.v5_0_8
-    ),
-  }),
-};
-
 export const balanceSheetJsonFactory = {
   emptyV508: (): BalanceSheet => ({
     type: BalanceSheetType.Full,
@@ -44,7 +22,6 @@ export const balanceSheetJsonFactory = {
     ),
   }),
 };
-
 export const companyFactsFactory = {
   empty: (): CompanyFacts => ({
     totalPurchaseFromSuppliers: 0,
@@ -132,7 +109,6 @@ export const companyFactsFactory = {
     mainOriginOfOtherSuppliers: { countryCode: DEFAULT_COUNTRY_CODE, costs: 0 },
   }),
 };
-
 export const companyFactsJsonFactory = {
   empty: (): any => ({
     totalPurchaseFromSuppliers: 0,
@@ -186,5 +162,16 @@ export const companyFactsJsonFactory = {
       { id: undefined, countryCode: afghanistanCode, percentage: 0.5 },
     ],
     industrySectors: [],
+  }),
+};
+export const balanceSheetFactory = {
+  emptyV508: (): BalanceSheet => ({
+    type: BalanceSheetType.Full,
+    version: BalanceSheetVersion.v5_0_8,
+    companyFacts: companyFactsFactory.empty(),
+    ratings: RatingsFactory.createDefaultRatings(
+      BalanceSheetType.Full,
+      BalanceSheetVersion.v5_0_8
+    ),
   }),
 };

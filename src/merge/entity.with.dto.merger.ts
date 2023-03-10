@@ -3,7 +3,7 @@ import { BalanceSheet } from '../models/balance.sheet';
 import { CompanyFacts } from '../models/company.facts';
 import { BalanceSheetPatchRequestBody } from '../dto/balance.sheet.dto';
 import {
-  CompanyFactsCreateRequestBodySchema,
+  CompanyFactsCreateRequestBodyTransformedSchema,
   CompanyFactsPatchRequestBody,
 } from '../dto/company.facts.dto';
 import * as _ from 'lodash';
@@ -40,7 +40,7 @@ export class EntityWithDtoMerger {
     companyFacts: CompanyFacts,
     companyFactsPatchRequestBody: CompanyFactsPatchRequestBody
   ): CompanyFacts {
-    return CompanyFactsCreateRequestBodySchema.parse(
+    return CompanyFactsCreateRequestBodyTransformedSchema.parse(
       _.mergeWith(
         {
           ...companyFacts,

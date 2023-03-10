@@ -1,5 +1,5 @@
 import {
-  BalanceSheetCreateRequestBodySchema,
+  BalanceSheetCreateRequestBodyTransformedSchema,
   balanceSheetToResponse,
 } from '../../src/dto/balance.sheet.dto';
 import {
@@ -7,7 +7,7 @@ import {
   BalanceSheetVersion,
 } from '../../src/models/balance.sheet';
 import { RatingsFactory } from '../../src/factories/ratings.factory';
-import { balanceSheetFactory } from '../testData/balance.sheet';
+import { balanceSheetFactory } from '../../src/openapi/examples';
 
 describe('BalanceSheetCreateRequestBodySchema', () => {
   it('parse json with a merged rating entity', () => {
@@ -21,7 +21,7 @@ describe('BalanceSheetCreateRequestBodySchema', () => {
         { shortName: 'E2.1', estimations: 3 },
       ],
     };
-    const result = BalanceSheetCreateRequestBodySchema.parse(json);
+    const result = BalanceSheetCreateRequestBodyTransformedSchema.parse(json);
 
     const defaultRatings = RatingsFactory.createDefaultRatings(
       json.type,
@@ -69,7 +69,8 @@ describe('BalanceSheetCreateRequestBodySchema', () => {
       type: BalanceSheetType.Full,
       version: BalanceSheetVersion.v5_0_4,
     };
-    const result = await BalanceSheetCreateRequestBodySchema.parseAsync(json);
+    const result =
+      await BalanceSheetCreateRequestBodyTransformedSchema.parseAsync(json);
 
     const expectedRatings = RatingsFactory.createDefaultRatings(
       json.type,

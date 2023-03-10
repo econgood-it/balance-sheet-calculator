@@ -10,10 +10,10 @@ import {
   BalanceSheetType,
   BalanceSheetVersion,
 } from '../../../src/models/balance.sheet';
-import { companyFactsJsonFactory } from '../../testData/balance.sheet';
 import supertest = require('supertest');
 import { Rating } from '../../../src/models/rating';
 import { RatingResponseBody } from '../../../src/dto/rating.dto';
+import { companyFactsJsonFactory } from '../../../src/openapi/examples';
 
 describe('Balance Sheet Controller', () => {
   let connection: Connection;

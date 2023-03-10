@@ -4,8 +4,8 @@ import { CalcResults, Calculator } from '../../src/calculations/calculator';
 import { RegionProvider } from '../../src/providers/region.provider';
 import { IndustryProvider } from '../../src/providers/industry.provider';
 import { BalanceSheetVersion } from '../../src/models/balance.sheet';
-import { companyFactsFactory } from '../testData/balance.sheet';
 import { CompanyFacts } from '../../src/models/company.facts';
+import { companyFactsFactory } from '../../src/openapi/examples';
 
 describe('Stakeholder Weight Calculator', () => {
   let companyFacts: CompanyFacts;

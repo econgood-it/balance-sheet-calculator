@@ -4,8 +4,8 @@ import { Application } from 'express';
 import { ConfigurationReader } from '../../src/configuration.reader';
 import { DatabaseConnectionCreator } from '../../src/database.connection.creator';
 import App from '../../src/app';
-import { balanceSheetJsonFactory } from '../testData/balance.sheet';
 import { TokenProvider } from '../TokenProvider';
+import { balanceSheetJsonFactory } from '../../src/openapi/examples';
 
 describe('Authentication', () => {
   let connection: Connection;

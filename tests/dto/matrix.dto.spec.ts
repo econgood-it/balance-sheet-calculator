@@ -1,10 +1,10 @@
 import { BalanceSheet } from '../../src/models/balance.sheet';
-import { balanceSheetFactory } from '../testData/balance.sheet';
 import {
   balanceSheetToMatrixResponse,
   ratingToMatrixRating,
 } from '../../src/dto/matrix.dto';
 import { Rating } from '../../src/models/rating';
+import { balanceSheetFactory } from '../../src/openapi/examples';
 
 describe('Matrix DTO', () => {
   let balanceSheet: BalanceSheet;

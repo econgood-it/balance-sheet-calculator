@@ -46,7 +46,9 @@ const CompanyFactsRequestBodySchema = z.object({
   mainOriginOfOtherSuppliers: isCountryCode.optional(),
 });
 
-export const CompanyFactsCreateRequestBodySchema =
+export const CompanyFactsCreateRequestBody = CompanyFactsRequestBodySchema;
+
+export const CompanyFactsCreateRequestBodyTransformedSchema =
   CompanyFactsRequestBodySchema.transform((cf) => ({
     ...cf,
     mainOriginOfOtherSuppliers: computeCostsAndCreateMainOriginOfOtherSuppliers(

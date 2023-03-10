@@ -1,8 +1,8 @@
-import { companyFactsFactory } from '../testData/balance.sheet';
 import { EntityWithDtoMerger } from '../../src/merge/entity.with.dto.merger';
 
 import { CompanyFacts } from '../../src/models/company.facts';
 import { CompanyFactsPatchRequestBodySchema } from '../../src/dto/company.facts.dto';
+import { companyFactsFactory } from '../../src/openapi/examples';
 
 describe('EntityWithDTOMerger', () => {
   let companyFacts: CompanyFacts;

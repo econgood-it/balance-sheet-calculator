@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import {
-  CompanyFactsCreateRequestBodySchema,
+  CompanyFactsCreateRequestBody,
+  CompanyFactsCreateRequestBodyTransformedSchema,
   CompanyFactsPatchRequestBodySchema,
   CompanyFactsResponseBodySchema,
 } from './company.facts.dto';
@@ -28,15 +29,19 @@ function mergeWithDefaultRatings(
   return mergeRatingsWithRequestBodies(defaultRatings, ratingRequestBodies);
 }
 
-export const BalanceSheetCreateRequestBodySchema = z
-  .object({
-    type: z.nativeEnum(BalanceSheetType),
-    version: z.nativeEnum(BalanceSheetVersion),
-    companyFacts: CompanyFactsCreateRequestBodySchema.default({}),
-    ratings: RatingRequestBodySchema.array().default([]),
-  })
-  .transform((b) => ({
+export const BalanceSheetCreateRequestBodySchema = z.object({
+  type: z.nativeEnum(BalanceSheetType),
+  version: z.nativeEnum(BalanceSheetVersion),
+  companyFacts: CompanyFactsCreateRequestBody.default({}),
+  ratings: RatingRequestBodySchema.array().default([]),
+});
+
+export const BalanceSheetCreateRequestBodyTransformedSchema =
+  BalanceSheetCreateRequestBodySchema.transform((b) => ({
     ...b,
+    companyFacts: CompanyFactsCreateRequestBodyTransformedSchema.parse(
+      b.companyFacts
+    ),
     ratings: mergeWithDefaultRatings(b.ratings, b.type, b.version),
   }));
 
@@ -74,3 +79,9 @@ export function balanceSheetToResponse(
     ),
   });
 }
+
+export const BalanceSheetIdsResponseSchema = z
+  .object({
+    id: z.number(),
+  })
+  .array();

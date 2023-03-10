@@ -25,7 +25,8 @@ import { TopicWeightsReader } from '../reader/balanceSheetReader/topic.weights.r
 import { StakeholderWeightsReader } from '../reader/balanceSheetReader/stakeholder.weights.reader';
 import { BalanceSheet } from '../models/balance.sheet';
 import {
-  BalanceSheetCreateRequestBodySchema,
+  BalanceSheetCreateRequestBodyTransformedSchema,
+  BalanceSheetIdsResponseSchema,
   BalanceSheetPatchRequestBodySchema,
   balanceSheetToResponse,
 } from '../dto/balance.sheet.dto';
@@ -47,9 +48,8 @@ export class BalanceSheetService {
     this.connection.manager
       .transaction(async (entityManager) => {
         const foundUser = await this.findUserOrFail(req, entityManager);
-        const balanceSheet = BalanceSheetCreateRequestBodySchema.parse(
-          req.body
-        );
+        const balanceSheet =
+          BalanceSheetCreateRequestBodyTransformedSchema.parse(req.body);
 
         const { updatedBalanceSheet } = await CalculationService.calculate(
           balanceSheet
@@ -237,9 +237,11 @@ export class BalanceSheetService {
           relations: ['balanceSheetEntities'],
         });
         res.json(
-          user.balanceSheetEntities.map((b) => {
-            return { id: b.id };
-          })
+          BalanceSheetIdsResponseSchema.parse(
+            user.balanceSheetEntities.map((b) => {
+              return { id: b.id };
+            })
+          )
         );
       })
       .catch((error) => {

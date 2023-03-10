@@ -2,7 +2,7 @@ import {
   FinanceCalc,
   FinanceCalcResults,
 } from '../../src/calculations/finance.calc';
-import { companyFactsFactory } from '../testData/balance.sheet';
+import { companyFactsFactory } from '../../src/openapi/examples';
 
 describe('Finance Calculator', () => {
   it('should return default value of economic ratio', () => {

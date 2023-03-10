@@ -1,13 +1,13 @@
-import {
-  companyFactsFactory,
-  companyFactsJsonFactory,
-} from '../testData/balance.sheet';
 import { DEFAULT_COUNTRY_CODE } from '../../src/models/region';
 import {
   allValuesAreZero,
   CompanyFacts,
   CompanyFactsSchema,
 } from '../../src/models/company.facts';
+import {
+  companyFactsFactory,
+  companyFactsJsonFactory,
+} from '../../src/openapi/examples';
 
 describe('Company Facts', () => {
   it('allValuesAreZero should return true', () => {

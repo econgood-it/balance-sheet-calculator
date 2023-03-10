@@ -14,9 +14,9 @@ import {
   BalanceSheetType,
   BalanceSheetVersion,
 } from '../../src/models/balance.sheet';
-import { companyFactsFactory } from '../testData/balance.sheet';
 import { CompanyFacts } from '../../src/models/company.facts';
 import { Rating } from '../../src/models/rating';
+import { companyFactsFactory } from '../../src/openapi/examples';
 
 describe('Ratings updater', () => {
   const stakeholderWeightCalculator = new StakeholderWeightCalculator();

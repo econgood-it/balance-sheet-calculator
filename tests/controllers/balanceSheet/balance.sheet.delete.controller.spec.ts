@@ -16,7 +16,7 @@ import {
   BalanceSheetVersion,
 } from '../../../src/models/balance.sheet';
 import supertest = require('supertest');
-import { companyFactsJsonFactory } from '../../testData/balance.sheet';
+import { companyFactsJsonFactory } from '../../../src/openapi/examples';
 
 describe('Balance Sheet Controller', () => {
   let connection: Connection;

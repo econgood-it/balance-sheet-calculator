@@ -1,11 +1,12 @@
 import 'reflect-metadata';
 import { DatabaseConnectionCreator } from './database.connection.creator';
 import { Connection } from 'typeorm';
-import App from './app';
+
 import { LoggingService } from './logging';
 import { ConfigurationReader } from './configuration.reader';
 import { AdminAccountCreator } from './admin.account.creator';
 import { Role } from './entities/enums';
+import App from './app';
 
 declare global {
   namespace Express {

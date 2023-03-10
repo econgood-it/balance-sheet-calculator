@@ -2,8 +2,8 @@ import { IndustryProvider } from '../../src/providers/industry.provider';
 
 import { CustomerCalc } from '../../src/calculations/customer.calc';
 import { BalanceSheetVersion } from '../../src/models/balance.sheet';
-import { companyFactsFactory } from '../testData/balance.sheet';
 import { CompanyFacts } from '../../src/models/company.facts';
+import { companyFactsFactory } from '../../src/openapi/examples';
 
 describe('Customer Calculator', () => {
   let industryProvider: IndustryProvider;

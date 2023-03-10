@@ -11,8 +11,8 @@ import {
   BalanceSheetType,
   BalanceSheetVersion,
 } from '../../../src/models/balance.sheet';
-import { companyFactsJsonFactory } from '../../testData/balance.sheet';
 import { Rating } from '../../../src/models/rating';
+import { companyFactsJsonFactory } from '../../../src/openapi/examples';
 
 describe('Update endpoint of Balance Sheet Controller', () => {
   let connection: Connection;

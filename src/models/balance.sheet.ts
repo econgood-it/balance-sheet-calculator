@@ -5,7 +5,6 @@ import { RatingSchema } from './rating';
 export enum BalanceSheetType {
   Compact = 'Compact',
   Full = 'Full',
-  Other = 'other',
 }
 
 export enum BalanceSheetVersion {

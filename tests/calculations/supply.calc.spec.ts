@@ -5,12 +5,12 @@ import {
 import { RegionProvider } from '../../src/providers/region.provider';
 import { IndustryProvider } from '../../src/providers/industry.provider';
 import { BalanceSheetVersion } from '../../src/models/balance.sheet';
-import { companyFactsFactory } from '../testData/balance.sheet';
 import {
   CompanyFacts,
   computeCostsOfMainOriginOfOtherSuppliers,
   SupplyFraction,
 } from '../../src/models/company.facts';
+import { companyFactsFactory } from '../../src/openapi/examples';
 
 describe('Supply Calculator', () => {
   const defaultPPPIndex = 1.00304566871495;

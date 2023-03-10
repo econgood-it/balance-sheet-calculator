@@ -7,8 +7,8 @@ import {
   createFromBalanceSheet,
 } from '../../src/entities/balance.sheet.entity';
 import { Role } from '../../src/entities/enums';
-import { balanceSheetFactory } from '../testData/balance.sheet';
 import { User } from '../../src/entities/user';
+import { balanceSheetFactory } from '../../src/openapi/examples';
 
 describe('Balance Sheet', () => {
   let balanceSheetEntityRepository: Repository<BalanceSheetEntity>;
