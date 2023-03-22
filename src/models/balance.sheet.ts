@@ -1,24 +1,31 @@
 import { z } from 'zod';
-import { CompanyFactsSchema } from './company.facts';
-import { RatingSchema } from './rating';
-
-export enum BalanceSheetType {
-  Compact = 'Compact',
-  Full = 'Full',
-}
-
-export enum BalanceSheetVersion {
-  // eslint-disable-next-line camelcase
-  v5_0_4 = '5.04',
-  // eslint-disable-next-line camelcase
-  v5_0_5 = '5.05',
-  // eslint-disable-next-line camelcase
-  v5_0_6 = '5.06',
-  // eslint-disable-next-line camelcase
-  v5_0_7 = '5.07',
-  // eslint-disable-next-line camelcase
-  v5_0_8 = '5.08',
-}
+import {
+  CompanyFactsCreateRequestBodyTransformedSchema,
+  CompanyFactsSchema,
+} from './company.facts';
+import {
+  filterTopics,
+  isTopic,
+  Rating,
+  RatingSchema,
+  sortRatings,
+} from './rating';
+import { RatingsFactory } from '../factories/ratings.factory';
+import { mergeRatingsWithRequestBodies } from '../merge/ratingsWithDtoMerger';
+import { translateBalanceSheet, Translations } from '../language/translations';
+import {
+  BalanceSheetCreateRequestBodySchema,
+  BalanceSheetResponseBodySchema,
+} from 'e-calculator-schemas/dist/balance.sheet.dto';
+import {
+  BalanceSheetType,
+  BalanceSheetVersion,
+} from 'e-calculator-schemas/dist/shared.schemas';
+import { RatingRequestBodySchema } from 'e-calculator-schemas/dist/rating.dto';
+import { none, Option, some } from '../calculations/option';
+import { roundWithPrecision } from '../math';
+import { MatrixRatingBodySchema } from 'e-calculator-schemas/dist/matrix.dto';
+import { diff } from 'deep-diff';
 
 export const BalanceSheetVersionSchema = z.nativeEnum(BalanceSheetVersion);
 export const BalanceSheetSchema = z.object({
@@ -29,3 +36,98 @@ export const BalanceSheetSchema = z.object({
 });
 
 export type BalanceSheet = z.infer<typeof BalanceSheetSchema>;
+
+function mergeWithDefaultRatings(
+  ratingRequestBodies: z.infer<typeof RatingRequestBodySchema>[],
+  type: BalanceSheetType,
+  version: BalanceSheetVersion
+): Rating[] {
+  const defaultRatings = RatingsFactory.createDefaultRatings(type, version);
+  return mergeRatingsWithRequestBodies(defaultRatings, ratingRequestBodies);
+}
+
+export function parseAsBalanceSheet(
+  json: z.input<typeof BalanceSheetCreateRequestBodySchema>
+) {
+  return BalanceSheetCreateRequestBodySchema.transform((b) => ({
+    ...b,
+    companyFacts: CompanyFactsCreateRequestBodyTransformedSchema.parse(
+      b.companyFacts
+    ),
+    ratings: mergeWithDefaultRatings(b.ratings, b.type, b.version),
+  }))
+    .pipe(BalanceSheetSchema)
+    .parse(json);
+}
+
+export function balanceSheetToResponse(
+  id: number | undefined,
+  balanceSheet: BalanceSheet,
+  language: keyof Translations
+) {
+  const transBalanceSheet = translateBalanceSheet(balanceSheet, language);
+  return BalanceSheetResponseBodySchema.parse({
+    id,
+    ...transBalanceSheet,
+    ratings: sortRatings(
+      transBalanceSheet.ratings.map((r) => ({
+        ...r,
+        type: isTopic(r) ? 'topic' : 'aspect',
+      }))
+    ),
+  });
+}
+
+type MatrixRatingBody = z.infer<typeof MatrixRatingBodySchema>;
+const MatrixResponseBodySchema = z.object({
+  ratings: MatrixRatingBodySchema.array(),
+});
+
+export function balanceSheetToMatrixResponse(balanceSheet: BalanceSheet) {
+  return MatrixResponseBodySchema.parse({
+    ratings: filterTopics(sortRatings(balanceSheet.ratings)).map((r) =>
+      ratingToMatrixRating(r)
+    ),
+  });
+}
+
+export function ratingToMatrixRating(rating: Rating): MatrixRatingBody {
+  const percentage = calcPercentage(rating.points, rating.maxPoints);
+  const percentageReached = percentage.isPresent()
+    ? percentage.get()
+    : undefined;
+  return MatrixRatingBodySchema.parse({
+    shortName: rating.shortName,
+    name: rating.name,
+    points: roundWithPrecision(rating.points),
+    maxPoints: roundWithPrecision(rating.maxPoints),
+    percentageReached,
+    notApplicable: notApplicable(rating.weight),
+  });
+}
+
+function calcPercentage(points: number, maxPoints: number): Option<number> {
+  if (maxPoints === 0 || points < 0) {
+    return none();
+  }
+  return some(roundWithPrecision(points / maxPoints, 1) * 100);
+}
+
+function notApplicable(weight: number): boolean {
+  return weight === 0;
+}
+
+export const diffBetweenBalanceSheets = (
+  balanceSheet: BalanceSheet,
+  otherBalanceSheet: BalanceSheet
+) => {
+  const differences = diff(balanceSheet, otherBalanceSheet);
+  return differences?.map((d) =>
+    d.path && d.path.length >= 2 && d.path[0] === 'ratings'
+      ? {
+          ...d,
+          shortName: balanceSheet.ratings[d.path[1]].shortName,
+        }
+      : d
+  );
+};

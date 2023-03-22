@@ -6,7 +6,6 @@ import {
 } from '../entities/balance.sheet.entity';
 import { Connection, EntityManager } from 'typeorm';
 import { EntityWithDtoMerger } from '../merge/entity.with.dto.merger';
-import { balanceSheetToMatrixResponse } from '../dto/matrix.dto';
 import { handle } from '../exceptions/error.handler';
 import { User } from '../entities/user';
 import { AccessCheckerService } from './access.checker.service';
@@ -15,25 +14,28 @@ import UnauthorizedException from '../exceptions/unauthorized.exception';
 import { NoAccessError } from '../exceptions/no.access.error';
 import { Workbook } from 'exceljs';
 import { BalanceSheetReader } from '../reader/balanceSheetReader/balance.sheet.reader';
-import {
-  BalanceSheetExcelDiffResponseBody,
-  diffBetweenBalanceSheets,
-} from '../dto/balance.sheet.diff.dto';
+
 import { CalcResultsReader } from '../reader/balanceSheetReader/calc.results.reader';
 import { diff } from 'deep-diff';
 import { TopicWeightsReader } from '../reader/balanceSheetReader/topic.weights.reader';
 import { StakeholderWeightsReader } from '../reader/balanceSheetReader/stakeholder.weights.reader';
-import { BalanceSheet } from '../models/balance.sheet';
 import {
-  BalanceSheetCreateRequestBodyTransformedSchema,
-  BalanceSheetIdsResponseSchema,
-  BalanceSheetPatchRequestBodySchema,
+  BalanceSheet,
+  balanceSheetToMatrixResponse,
   balanceSheetToResponse,
-} from '../dto/balance.sheet.dto';
+  diffBetweenBalanceSheets,
+  parseAsBalanceSheet,
+} from '../models/balance.sheet';
+
 import {
   parseLanguageParameter,
   translateBalanceSheet,
 } from '../language/translations';
+import {
+  BalanceSheetItemsResponseSchema,
+  BalanceSheetPatchRequestBodySchema,
+} from 'e-calculator-schemas/dist/balance.sheet.dto';
+import { BalanceSheetExcelDiffResponseBody } from 'e-calculator-schemas/dist/balance.sheet.diff';
 
 export class BalanceSheetService {
   constructor(private connection: Connection) {}
@@ -48,8 +50,7 @@ export class BalanceSheetService {
     this.connection.manager
       .transaction(async (entityManager) => {
         const foundUser = await this.findUserOrFail(req, entityManager);
-        const balanceSheet =
-          BalanceSheetCreateRequestBodyTransformedSchema.parse(req.body);
+        const balanceSheet = parseAsBalanceSheet(req.body);
 
         const { updatedBalanceSheet } = await CalculationService.calculate(
           balanceSheet
@@ -237,7 +238,7 @@ export class BalanceSheetService {
           relations: ['balanceSheetEntities'],
         });
         res.json(
-          BalanceSheetIdsResponseSchema.parse(
+          BalanceSheetItemsResponseSchema.parse(
             user.balanceSheetEntities.map((b) => {
               return { id: b.id };
             })

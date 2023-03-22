@@ -1,6 +1,5 @@
 import { mergeRatingsWithRequestBodies } from '../../src/merge/ratingsWithDtoMerger';
 import { Rating } from '../../src/models/rating';
-import { RatingRequestBody } from '../../src/dto/rating.dto';
 
 describe('mergeRatingsWithRequestBodies', () => {
   it('should merge ratings with ratings from the request body', () => {
@@ -27,7 +26,7 @@ describe('mergeRatingsWithRequestBodies', () => {
       },
     ];
 
-    const ratingRequestBodies: RatingRequestBody[] = [
+    const ratingRequestBodies = [
       {
         shortName: 'A1',
         estimations: 10,

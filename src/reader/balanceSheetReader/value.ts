@@ -1,7 +1,8 @@
 import { CompanySize } from '../../calculations/employees.calc';
 import { none, Option, some } from '../../calculations/option';
-import { BalanceSheetVersion } from '../../models/balance.sheet';
+
 import { AVERAGE_REGION_NAME_TO_COUNTRY_CODE } from '../../models/region';
+import { BalanceSheetVersion } from 'e-calculator-schemas/dist/shared.schemas';
 
 export class Value {
   constructor(public readonly value: string) {}

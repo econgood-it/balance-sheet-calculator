@@ -1,9 +1,6 @@
 import { BalanceSheetPaths } from '../../controllers/balance.sheet.controller';
 import { z } from 'zod';
-import {
-  BalanceSheetIdsResponseSchema,
-  BalanceSheetResponseBodySchema,
-} from '../../dto/balance.sheet.dto';
+
 import {
   applicationJson,
   HttpCodes,
@@ -14,6 +11,10 @@ import {
 import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { OpenApiSchemas } from '../schemas';
 import { OpenApiParams } from '../params';
+import {
+  BalanceSheetItemsResponseSchema,
+  BalanceSheetResponseBodySchema,
+} from 'e-calculator-schemas/dist/balance.sheet.dto';
 
 export function registerBalanceSheetGet(
   registry: OpenAPIRegistry,
@@ -38,7 +39,7 @@ export function registerBalanceSheetGet(
         description: 'Balance sheet of current user',
         content: {
           [applicationJson]: {
-            schema: BalanceSheetIdsResponseSchema,
+            schema: BalanceSheetItemsResponseSchema,
           },
         },
       },

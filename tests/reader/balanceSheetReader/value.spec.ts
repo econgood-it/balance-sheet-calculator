@@ -1,6 +1,6 @@
 import { Value } from '../../../src/reader/balanceSheetReader/value';
 import { CompanySize } from '../../../src/calculations/employees.calc';
-import { BalanceSheetVersion } from '../../../src/models/balance.sheet';
+import { BalanceSheetVersion } from 'e-calculator-schemas/dist/shared.schemas';
 
 describe('Value', () => {
   it('should be parsed as company size', async () => {

@@ -1,7 +1,11 @@
 import * as path from 'path';
-import { BalanceSheetType, BalanceSheetVersion } from '../models/balance.sheet';
+
 import { Rating, RatingSchema } from '../models/rating';
 import fs from 'fs';
+import {
+  BalanceSheetType,
+  BalanceSheetVersion,
+} from 'e-calculator-schemas/dist/shared.schemas';
 
 export class RatingsFactory {
   public static createDefaultRatings(

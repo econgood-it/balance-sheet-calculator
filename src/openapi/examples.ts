@@ -1,11 +1,11 @@
-import {
-  BalanceSheet,
-  BalanceSheetType,
-  BalanceSheetVersion,
-} from '../models/balance.sheet';
+import { BalanceSheet } from '../models/balance.sheet';
 import { RatingsFactory } from '../factories/ratings.factory';
 import { CompanyFacts } from '../models/company.facts';
 import { DEFAULT_COUNTRY_CODE } from '../models/region';
+import {
+  BalanceSheetType,
+  BalanceSheetVersion,
+} from 'e-calculator-schemas/dist/shared.schemas';
 
 const arabEmiratesCode = 'ARE';
 const afghanistanCode = 'AFG';

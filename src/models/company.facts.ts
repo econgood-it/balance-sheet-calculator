@@ -1,4 +1,6 @@
 import { z } from 'zod';
+import { CompanyFactsCreateRequestBodySchema } from 'e-calculator-schemas/dist/company.facts.dto';
+
 export const isCountryCode = z.string().min(3).max(3);
 export const isIndustryCode = z.string().min(1).max(4);
 const SupplyFractionSchema = z.object({
@@ -119,3 +121,12 @@ export function allValuesAreZero(companyFacts: CompanyFacts): boolean {
 export const INDUSTRY_CODE_FOR_FINANCIAL_SERVICES = 'K';
 export const INDUSTRY_CODE_FOR_MINING = 'B';
 export const INDUSTRY_CODE_FOR_CONSTRUCTION_INDUSTRY = 'F';
+export const CompanyFactsCreateRequestBodyTransformedSchema =
+  CompanyFactsCreateRequestBodySchema.transform((cf) => ({
+    ...cf,
+    mainOriginOfOtherSuppliers: computeCostsAndCreateMainOriginOfOtherSuppliers(
+      cf.mainOriginOfOtherSuppliers,
+      cf.totalPurchaseFromSuppliers,
+      cf.supplyFractions
+    ),
+  }));

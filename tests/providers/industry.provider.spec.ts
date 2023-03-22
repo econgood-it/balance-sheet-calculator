@@ -1,5 +1,5 @@
 import { IndustryProvider } from '../../src/providers/industry.provider';
-import { BalanceSheetVersion } from '../../src/models/balance.sheet';
+import { BalanceSheetVersion } from 'e-calculator-schemas/dist/shared.schemas';
 
 describe('Industry Provider', () => {
   it('is created from file', async () => {

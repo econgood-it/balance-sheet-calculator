@@ -5,8 +5,9 @@ import { SupplyFractionReader } from './supply.fraction.reader';
 import { EmployeesFractionReader } from './employees.fraction.reader';
 import { IndustrySectorReader } from './industry.sector.reader';
 import { RatingReader } from './rating.reader';
-import { BalanceSheet, BalanceSheetType } from '../../models/balance.sheet';
+import { BalanceSheet } from '../../models/balance.sheet';
 import { Translations } from '../../language/translations';
+import { BalanceSheetType } from 'e-calculator-schemas/dist/shared.schemas';
 
 const range = (start: number, end: number): number[] =>
   Array.from(Array(end - start + 1).keys()).map((x) => x + start);

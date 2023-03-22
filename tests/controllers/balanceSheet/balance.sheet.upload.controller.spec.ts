@@ -8,8 +8,7 @@ import { ConfigurationReader } from '../../../src/configuration.reader';
 import { TokenProvider } from '../../TokenProvider';
 import { BalanceSheetEntity } from '../../../src/entities/balance.sheet.entity';
 import path from 'path';
-import { Rating } from '../../../src/models/rating';
-import { RatingResponseBody } from '../../../src/dto/rating.dto';
+import { Rating, RatingResponseBody } from '../../../src/models/rating';
 
 describe('Balance Sheet Controller', () => {
   let connection: Connection;

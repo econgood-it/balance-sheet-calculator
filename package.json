@@ -12,7 +12,7 @@
     "test": "env-cmd -e development jest --watch --runInBand",
     "coverage": "env-cmd -e development jest --runInBand --coverage",
     "test:ci": "env-cmd -e ci jest --runInBand",
-    "update:to:latest": "ncu -u && npm update && npm install && npm audit fix"
+    "update:to:latest": "ncu -u && yarn update && yarn install && yarn audit fix"
   },
   "repository": {
     "type": "git",
@@ -27,7 +27,9 @@
     "correlation-id": "^4.0.0",
     "cors": "^2.8.5",
     "deep-diff": "^1.0.2",
+    "e-calculator-schemas": "git+ssh://ecg00-gitea@git.ecogood.org:services/e-calculator-schemas.git#v1.0.13",
     "env-cmd": "^10.1.0",
+    "eslint-plugin-n": "^15.6.1",
     "exceljs": "^4.3.0",
     "express": "^4.18.1",
     "i18next": "^21.9.0",
@@ -73,7 +75,7 @@
     "@types/winston": "^2.4.4",
     "@typescript-eslint/eslint-plugin": "^5.33.0",
     "@typescript-eslint/parser": "^5.33.0",
-    "eslint": "^8.21.0",
+    "eslint": "8.22.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-config-standard": "^17.0.0",

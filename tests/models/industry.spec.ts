@@ -1,5 +1,4 @@
-import { Industry } from '../../src/models/industry';
-import { industryToResponse } from '../../src/dto/industry.dto';
+import { Industry, industryToResponse } from '../../src/models/industry';
 
 describe('Industry DTO', () => {
   it('should be created from industry entity', () => {

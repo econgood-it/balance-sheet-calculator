@@ -1,12 +1,14 @@
 import { mergeRatingsWithRequestBodies } from './ratingsWithDtoMerger';
 import { BalanceSheet } from '../models/balance.sheet';
-import { CompanyFacts } from '../models/company.facts';
-import { BalanceSheetPatchRequestBody } from '../dto/balance.sheet.dto';
 import {
+  CompanyFacts,
   CompanyFactsCreateRequestBodyTransformedSchema,
-  CompanyFactsPatchRequestBody,
-} from '../dto/company.facts.dto';
+} from '../models/company.facts';
+
 import * as _ from 'lodash';
+import { BalanceSheetPatchRequestBodySchema } from 'e-calculator-schemas/dist/balance.sheet.dto';
+import { z } from 'zod';
+import { CompanyFactsPatchRequestBodySchema } from 'e-calculator-schemas/dist/company.facts.dto';
 
 function overrideArray(objValue: any, srcValue: any): any {
   if (_.isArray(srcValue)) {
@@ -17,7 +19,9 @@ function overrideArray(objValue: any, srcValue: any): any {
 export class EntityWithDtoMerger {
   public mergeBalanceSheet(
     balanceSheet: BalanceSheet,
-    balanceSheetPatchRequestBody: BalanceSheetPatchRequestBody
+    balanceSheetPatchRequestBody: z.infer<
+      typeof BalanceSheetPatchRequestBodySchema
+    >
   ): BalanceSheet {
     return {
       ...balanceSheet,
@@ -38,7 +42,9 @@ export class EntityWithDtoMerger {
 
   public mergeCompanyFacts(
     companyFacts: CompanyFacts,
-    companyFactsPatchRequestBody: CompanyFactsPatchRequestBody
+    companyFactsPatchRequestBody: z.infer<
+      typeof CompanyFactsPatchRequestBodySchema
+    >
   ): CompanyFacts {
     return CompanyFactsCreateRequestBodyTransformedSchema.parse(
       _.mergeWith(

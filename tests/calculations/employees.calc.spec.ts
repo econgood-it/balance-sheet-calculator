@@ -6,9 +6,9 @@ import {
   EmployeesCalcResults,
 } from '../../src/calculations/employees.calc';
 
-import { BalanceSheetVersion } from '../../src/models/balance.sheet';
 import { CompanyFacts } from '../../src/models/company.facts';
 import { companyFactsFactory } from '../../src/openapi/examples';
+import { BalanceSheetVersion } from 'e-calculator-schemas/dist/shared.schemas';
 
 describe('Employees Calculator', () => {
   describe('should calculate the itucAverage ', () => {

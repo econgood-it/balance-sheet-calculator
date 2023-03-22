@@ -11,12 +11,12 @@ import {
   BALANCE_SHEET_RELATIONS,
   BalanceSheetEntity,
 } from '../../../src/entities/balance.sheet.entity';
+import { companyFactsJsonFactory } from '../../../src/openapi/examples';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
-} from '../../../src/models/balance.sheet';
+} from 'e-calculator-schemas/dist/shared.schemas';
 import supertest = require('supertest');
-import { companyFactsJsonFactory } from '../../../src/openapi/examples';
 
 describe('Balance Sheet Controller', () => {
   let connection: Connection;

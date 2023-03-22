@@ -10,6 +10,11 @@ import {
 import * as bcrypt from 'bcrypt';
 import { Role } from './enums';
 import { BalanceSheetEntity } from './balance.sheet.entity';
+import {
+  PasswordResetRequestBodySchema,
+  UserRequestBodySchema,
+} from 'e-calculator-schemas/dist/user.schema';
+import { z } from 'zod';
 
 @Entity()
 export class User {
@@ -56,4 +61,10 @@ export class User {
   public comparePassword(password: string): boolean {
     return bcrypt.compareSync(password, this.password);
   }
+}
+
+export function parseAsUser(json: z.infer<typeof UserRequestBodySchema>): User {
+  return UserRequestBodySchema.transform(
+    (u) => new User(undefined, u.email, u.password, Role.User)
+  ).parse(json);
 }

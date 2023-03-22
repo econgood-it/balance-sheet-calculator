@@ -7,14 +7,13 @@ import { ConfigurationReader } from '../../../src/configuration.reader';
 import { TokenProvider } from '../../TokenProvider';
 import { BalanceSheetEntity } from '../../../src/entities/balance.sheet.entity';
 import { CORRELATION_HEADER_NAME } from '../../../src/middleware/correlation.id.middleware';
+import { INDUSTRY_CODE_FOR_FINANCIAL_SERVICES } from '../../../src/models/company.facts';
+import { companyFactsJsonFactory } from '../../../src/openapi/examples';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
-} from '../../../src/models/balance.sheet';
-import { Rating } from '../../../src/models/rating';
-import { INDUSTRY_CODE_FOR_FINANCIAL_SERVICES } from '../../../src/models/company.facts';
-import { RatingResponseBody } from '../../../src/dto/rating.dto';
-import { companyFactsJsonFactory } from '../../../src/openapi/examples';
+} from 'e-calculator-schemas/dist/shared.schemas';
+import { RatingResponseBody, Rating } from '../../../src/models/rating';
 
 describe('Balance Sheet Controller', () => {
   let connection: Connection;

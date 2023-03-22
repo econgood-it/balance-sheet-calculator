@@ -9,14 +9,14 @@ import { RegionProvider } from '../../src/providers/region.provider';
 import { IndustryProvider } from '../../src/providers/industry.provider';
 import { StakeholderWeightCalculator } from '../../src/calculations/stakeholder.weight.calculator';
 import { TopicWeightCalculator } from '../../src/calculations/topic.weight.calculator';
-import {
-  BalanceSheet,
-  BalanceSheetType,
-  BalanceSheetVersion,
-} from '../../src/models/balance.sheet';
+import { BalanceSheet } from '../../src/models/balance.sheet';
 import { CompanyFacts } from '../../src/models/company.facts';
 import { Rating } from '../../src/models/rating';
 import { companyFactsFactory } from '../../src/openapi/examples';
+import {
+  BalanceSheetType,
+  BalanceSheetVersion,
+} from 'e-calculator-schemas/dist/shared.schemas';
 
 describe('Ratings updater', () => {
   const stakeholderWeightCalculator = new StakeholderWeightCalculator();

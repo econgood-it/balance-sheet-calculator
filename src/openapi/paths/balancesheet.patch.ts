@@ -1,11 +1,7 @@
 import { BalanceSheetPaths } from '../../controllers/balance.sheet.controller';
 import { z } from 'zod';
 import { balanceSheetJsonFactory } from '../examples';
-import {
-  BalanceSheetType,
-  BalanceSheetVersion,
-} from '../../models/balance.sheet';
-import { BalanceSheetResponseBodySchema } from '../../dto/balance.sheet.dto';
+
 import {
   applicationJson,
   HttpCodes,
@@ -16,6 +12,11 @@ import {
 import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { OpenApiSchemas } from '../schemas';
 import { OpenApiParams } from '../params';
+import {
+  BalanceSheetType,
+  BalanceSheetVersion,
+} from 'e-calculator-schemas/dist/shared.schemas';
+import { BalanceSheetResponseBodySchema } from 'e-calculator-schemas/dist/balance.sheet.dto';
 
 export function registerBalanceSheetPatch(
   registry: OpenAPIRegistry,

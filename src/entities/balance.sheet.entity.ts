@@ -6,13 +6,13 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from './user';
-import {
-  BalanceSheet,
-  BalanceSheetType,
-  BalanceSheetVersion,
-} from '../models/balance.sheet';
+import { BalanceSheet } from '../models/balance.sheet';
 import { CompanyFacts } from '../models/company.facts';
 import { Rating } from '../models/rating';
+import {
+  BalanceSheetType,
+  BalanceSheetVersion,
+} from 'e-calculator-schemas/dist/shared.schemas';
 
 export const BALANCE_SHEET_RELATIONS = ['users'];
 

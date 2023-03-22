@@ -1,7 +1,11 @@
 import { mergeVal } from './merge.utils';
 import { Rating } from '../models/rating';
-import { RatingRequestBody } from '../dto/rating.dto';
+
 import * as _ from 'lodash';
+import { RatingRequestBodySchema } from 'e-calculator-schemas/dist/rating.dto';
+import { z } from 'zod';
+
+type RatingRequestBody = z.infer<typeof RatingRequestBodySchema>;
 
 export function mergeRatingsWithRequestBodies(
   ratings: Rating[],

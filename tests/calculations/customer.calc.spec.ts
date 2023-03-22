@@ -1,9 +1,10 @@
 import { IndustryProvider } from '../../src/providers/industry.provider';
 
 import { CustomerCalc } from '../../src/calculations/customer.calc';
-import { BalanceSheetVersion } from '../../src/models/balance.sheet';
+
 import { CompanyFacts } from '../../src/models/company.facts';
 import { companyFactsFactory } from '../../src/openapi/examples';
+import { BalanceSheetVersion } from 'e-calculator-schemas/dist/shared.schemas';
 
 describe('Customer Calculator', () => {
   let industryProvider: IndustryProvider;

@@ -6,14 +6,14 @@ import { Connection } from 'typeorm';
 import { Application } from 'express';
 import { TokenProvider } from '../../TokenProvider';
 import { CORRELATION_HEADER_NAME } from '../../../src/middleware/correlation.id.middleware';
+import { Rating, RatingResponseBody } from '../../../src/models/rating';
+
+import { companyFactsJsonFactory } from '../../../src/openapi/examples';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
-} from '../../../src/models/balance.sheet';
+} from 'e-calculator-schemas/dist/shared.schemas';
 import supertest = require('supertest');
-import { Rating } from '../../../src/models/rating';
-import { RatingResponseBody } from '../../../src/dto/rating.dto';
-import { companyFactsJsonFactory } from '../../../src/openapi/examples';
 
 describe('Balance Sheet Controller', () => {
   let connection: Connection;

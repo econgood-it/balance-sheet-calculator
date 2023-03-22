@@ -7,12 +7,12 @@ import { ConfigurationReader } from '../../../src/configuration.reader';
 
 import { TokenProvider } from '../../TokenProvider';
 import { CORRELATION_HEADER_NAME } from '../../../src/middleware/correlation.id.middleware';
+import { Rating } from '../../../src/models/rating';
+import { companyFactsJsonFactory } from '../../../src/openapi/examples';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
-} from '../../../src/models/balance.sheet';
-import { Rating } from '../../../src/models/rating';
-import { companyFactsJsonFactory } from '../../../src/openapi/examples';
+} from 'e-calculator-schemas/dist/shared.schemas';
 
 describe('Update endpoint of Balance Sheet Controller', () => {
   let connection: Connection;

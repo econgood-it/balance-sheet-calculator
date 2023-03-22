@@ -2,11 +2,9 @@ import { NextFunction, Request, Response } from 'express';
 
 import { handle } from '../exceptions/error.handler';
 import { IndustryProvider } from '../providers/industry.provider';
-import {
-  BalanceSheetVersion,
-  BalanceSheetVersionSchema,
-} from '../models/balance.sheet';
-import { industryToResponse } from '../dto/industry.dto';
+import { BalanceSheetVersionSchema } from '../models/balance.sheet';
+import { industryToResponse } from '../models/industry';
+import { BalanceSheetVersion } from 'e-calculator-schemas/dist/shared.schemas';
 
 export class IndustryService {
   public async getIndustries(req: Request, res: Response, next: NextFunction) {

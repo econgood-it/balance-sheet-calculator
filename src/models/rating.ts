@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { RatingResponseBodySchema } from 'e-calculator-schemas/dist/rating.dto';
 
 export const RatingSchema = z.object({
   shortName: z.string(),
@@ -10,6 +11,7 @@ export const RatingSchema = z.object({
   isWeightSelectedByUser: z.boolean(),
   isPositive: z.boolean(),
 });
+
 export type Rating = z.infer<typeof RatingSchema>;
 
 export function isTopicShortName(shortName: string): boolean {
@@ -47,3 +49,5 @@ export function sortRatings(ratings: Rating[]): Rating[] {
     r1.shortName.localeCompare(r2.shortName)
   );
 }
+
+export type RatingResponseBody = z.infer<typeof RatingResponseBodySchema>;

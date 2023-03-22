@@ -2,13 +2,10 @@ import { NextFunction, Request, Response } from 'express';
 import { Connection } from 'typeorm';
 import * as jwt from 'jwt-simple';
 import * as moment from 'moment';
-import { User } from '../entities/user';
+import { parseAsUser, User } from '../entities/user';
 import BadRequestException from '../exceptions/bad.request.exception';
 import { handle } from '../exceptions/error.handler';
-import {
-  PasswordResetRequestBodySchema,
-  UserRequestBodySchema,
-} from '../dto/user.dto';
+import { PasswordResetRequestBodySchema } from 'e-calculator-schemas/dist/user.schema';
 
 export class UserService {
   constructor(private connection: Connection, public jwtSecret: string) {}
@@ -33,7 +30,7 @@ export class UserService {
   public async getToken(req: Request, res: Response, next: NextFunction) {
     this.connection.manager
       .transaction(async (entityManager) => {
-        const user: User = UserRequestBodySchema.parse(req.body);
+        const user: User = parseAsUser(req.body);
         const userRepository = entityManager.getRepository(User);
         const foundUser: User = await userRepository.findOneOrFail({
           where: {
@@ -54,7 +51,7 @@ export class UserService {
   public async createUser(req: Request, res: Response, next: NextFunction) {
     this.connection.manager
       .transaction(async (entityManager) => {
-        const user: User = UserRequestBodySchema.parse(req.body);
+        const user: User = parseAsUser(req.body);
         const userRepository = entityManager.getRepository(User);
         const foundUser = await userRepository.findOne({
           where: {
@@ -106,7 +103,7 @@ export class UserService {
         const foundUser = await userRepository.findOneOrFail({
           where: { id: userId },
         });
-        foundUser.password = passwordResetRequestBody.password;
+        foundUser.password = passwordResetRequestBody.newPassword;
         await userRepository.save(foundUser);
         res.json({ message: 'Password has been reset to new one' });
       })

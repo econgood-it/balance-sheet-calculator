@@ -3,21 +3,21 @@ import subprocess
 import shutil
 import logging
 
-npm = 'npm'
+yarn = 'yarn'
 run = 'run'
 docker_compose = 'docker-compose'
 
 
 
 def install_dependencies(production: bool,):
-    cmd = [npm, 'install']
+    cmd = [yarn, 'install']
     if production:
         cmd.append('--production')
     subprocess.run(cmd, check=True)
 
 
 def check_linting():
-    subprocess.run([npm, run, 'lint'], check=True)
+    subprocess.run([yarn, run, 'lint'], check=True)
 
 
 def shutdown_test_database():
@@ -29,11 +29,11 @@ def startup_test_database():
 
 
 def run_tests():
-    subprocess.run([npm, run, 'test:ci'], check=True)
+    subprocess.run([yarn, run, 'test:ci'], check=True)
 
 
 def compile():
-    subprocess.run([npm, run, 'build'], check=True)
+    subprocess.run([yarn, run, 'build'], check=True)
 
 
 def rsync(folder: str, server_domain: str):
