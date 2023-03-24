@@ -1,10 +1,9 @@
 import { z } from 'zod';
-import { CompanyFactsCreateRequestBodySchema } from 'e-calculator-schemas/dist/company.facts.dto';
+import { CompanyFactsCreateRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/company.facts.dto';
 import {
   isCountryCode,
   isIndustryCode,
-} from 'e-calculator-schemas/dist/shared.schemas';
-import { balanceSheetToResponse } from './balance.sheet';
+} from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 
 const isPercentage = z.number().min(0).max(1);
 

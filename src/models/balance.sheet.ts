@@ -17,15 +17,15 @@ import { translateBalanceSheet, Translations } from '../language/translations';
 import {
   BalanceSheetCreateRequestBodySchema,
   BalanceSheetResponseBodySchema,
-} from 'e-calculator-schemas/dist/balance.sheet.dto';
+} from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
-} from 'e-calculator-schemas/dist/shared.schemas';
-import { RatingRequestBodySchema } from 'e-calculator-schemas/dist/rating.dto';
+} from '@ecogood/e-calculator-schemas/dist/shared.schemas';
+import { RatingRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/rating.dto';
 import { none, Option, some } from '../calculations/option';
 import { roundWithPrecision } from '../math';
-import { MatrixRatingBodySchema } from 'e-calculator-schemas/dist/matrix.dto';
+import { MatrixRatingBodySchema } from '@ecogood/e-calculator-schemas/dist/matrix.dto';
 import { diff } from 'deep-diff';
 
 export const BalanceSheetVersionSchema = z.nativeEnum(BalanceSheetVersion);

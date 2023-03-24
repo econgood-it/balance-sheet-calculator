@@ -4,7 +4,7 @@ import fs from 'fs';
 
 import path from 'path';
 import { Industry, IndustrySchema } from '../models/industry';
-import { BalanceSheetVersion } from 'e-calculator-schemas/dist/shared.schemas';
+import { BalanceSheetVersion } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 
 export class IndustryProvider extends Provider<string, Industry> {
   public static async fromVersion(version: BalanceSheetVersion) {

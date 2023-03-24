@@ -2,6 +2,7 @@ import argparse
 import subprocess
 import shutil
 import logging
+import os
 
 yarn = 'yarn'
 run = 'run'
@@ -43,10 +44,14 @@ def rsync(folder: str, server_domain: str):
 def restart_server(server_domain: str):
     subprocess.run(['ssh', server_domain, 'bash bin/node-svc.sh restart'], check=True)
 
+def rm_folder(folder: str):
+    if os.path.exists(folder) and os.path.isdir(folder):
+        shutil.rmtree(folder)
 
 def main(args):
     logging.info(f"Start build and deployment process for the environment {args.environment}")
     logging.info(f"Install dependencies")
+    rm_folder('node_modules')
     install_dependencies(production=False)
     logging.info(f"Check linting")
     check_linting()
@@ -57,7 +62,7 @@ def main(args):
     shutdown_test_database()
     logging.info(f"Build and compile")
     compile()
-    shutil.rmtree('node_modules')
+    rm_folder('node_modules')
     install_dependencies(production=True)
     server_domain = 'ecg00-bcalc@ecg00.hostsharing.net' if args.environment == 'prod' else 'ecg04-bcalc_test@ecg04.hostsharing.net'
     logging.info(f"Copy dist and node_modules folder to {server_domain}")

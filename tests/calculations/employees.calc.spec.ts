@@ -8,7 +8,7 @@ import {
 
 import { CompanyFacts } from '../../src/models/company.facts';
 import { companyFactsFactory } from '../../src/openapi/examples';
-import { BalanceSheetVersion } from 'e-calculator-schemas/dist/shared.schemas';
+import { BalanceSheetVersion } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 
 describe('Employees Calculator', () => {
   describe('should calculate the itucAverage ', () => {

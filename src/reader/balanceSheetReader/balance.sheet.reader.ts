@@ -7,7 +7,7 @@ import { IndustrySectorReader } from './industry.sector.reader';
 import { RatingReader } from './rating.reader';
 import { BalanceSheet } from '../../models/balance.sheet';
 import { Translations } from '../../language/translations';
-import { BalanceSheetType } from 'e-calculator-schemas/dist/shared.schemas';
+import { BalanceSheetType } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 
 const range = (start: number, end: number): number[] =>
   Array.from(Array(end - start + 1).keys()).map((x) => x + start);

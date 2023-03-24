@@ -3,8 +3,7 @@ import { RatingsFactory } from '../../src/factories/ratings.factory';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
-  isIndustryCode,
-} from 'e-calculator-schemas/dist/shared.schemas';
+} from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import {
   BalanceSheet,
   balanceSheetToMatrixResponse,
@@ -15,7 +14,6 @@ import {
 import { Rating } from '../../src/models/rating';
 import {
   balanceSheetFactory,
-  companyFactsFactory,
   companyFactsJsonFactory,
 } from '../../src/openapi/examples';
 

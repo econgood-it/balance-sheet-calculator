@@ -2,7 +2,7 @@ import { RatingsFactory } from '../../src/factories/ratings.factory';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
-} from 'e-calculator-schemas/dist/shared.schemas';
+} from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 
 describe('Ratings factory', () => {
   it('should create a default rating for a full balance sheet', () => {

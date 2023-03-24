@@ -34,8 +34,8 @@ import {
 import {
   BalanceSheetItemsResponseSchema,
   BalanceSheetPatchRequestBodySchema,
-} from 'e-calculator-schemas/dist/balance.sheet.dto';
-import { BalanceSheetExcelDiffResponseBody } from 'e-calculator-schemas/dist/balance.sheet.diff';
+} from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
+import { BalanceSheetExcelDiffResponseBody } from '@ecogood/e-calculator-schemas/dist/balance.sheet.diff';
 
 export class BalanceSheetService {
   constructor(private connection: Connection) {}

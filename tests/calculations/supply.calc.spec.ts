@@ -11,7 +11,7 @@ import {
   SupplyFraction,
 } from '../../src/models/company.facts';
 import { companyFactsFactory } from '../../src/openapi/examples';
-import { BalanceSheetVersion } from 'e-calculator-schemas/dist/shared.schemas';
+import { BalanceSheetVersion } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 
 describe('Supply Calculator', () => {
   const defaultPPPIndex = 1.00304566871495;

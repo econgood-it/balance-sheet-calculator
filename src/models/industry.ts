@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { IndustryResponseBodySchema } from 'e-calculator-schemas/dist/industry.dto';
+import { IndustryResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/industry.dto';
 
 export const IndustrySchema = z.object({
   ecologicalSupplyChainRisk: z.number(),

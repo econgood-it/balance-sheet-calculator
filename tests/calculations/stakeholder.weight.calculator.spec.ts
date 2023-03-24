@@ -5,7 +5,7 @@ import { RegionProvider } from '../../src/providers/region.provider';
 import { IndustryProvider } from '../../src/providers/industry.provider';
 import { CompanyFacts } from '../../src/models/company.facts';
 import { companyFactsFactory } from '../../src/openapi/examples';
-import { BalanceSheetVersion } from 'e-calculator-schemas/dist/shared.schemas';
+import { BalanceSheetVersion } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 
 describe('Stakeholder Weight Calculator', () => {
   let companyFacts: CompanyFacts;

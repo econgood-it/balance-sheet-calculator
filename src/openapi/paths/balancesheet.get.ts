@@ -14,7 +14,7 @@ import { OpenApiParams } from '../params';
 import {
   BalanceSheetItemsResponseSchema,
   BalanceSheetResponseBodySchema,
-} from 'e-calculator-schemas/dist/balance.sheet.dto';
+} from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
 
 export function registerBalanceSheetGet(
   registry: OpenAPIRegistry,

@@ -10,11 +10,9 @@ import {
 import * as bcrypt from 'bcrypt';
 import { Role } from './enums';
 import { BalanceSheetEntity } from './balance.sheet.entity';
-import {
-  PasswordResetRequestBodySchema,
-  UserRequestBodySchema,
-} from 'e-calculator-schemas/dist/user.schema';
+
 import { z } from 'zod';
+import { UserRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/user.schema';
 
 @Entity()
 export class User {

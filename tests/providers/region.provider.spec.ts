@@ -1,5 +1,5 @@
 import { RegionProvider } from '../../src/providers/region.provider';
-import { BalanceSheetVersion } from 'e-calculator-schemas/dist/shared.schemas';
+import { BalanceSheetVersion } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 
 describe('Region Provider', () => {
   it('returns regions of version 5.08', async () => {

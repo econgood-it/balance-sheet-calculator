@@ -2,7 +2,7 @@ import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import {
   BalanceSheetCreateRequestBodySchema,
   BalanceSheetPatchRequestBodySchema,
-} from 'e-calculator-schemas/dist/balance.sheet.dto';
+} from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
 
 export type OpenApiSchemas = {
   BalanceSheetCreateRequestApiSchema: any;

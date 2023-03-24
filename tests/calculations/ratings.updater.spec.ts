@@ -16,7 +16,7 @@ import { companyFactsFactory } from '../../src/openapi/examples';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
-} from 'e-calculator-schemas/dist/shared.schemas';
+} from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 
 describe('Ratings updater', () => {
   const stakeholderWeightCalculator = new StakeholderWeightCalculator();

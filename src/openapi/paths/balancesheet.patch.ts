@@ -15,8 +15,8 @@ import { OpenApiParams } from '../params';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
-} from 'e-calculator-schemas/dist/shared.schemas';
-import { BalanceSheetResponseBodySchema } from 'e-calculator-schemas/dist/balance.sheet.dto';
+} from '@ecogood/e-calculator-schemas/dist/shared.schemas';
+import { BalanceSheetResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
 
 export function registerBalanceSheetPatch(
   registry: OpenAPIRegistry,

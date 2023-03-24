@@ -5,7 +5,7 @@ import { DEFAULT_COUNTRY_CODE } from '../models/region';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
-} from 'e-calculator-schemas/dist/shared.schemas';
+} from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 
 const arabEmiratesCode = 'ARE';
 const afghanistanCode = 'AFG';

@@ -4,7 +4,7 @@ import { Workbook } from 'exceljs';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
-} from 'e-calculator-schemas/dist/shared.schemas';
+} from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 
 describe('BalanceSheetReader', () => {
   it('should read company facts from excel', async () => {

@@ -5,7 +5,7 @@ import fs from 'fs';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
-} from 'e-calculator-schemas/dist/shared.schemas';
+} from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 
 export class RatingsFactory {
   public static createDefaultRatings(

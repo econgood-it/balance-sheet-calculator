@@ -3,7 +3,7 @@ import { EntityWithDtoMerger } from '../../src/merge/entity.with.dto.merger';
 import { CompanyFacts } from '../../src/models/company.facts';
 
 import { companyFactsFactory } from '../../src/openapi/examples';
-import { CompanyFactsPatchRequestBodySchema } from 'e-calculator-schemas/dist/company.facts.dto';
+import { CompanyFactsPatchRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/company.facts.dto';
 
 describe('EntityWithDTOMerger', () => {
   let companyFacts: CompanyFacts;

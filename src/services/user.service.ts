@@ -5,7 +5,7 @@ import * as moment from 'moment';
 import { parseAsUser, User } from '../entities/user';
 import BadRequestException from '../exceptions/bad.request.exception';
 import { handle } from '../exceptions/error.handler';
-import { PasswordResetRequestBodySchema } from 'e-calculator-schemas/dist/user.schema';
+import { PasswordResetRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/user.schema';
 
 export class UserService {
   constructor(private connection: Connection, public jwtSecret: string) {}

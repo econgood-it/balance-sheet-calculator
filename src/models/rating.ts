@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { RatingResponseBodySchema } from 'e-calculator-schemas/dist/rating.dto';
+import { RatingResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/rating.dto';
 
 export const RatingSchema = z.object({
   shortName: z.string(),

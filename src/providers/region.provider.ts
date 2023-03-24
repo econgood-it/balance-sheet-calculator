@@ -3,7 +3,7 @@ import fs from 'fs';
 
 import path from 'path';
 import { Region, RegionSchema } from '../models/region';
-import { BalanceSheetVersion } from 'e-calculator-schemas/dist/shared.schemas';
+import { BalanceSheetVersion } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 
 export class RegionProvider extends Provider<string, Region> {
   public static async fromVersion(version: BalanceSheetVersion) {

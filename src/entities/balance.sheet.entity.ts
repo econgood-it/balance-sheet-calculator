@@ -12,7 +12,7 @@ import { Rating } from '../models/rating';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
-} from 'e-calculator-schemas/dist/shared.schemas';
+} from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 
 export const BALANCE_SHEET_RELATIONS = ['users'];
 

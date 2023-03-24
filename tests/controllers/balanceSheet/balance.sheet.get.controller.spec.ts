@@ -12,7 +12,7 @@ import { companyFactsJsonFactory } from '../../../src/openapi/examples';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
-} from 'e-calculator-schemas/dist/shared.schemas';
+} from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import supertest = require('supertest');
 
 describe('Balance Sheet Controller', () => {

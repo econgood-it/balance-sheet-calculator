@@ -2,7 +2,7 @@ import { mergeVal } from './merge.utils';
 import { Rating } from '../models/rating';
 
 import * as _ from 'lodash';
-import { RatingRequestBodySchema } from 'e-calculator-schemas/dist/rating.dto';
+import { RatingRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/rating.dto';
 import { z } from 'zod';
 
 type RatingRequestBody = z.infer<typeof RatingRequestBodySchema>;
