@@ -66,14 +66,19 @@ describe('EntityWithDTOMerger', () => {
 
     it('using employeesFractions from dto', async () => {
       const employeesFractions = [
-        { countryCode: 'BEL', percentage: 0.2 },
-        { countryCode: 'DEU', percentage: 1 },
+        { countryCode: 'BEL', percentage: 20 },
+        { countryCode: 'DEU', percentage: 100 },
       ];
       companyFacts.employeesFractions = [
         { countryCode: 'ALG', percentage: 0.4 },
       ];
       const merged = await merge({ employeesFractions });
-      expect(merged.employeesFractions).toMatchObject(employeesFractions);
+      expect(merged.employeesFractions).toMatchObject(
+        employeesFractions.map((e) => ({
+          ...e,
+          percentage: e.percentage / 100,
+        }))
+      );
     });
 
     it('using totalPurchaseFromSuppliers from db', async () => {

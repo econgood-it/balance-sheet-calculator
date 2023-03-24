@@ -1,8 +1,9 @@
 import { mergeRatingsWithRequestBodies } from './ratingsWithDtoMerger';
-import { BalanceSheet } from '../models/balance.sheet';
+import { BalanceSheet, BalanceSheetSchema } from '../models/balance.sheet';
 import {
   CompanyFacts,
   CompanyFactsCreateRequestBodyTransformedSchema,
+  companyFactsToResponse,
 } from '../models/company.facts';
 
 import * as _ from 'lodash';
@@ -23,7 +24,7 @@ export class EntityWithDtoMerger {
       typeof BalanceSheetPatchRequestBodySchema
     >
   ): BalanceSheet {
-    return {
+    return BalanceSheetSchema.parse({
       ...balanceSheet,
       ...(balanceSheetPatchRequestBody.companyFacts && {
         companyFacts: this.mergeCompanyFacts(
@@ -37,7 +38,7 @@ export class EntityWithDtoMerger {
           balanceSheetPatchRequestBody.ratings
         ),
       }),
-    };
+    });
   }
 
   public mergeCompanyFacts(
@@ -49,7 +50,7 @@ export class EntityWithDtoMerger {
     return CompanyFactsCreateRequestBodyTransformedSchema.parse(
       _.mergeWith(
         {
-          ...companyFacts,
+          ...companyFactsToResponse(companyFacts),
           mainOriginOfOtherSuppliers:
             companyFacts.mainOriginOfOtherSuppliers.countryCode,
         },

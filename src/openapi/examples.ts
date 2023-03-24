@@ -158,10 +158,10 @@ export const companyFactsJsonFactory = {
       },
     ],
     employeesFractions: [
-      { id: undefined, countryCode: arabEmiratesCode, percentage: 0.5 },
-      { id: undefined, countryCode: afghanistanCode, percentage: 0.5 },
+      { id: undefined, countryCode: arabEmiratesCode, percentage: 50 },
+      { id: undefined, countryCode: afghanistanCode, percentage: 80 },
     ],
-    industrySectors: [],
+    industrySectors: [{ industryCode: 'A', amountOfTotalTurnover: 100 }],
   }),
 };
 export const balanceSheetFactory = {

@@ -2,6 +2,7 @@ import { z } from 'zod';
 import {
   CompanyFactsCreateRequestBodyTransformedSchema,
   CompanyFactsSchema,
+  companyFactsToResponse,
 } from './company.facts';
 import {
   filterTopics,
@@ -69,6 +70,7 @@ export function balanceSheetToResponse(
   return BalanceSheetResponseBodySchema.parse({
     id,
     ...transBalanceSheet,
+    companyFacts: companyFactsToResponse(transBalanceSheet.companyFacts),
     ratings: sortRatings(
       transBalanceSheet.ratings.map((r) => ({
         ...r,

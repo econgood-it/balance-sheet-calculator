@@ -1,8 +1,13 @@
 import { z } from 'zod';
 import { CompanyFactsCreateRequestBodySchema } from 'e-calculator-schemas/dist/company.facts.dto';
+import {
+  isCountryCode,
+  isIndustryCode,
+} from 'e-calculator-schemas/dist/shared.schemas';
+import { balanceSheetToResponse } from './balance.sheet';
 
-export const isCountryCode = z.string().min(3).max(3);
-export const isIndustryCode = z.string().min(1).max(4);
+const isPercentage = z.number().min(0).max(1);
+
 const SupplyFractionSchema = z.object({
   countryCode: isCountryCode.optional(),
   industryCode: isIndustryCode.optional(),
@@ -11,12 +16,12 @@ const SupplyFractionSchema = z.object({
 export type SupplyFraction = z.infer<typeof SupplyFractionSchema>;
 const EmployeesFractionSchema = z.object({
   countryCode: isCountryCode.optional(),
-  percentage: z.number(),
+  percentage: isPercentage,
 });
 export type EmployeesFraction = z.infer<typeof EmployeesFractionSchema>;
 const IndustrySectorSchema = z.object({
   industryCode: isIndustryCode.optional(),
-  amountOfTotalTurnover: z.number(),
+  amountOfTotalTurnover: isPercentage,
   description: z.string(),
 });
 export type IndustrySector = z.infer<typeof IndustrySectorSchema>;
@@ -118,15 +123,40 @@ export function allValuesAreZero(companyFacts: CompanyFacts): boolean {
   return false;
 }
 
+const percentageToDecimal = (percentage: number) => percentage / 100;
+const decimalToPercentage = (decimal: number) => decimal * 100;
+
 export const INDUSTRY_CODE_FOR_FINANCIAL_SERVICES = 'K';
 export const INDUSTRY_CODE_FOR_MINING = 'B';
 export const INDUSTRY_CODE_FOR_CONSTRUCTION_INDUSTRY = 'F';
 export const CompanyFactsCreateRequestBodyTransformedSchema =
   CompanyFactsCreateRequestBodySchema.transform((cf) => ({
     ...cf,
+    employeesFractions: cf.employeesFractions.map((e) => ({
+      ...e,
+      percentage: percentageToDecimal(e.percentage),
+    })),
+    industrySectors: cf.industrySectors.map((i) => ({
+      ...i,
+      amountOfTotalTurnover: percentageToDecimal(i.amountOfTotalTurnover),
+    })),
     mainOriginOfOtherSuppliers: computeCostsAndCreateMainOriginOfOtherSuppliers(
       cf.mainOriginOfOtherSuppliers,
       cf.totalPurchaseFromSuppliers,
       cf.supplyFractions
     ),
   }));
+
+export function companyFactsToResponse(companyFacts: CompanyFacts) {
+  return {
+    ...companyFacts,
+    employeesFractions: companyFacts.employeesFractions.map((e) => ({
+      ...e,
+      percentage: decimalToPercentage(e.percentage),
+    })),
+    industrySectors: companyFacts.industrySectors.map((i) => ({
+      ...i,
+      amountOfTotalTurnover: decimalToPercentage(i.amountOfTotalTurnover),
+    })),
+  };
+}

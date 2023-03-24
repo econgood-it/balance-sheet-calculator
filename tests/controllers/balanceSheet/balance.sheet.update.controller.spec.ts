@@ -66,8 +66,8 @@ describe('Update endpoint of Balance Sheet Controller', () => {
           { industryCode: 'Ce', countryCode: 'BEL', costs: 300 },
         ],
         employeesFractions: [
-          { countryCode: 'GBR', percentage: 0.2 },
-          { countryCode: 'BEL', percentage: 0.4 },
+          { countryCode: 'GBR', percentage: 20 },
+          { countryCode: 'BEL', percentage: 40 },
         ],
         industrySectors: [],
       },

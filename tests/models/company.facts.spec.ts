@@ -277,12 +277,12 @@ describe('CompanyFactsCreateRequestBodySchema', () => {
 
 describe('CompanyFactsPatchRequestBodySchema', () => {
   it('parse with employees fractions with missing country code', () => {
-    const employeesFractions = [{ percentage: 0.8 }];
+    const employeesFractions = [{ percentage: 80 }];
     const result = CompanyFactsCreateRequestBodyTransformedSchema.parse({
       employeesFractions,
     });
     expect(result).toMatchObject({
-      employeesFractions,
+      employeesFractions: [{ percentage: 0.8 }],
     });
   });
 

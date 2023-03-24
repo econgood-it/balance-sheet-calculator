@@ -3,6 +3,7 @@ import { RatingsFactory } from '../../src/factories/ratings.factory';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
+  isIndustryCode,
 } from 'e-calculator-schemas/dist/shared.schemas';
 import {
   BalanceSheet,
@@ -12,7 +13,11 @@ import {
   ratingToMatrixRating,
 } from '../../src/models/balance.sheet';
 import { Rating } from '../../src/models/rating';
-import { balanceSheetFactory } from '../../src/openapi/examples';
+import {
+  balanceSheetFactory,
+  companyFactsFactory,
+  companyFactsJsonFactory,
+} from '../../src/openapi/examples';
 
 describe('Parse', () => {
   it('json with a merged rating entity', () => {
@@ -81,6 +86,34 @@ describe('Parse', () => {
       json.version
     );
     expect(result.ratings).toMatchObject(expectedRatings);
+  });
+
+  it('json and divide percentage values by 100', async () => {
+    const companyFactsAsJson = companyFactsJsonFactory.nonEmpty();
+    const json = {
+      type: BalanceSheetType.Full,
+      version: BalanceSheetVersion.v5_0_4,
+      companyFacts: companyFactsAsJson,
+    };
+    const result = parseAsBalanceSheet(json);
+    expect(result.companyFacts.industrySectors).toHaveLength(
+      companyFactsAsJson.industrySectors.length
+    );
+    expect(result.companyFacts.employeesFractions).toHaveLength(
+      companyFactsAsJson.employeesFractions.length
+    );
+    for (const index in result.companyFacts.industrySectors) {
+      expect(
+        result.companyFacts.industrySectors[index].amountOfTotalTurnover
+      ).toBe(
+        companyFactsAsJson.industrySectors[index].amountOfTotalTurnover / 100
+      );
+    }
+    for (const index in result.companyFacts.employeesFractions) {
+      expect(result.companyFacts.employeesFractions[index].percentage).toBe(
+        companyFactsAsJson.employeesFractions[index].percentage / 100
+      );
+    }
   });
 });
 
@@ -160,11 +193,49 @@ describe('balanceSheetToResponse', () => {
       balanceSheet,
       'en'
     );
+
     expect(
       balanceSheetResponse.companyFacts.employeesFractions.some(
         (s) => s.countryCode === undefined
       )
     ).toBeTruthy();
+  });
+
+  it('parse balanceSheet and transform decimals back to percentages', () => {
+    const balanceSheet = {
+      ...balanceSheetFactory.emptyV508(),
+      companyFacts: {
+        ...balanceSheetFactory.emptyV508().companyFacts,
+        employeesFractions: [
+          { countryCode: 'ARE', percentage: 0.3 },
+          { percentage: 0.5 },
+        ],
+        industrySectors: [
+          { industryCode: 'A', amountOfTotalTurnover: 0.7, description: '' },
+        ],
+      },
+    };
+    const balanceSheetResponse = balanceSheetToResponse(
+      undefined,
+      balanceSheet,
+      'en'
+    );
+    for (const index in balanceSheetResponse.companyFacts.industrySectors) {
+      expect(
+        balanceSheetResponse.companyFacts.industrySectors[index]
+          .amountOfTotalTurnover
+      ).toBe(
+        balanceSheet.companyFacts.industrySectors[index].amountOfTotalTurnover *
+          100
+      );
+    }
+    for (const index in balanceSheetResponse.companyFacts.employeesFractions) {
+      expect(
+        balanceSheetResponse.companyFacts.employeesFractions[index].percentage
+      ).toBe(
+        balanceSheet.companyFacts.employeesFractions[index].percentage * 100
+      );
+    }
   });
 });
 
