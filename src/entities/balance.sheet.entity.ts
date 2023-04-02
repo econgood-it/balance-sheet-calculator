@@ -56,15 +56,6 @@ export class BalanceSheetEntity {
     this.companyFacts = companyFacts;
     this.users = users;
   }
-
-  public toBalanceSheet(): BalanceSheet {
-    return {
-      type: this.type,
-      version: this.version,
-      ratings: this.ratings,
-      companyFacts: this.companyFacts,
-    };
-  }
 }
 
 export function createFromBalanceSheet(

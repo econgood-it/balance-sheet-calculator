@@ -22,7 +22,7 @@
   "license": "MIT",
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "^4.4.2",
-    "@ecogood/e-calculator-schemas": "^1.0.0",
+    "@ecogood/e-calculator-schemas": "^1.0.2",
     "@mr42/version-comparator": "^1.2.2",
     "bcrypt": "^5.0.1",
     "correlation-id": "^4.0.0",
