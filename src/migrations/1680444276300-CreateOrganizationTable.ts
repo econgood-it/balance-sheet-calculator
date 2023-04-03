@@ -7,11 +7,8 @@ export class CreateOrganizationTableimplements1680444276300
     const queries = [
       `CREATE TABLE "organization_entity"
                    (
-                       "id"         SERIAL    NOT NULL, 
-                       "street"     character varying NOT NULL,
-                       "houseNumber"     character varying NOT NULL,
-                       "zip"     character varying NOT NULL, 
-                       "city"     character varying NOT NULL, 
+                       "id"         SERIAL    NOT NULL,
+                       "organization" jsonb NOT NULL, 
                        CONSTRAINT "PK_organization_entity" PRIMARY KEY ("id")
                    )`,
     ];
