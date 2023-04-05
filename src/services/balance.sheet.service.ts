@@ -9,7 +9,6 @@ import { EntityWithDtoMerger } from '../merge/entity.with.dto.merger';
 import { handle } from '../exceptions/error.handler';
 import { User } from '../entities/user';
 
-import { CalculationService } from './calculation.service';
 import UnauthorizedException from '../exceptions/unauthorized.exception';
 import { NoAccessError } from '../exceptions/no.access.error';
 import { Workbook } from 'exceljs';
@@ -36,6 +35,7 @@ import {
 } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
 import { BalanceSheetExcelDiffResponseBody } from '@ecogood/e-calculator-schemas/dist/balance.sheet.diff';
 import { BalanceSheetAuthorization } from '../security/authorization';
+import { Calc } from './calculation.service';
 
 export class BalanceSheetService {
   constructor(private connection: Connection) {}
@@ -52,9 +52,7 @@ export class BalanceSheetService {
         const foundUser = await this.findUserOrFail(req, entityManager);
         const balanceSheet = BalanceSheetParser.fromJson(req.body);
 
-        const { updatedBalanceSheet } = await CalculationService.calculate(
-          balanceSheet
-        );
+        const { updatedBalanceSheet } = await Calc.calculate(balanceSheet);
 
         const balanceSheetId = saveFlag
           ? await this.saveBalanceSheet(
@@ -102,7 +100,7 @@ export class BalanceSheetService {
           calcResults,
           stakeholderWeights,
           topicWeights,
-        } = await CalculationService.calculate(balanceSheetUpload);
+        } = await Calc.calculate(balanceSheetUpload);
 
         res.json(
           BalanceSheetExcelDiffResponseBody.parse({
@@ -151,9 +149,7 @@ export class BalanceSheetService {
 
           const balanceSheet = balanceSheetReader.readFromWorkbook(wb);
 
-          const { updatedBalanceSheet } = await CalculationService.calculate(
-            balanceSheet
-          );
+          const { updatedBalanceSheet } = await Calc.calculate(balanceSheet);
 
           const balanceSheetId = saveFlag
             ? await this.saveBalanceSheet(
@@ -207,7 +203,7 @@ export class BalanceSheetService {
           balanceSheetEntity.toBalanceSheet(),
           balanceSheetPatchRequestBody
         );
-        const { updatedBalanceSheet } = await CalculationService.calculate(
+        const { updatedBalanceSheet } = await Calc.calculate(
           mergedBalanceSheet
         );
         const balanceSheetId = await this.saveBalanceSheet(

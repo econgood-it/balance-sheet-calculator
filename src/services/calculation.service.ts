@@ -7,8 +7,8 @@ import { TopicWeightCalculator } from '../calculations/topic.weight.calculator';
 import Provider from '../providers/provider';
 import { BalanceSheet } from '../models/balance.sheet';
 
-export class CalculationService {
-  public static async calculate(balanceSheet: BalanceSheet): Promise<{
+export namespace Calc {
+  export async function calculate(balanceSheet: BalanceSheet): Promise<{
     updatedBalanceSheet: BalanceSheet;
     calcResults: CalcResults;
     stakeholderWeights: Provider<string, number>;
