@@ -6,9 +6,8 @@ import {
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import {
   BalanceSheet,
+  BalanceSheetParser,
   balanceSheetToMatrixResponse,
-  balanceSheetToResponse,
-  parseAsBalanceSheet,
   ratingToMatrixRating,
 } from '../../src/models/balance.sheet';
 import { Rating } from '../../src/models/rating';
@@ -29,7 +28,7 @@ describe('Parse', () => {
         { shortName: 'E2.1', estimations: 3 },
       ],
     };
-    const result = parseAsBalanceSheet(json);
+    const result = BalanceSheetParser.fromJson(json);
 
     const defaultRatings = RatingsFactory.createDefaultRatings(
       json.type,
@@ -77,7 +76,7 @@ describe('Parse', () => {
       type: BalanceSheetType.Full,
       version: BalanceSheetVersion.v5_0_4,
     };
-    const result = parseAsBalanceSheet(json);
+    const result = BalanceSheetParser.fromJson(json);
 
     const expectedRatings = RatingsFactory.createDefaultRatings(
       json.type,
@@ -93,7 +92,7 @@ describe('Parse', () => {
       version: BalanceSheetVersion.v5_0_4,
       companyFacts: companyFactsAsJson,
     };
-    const result = parseAsBalanceSheet(json);
+    const result = BalanceSheetParser.fromJson(json);
     expect(result.companyFacts.industrySectors).toHaveLength(
       companyFactsAsJson.industrySectors.length
     );
@@ -124,7 +123,7 @@ describe('balanceSheetToResponse', () => {
         mainOriginOfOtherSuppliers: { costs: 9 },
       },
     };
-    const balanceSheetResponse = balanceSheetToResponse(
+    const balanceSheetResponse = BalanceSheetParser.toJson(
       undefined,
       balanceSheet,
       'en'
@@ -142,7 +141,7 @@ describe('balanceSheetToResponse', () => {
         hasCanteen: undefined,
       },
     };
-    const balanceSheetResponse = balanceSheetToResponse(
+    const balanceSheetResponse = BalanceSheetParser.toJson(
       undefined,
       balanceSheet,
       'en'
@@ -162,7 +161,7 @@ describe('balanceSheetToResponse', () => {
         mainOriginOfOtherSuppliers: { costs: 9, countryCode: 'DEU' },
       },
     };
-    const balanceSheetResponse = balanceSheetToResponse(
+    const balanceSheetResponse = BalanceSheetParser.toJson(
       undefined,
       balanceSheet,
       'en'
@@ -186,7 +185,7 @@ describe('balanceSheetToResponse', () => {
         mainOriginOfOtherSuppliers: { costs: 9, countryCode: 'DEU' },
       },
     };
-    const balanceSheetResponse = balanceSheetToResponse(
+    const balanceSheetResponse = BalanceSheetParser.toJson(
       undefined,
       balanceSheet,
       'en'
@@ -213,7 +212,7 @@ describe('balanceSheetToResponse', () => {
         ],
       },
     };
-    const balanceSheetResponse = balanceSheetToResponse(
+    const balanceSheetResponse = BalanceSheetParser.toJson(
       undefined,
       balanceSheet,
       'en'

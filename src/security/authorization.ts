@@ -4,8 +4,8 @@ import { EntityManager } from 'typeorm';
 import { User } from '../entities/user';
 import { NoAccessError } from '../exceptions/no.access.error';
 
-export class AccessCheckerService {
-  public static async check(
+export namespace BalanceSheetAuthorization {
+  export async function isGrantedForCurrentUserOrFail(
     request: Request,
     balanceSheet: BalanceSheetEntity,
     entityManager: EntityManager

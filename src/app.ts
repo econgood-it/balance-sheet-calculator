@@ -2,7 +2,7 @@ import express, { Application } from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import { BalanceSheetController } from './controllers/balance.sheet.controller';
-import { Authentication } from './authentication';
+import { Authentication } from './security/authentication';
 import errorMiddleware from './middleware/error.middleware';
 import { Connection } from 'typeorm';
 import { LoggingService } from './logging';
@@ -20,6 +20,8 @@ import { IndustryController } from './controllers/industry.controller';
 import { IndustryService } from './services/industry.service';
 import { ApiKeyController } from './controllers/api.key.controller';
 import { ApiKeyService } from './services/api.key.service';
+import { OrganizationController } from './controllers/organization.controller';
+import { OrganizationService } from './services/organization.service';
 
 class App {
   public readonly app: Application;
@@ -30,6 +32,7 @@ class App {
   private userController: UserController;
   private apiKeyController: ApiKeyController;
   private healthCheckController: HealthCheckController;
+  private organizationController: OrganizationController;
   private docsController: DocsController;
   private authentication: Authentication;
 
@@ -58,6 +61,10 @@ class App {
     this.healthCheckController = new HealthCheckController(
       this.app,
       new HealthCheckService()
+    );
+    this.organizationController = new OrganizationController(
+      this.app,
+      new OrganizationService(connection)
     );
     this.docsController = new DocsController(this.app, configuration);
     this.app.use(errorMiddleware);

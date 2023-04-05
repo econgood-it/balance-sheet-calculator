@@ -38,46 +38,48 @@ export const BalanceSheetSchema = z.object({
 
 export type BalanceSheet = z.infer<typeof BalanceSheetSchema>;
 
-function mergeWithDefaultRatings(
-  ratingRequestBodies: z.infer<typeof RatingRequestBodySchema>[],
-  type: BalanceSheetType,
-  version: BalanceSheetVersion
-): Rating[] {
-  const defaultRatings = RatingsFactory.createDefaultRatings(type, version);
-  return mergeRatingsWithRequestBodies(defaultRatings, ratingRequestBodies);
-}
+export namespace BalanceSheetParser {
+  function mergeWithDefaultRatings(
+    ratingRequestBodies: z.infer<typeof RatingRequestBodySchema>[],
+    type: BalanceSheetType,
+    version: BalanceSheetVersion
+  ): Rating[] {
+    const defaultRatings = RatingsFactory.createDefaultRatings(type, version);
+    return mergeRatingsWithRequestBodies(defaultRatings, ratingRequestBodies);
+  }
 
-export function parseAsBalanceSheet(
-  json: z.input<typeof BalanceSheetCreateRequestBodySchema>
-) {
-  return BalanceSheetCreateRequestBodySchema.transform((b) => ({
-    ...b,
-    companyFacts: CompanyFactsCreateRequestBodyTransformedSchema.parse(
-      b.companyFacts
-    ),
-    ratings: mergeWithDefaultRatings(b.ratings, b.type, b.version),
-  }))
-    .pipe(BalanceSheetSchema)
-    .parse(json);
-}
+  export function fromJson(
+    json: z.input<typeof BalanceSheetCreateRequestBodySchema>
+  ) {
+    return BalanceSheetCreateRequestBodySchema.transform((b) => ({
+      ...b,
+      companyFacts: CompanyFactsCreateRequestBodyTransformedSchema.parse(
+        b.companyFacts
+      ),
+      ratings: mergeWithDefaultRatings(b.ratings, b.type, b.version),
+    }))
+      .pipe(BalanceSheetSchema)
+      .parse(json);
+  }
 
-export function balanceSheetToResponse(
-  id: number | undefined,
-  balanceSheet: BalanceSheet,
-  language: keyof Translations
-) {
-  const transBalanceSheet = translateBalanceSheet(balanceSheet, language);
-  return BalanceSheetResponseBodySchema.parse({
-    id,
-    ...transBalanceSheet,
-    companyFacts: companyFactsToResponse(transBalanceSheet.companyFacts),
-    ratings: sortRatings(
-      transBalanceSheet.ratings.map((r) => ({
-        ...r,
-        type: isTopic(r) ? 'topic' : 'aspect',
-      }))
-    ),
-  });
+  export function toJson(
+    id: number | undefined,
+    balanceSheet: BalanceSheet,
+    language: keyof Translations
+  ) {
+    const transBalanceSheet = translateBalanceSheet(balanceSheet, language);
+    return BalanceSheetResponseBodySchema.parse({
+      id,
+      ...transBalanceSheet,
+      companyFacts: companyFactsToResponse(transBalanceSheet.companyFacts),
+      ratings: sortRatings(
+        transBalanceSheet.ratings.map((r) => ({
+          ...r,
+          type: isTopic(r) ? 'topic' : 'aspect',
+        }))
+      ),
+    });
+  }
 }
 
 type MatrixRatingBody = z.infer<typeof MatrixRatingBodySchema>;

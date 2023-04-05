@@ -8,7 +8,7 @@ import { Connection, EntityManager } from 'typeorm';
 import { EntityWithDtoMerger } from '../merge/entity.with.dto.merger';
 import { handle } from '../exceptions/error.handler';
 import { User } from '../entities/user';
-import { AccessCheckerService } from './access.checker.service';
+
 import { CalculationService } from './calculation.service';
 import UnauthorizedException from '../exceptions/unauthorized.exception';
 import { NoAccessError } from '../exceptions/no.access.error';
@@ -21,10 +21,9 @@ import { TopicWeightsReader } from '../reader/balanceSheetReader/topic.weights.r
 import { StakeholderWeightsReader } from '../reader/balanceSheetReader/stakeholder.weights.reader';
 import {
   BalanceSheet,
+  BalanceSheetParser,
   balanceSheetToMatrixResponse,
-  balanceSheetToResponse,
   diffBetweenBalanceSheets,
-  parseAsBalanceSheet,
 } from '../models/balance.sheet';
 
 import {
@@ -36,6 +35,7 @@ import {
   BalanceSheetPatchRequestBodySchema,
 } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
 import { BalanceSheetExcelDiffResponseBody } from '@ecogood/e-calculator-schemas/dist/balance.sheet.diff';
+import { BalanceSheetAuthorization } from '../security/authorization';
 
 export class BalanceSheetService {
   constructor(private connection: Connection) {}
@@ -50,7 +50,7 @@ export class BalanceSheetService {
     this.connection.manager
       .transaction(async (entityManager) => {
         const foundUser = await this.findUserOrFail(req, entityManager);
-        const balanceSheet = parseAsBalanceSheet(req.body);
+        const balanceSheet = BalanceSheetParser.fromJson(req.body);
 
         const { updatedBalanceSheet } = await CalculationService.calculate(
           balanceSheet
@@ -66,7 +66,11 @@ export class BalanceSheetService {
           : undefined;
 
         res.json(
-          balanceSheetToResponse(balanceSheetId, updatedBalanceSheet, language)
+          BalanceSheetParser.toJson(
+            balanceSheetId,
+            updatedBalanceSheet,
+            language
+          )
         );
       })
       .catch((error) => {
@@ -161,7 +165,7 @@ export class BalanceSheetService {
             : undefined;
 
           res.json(
-            balanceSheetToResponse(
+            BalanceSheetParser.toJson(
               balanceSheetId,
               updatedBalanceSheet,
               language
@@ -192,7 +196,7 @@ export class BalanceSheetService {
           where: { id: balanceSheetIdParam },
           relations: BALANCE_SHEET_RELATIONS,
         });
-        await AccessCheckerService.check(
+        await BalanceSheetAuthorization.isGrantedForCurrentUserOrFail(
           req,
           balanceSheetEntity,
           entityManager
@@ -214,7 +218,11 @@ export class BalanceSheetService {
         );
 
         res.json(
-          balanceSheetToResponse(balanceSheetId, updatedBalanceSheet, language)
+          BalanceSheetParser.toJson(
+            balanceSheetId,
+            updatedBalanceSheet,
+            language
+          )
         );
       })
       .catch((error) => {
@@ -265,13 +273,13 @@ export class BalanceSheetService {
           where: { id: balanceSheetId },
           relations: BALANCE_SHEET_RELATIONS,
         });
-        await AccessCheckerService.check(
+        await BalanceSheetAuthorization.isGrantedForCurrentUserOrFail(
           req,
           balanceSheetEntity,
           entityManager
         );
         res.json(
-          balanceSheetToResponse(
+          BalanceSheetParser.toJson(
             balanceSheetEntity.id,
             balanceSheetEntity.toBalanceSheet(),
             language
@@ -298,7 +306,7 @@ export class BalanceSheetService {
           where: { id: balanceSheetId },
           relations: BALANCE_SHEET_RELATIONS,
         });
-        await AccessCheckerService.check(
+        await BalanceSheetAuthorization.isGrantedForCurrentUserOrFail(
           req,
           balanceSheetEntity,
           entityManager
@@ -329,7 +337,7 @@ export class BalanceSheetService {
           where: { id: balanceSheetId },
           relations: BALANCE_SHEET_RELATIONS,
         });
-        await AccessCheckerService.check(
+        await BalanceSheetAuthorization.isGrantedForCurrentUserOrFail(
           req,
           balanceSheetEntity,
           entityManager

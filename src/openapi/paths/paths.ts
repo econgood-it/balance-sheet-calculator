@@ -6,8 +6,10 @@ import { registerBalanceSheetPost } from './balancesheet.post';
 import { registerBalanceSheetGet } from './balancesheet.get';
 import { registerBalanceSheetDelete } from './balancesheet.delete';
 import { registerBalanceSheetPatch } from './balancesheet.patch';
+import { registerOrganizationPost } from './organization.post';
 export const Tags = {
   balanceSheets: 'balancesheets',
+  organization: 'organization',
 };
 export const Methods: {
   [name: string]: 'get' | 'post' | 'put' | 'delete' | 'patch';
@@ -36,4 +38,5 @@ export function registerPaths(
   registerBalanceSheetPost(registry, schemas, params);
   registerBalanceSheetPatch(registry, schemas, params);
   registerBalanceSheetDelete(registry, schemas, params);
+  registerOrganizationPost(registry, schemas, params);
 }

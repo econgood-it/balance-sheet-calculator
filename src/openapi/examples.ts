@@ -6,6 +6,7 @@ import {
   BalanceSheetType,
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
+import { Organization } from '../models/organization';
 
 const arabEmiratesCode = 'ARE';
 const afghanistanCode = 'AFG';
@@ -173,5 +174,16 @@ export const balanceSheetFactory = {
       BalanceSheetType.Full,
       BalanceSheetVersion.v5_0_8
     ),
+  }),
+};
+
+export const organizationFactory = {
+  default: (): Organization => ({
+    address: {
+      street: 'Example street',
+      houseNumber: '28a',
+      zip: '999999',
+      city: 'Example city',
+    },
   }),
 };

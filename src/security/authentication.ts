@@ -1,14 +1,14 @@
 import { Application, NextFunction, Request, Response } from 'express';
 import passport from 'passport';
 import { Strategy, ExtractJwt } from 'passport-jwt';
-import { User } from './entities/user';
+import { User } from '../entities/user';
 import { Connection } from 'typeorm';
-import UnauthorizedException from './exceptions/unauthorized.exception';
-import { Role } from './entities/enums';
-import { Configuration } from './configuration.reader';
+import UnauthorizedException from '../exceptions/unauthorized.exception';
+import { Role } from '../entities/enums';
+import { Configuration } from '../configuration.reader';
 import { BasicStrategy } from 'passport-http';
 import { HeaderAPIKeyStrategy } from 'passport-headerapikey';
-import { API_KEY_RELATIONS, ApiKey } from './entities/api.key';
+import { API_KEY_RELATIONS, ApiKey } from '../entities/api.key';
 
 class JWTAuthentication {
   constructor(private connection: Connection) {}

@@ -4,6 +4,8 @@ import { Role } from '../src/entities/enums';
 import { Application } from 'express';
 import supertest from 'supertest';
 
+export type AuthHeader = { key: string; value: string };
+
 export class TokenProvider {
   private static async createTestUserIfNotExists(
     connection: Connection,
@@ -52,6 +54,22 @@ export class TokenProvider {
       'MGb3C7WO&=S}Q&R&=4cK',
       Role.User
     );
+  }
+
+  public static async provideValidAuthHeader(
+    app: Application,
+    connection: Connection,
+    role: Role = Role.User,
+    email?: string
+  ): Promise<AuthHeader> {
+    const token =
+      role === Role.User
+        ? await TokenProvider.provideValidUserToken(app, connection, email)
+        : await TokenProvider.provideValidAdminToken(app, connection);
+    return {
+      key: 'Authorization',
+      value: `Bearer ${token}`,
+    };
   }
 
   public static async provideValidAdminToken(

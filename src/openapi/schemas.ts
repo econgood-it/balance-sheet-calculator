@@ -3,10 +3,12 @@ import {
   BalanceSheetCreateRequestBodySchema,
   BalanceSheetPatchRequestBodySchema,
 } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
+import { OrganizationRequestSchema } from '@ecogood/e-calculator-schemas/dist/organization.dto';
 
 export type OpenApiSchemas = {
   BalanceSheetCreateRequestApiSchema: any;
   BalanceSheetPatchRequestApiSchema: any;
+  OrganizationCreateRequestApiSchema: any;
 };
 
 export function registerSchemas(registry: OpenAPIRegistry): OpenApiSchemas {
@@ -18,8 +20,13 @@ export function registerSchemas(registry: OpenAPIRegistry): OpenApiSchemas {
     'BalanceSheetPatchRequest',
     BalanceSheetPatchRequestBodySchema
   );
+  const OrganizationCreateRequestApiSchema = registry.register(
+    'BalanceSheetPatchRequest',
+    OrganizationRequestSchema
+  );
   return {
     BalanceSheetCreateRequestApiSchema,
     BalanceSheetPatchRequestApiSchema,
+    OrganizationCreateRequestApiSchema,
   };
 }
