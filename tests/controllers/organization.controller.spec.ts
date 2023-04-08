@@ -1,7 +1,7 @@
-import { Connection, Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { Application } from 'express';
 import { ConfigurationReader } from '../../src/configuration.reader';
-import { DatabaseConnectionCreator } from '../../src/database.connection.creator';
+import { DatabaseSourceCreator } from '../../src/databaseSourceCreator';
 import App from '../../src/app';
 import { AuthHeader, TokenProvider } from '../TokenProvider';
 import supertest from 'supertest';
@@ -14,7 +14,7 @@ import { Role } from '../../src/entities/enums';
 import { v4 as uuid4 } from 'uuid';
 
 describe('Organization Controller', () => {
-  let connection: Connection;
+  let dataSource: DataSource;
   let app: Application;
   const configuration = ConfigurationReader.read();
   let userTokenHeader: AuthHeader;
@@ -22,22 +22,21 @@ describe('Organization Controller', () => {
   const userEmail = `${uuid4()}@example.com`;
 
   beforeAll(async () => {
-    connection =
-      await DatabaseConnectionCreator.createConnectionAndRunMigrations(
-        configuration
-      );
-    app = new App(connection, configuration).app;
+    dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
+      configuration
+    );
+    app = new App(dataSource, configuration).app;
     userTokenHeader = await TokenProvider.provideValidAuthHeader(
       app,
-      connection,
+      dataSource,
       Role.User,
       userEmail
     );
-    organizationRepo = connection.getRepository(OrganizationEntity);
+    organizationRepo = dataSource.getRepository(OrganizationEntity);
   });
 
   afterAll(async () => {
-    await connection.close();
+    await dataSource.destroy();
   });
 
   it('should create organization on post request', async () => {
@@ -73,7 +72,7 @@ describe('Organization Controller', () => {
   it('should fail to create organization if user is admin', async () => {
     const adminTokenHeader = await TokenProvider.provideValidAuthHeader(
       app,
-      connection,
+      dataSource,
       Role.Admin
     );
     const orgaJson = organizationFactory.default();

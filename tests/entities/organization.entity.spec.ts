@@ -1,5 +1,5 @@
-import { Connection, Repository } from 'typeorm';
-import { DatabaseConnectionCreator } from '../../src/database.connection.creator';
+import { DataSource, Repository } from 'typeorm';
+import { DatabaseSourceCreator } from '../../src/databaseSourceCreator';
 import { ConfigurationReader } from '../../src/configuration.reader';
 import {
   ORGANIZATION_RELATIONS,
@@ -8,12 +8,10 @@ import {
 import { User } from '../../src/entities/user';
 import { Role } from '../../src/entities/enums';
 import { v4 as uuid4 } from 'uuid';
-import { createFromBalanceSheet } from '../../src/entities/balance.sheet.entity';
-import { balanceSheetFactory } from '../../src/openapi/examples';
 
 describe('CompanyProfileEntity', () => {
   let organizationEntityRepo: Repository<OrganizationEntity>;
-  let connection: Connection;
+  let dataSource: DataSource;
   const organization = {
     address: {
       street: 'Example street',
@@ -24,18 +22,17 @@ describe('CompanyProfileEntity', () => {
   };
 
   beforeAll(async () => {
-    connection =
-      await DatabaseConnectionCreator.createConnectionAndRunMigrations(
-        ConfigurationReader.read()
-      );
-    organizationEntityRepo = connection.getRepository(OrganizationEntity);
+    dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
+      ConfigurationReader.read()
+    );
+    organizationEntityRepo = dataSource.getRepository(OrganizationEntity);
   });
 
   afterAll(async () => {
-    await connection.close();
+    await dataSource.destroy();
   });
   it('should be saved', async () => {
-    const user = await connection
+    const user = await dataSource
       .getRepository(User)
       .save(
         new User(undefined, `${uuid4()}@example.com`, 'test1234', Role.User)
@@ -75,7 +72,7 @@ describe('CompanyProfileEntity', () => {
 
   it('does remove relation to member on organization delete', async () => {
     const email = `${uuid4()}@example.com`;
-    const user = await connection
+    const user = await dataSource
       .getRepository(User)
       .save(new User(undefined, email, 'test1234', Role.User));
     const organizationEntity = await organizationEntityRepo.save(
@@ -83,10 +80,10 @@ describe('CompanyProfileEntity', () => {
     );
 
     const query = `SELECT * from organization_members where "userId" = ${user.id} and "organizationEntityId" = ${organizationEntity.id}`;
-    let relation = await connection.query(query);
+    let relation = await dataSource.query(query);
     expect(relation).toHaveLength(1);
     await organizationEntityRepo.remove(organizationEntity);
-    relation = await connection.query(query);
+    relation = await dataSource.query(query);
     expect(relation).toHaveLength(0);
   });
 });

@@ -1,7 +1,7 @@
-import { Connection, Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { Application } from 'express';
 import { ConfigurationReader } from '../../src/configuration.reader';
-import { DatabaseConnectionCreator } from '../../src/database.connection.creator';
+import { DatabaseSourceCreator } from '../../src/databaseSourceCreator';
 import App from '../../src/app';
 import { TokenProvider } from '../TokenProvider';
 import supertest from 'supertest';
@@ -9,29 +9,28 @@ import { ApiKey } from '../../src/entities/api.key';
 import { v4 as uuid4 } from 'uuid';
 
 describe('ApiKeyController', () => {
-  let connection: Connection;
+  let dataSource: DataSource;
   let app: Application;
   const configuration = ConfigurationReader.read();
   let apiKeyRepository: Repository<ApiKey>;
 
   beforeAll(async () => {
-    connection =
-      await DatabaseConnectionCreator.createConnectionAndRunMigrations(
-        configuration
-      );
-    app = new App(connection, configuration).app;
-    apiKeyRepository = connection.getRepository(ApiKey);
+    dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
+      configuration
+    );
+    app = new App(dataSource, configuration).app;
+    apiKeyRepository = dataSource.getRepository(ApiKey);
   });
 
   afterAll(async () => {
-    await connection.close();
+    await dataSource.destroy();
   });
 
   it('should create new api key for user', async () => {
     const userEmail = `${uuid4()}@example.com`;
     const token = `Bearer ${await TokenProvider.provideValidUserToken(
       app,
-      connection,
+      dataSource,
       userEmail
     )}`;
     const testApp = supertest(app);
@@ -51,7 +50,7 @@ describe('ApiKeyController', () => {
     const userEmail = `${uuid4()}@example.com`;
     const token = `Bearer ${await TokenProvider.provideValidUserToken(
       app,
-      connection,
+      dataSource,
       userEmail
     )}`;
     const testApp = supertest(app);
@@ -76,7 +75,7 @@ describe('ApiKeyController', () => {
     const userEmail = `${uuid4()}@example.com`;
     const token = `Bearer ${await TokenProvider.provideValidUserToken(
       app,
-      connection,
+      dataSource,
       userEmail
     )}`;
     const testApp = supertest(app);
@@ -87,7 +86,7 @@ describe('ApiKeyController', () => {
 
     const tokenWithoutPermission = `Bearer ${await TokenProvider.provideValidUserToken(
       app,
-      connection,
+      dataSource,
       `${uuid4()}@example.com`
     )}`;
 

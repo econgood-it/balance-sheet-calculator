@@ -1,6 +1,6 @@
 import supertest from 'supertest';
-import { Connection } from 'typeorm';
-import { DatabaseConnectionCreator } from '../../../src/database.connection.creator';
+import { DataSource } from 'typeorm';
+import { DatabaseSourceCreator } from '../../../src/databaseSourceCreator';
 import App from '../../../src/app';
 import { Application } from 'express';
 import { ConfigurationReader } from '../../../src/configuration.reader';
@@ -9,7 +9,7 @@ import { TokenProvider } from '../../TokenProvider';
 import path from 'path';
 
 describe('Balance Sheet Controller', () => {
-  let connection: Connection;
+  let dataSource: DataSource;
   let app: Application;
   const configuration = ConfigurationReader.read();
 
@@ -19,19 +19,18 @@ describe('Balance Sheet Controller', () => {
   };
 
   beforeAll(async () => {
-    connection =
-      await DatabaseConnectionCreator.createConnectionAndRunMigrations(
-        configuration
-      );
-    app = new App(connection, configuration).app;
+    dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
+      configuration
+    );
+    app = new App(dataSource, configuration).app;
     tokenHeader.value = `Bearer ${await TokenProvider.provideValidUserToken(
       app,
-      connection
+      dataSource
     )}`;
   });
 
   afterAll(async () => {
-    await connection.close();
+    await dataSource.destroy();
   });
 
   it('returns diff between uploaded excel file and API', async () => {

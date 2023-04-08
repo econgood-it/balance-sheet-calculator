@@ -1,6 +1,6 @@
 import 'reflect-metadata';
-import { DatabaseConnectionCreator } from './database.connection.creator';
-import { Connection } from 'typeorm';
+import { DatabaseSourceCreator } from './databaseSourceCreator';
+import { DataSource } from 'typeorm';
 
 import { LoggingService } from './logging';
 import { ConfigurationReader } from './configuration.reader';
@@ -20,10 +20,10 @@ declare global {
 
 const configuration = ConfigurationReader.read();
 
-DatabaseConnectionCreator.createConnectionAndRunMigrations(configuration)
-  .then(async (connection: Connection) => {
-    await AdminAccountCreator.saveAdmin(connection, configuration);
-    const app = new App(connection, configuration);
+DatabaseSourceCreator.createDataSourceAndRunMigrations(configuration)
+  .then(async (dataSource: DataSource) => {
+    await AdminAccountCreator.saveAdmin(dataSource, configuration);
+    const app = new App(dataSource, configuration);
     app.start();
   })
   .catch((error) => {

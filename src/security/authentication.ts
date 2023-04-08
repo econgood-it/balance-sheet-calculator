@@ -1,8 +1,8 @@
 import { Application, NextFunction, Request, Response } from 'express';
 import passport from 'passport';
-import { Strategy, ExtractJwt } from 'passport-jwt';
+import { ExtractJwt, Strategy } from 'passport-jwt';
 import { User } from '../entities/user';
-import { Connection } from 'typeorm';
+import { DataSource } from 'typeorm';
 import UnauthorizedException from '../exceptions/unauthorized.exception';
 import { Role } from '../entities/enums';
 import { Configuration } from '../configuration.reader';
@@ -11,7 +11,7 @@ import { HeaderAPIKeyStrategy } from 'passport-headerapikey';
 import { API_KEY_RELATIONS, ApiKey } from '../entities/api.key';
 
 class JWTAuthentication {
-  constructor(private connection: Connection) {}
+  constructor(private dataSource: DataSource) {}
 
   public initialize(jwtSecret: string) {
     passport.use('jwt', this.getStrategy(jwtSecret));
@@ -26,7 +26,7 @@ class JWTAuthentication {
     };
 
     return new Strategy(params, (req: Request, payload: any, done: any) => {
-      this.connection.manager
+      this.dataSource.manager
         .transaction(async (entityManager) => {
           const userRepository = entityManager.getRepository(User);
           const foundUser = await userRepository.findOneOrFail({
@@ -77,7 +77,7 @@ class JWTAuthentication {
 }
 
 class ApiKeyAuthentication {
-  constructor(private connection: Connection) {}
+  constructor(private dataSource: DataSource) {}
 
   public initialize() {
     passport.use('headerapikey', this.getStrategy());
@@ -89,7 +89,7 @@ class ApiKeyAuthentication {
       { header: 'Api-Key', prefix: '' },
       false,
       (apikey: string, done: any) => {
-        this.connection.manager
+        this.dataSource.manager
           .transaction(async (entityManager) => {
             const apiRepository = entityManager.getRepository(ApiKey);
             const [id, value] = apikey.split('.');
@@ -149,9 +149,9 @@ export class Authentication {
   private jwtAuthentication: JWTAuthentication;
   private apiKeyAuthentication: ApiKeyAuthentication;
 
-  constructor(private connection: Connection) {
-    this.jwtAuthentication = new JWTAuthentication(connection);
-    this.apiKeyAuthentication = new ApiKeyAuthentication(connection);
+  constructor(private dataSource: DataSource) {
+    this.jwtAuthentication = new JWTAuthentication(dataSource);
+    this.apiKeyAuthentication = new ApiKeyAuthentication(dataSource);
   }
 
   public addBasicAuthToDocsEndpoint(

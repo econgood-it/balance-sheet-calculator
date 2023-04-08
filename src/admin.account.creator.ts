@@ -1,14 +1,14 @@
-import { Connection } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { Configuration } from './configuration.reader';
 import { User } from './entities/user';
 import { Role } from './entities/enums';
 
 export class AdminAccountCreator {
   public static async saveAdmin(
-    connection: Connection,
+    dataSource: DataSource,
     configuration: Configuration
   ) {
-    await connection.manager.transaction(async (entityManager) => {
+    await dataSource.manager.transaction(async (entityManager) => {
       const userRepository = entityManager.getRepository(User);
       const foundUser = await userRepository.findOneBy({
         email: configuration.adminEmail,

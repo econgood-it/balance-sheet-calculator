@@ -1,6 +1,6 @@
 import supertest from 'supertest';
-import { Connection, Repository } from 'typeorm';
-import { DatabaseConnectionCreator } from '../../../src/database.connection.creator';
+import { DataSource, Repository } from 'typeorm';
+import { DatabaseSourceCreator } from '../../../src/databaseSourceCreator';
 import App from '../../../src/app';
 import { Application } from 'express';
 import { ConfigurationReader } from '../../../src/configuration.reader';
@@ -11,7 +11,7 @@ import path from 'path';
 import { Rating, RatingResponseBody } from '../../../src/models/rating';
 
 describe('Balance Sheet Controller', () => {
-  let connection: Connection;
+  let dataSource: DataSource;
   let balaneSheetRepository: Repository<BalanceSheetEntity>;
   let app: Application;
   const configuration = ConfigurationReader.read();
@@ -22,20 +22,19 @@ describe('Balance Sheet Controller', () => {
   };
 
   beforeAll(async () => {
-    connection =
-      await DatabaseConnectionCreator.createConnectionAndRunMigrations(
-        configuration
-      );
-    balaneSheetRepository = connection.getRepository(BalanceSheetEntity);
-    app = new App(connection, configuration).app;
+    dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
+      configuration
+    );
+    balaneSheetRepository = dataSource.getRepository(BalanceSheetEntity);
+    app = new App(dataSource, configuration).app;
     tokenHeader.value = `Bearer ${await TokenProvider.provideValidUserToken(
       app,
-      connection
+      dataSource
     )}`;
   });
 
   afterAll(async () => {
-    await connection.close();
+    await dataSource.destroy();
   });
 
   it('creates BalanceSheet from uploaded excel file', async () => {

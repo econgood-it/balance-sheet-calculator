@@ -4,7 +4,7 @@ import {
   BalanceSheetEntity,
   createFromBalanceSheet,
 } from '../entities/balance.sheet.entity';
-import { Connection, EntityManager } from 'typeorm';
+import { DataSource, EntityManager } from 'typeorm';
 import { EntityWithDtoMerger } from '../merge/entity.with.dto.merger';
 import { handle } from '../exceptions/error.handler';
 import { User } from '../entities/user';
@@ -36,7 +36,7 @@ import { Authorization } from '../security/authorization';
 import { Calc } from './calculation.service';
 
 export class BalanceSheetService {
-  constructor(private connection: Connection) {}
+  constructor(private dataSource: DataSource) {}
 
   public async createBalanceSheet(
     req: Request,
@@ -45,7 +45,7 @@ export class BalanceSheetService {
   ) {
     const saveFlag = this.parseSaveFlag(req.query.save);
     const language = parseLanguageParameter(req.query.lng);
-    this.connection.manager
+    this.dataSource.manager
       .transaction(async (entityManager) => {
         const foundUser = await Authorization.findCurrentUserOrFail(
           req,
@@ -141,7 +141,7 @@ export class BalanceSheetService {
   ) {
     const language = parseLanguageParameter(req.query.lng);
     const saveFlag = this.parseSaveFlag(req.query.save);
-    this.connection.manager
+    this.dataSource.manager
       .transaction(async (entityManager) => {
         if (req.file) {
           const foundUser = await Authorization.findCurrentUserOrFail(
@@ -186,7 +186,7 @@ export class BalanceSheetService {
     next: NextFunction
   ) {
     const language = parseLanguageParameter(req.query.lng);
-    this.connection.manager
+    this.dataSource.manager
       .transaction(async (entityManager) => {
         const balanceSheetRepository =
           entityManager.getRepository(BalanceSheetEntity);
@@ -235,7 +235,7 @@ export class BalanceSheetService {
     res: Response,
     next: NextFunction
   ) {
-    this.connection.manager
+    this.dataSource.manager
       .transaction(async (entityManager) => {
         if (!req.userInfo) {
           throw new NoAccessError();
@@ -264,7 +264,7 @@ export class BalanceSheetService {
     next: NextFunction
   ) {
     const language = parseLanguageParameter(req.query.lng);
-    this.connection.manager
+    this.dataSource.manager
       .transaction(async (entityManager) => {
         const balanceSheetRepository =
           entityManager.getRepository(BalanceSheetEntity);
@@ -297,7 +297,7 @@ export class BalanceSheetService {
     next: NextFunction
   ) {
     const language = parseLanguageParameter(req.query.lng);
-    this.connection.manager
+    this.dataSource.manager
       .transaction(async (entityManager) => {
         const balanceSheetRepository =
           entityManager.getRepository(BalanceSheetEntity);
@@ -328,7 +328,7 @@ export class BalanceSheetService {
     res: Response,
     next: NextFunction
   ) {
-    this.connection.manager
+    this.dataSource.manager
       .transaction(async (entityManager) => {
         const balanceSheetId: number = Number(req.params.id);
         const balanceSheetRepository =

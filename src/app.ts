@@ -4,7 +4,7 @@ import cors from 'cors';
 import { BalanceSheetController } from './controllers/balance.sheet.controller';
 import { Authentication } from './security/authentication';
 import errorMiddleware from './middleware/error.middleware';
-import { Connection } from 'typeorm';
+
 import { LoggingService } from './logging';
 import { BalanceSheetService } from './services/balance.sheet.service';
 import { Configuration } from './configuration.reader';
@@ -22,6 +22,7 @@ import { ApiKeyController } from './controllers/api.key.controller';
 import { ApiKeyService } from './services/api.key.service';
 import { OrganizationController } from './controllers/organization.controller';
 import { OrganizationService } from './services/organization.service';
+import { DataSource } from 'typeorm';
 
 class App {
   public readonly app: Application;
@@ -36,14 +37,14 @@ class App {
   private docsController: DocsController;
   private authentication: Authentication;
 
-  constructor(connection: Connection, private configuration: Configuration) {
+  constructor(dataSource: DataSource, private configuration: Configuration) {
     this.app = express();
     this.setConfig();
-    this.authentication = new Authentication(connection);
+    this.authentication = new Authentication(dataSource);
     this.authentication.addBasicAuthToDocsEndpoint(this.app, configuration);
     this.authentication.addAuthToApplication(this.app, configuration.jwtSecret);
     // Creating controllers
-    const balanceSheetService = new BalanceSheetService(connection);
+    const balanceSheetService = new BalanceSheetService(dataSource);
     this.balanceSheetController = new BalanceSheetController(
       this.app,
       balanceSheetService
@@ -54,9 +55,9 @@ class App {
       this.app,
       new IndustryService()
     );
-    const userService = new UserService(connection, configuration.jwtSecret);
+    const userService = new UserService(dataSource, configuration.jwtSecret);
     this.userController = new UserController(this.app, userService);
-    const apiKeyService = new ApiKeyService(connection);
+    const apiKeyService = new ApiKeyService(dataSource);
     this.apiKeyController = new ApiKeyController(this.app, apiKeyService);
     this.healthCheckController = new HealthCheckController(
       this.app,
@@ -64,7 +65,7 @@ class App {
     );
     this.organizationController = new OrganizationController(
       this.app,
-      new OrganizationService(connection)
+      new OrganizationService(dataSource)
     );
     this.docsController = new DocsController(this.app, configuration);
     this.app.use(errorMiddleware);

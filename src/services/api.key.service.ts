@@ -1,15 +1,15 @@
 import { NextFunction, Request, Response } from 'express';
-import { Connection } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { User } from '../entities/user';
 import { handle } from '../exceptions/error.handler';
 import { API_KEY_RELATIONS, ApiKey } from '../entities/api.key';
 import UnauthorizedException from '../exceptions/unauthorized.exception';
 
 export class ApiKeyService {
-  constructor(private connection: Connection) {}
+  constructor(private dataSource: DataSource) {}
 
   public async createApiKey(req: Request, res: Response, next: NextFunction) {
-    this.connection.manager
+    this.dataSource.manager
       .transaction(async (entityManager) => {
         if (req.userInfo === undefined || req.userInfo.id === undefined) {
           throw new Error('User undefined');
@@ -36,7 +36,7 @@ export class ApiKeyService {
   }
 
   public async deleteApiKey(req: Request, res: Response, next: NextFunction) {
-    this.connection.manager
+    this.dataSource.manager
       .transaction(async (entityManager) => {
         if (req.userInfo === undefined || req.userInfo.id === undefined) {
           throw new Error('User undefined');

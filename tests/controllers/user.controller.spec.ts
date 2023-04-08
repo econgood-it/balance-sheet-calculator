@@ -1,7 +1,7 @@
-import { Connection, Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { Application } from 'express';
 import { ConfigurationReader } from '../../src/configuration.reader';
-import { DatabaseConnectionCreator } from '../../src/database.connection.creator';
+import { DatabaseSourceCreator } from '../../src/databaseSourceCreator';
 import App from '../../src/app';
 import { TokenProvider } from '../TokenProvider';
 import supertest from 'supertest';
@@ -9,7 +9,7 @@ import { User } from '../../src/entities/user';
 import { Role } from '../../src/entities/enums';
 
 describe('User Controller', () => {
-  let connection: Connection;
+  let dataSource: DataSource;
   let app: Application;
   const configuration = ConfigurationReader.read();
   let userRepository: Repository<User>;
@@ -29,24 +29,23 @@ describe('User Controller', () => {
   };
 
   beforeAll(async () => {
-    connection =
-      await DatabaseConnectionCreator.createConnectionAndRunMigrations(
-        configuration
-      );
-    app = new App(connection, configuration).app;
-    userRepository = connection.getRepository(User);
+    dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
+      configuration
+    );
+    app = new App(dataSource, configuration).app;
+    userRepository = dataSource.getRepository(User);
     userTokenHeader.value = `Bearer ${await TokenProvider.provideValidUserToken(
       app,
-      connection
+      dataSource
     )}`;
     adminTokenHeader.value = `Bearer ${await TokenProvider.provideValidAdminToken(
       app,
-      connection
+      dataSource
     )}`;
   });
 
   afterAll(async () => {
-    await connection.close();
+    await dataSource.destroy();
   });
 
   beforeEach(async () => {

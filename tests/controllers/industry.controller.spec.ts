@@ -1,13 +1,13 @@
-import { Connection } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { Application } from 'express';
 import { ConfigurationReader } from '../../src/configuration.reader';
-import { DatabaseConnectionCreator } from '../../src/database.connection.creator';
+import { DatabaseSourceCreator } from '../../src/databaseSourceCreator';
 import App from '../../src/app';
 import { TokenProvider } from '../TokenProvider';
 import supertest from 'supertest';
 
 describe('Industry Controller', () => {
-  let connection: Connection;
+  let dataSource: DataSource;
   let app: Application;
   const configuration = ConfigurationReader.read();
   const userTokenHeader = {
@@ -16,19 +16,18 @@ describe('Industry Controller', () => {
   };
 
   beforeAll(async () => {
-    connection =
-      await DatabaseConnectionCreator.createConnectionAndRunMigrations(
-        configuration
-      );
-    app = new App(connection, configuration).app;
+    dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
+      configuration
+    );
+    app = new App(dataSource, configuration).app;
     userTokenHeader.value = `Bearer ${await TokenProvider.provideValidUserToken(
       app,
-      connection
+      dataSource
     )}`;
   });
 
   afterAll(async () => {
-    await connection.close();
+    await dataSource.destroy();
   });
 
   it('should return industry with industry code and name', async () => {

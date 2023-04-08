@@ -1,6 +1,6 @@
 import supertest from 'supertest';
-import { Connection } from 'typeorm';
-import { DatabaseConnectionCreator } from '../../../src/database.connection.creator';
+import { DataSource } from 'typeorm';
+import { DatabaseSourceCreator } from '../../../src/databaseSourceCreator';
 import App from '../../../src/app';
 import { Application } from 'express';
 import { ConfigurationReader } from '../../../src/configuration.reader';
@@ -15,7 +15,7 @@ import {
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 
 describe('Update endpoint of Balance Sheet Controller', () => {
-  let connection: Connection;
+  let dataSource: DataSource;
   let app: Application;
   const configuration = ConfigurationReader.read();
   const endpointPath = '/v1/balancesheets';
@@ -24,19 +24,18 @@ describe('Update endpoint of Balance Sheet Controller', () => {
     value: '',
   };
   beforeAll(async () => {
-    connection =
-      await DatabaseConnectionCreator.createConnectionAndRunMigrations(
-        configuration
-      );
-    app = new App(connection, configuration).app;
+    dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
+      configuration
+    );
+    app = new App(dataSource, configuration).app;
     tokenHeader.value = `Bearer ${await TokenProvider.provideValidUserToken(
       app,
-      connection
+      dataSource
     )}`;
   });
 
   afterAll(async () => {
-    await connection.close();
+    await dataSource.destroy();
   });
 
   it('should update company facts of balance sheet', async () => {
@@ -179,7 +178,7 @@ describe('Update endpoint of Balance Sheet Controller', () => {
     beforeAll(async () => {
       tokenOfUnauthorizedUser = `Bearer ${await TokenProvider.provideValidUserToken(
         app,
-        connection,
+        dataSource,
         'unauthorizedUser@example.com'
       )}`;
     });

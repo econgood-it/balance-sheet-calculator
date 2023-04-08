@@ -1,11 +1,11 @@
-import { Connection, createConnection } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { Configuration } from './configuration.reader';
 
-export class DatabaseConnectionCreator {
-  public static async createConnection(
+export class DatabaseSourceCreator {
+  public static async createDataSource(
     configuration: Configuration
-  ): Promise<Connection> {
-    return createConnection({
+  ): Promise<DataSource> {
+    return new DataSource({
       type: 'postgres',
       host: configuration.dbHost,
       port: configuration.dbPort,
@@ -19,13 +19,14 @@ export class DatabaseConnectionCreator {
     });
   }
 
-  public static async createConnectionAndRunMigrations(
+  public static async createDataSourceAndRunMigrations(
     configuration: Configuration
-  ): Promise<Connection> {
-    const connection = await DatabaseConnectionCreator.createConnection(
+  ): Promise<DataSource> {
+    const dataSource = await DatabaseSourceCreator.createDataSource(
       configuration
     );
-    await connection.runMigrations({ transaction: 'each' });
-    return connection;
+    await dataSource.initialize();
+    await dataSource.runMigrations({ transaction: 'each' });
+    return dataSource;
   }
 }

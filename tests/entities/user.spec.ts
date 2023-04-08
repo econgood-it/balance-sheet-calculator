@@ -1,23 +1,22 @@
-import { DatabaseConnectionCreator } from '../../src/database.connection.creator';
-import { Connection, Repository } from 'typeorm';
+import { DatabaseSourceCreator } from '../../src/databaseSourceCreator';
+import { DataSource, Repository } from 'typeorm';
 import { ConfigurationReader } from '../../src/configuration.reader';
 import { parseAsUser, User } from '../../src/entities/user';
 import { Role } from '../../src/entities/enums';
 
 describe('User', () => {
   let userRepository: Repository<User>;
-  let connection: Connection;
+  let dataSource: DataSource;
 
   beforeAll(async () => {
-    connection =
-      await DatabaseConnectionCreator.createConnectionAndRunMigrations(
-        ConfigurationReader.read()
-      );
-    userRepository = connection.getRepository(User);
+    dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
+      ConfigurationReader.read()
+    );
+    userRepository = dataSource.getRepository(User);
   });
 
   afterAll(async () => {
-    await connection.close();
+    await dataSource.destroy();
   });
 
   it('should be saved and deleted', async () => {

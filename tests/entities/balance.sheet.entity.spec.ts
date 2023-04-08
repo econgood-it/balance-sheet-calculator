@@ -1,5 +1,5 @@
-import { DatabaseConnectionCreator } from '../../src/database.connection.creator';
-import { Connection, Repository } from 'typeorm';
+import { DatabaseSourceCreator } from '../../src/databaseSourceCreator';
+import { DataSource, Repository } from 'typeorm';
 import { ConfigurationReader } from '../../src/configuration.reader';
 import {
   BALANCE_SHEET_RELATIONS,
@@ -13,18 +13,17 @@ import { v4 as uuid4 } from 'uuid';
 
 describe('Balance Sheet', () => {
   let balanceSheetEntityRepository: Repository<BalanceSheetEntity>;
-  let connection: Connection;
+  let dataSource: DataSource;
 
   beforeAll(async () => {
-    connection =
-      await DatabaseConnectionCreator.createConnectionAndRunMigrations(
-        ConfigurationReader.read()
-      );
-    balanceSheetEntityRepository = connection.getRepository(BalanceSheetEntity);
+    dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
+      ConfigurationReader.read()
+    );
+    balanceSheetEntityRepository = dataSource.getRepository(BalanceSheetEntity);
   });
 
   afterAll(async () => {
-    await connection.close();
+    await dataSource.destroy();
   });
 
   it('does not cascades users on insert', async () => {
@@ -44,7 +43,7 @@ describe('Balance Sheet', () => {
   });
 
   async function cleanUpTables() {
-    const balanceSheetEntityRepository = await connection.getRepository(
+    const balanceSheetEntityRepository = await dataSource.getRepository(
       BalanceSheetEntity
     );
     const balanceSheetEntities = await balanceSheetEntityRepository.find();
@@ -56,7 +55,7 @@ describe('Balance Sheet', () => {
   it('does save relation to existing user', async () => {
     await cleanUpTables();
     const email = `${uuid4()}@example.com`;
-    const user = await connection
+    const user = await dataSource
       .getRepository(User)
       .save(new User(undefined, email, 'test1234', Role.User));
     const balanceSheetEntity = createFromBalanceSheet(
@@ -77,7 +76,7 @@ describe('Balance Sheet', () => {
       email: email,
       role: Role.User,
     });
-    const relation = await connection.query(
+    const relation = await dataSource.query(
       `SELECT * from balance_sheet_entities_users where "userId" = ${user.id} and "balanceSheetEntityId" = ${balanceSheetEntity.id}`
     );
     expect(relation).toHaveLength(1);
@@ -90,7 +89,7 @@ describe('Balance Sheet', () => {
   it('does remove relation to user on delete', async () => {
     await cleanUpTables();
     const email = `${uuid4()}@example.com`;
-    const user = await connection
+    const user = await dataSource
       .getRepository(User)
       .save(new User(undefined, email, 'test1234', Role.User));
     const balanceSheetEntity = createFromBalanceSheet(
@@ -101,10 +100,10 @@ describe('Balance Sheet', () => {
 
     await balanceSheetEntityRepository.save(balanceSheetEntity);
     const query = `SELECT * from balance_sheet_entities_users where "userId" = ${user.id} and "balanceSheetEntityId" = ${balanceSheetEntity.id}`;
-    let relation = await connection.query(query);
+    let relation = await dataSource.query(query);
     expect(relation).toHaveLength(1);
     await balanceSheetEntityRepository.remove(balanceSheetEntity);
-    relation = await connection.query(query);
+    relation = await dataSource.query(query);
     expect(relation).toHaveLength(0);
   });
 });

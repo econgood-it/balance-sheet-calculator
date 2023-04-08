@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { Connection } from 'typeorm';
+import { DataSource } from 'typeorm';
 import * as jwt from 'jwt-simple';
 import * as moment from 'moment';
 import { parseAsUser, User } from '../entities/user';
@@ -8,7 +8,7 @@ import { handle } from '../exceptions/error.handler';
 import { PasswordResetRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/user.schema';
 
 export class UserService {
-  constructor(private connection: Connection, public jwtSecret: string) {}
+  constructor(private dataSource: DataSource, public jwtSecret: string) {}
 
   private genToken = (user: User): Object => {
     const expires = moment.utc().add({ days: 7 }).unix();
@@ -28,7 +28,7 @@ export class UserService {
   };
 
   public async getToken(req: Request, res: Response, next: NextFunction) {
-    this.connection.manager
+    this.dataSource.manager
       .transaction(async (entityManager) => {
         const user: User = parseAsUser(req.body);
         const userRepository = entityManager.getRepository(User);
@@ -49,7 +49,7 @@ export class UserService {
   }
 
   public async createUser(req: Request, res: Response, next: NextFunction) {
-    this.connection.manager
+    this.dataSource.manager
       .transaction(async (entityManager) => {
         const user: User = parseAsUser(req.body);
         const userRepository = entityManager.getRepository(User);
@@ -70,7 +70,7 @@ export class UserService {
   }
 
   public async deleteUser(req: Request, res: Response, next: NextFunction) {
-    this.connection.manager
+    this.dataSource.manager
       .transaction(async (entityManager) => {
         const email: string = req.body.email;
         const userRepository = entityManager.getRepository(User);
@@ -90,7 +90,7 @@ export class UserService {
   }
 
   public async resetPassword(req: Request, res: Response, next: NextFunction) {
-    this.connection.manager
+    this.dataSource.manager
       .transaction(async (entityManager) => {
         if (req.userInfo === undefined || req.userInfo.id === undefined) {
           throw new Error('User undefined');

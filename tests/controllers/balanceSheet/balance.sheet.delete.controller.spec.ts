@@ -1,8 +1,8 @@
-import { DatabaseConnectionCreator } from '../../../src/database.connection.creator';
+import { DatabaseSourceCreator } from '../../../src/databaseSourceCreator';
 import App from '../../../src/app';
 import { ConfigurationReader } from '../../../src/configuration.reader';
 
-import { Connection } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { Application } from 'express';
 
 import { TokenProvider } from '../../TokenProvider';
@@ -19,7 +19,7 @@ import {
 import supertest = require('supertest');
 
 describe('Balance Sheet Controller', () => {
-  let connection: Connection;
+  let dataSource: DataSource;
   let app: Application;
   const configuration = ConfigurationReader.read();
   let balanceSheetJson: any;
@@ -30,19 +30,18 @@ describe('Balance Sheet Controller', () => {
   };
 
   beforeAll(async () => {
-    connection =
-      await DatabaseConnectionCreator.createConnectionAndRunMigrations(
-        configuration
-      );
-    app = new App(connection, configuration).app;
+    dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
+      configuration
+    );
+    app = new App(dataSource, configuration).app;
     tokenHeader.value = `Bearer ${await TokenProvider.provideValidUserToken(
       app,
-      connection
+      dataSource
     )}`;
   });
 
   afterAll(async () => {
-    await connection.close();
+    await dataSource.destroy();
   });
 
   beforeEach(() => {
@@ -73,7 +72,7 @@ describe('Balance Sheet Controller', () => {
       .set(tokenHeader.key, tokenHeader.value)
       .send(balanceSheetJson);
 
-    await connection.getRepository(BalanceSheetEntity).findOneOrFail({
+    await dataSource.getRepository(BalanceSheetEntity).findOneOrFail({
       where: { id: postResponse.body.id },
       relations: BALANCE_SHEET_RELATIONS,
     });
@@ -96,7 +95,7 @@ describe('Balance Sheet Controller', () => {
     beforeAll(async () => {
       tokenOfUnauthorizedUser = `Bearer ${await TokenProvider.provideValidUserToken(
         app,
-        connection,
+        dataSource,
         'unauthorizedUser@example.com'
       )}`;
     });
