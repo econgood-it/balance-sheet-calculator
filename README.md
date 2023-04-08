@@ -107,7 +107,7 @@ EPOCHMILLISECONDS-DescriptionOfWhatTheMigrationDoes
 On linux systems you can retrieve the EPOCHMILLISECONDS via
 
 ```shell script
-date +%s%3N
+date +%s%300
 ```
 
 # Deployments

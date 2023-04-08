@@ -1,5 +1,13 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Organization } from '../models/organization';
+import { User } from './user';
+export const ORGANIZATION_RELATIONS = ['members'];
 
 @Entity()
 export class OrganizationEntity {
@@ -9,8 +17,17 @@ export class OrganizationEntity {
   @Column('jsonb')
   public readonly organization: Organization;
 
-  public constructor(id: number | undefined, organization: Organization) {
+  @ManyToMany((type) => User, (user) => user.organizationEntities)
+  @JoinTable({ name: 'organization_members' })
+  public readonly members: User[];
+
+  public constructor(
+    id: number | undefined,
+    organization: Organization,
+    members: User[]
+  ) {
     this.id = id;
     this.organization = organization;
+    this.members = members;
   }
 }

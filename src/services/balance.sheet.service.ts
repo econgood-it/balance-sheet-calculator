@@ -8,8 +8,6 @@ import { Connection, EntityManager } from 'typeorm';
 import { EntityWithDtoMerger } from '../merge/entity.with.dto.merger';
 import { handle } from '../exceptions/error.handler';
 import { User } from '../entities/user';
-
-import UnauthorizedException from '../exceptions/unauthorized.exception';
 import { NoAccessError } from '../exceptions/no.access.error';
 import { Workbook } from 'exceljs';
 import { BalanceSheetReader } from '../reader/balanceSheetReader/balance.sheet.reader';
@@ -34,7 +32,7 @@ import {
   BalanceSheetPatchRequestBodySchema,
 } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
 import { BalanceSheetExcelDiffResponseBody } from '@ecogood/e-calculator-schemas/dist/balance.sheet.diff';
-import { BalanceSheetAuthorization } from '../security/authorization';
+import { Authorization } from '../security/authorization';
 import { Calc } from './calculation.service';
 
 export class BalanceSheetService {
@@ -49,7 +47,10 @@ export class BalanceSheetService {
     const language = parseLanguageParameter(req.query.lng);
     this.connection.manager
       .transaction(async (entityManager) => {
-        const foundUser = await this.findUserOrFail(req, entityManager);
+        const foundUser = await Authorization.findCurrentUserOrFail(
+          req,
+          entityManager
+        );
         const balanceSheet = BalanceSheetParser.fromJson(req.body);
 
         const { updatedBalanceSheet } = await Calc.calculate(balanceSheet);
@@ -143,7 +144,10 @@ export class BalanceSheetService {
     this.connection.manager
       .transaction(async (entityManager) => {
         if (req.file) {
-          const foundUser = await this.findUserOrFail(req, entityManager);
+          const foundUser = await Authorization.findCurrentUserOrFail(
+            req,
+            entityManager
+          );
           const wb = await new Workbook().xlsx.load(req.file.buffer);
           const balanceSheetReader = new BalanceSheetReader();
 
@@ -192,7 +196,7 @@ export class BalanceSheetService {
           where: { id: balanceSheetIdParam },
           relations: BALANCE_SHEET_RELATIONS,
         });
-        await BalanceSheetAuthorization.isGrantedForCurrentUserOrFail(
+        await Authorization.isGrantedForCurrentUserOrFail(
           req,
           balanceSheetEntity,
           entityManager
@@ -269,7 +273,7 @@ export class BalanceSheetService {
           where: { id: balanceSheetId },
           relations: BALANCE_SHEET_RELATIONS,
         });
-        await BalanceSheetAuthorization.isGrantedForCurrentUserOrFail(
+        await Authorization.isGrantedForCurrentUserOrFail(
           req,
           balanceSheetEntity,
           entityManager
@@ -302,7 +306,7 @@ export class BalanceSheetService {
           where: { id: balanceSheetId },
           relations: BALANCE_SHEET_RELATIONS,
         });
-        await BalanceSheetAuthorization.isGrantedForCurrentUserOrFail(
+        await Authorization.isGrantedForCurrentUserOrFail(
           req,
           balanceSheetEntity,
           entityManager
@@ -333,7 +337,7 @@ export class BalanceSheetService {
           where: { id: balanceSheetId },
           relations: BALANCE_SHEET_RELATIONS,
         });
-        await BalanceSheetAuthorization.isGrantedForCurrentUserOrFail(
+        await Authorization.isGrantedForCurrentUserOrFail(
           req,
           balanceSheetEntity,
           entityManager
@@ -360,15 +364,6 @@ export class BalanceSheetService {
         .getRepository(BalanceSheetEntity)
         .save(createFromBalanceSheet(balanceSheetId, balanceSheet, [user]))
     ).id;
-  }
-
-  private async findUserOrFail(req: Request, entityManager: EntityManager) {
-    if (req.userInfo === undefined) {
-      throw new UnauthorizedException('No user provided');
-    }
-    const userId = req.userInfo.id;
-    const userRepository = entityManager.getRepository(User);
-    return await userRepository.findOneOrFail({ where: { id: userId } });
   }
 
   private parseSaveFlag(saveParam: any): boolean {

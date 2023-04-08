@@ -13,6 +13,7 @@ import { BalanceSheetEntity } from './balance.sheet.entity';
 
 import { z } from 'zod';
 import { UserRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/user.schema';
+import { OrganizationEntity } from './organization.entity';
 
 @Entity()
 export class User {
@@ -36,6 +37,12 @@ export class User {
     (balanceSheetEntity) => balanceSheetEntity.users
   )
   balanceSheetEntities!: BalanceSheetEntity[];
+
+  @ManyToMany(
+    (type) => OrganizationEntity,
+    (organizationEntity) => organizationEntity.members
+  )
+  organizationEntities!: OrganizationEntity[];
 
   public constructor(
     id: number | undefined,

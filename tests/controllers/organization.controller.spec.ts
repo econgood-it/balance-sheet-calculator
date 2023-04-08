@@ -5,9 +5,13 @@ import { DatabaseConnectionCreator } from '../../src/database.connection.creator
 import App from '../../src/app';
 import { AuthHeader, TokenProvider } from '../TokenProvider';
 import supertest from 'supertest';
-import { OrganizationEntity } from '../../src/entities/organization.entity';
+import {
+  ORGANIZATION_RELATIONS,
+  OrganizationEntity,
+} from '../../src/entities/organization.entity';
 import { organizationFactory } from '../../src/openapi/examples';
 import { Role } from '../../src/entities/enums';
+import { v4 as uuid4 } from 'uuid';
 
 describe('Organization Controller', () => {
   let connection: Connection;
@@ -15,6 +19,7 @@ describe('Organization Controller', () => {
   const configuration = ConfigurationReader.read();
   let userTokenHeader: AuthHeader;
   let organizationRepo: Repository<OrganizationEntity>;
+  const userEmail = `${uuid4()}@example.com`;
 
   beforeAll(async () => {
     connection =
@@ -24,7 +29,9 @@ describe('Organization Controller', () => {
     app = new App(connection, configuration).app;
     userTokenHeader = await TokenProvider.provideValidAuthHeader(
       app,
-      connection
+      connection,
+      Role.User,
+      userEmail
     );
     organizationRepo = connection.getRepository(OrganizationEntity);
   });
@@ -42,12 +49,15 @@ describe('Organization Controller', () => {
       .send(orgaJson);
     expect(response.status).toBe(200);
     expect(response.body).toMatchObject(orgaJson);
-    const organization = (
-      await organizationRepo.findOneByOrFail({
+    const organizationEntity = await organizationRepo.findOneOrFail({
+      where: {
         id: response.body.id,
-      })
-    ).organization;
-    expect(organization).toMatchObject(orgaJson);
+      },
+      relations: ORGANIZATION_RELATIONS,
+    });
+    expect(organizationEntity.organization).toMatchObject(orgaJson);
+    expect(organizationEntity.members).toHaveLength(1);
+    expect(organizationEntity.members[0].email).toBe(userEmail);
   });
 
   it('should fail to create organization if user is unauthenticated', async () => {
