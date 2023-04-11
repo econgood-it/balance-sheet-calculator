@@ -7,6 +7,7 @@ import { TokenProvider } from '../TokenProvider';
 import supertest from 'supertest';
 import { User } from '../../src/entities/user';
 import { Role } from '../../src/entities/enums';
+import { RepoProvider } from '../../src/repositories/repo.provider';
 
 describe('User Controller', () => {
   let dataSource: DataSource;
@@ -32,7 +33,7 @@ describe('User Controller', () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
       configuration
     );
-    app = new App(dataSource, configuration).app;
+    app = new App(dataSource, configuration, new RepoProvider()).app;
     userRepository = dataSource.getRepository(User);
     userTokenHeader.value = `Bearer ${await TokenProvider.provideValidUserToken(
       app,

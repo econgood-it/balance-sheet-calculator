@@ -17,6 +17,7 @@ import {
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import supertest = require('supertest');
+import { RepoProvider } from '../../../src/repositories/repo.provider';
 
 describe('Balance Sheet Controller', () => {
   let dataSource: DataSource;
@@ -33,7 +34,7 @@ describe('Balance Sheet Controller', () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
       configuration
     );
-    app = new App(dataSource, configuration).app;
+    app = new App(dataSource, configuration, new RepoProvider()).app;
     tokenHeader.value = `Bearer ${await TokenProvider.provideValidUserToken(
       app,
       dataSource

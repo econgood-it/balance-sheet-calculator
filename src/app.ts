@@ -23,6 +23,7 @@ import { ApiKeyService } from './services/api.key.service';
 import { OrganizationController } from './controllers/organization.controller';
 import { OrganizationService } from './services/organization.service';
 import { DataSource } from 'typeorm';
+import { IRepoProvider } from './repositories/repo.provider';
 
 class App {
   public readonly app: Application;
@@ -37,7 +38,11 @@ class App {
   private docsController: DocsController;
   private authentication: Authentication;
 
-  constructor(dataSource: DataSource, private configuration: Configuration) {
+  constructor(
+    dataSource: DataSource,
+    private configuration: Configuration,
+    repoProvider: IRepoProvider
+  ) {
     this.app = express();
     this.setConfig();
     this.authentication = new Authentication(dataSource);
@@ -65,7 +70,7 @@ class App {
     );
     this.organizationController = new OrganizationController(
       this.app,
-      new OrganizationService(dataSource)
+      new OrganizationService(dataSource, repoProvider)
     );
     this.docsController = new DocsController(this.app, configuration);
     this.app.use(errorMiddleware);

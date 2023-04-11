@@ -9,7 +9,7 @@ import { User } from '../../src/entities/user';
 import { Role } from '../../src/entities/enums';
 import { v4 as uuid4 } from 'uuid';
 
-describe('CompanyProfileEntity', () => {
+describe('OrganizationEntityRepo', () => {
   let organizationEntityRepo: Repository<OrganizationEntity>;
   let dataSource: DataSource;
   const organization = {
@@ -31,7 +31,7 @@ describe('CompanyProfileEntity', () => {
   afterAll(async () => {
     await dataSource.destroy();
   });
-  it('should be saved', async () => {
+  it('should be save', async () => {
     const user = await dataSource
       .getRepository(User)
       .save(

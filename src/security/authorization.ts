@@ -6,7 +6,7 @@ import { NoAccessError } from '../exceptions/no.access.error';
 import UnauthorizedException from '../exceptions/unauthorized.exception';
 
 export namespace Authorization {
-  export async function isGrantedForCurrentUserOrFail(
+  export async function checkBalanceSheetPermissionForCurrentUser(
     request: Request,
     balanceSheet: BalanceSheetEntity,
     entityManager: EntityManager
@@ -26,6 +26,7 @@ export namespace Authorization {
     }
     throw new NoAccessError();
   }
+
   export async function findCurrentUserOrFail(
     req: Request,
     entityManager: EntityManager

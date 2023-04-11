@@ -5,6 +5,7 @@ import { DatabaseSourceCreator } from '../../src/databaseSourceCreator';
 import App from '../../src/app';
 import { TokenProvider } from '../TokenProvider';
 import supertest from 'supertest';
+import { RepoProvider } from '../../src/repositories/repo.provider';
 
 describe('Industry Controller', () => {
   let dataSource: DataSource;
@@ -19,7 +20,7 @@ describe('Industry Controller', () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
       configuration
     );
-    app = new App(dataSource, configuration).app;
+    app = new App(dataSource, configuration, new RepoProvider()).app;
     userTokenHeader.value = `Bearer ${await TokenProvider.provideValidUserToken(
       app,
       dataSource

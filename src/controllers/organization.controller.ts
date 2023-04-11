@@ -1,10 +1,11 @@
 import { Application } from 'express';
 import { OrganizationService } from '../services/organization.service';
-import { allowAdminOnly, allowUserOnly } from './role.access';
+import { allowUserOnly } from './role.access';
 
 const resourceUrl = '/v1/organization';
 export const OrganizationPaths = {
   post: `${resourceUrl}`,
+  put: `${resourceUrl}/:id`,
 };
 
 export class OrganizationController {
@@ -20,6 +21,10 @@ export class OrganizationController {
       OrganizationPaths.post,
       allowUserOnly,
       this.organizationService.createOrganization.bind(this.organizationService)
+    );
+    this.app.put(
+      OrganizationPaths.put,
+      this.organizationService.updateOrganization.bind(this.organizationService)
     );
   }
 }

@@ -9,6 +9,7 @@ import { TokenProvider } from '../../TokenProvider';
 import { BalanceSheetEntity } from '../../../src/entities/balance.sheet.entity';
 import path from 'path';
 import { Rating, RatingResponseBody } from '../../../src/models/rating';
+import { RepoProvider } from '../../../src/repositories/repo.provider';
 
 describe('Balance Sheet Controller', () => {
   let dataSource: DataSource;
@@ -26,7 +27,7 @@ describe('Balance Sheet Controller', () => {
       configuration
     );
     balaneSheetRepository = dataSource.getRepository(BalanceSheetEntity);
-    app = new App(dataSource, configuration).app;
+    app = new App(dataSource, configuration, new RepoProvider()).app;
     tokenHeader.value = `Bearer ${await TokenProvider.provideValidUserToken(
       app,
       dataSource

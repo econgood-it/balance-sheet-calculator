@@ -13,6 +13,7 @@ import {
   BalanceSheetType,
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
+import { RepoProvider } from '../../../src/repositories/repo.provider';
 
 describe('Update endpoint of Balance Sheet Controller', () => {
   let dataSource: DataSource;
@@ -27,7 +28,7 @@ describe('Update endpoint of Balance Sheet Controller', () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
       configuration
     );
-    app = new App(dataSource, configuration).app;
+    app = new App(dataSource, configuration, new RepoProvider()).app;
     tokenHeader.value = `Bearer ${await TokenProvider.provideValidUserToken(
       app,
       dataSource

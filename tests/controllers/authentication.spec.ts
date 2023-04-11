@@ -6,6 +6,7 @@ import { DatabaseSourceCreator } from '../../src/databaseSourceCreator';
 import App from '../../src/app';
 import { TokenProvider } from '../TokenProvider';
 import { balanceSheetJsonFactory } from '../../src/openapi/examples';
+import { RepoProvider } from '../../src/repositories/repo.provider';
 
 describe('Authentication', () => {
   let dataSource: DataSource;
@@ -17,7 +18,7 @@ describe('Authentication', () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
       configuration
     );
-    app = new App(dataSource, configuration).app;
+    app = new App(dataSource, configuration, new RepoProvider()).app;
   });
 
   afterAll(async () => {

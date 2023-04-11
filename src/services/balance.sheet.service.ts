@@ -196,7 +196,7 @@ export class BalanceSheetService {
           where: { id: balanceSheetIdParam },
           relations: BALANCE_SHEET_RELATIONS,
         });
-        await Authorization.isGrantedForCurrentUserOrFail(
+        await Authorization.checkBalanceSheetPermissionForCurrentUser(
           req,
           balanceSheetEntity,
           entityManager
@@ -273,7 +273,7 @@ export class BalanceSheetService {
           where: { id: balanceSheetId },
           relations: BALANCE_SHEET_RELATIONS,
         });
-        await Authorization.isGrantedForCurrentUserOrFail(
+        await Authorization.checkBalanceSheetPermissionForCurrentUser(
           req,
           balanceSheetEntity,
           entityManager
@@ -306,7 +306,7 @@ export class BalanceSheetService {
           where: { id: balanceSheetId },
           relations: BALANCE_SHEET_RELATIONS,
         });
-        await Authorization.isGrantedForCurrentUserOrFail(
+        await Authorization.checkBalanceSheetPermissionForCurrentUser(
           req,
           balanceSheetEntity,
           entityManager
@@ -337,7 +337,7 @@ export class BalanceSheetService {
           where: { id: balanceSheetId },
           relations: BALANCE_SHEET_RELATIONS,
         });
-        await Authorization.isGrantedForCurrentUserOrFail(
+        await Authorization.checkBalanceSheetPermissionForCurrentUser(
           req,
           balanceSheetEntity,
           entityManager

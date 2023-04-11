@@ -1,10 +1,9 @@
 import { DataSource, Repository } from 'typeorm';
 import { Application } from 'express';
 import { ConfigurationReader } from '../../src/configuration.reader';
-import { DatabaseSourceCreator } from '../../src/databaseSourceCreator';
 import App from '../../src/app';
 import { AuthHeader, TokenProvider } from '../TokenProvider';
-import supertest from 'supertest';
+import supertest, { Response } from 'supertest';
 import {
   ORGANIZATION_RELATIONS,
   OrganizationEntity,
@@ -12,6 +11,10 @@ import {
 import { organizationFactory } from '../../src/openapi/examples';
 import { Role } from '../../src/entities/enums';
 import { v4 as uuid4 } from 'uuid';
+import { OrganizationPaths } from '../../src/controllers/organization.controller';
+import { Organization } from '../../src/models/organization';
+import { RepoProvider } from '../../src/repositories/repo.provider';
+import { DatabaseSourceCreator } from '../../src/databaseSourceCreator';
 
 describe('Organization Controller', () => {
   let dataSource: DataSource;
@@ -25,7 +28,7 @@ describe('Organization Controller', () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
       configuration
     );
-    app = new App(dataSource, configuration).app;
+    app = new App(dataSource, configuration, new RepoProvider()).app;
     userTokenHeader = await TokenProvider.provideValidAuthHeader(
       app,
       dataSource,
@@ -39,13 +42,20 @@ describe('Organization Controller', () => {
     await dataSource.destroy();
   });
 
+  async function postOrganizationWithNormalUser(
+    app: supertest.SuperTest<supertest.Test>,
+    orgaJson: Organization
+  ): Promise<Response> {
+    return app
+      .post(OrganizationPaths.post)
+      .set(userTokenHeader.key, userTokenHeader.value)
+      .send(orgaJson);
+  }
+
   it('should create organization on post request', async () => {
     const orgaJson = organizationFactory.default();
     const testApp = supertest(app);
-    const response = await testApp
-      .post('/v1/organization')
-      .set(userTokenHeader.key, userTokenHeader.value)
-      .send(orgaJson);
+    const response = await postOrganizationWithNormalUser(testApp, orgaJson);
     expect(response.status).toBe(200);
     expect(response.body).toMatchObject(orgaJson);
     const organizationEntity = await organizationRepo.findOneOrFail({
@@ -63,7 +73,7 @@ describe('Organization Controller', () => {
     const orgaJson = organizationFactory.default();
     const testApp = supertest(app);
     const response = await testApp
-      .post('/v1/organization')
+      .post(OrganizationPaths.post)
       .set(userTokenHeader.key, 'Bearer invalid token')
       .send(orgaJson);
     expect(response.status).toBe(401);
@@ -78,9 +88,39 @@ describe('Organization Controller', () => {
     const orgaJson = organizationFactory.default();
     const testApp = supertest(app);
     const response = await testApp
-      .post('/v1/organization')
+      .post(OrganizationPaths.post)
       .set(adminTokenHeader.key, adminTokenHeader.value)
       .send(orgaJson);
     expect(response.status).toBe(403);
+  });
+
+  it('should update organization on put request', async () => {
+    const orgaJson = organizationFactory.default();
+    const testApp = supertest(app);
+    const responsePost = await postOrganizationWithNormalUser(
+      testApp,
+      orgaJson
+    );
+    const orgaJsonUpdate = {
+      ...orgaJson,
+      address: { ...orgaJson.address, city: 'Example city 2' },
+    };
+    expect(responsePost.status).toBe(200);
+    const response = await testApp
+      .put(`${OrganizationPaths.post}/${responsePost.body.id}`)
+      .set(userTokenHeader.key, userTokenHeader.value)
+      .send(orgaJsonUpdate);
+    console.log(response.text);
+    expect(response.status).toBe(200);
+    expect(response.body).toMatchObject(orgaJsonUpdate);
+    const organizationEntity = await organizationRepo.findOneOrFail({
+      where: {
+        id: response.body.id,
+      },
+      relations: ORGANIZATION_RELATIONS,
+    });
+    expect(organizationEntity.organization).toMatchObject(orgaJsonUpdate);
+    expect(organizationEntity.members).toHaveLength(1);
+    expect(organizationEntity.members[0].email).toBe(userEmail);
   });
 });

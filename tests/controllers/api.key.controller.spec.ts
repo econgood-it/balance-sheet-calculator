@@ -7,6 +7,7 @@ import { TokenProvider } from '../TokenProvider';
 import supertest from 'supertest';
 import { ApiKey } from '../../src/entities/api.key';
 import { v4 as uuid4 } from 'uuid';
+import { RepoProvider } from '../../src/repositories/repo.provider';
 
 describe('ApiKeyController', () => {
   let dataSource: DataSource;
@@ -18,7 +19,7 @@ describe('ApiKeyController', () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
       configuration
     );
-    app = new App(dataSource, configuration).app;
+    app = new App(dataSource, configuration, new RepoProvider()).app;
     apiKeyRepository = dataSource.getRepository(ApiKey);
   });
 

@@ -7,6 +7,7 @@ import { ConfigurationReader } from './configuration.reader';
 import { AdminAccountCreator } from './admin.account.creator';
 import { Role } from './entities/enums';
 import App from './app';
+import { RepoProvider } from './repositories/repo.provider';
 
 declare global {
   namespace Express {
@@ -23,7 +24,7 @@ const configuration = ConfigurationReader.read();
 DatabaseSourceCreator.createDataSourceAndRunMigrations(configuration)
   .then(async (dataSource: DataSource) => {
     await AdminAccountCreator.saveAdmin(dataSource, configuration);
-    const app = new App(dataSource, configuration);
+    const app = new App(dataSource, configuration, new RepoProvider());
     app.start();
   })
   .catch((error) => {
