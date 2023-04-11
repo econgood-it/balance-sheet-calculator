@@ -26,11 +26,9 @@ export class OrganizationService {
       .transaction(async (entityManager) => {
         const orgaRepo =
           this.repoProvider.getOrganizationEntityRepo(entityManager);
+        const userRepo = this.repoProvider.getUserEntityRepo(entityManager);
         const organization = OrganizationParser.fromJson(req.body);
-        const currentUser = await Authorization.findCurrentUserOrFail(
-          req,
-          entityManager
-        );
+        const currentUser = await userRepo.findCurrentUserOrFail(req);
         const organizationEntity = await orgaRepo.save(
           new OrganizationEntity(undefined, organization, [currentUser])
         );
@@ -49,14 +47,13 @@ export class OrganizationService {
     this.dataSource.manager
       .transaction(async (entityManager) => {
         const organizationEntityRepository =
-          entityManager.getRepository(OrganizationEntity);
+          this.repoProvider.getOrganizationEntityRepo(entityManager);
         const organizationIdParam: number = Number(req.params.id);
         const organization = OrganizationParser.fromJson(req.body);
         const organizationEntity =
-          await organizationEntityRepository.findOneOrFail({
-            where: { id: organizationIdParam },
-            relations: ORGANIZATION_RELATIONS,
-          });
+          await organizationEntityRepository.findByIdOrFail(
+            organizationIdParam
+          );
         const updatedOrganizationEntity =
           await organizationEntityRepository.save(
             new OrganizationEntity(

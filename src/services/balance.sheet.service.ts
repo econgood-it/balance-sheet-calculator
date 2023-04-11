@@ -34,9 +34,13 @@ import {
 import { BalanceSheetExcelDiffResponseBody } from '@ecogood/e-calculator-schemas/dist/balance.sheet.diff';
 import { Authorization } from '../security/authorization';
 import { Calc } from './calculation.service';
+import { IRepoProvider } from '../repositories/repo.provider';
 
 export class BalanceSheetService {
-  constructor(private dataSource: DataSource) {}
+  constructor(
+    private dataSource: DataSource,
+    private repoProvider: IRepoProvider
+  ) {}
 
   public async createBalanceSheet(
     req: Request,
@@ -47,10 +51,8 @@ export class BalanceSheetService {
     const language = parseLanguageParameter(req.query.lng);
     this.dataSource.manager
       .transaction(async (entityManager) => {
-        const foundUser = await Authorization.findCurrentUserOrFail(
-          req,
-          entityManager
-        );
+        const userRepo = this.repoProvider.getUserEntityRepo(entityManager);
+        const foundUser = await userRepo.findCurrentUserOrFail(req);
         const balanceSheet = BalanceSheetParser.fromJson(req.body);
 
         const { updatedBalanceSheet } = await Calc.calculate(balanceSheet);
@@ -144,10 +146,8 @@ export class BalanceSheetService {
     this.dataSource.manager
       .transaction(async (entityManager) => {
         if (req.file) {
-          const foundUser = await Authorization.findCurrentUserOrFail(
-            req,
-            entityManager
-          );
+          const userRepo = this.repoProvider.getUserEntityRepo(entityManager);
+          const foundUser = await userRepo.findCurrentUserOrFail(req);
           const wb = await new Workbook().xlsx.load(req.file.buffer);
           const balanceSheetReader = new BalanceSheetReader();
 

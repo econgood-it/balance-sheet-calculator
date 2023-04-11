@@ -6,9 +6,14 @@ import { parseAsUser, User } from '../entities/user';
 import BadRequestException from '../exceptions/bad.request.exception';
 import { handle } from '../exceptions/error.handler';
 import { PasswordResetRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/user.schema';
+import { IRepoProvider } from '../repositories/repo.provider';
 
 export class UserService {
-  constructor(private dataSource: DataSource, public jwtSecret: string) {}
+  constructor(
+    private dataSource: DataSource,
+    private repoProvider: IRepoProvider,
+    public jwtSecret: string
+  ) {}
 
   private genToken = (user: User): Object => {
     const expires = moment.utc().add({ days: 7 }).unix();
@@ -31,12 +36,11 @@ export class UserService {
     this.dataSource.manager
       .transaction(async (entityManager) => {
         const user: User = parseAsUser(req.body);
-        const userRepository = entityManager.getRepository(User);
-        const foundUser: User = await userRepository.findOneOrFail({
-          where: {
-            email: user.email,
-          },
-        });
+        const userRepository =
+          this.repoProvider.getUserEntityRepo(entityManager);
+        const foundUser: User = await userRepository.findByEmailOrFail(
+          user.email
+        );
         const success = foundUser.comparePassword(user.password);
         if (!success) {
           throw new BadRequestException('Invalid credentials');
@@ -52,12 +56,9 @@ export class UserService {
     this.dataSource.manager
       .transaction(async (entityManager) => {
         const user: User = parseAsUser(req.body);
-        const userRepository = entityManager.getRepository(User);
-        const foundUser = await userRepository.findOne({
-          where: {
-            email: user.email,
-          },
-        });
+        const userRepository =
+          this.repoProvider.getUserEntityRepo(entityManager);
+        const foundUser = await userRepository.findOneByEmail(user.email);
         if (foundUser) {
           throw new Error('User already exists');
         }
@@ -73,15 +74,9 @@ export class UserService {
     this.dataSource.manager
       .transaction(async (entityManager) => {
         const email: string = req.body.email;
-        const userRepository = entityManager.getRepository(User);
-        const foundUser = await userRepository.findOne({
-          where: {
-            email,
-          },
-        });
-        if (foundUser) {
-          await userRepository.remove(foundUser);
-        }
+        const userRepository =
+          this.repoProvider.getUserEntityRepo(entityManager);
+        await userRepository.removeByEmail(email);
         res.status(200).json({ message: `Deleted user with email ${email}` });
       })
       .catch((error) => {
@@ -99,10 +94,9 @@ export class UserService {
         const passwordResetRequestBody = PasswordResetRequestBodySchema.parse(
           req.body
         );
-        const userRepository = entityManager.getRepository(User);
-        const foundUser = await userRepository.findOneOrFail({
-          where: { id: userId },
-        });
+        const userRepository =
+          this.repoProvider.getUserEntityRepo(entityManager);
+        const foundUser = await userRepository.findByIdOrFail(userId);
         foundUser.password = passwordResetRequestBody.newPassword;
         await userRepository.save(foundUser);
         res.json({ message: 'Password has been reset to new one' });

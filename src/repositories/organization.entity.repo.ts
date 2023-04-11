@@ -2,7 +2,7 @@ import {
   ORGANIZATION_RELATIONS,
   OrganizationEntity,
 } from '../entities/organization.entity';
-import { EntityManager, EntityRepository, Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 
 export interface IOrganizationEntityRepo {
   findByIdOrFail(id: number): Promise<OrganizationEntity>;

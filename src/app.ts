@@ -49,7 +49,10 @@ class App {
     this.authentication.addBasicAuthToDocsEndpoint(this.app, configuration);
     this.authentication.addAuthToApplication(this.app, configuration.jwtSecret);
     // Creating controllers
-    const balanceSheetService = new BalanceSheetService(dataSource);
+    const balanceSheetService = new BalanceSheetService(
+      dataSource,
+      repoProvider
+    );
     this.balanceSheetController = new BalanceSheetController(
       this.app,
       balanceSheetService
@@ -60,7 +63,11 @@ class App {
       this.app,
       new IndustryService()
     );
-    const userService = new UserService(dataSource, configuration.jwtSecret);
+    const userService = new UserService(
+      dataSource,
+      repoProvider,
+      configuration.jwtSecret
+    );
     this.userController = new UserController(this.app, userService);
     const apiKeyService = new ApiKeyService(dataSource);
     this.apiKeyController = new ApiKeyController(this.app, apiKeyService);
