@@ -182,7 +182,7 @@ export class BalanceSheetService {
         await Authorization.checkBalanceSheetPermissionForCurrentUser(
           req,
           balanceSheetEntity,
-          entityManager
+          this.repoProvider.getUserEntityRepo(entityManager)
         );
         const balanceSheetPatchRequestBody =
           BalanceSheetPatchRequestBodySchema.parse(req.body);
@@ -257,7 +257,7 @@ export class BalanceSheetService {
         await Authorization.checkBalanceSheetPermissionForCurrentUser(
           req,
           balanceSheetEntity,
-          entityManager
+          this.repoProvider.getUserEntityRepo(entityManager)
         );
         res.json(
           BalanceSheetParser.toJson(
@@ -289,7 +289,7 @@ export class BalanceSheetService {
         await Authorization.checkBalanceSheetPermissionForCurrentUser(
           req,
           balanceSheetEntity,
-          entityManager
+          this.repoProvider.getUserEntityRepo(entityManager)
         );
 
         res.json(
@@ -319,7 +319,7 @@ export class BalanceSheetService {
         await Authorization.checkBalanceSheetPermissionForCurrentUser(
           req,
           balanceSheetEntity,
-          entityManager
+          this.repoProvider.getUserEntityRepo(entityManager)
         );
         await balanceSheetRepository.remove(balanceSheetEntity);
 
