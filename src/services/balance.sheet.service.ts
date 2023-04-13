@@ -1,10 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import {
-  BALANCE_SHEET_RELATIONS,
-  BalanceSheetEntity,
-  createFromBalanceSheet,
-} from '../entities/balance.sheet.entity';
-import { DataSource, EntityManager } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { EntityWithDtoMerger } from '../merge/entity.with.dto.merger';
 import { handle } from '../exceptions/error.handler';
 import { User } from '../entities/user';
@@ -35,6 +30,7 @@ import { BalanceSheetExcelDiffResponseBody } from '@ecogood/e-calculator-schemas
 import { Authorization } from '../security/authorization';
 import { Calc } from './calculation.service';
 import { IRepoProvider } from '../repositories/repo.provider';
+import { IBalanceSheetEntityRepo } from '../repositories/balance.sheet.entity.repo';
 
 export class BalanceSheetService {
   constructor(
@@ -52,27 +48,22 @@ export class BalanceSheetService {
     this.dataSource.manager
       .transaction(async (entityManager) => {
         const userRepo = this.repoProvider.getUserEntityRepo(entityManager);
+        const balanceSheetRepo =
+          this.repoProvider.getBalanceSheetEntityRepo(entityManager);
         const foundUser = await userRepo.findCurrentUserOrFail(req);
         const balanceSheet = BalanceSheetParser.fromJson(req.body);
 
         const { updatedBalanceSheet } = await Calc.calculate(balanceSheet);
 
-        const balanceSheetId = saveFlag
-          ? await this.saveBalanceSheet(
-              undefined,
-              entityManager,
-              updatedBalanceSheet,
-              foundUser
-            )
-          : undefined;
-
-        res.json(
-          BalanceSheetParser.toJson(
-            balanceSheetId,
+        const { id, savedBalanceSheet } =
+          await this.saveBalanceSheetIfRequested(
+            saveFlag,
             updatedBalanceSheet,
-            language
-          )
-        );
+            [foundUser],
+            balanceSheetRepo
+          );
+
+        res.json(BalanceSheetParser.toJson(id, savedBalanceSheet, language));
       })
       .catch((error) => {
         handle(error, next);
@@ -150,27 +141,20 @@ export class BalanceSheetService {
           const foundUser = await userRepo.findCurrentUserOrFail(req);
           const wb = await new Workbook().xlsx.load(req.file.buffer);
           const balanceSheetReader = new BalanceSheetReader();
-
+          const balanceSheetRepo =
+            this.repoProvider.getBalanceSheetEntityRepo(entityManager);
           const balanceSheet = balanceSheetReader.readFromWorkbook(wb);
 
           const { updatedBalanceSheet } = await Calc.calculate(balanceSheet);
 
-          const balanceSheetId = saveFlag
-            ? await this.saveBalanceSheet(
-                undefined,
-                entityManager,
-                updatedBalanceSheet,
-                foundUser
-              )
-            : undefined;
-
-          res.json(
-            BalanceSheetParser.toJson(
-              balanceSheetId,
+          const { id, savedBalanceSheet } =
+            await this.saveBalanceSheetIfRequested(
+              saveFlag,
               updatedBalanceSheet,
-              language
-            )
-          );
+              [foundUser],
+              balanceSheetRepo
+            );
+          res.json(BalanceSheetParser.toJson(id, savedBalanceSheet, language));
         } else {
           res.json({ message: 'File empty' });
         }
@@ -189,13 +173,12 @@ export class BalanceSheetService {
     this.dataSource.manager
       .transaction(async (entityManager) => {
         const balanceSheetRepository =
-          entityManager.getRepository(BalanceSheetEntity);
+          this.repoProvider.getBalanceSheetEntityRepo(entityManager);
         const entityWithDTOMerger = new EntityWithDtoMerger();
         const balanceSheetIdParam: number = Number(req.params.id);
-        const balanceSheetEntity = await balanceSheetRepository.findOneOrFail({
-          where: { id: balanceSheetIdParam },
-          relations: BALANCE_SHEET_RELATIONS,
-        });
+        const balanceSheetEntity = await balanceSheetRepository.findByIdOrFail(
+          balanceSheetIdParam
+        );
         await Authorization.checkBalanceSheetPermissionForCurrentUser(
           req,
           balanceSheetEntity,
@@ -210,17 +193,17 @@ export class BalanceSheetService {
         const { updatedBalanceSheet } = await Calc.calculate(
           mergedBalanceSheet
         );
-        const balanceSheetId = await this.saveBalanceSheet(
-          balanceSheetEntity.id,
-          entityManager,
-          updatedBalanceSheet,
-          balanceSheetEntity.users[0]
-        );
+        const savedBalanceSheetEntity =
+          await balanceSheetRepository.saveBalanceSheet(
+            balanceSheetEntity.id,
+            updatedBalanceSheet,
+            balanceSheetEntity.users
+          );
 
         res.json(
           BalanceSheetParser.toJson(
-            balanceSheetId,
-            updatedBalanceSheet,
+            savedBalanceSheetEntity.id,
+            savedBalanceSheetEntity.toBalanceSheet(),
             language
           )
         );
@@ -240,14 +223,13 @@ export class BalanceSheetService {
         if (!req.userInfo) {
           throw new NoAccessError();
         }
-        const userRepository = entityManager.getRepository(User);
-        const user = await userRepository.findOneOrFail({
-          where: { id: req.userInfo.id },
-          relations: ['balanceSheetEntities'],
-        });
+        const balanceSheetEntityRepo =
+          this.repoProvider.getBalanceSheetEntityRepo(entityManager);
+        const balanceSheetEntities =
+          await balanceSheetEntityRepo.findBalanceSheetsOfUser(req.userInfo.id);
         res.json(
           BalanceSheetItemsResponseSchema.parse(
-            user.balanceSheetEntities.map((b) => {
+            balanceSheetEntities.map((b) => {
               return { id: b.id };
             })
           )
@@ -267,12 +249,11 @@ export class BalanceSheetService {
     this.dataSource.manager
       .transaction(async (entityManager) => {
         const balanceSheetRepository =
-          entityManager.getRepository(BalanceSheetEntity);
+          this.repoProvider.getBalanceSheetEntityRepo(entityManager);
         const balanceSheetId: number = Number(req.params.id);
-        const balanceSheetEntity = await balanceSheetRepository.findOneOrFail({
-          where: { id: balanceSheetId },
-          relations: BALANCE_SHEET_RELATIONS,
-        });
+        const balanceSheetEntity = await balanceSheetRepository.findByIdOrFail(
+          balanceSheetId
+        );
         await Authorization.checkBalanceSheetPermissionForCurrentUser(
           req,
           balanceSheetEntity,
@@ -300,12 +281,11 @@ export class BalanceSheetService {
     this.dataSource.manager
       .transaction(async (entityManager) => {
         const balanceSheetRepository =
-          entityManager.getRepository(BalanceSheetEntity);
+          this.repoProvider.getBalanceSheetEntityRepo(entityManager);
         const balanceSheetId: number = Number(req.params.id);
-        const balanceSheetEntity = await balanceSheetRepository.findOneOrFail({
-          where: { id: balanceSheetId },
-          relations: BALANCE_SHEET_RELATIONS,
-        });
+        const balanceSheetEntity = await balanceSheetRepository.findByIdOrFail(
+          balanceSheetId
+        );
         await Authorization.checkBalanceSheetPermissionForCurrentUser(
           req,
           balanceSheetEntity,
@@ -332,11 +312,10 @@ export class BalanceSheetService {
       .transaction(async (entityManager) => {
         const balanceSheetId: number = Number(req.params.id);
         const balanceSheetRepository =
-          entityManager.getRepository(BalanceSheetEntity);
-        const balanceSheetEntity = await balanceSheetRepository.findOneOrFail({
-          where: { id: balanceSheetId },
-          relations: BALANCE_SHEET_RELATIONS,
-        });
+          this.repoProvider.getBalanceSheetEntityRepo(entityManager);
+        const balanceSheetEntity = await balanceSheetRepository.findByIdOrFail(
+          balanceSheetId
+        );
         await Authorization.checkBalanceSheetPermissionForCurrentUser(
           req,
           balanceSheetEntity,
@@ -353,17 +332,24 @@ export class BalanceSheetService {
       });
   }
 
-  private async saveBalanceSheet(
-    balanceSheetId: number | undefined,
-    entityManager: EntityManager,
+  private async saveBalanceSheetIfRequested(
+    saveFlag: boolean,
     balanceSheet: BalanceSheet,
-    user: User
-  ) {
-    return (
-      await entityManager
-        .getRepository(BalanceSheetEntity)
-        .save(createFromBalanceSheet(balanceSheetId, balanceSheet, [user]))
-    ).id;
+    users: User[],
+    balanceSheetRepo: IBalanceSheetEntityRepo
+  ): Promise<{ id: number | undefined; savedBalanceSheet: BalanceSheet }> {
+    if (saveFlag) {
+      const balanceSheetEntity = await balanceSheetRepo.saveBalanceSheet(
+        undefined,
+        balanceSheet,
+        users
+      );
+      return {
+        id: balanceSheetEntity.id,
+        savedBalanceSheet: balanceSheetEntity.toBalanceSheet(),
+      };
+    }
+    return { id: undefined, savedBalanceSheet: balanceSheet };
   }
 
   private parseSaveFlag(saveParam: any): boolean {

@@ -1,25 +1,27 @@
 import { DatabaseSourceCreator } from '../../src/databaseSourceCreator';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { ConfigurationReader } from '../../src/configuration.reader';
-import {
-  BALANCE_SHEET_RELATIONS,
-  BalanceSheetEntity,
-  createFromBalanceSheet,
-} from '../../src/entities/balance.sheet.entity';
+import { BalanceSheetEntity } from '../../src/entities/balance.sheet.entity';
 import { Role } from '../../src/entities/enums';
 import { User } from '../../src/entities/user';
 import { balanceSheetFactory } from '../../src/openapi/examples';
 import { v4 as uuid4 } from 'uuid';
+import {
+  BalanceSheetEntityRepository,
+  IBalanceSheetEntityRepo,
+} from '../../src/repositories/balance.sheet.entity.repo';
 
 describe('Balance Sheet', () => {
-  let balanceSheetEntityRepository: Repository<BalanceSheetEntity>;
+  let balanceSheetEntityRepository: IBalanceSheetEntityRepo;
   let dataSource: DataSource;
 
   beforeAll(async () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
       ConfigurationReader.read()
     );
-    balanceSheetEntityRepository = dataSource.getRepository(BalanceSheetEntity);
+    balanceSheetEntityRepository = new BalanceSheetEntityRepository(
+      dataSource.manager
+    );
   });
 
   afterAll(async () => {
@@ -27,18 +29,14 @@ describe('Balance Sheet', () => {
   });
 
   it('does not cascades users on insert', async () => {
-    const balanceSheetEntity = createFromBalanceSheet(
+    const savedResult = await balanceSheetEntityRepository.saveBalanceSheet(
       undefined,
       balanceSheetFactory.emptyV508(),
       [new User(undefined, 'test@example.com', 'test1234', Role.User)]
     );
-    const savedResult = await balanceSheetEntityRepository.save(
-      balanceSheetEntity
+    const result = await balanceSheetEntityRepository.findByIdOrFail(
+      savedResult.id!
     );
-    const result = await balanceSheetEntityRepository.findOneOrFail({
-      where: { id: savedResult.id },
-      relations: BALANCE_SHEET_RELATIONS,
-    });
     expect(result.users).toHaveLength(0);
   });
 
@@ -58,18 +56,14 @@ describe('Balance Sheet', () => {
     const user = await dataSource
       .getRepository(User)
       .save(new User(undefined, email, 'test1234', Role.User));
-    const balanceSheetEntity = createFromBalanceSheet(
+    const savedResult = await balanceSheetEntityRepository.saveBalanceSheet(
       undefined,
       balanceSheetFactory.emptyV508(),
       [user]
     );
-    const savedResult = await balanceSheetEntityRepository.save(
-      balanceSheetEntity
+    const result = await balanceSheetEntityRepository.findByIdOrFail(
+      savedResult.id!
     );
-    const result = await balanceSheetEntityRepository.findOneOrFail({
-      where: { id: savedResult.id },
-      relations: BALANCE_SHEET_RELATIONS,
-    });
 
     expect(result.users).toHaveLength(1);
     expect(result.users[0]).toMatchObject({
@@ -77,11 +71,11 @@ describe('Balance Sheet', () => {
       role: Role.User,
     });
     const relation = await dataSource.query(
-      `SELECT * from balance_sheet_entities_users where "userId" = ${user.id} and "balanceSheetEntityId" = ${balanceSheetEntity.id}`
+      `SELECT * from balance_sheet_entities_users where "userId" = ${user.id} and "balanceSheetEntityId" = ${savedResult.id}`
     );
     expect(relation).toHaveLength(1);
     expect(relation[0]).toMatchObject({
-      balanceSheetEntityId: balanceSheetEntity.id,
+      balanceSheetEntityId: savedResult.id,
       userId: user.id,
     });
   });
@@ -92,13 +86,12 @@ describe('Balance Sheet', () => {
     const user = await dataSource
       .getRepository(User)
       .save(new User(undefined, email, 'test1234', Role.User));
-    const balanceSheetEntity = createFromBalanceSheet(
-      undefined,
-      balanceSheetFactory.emptyV508(),
-      [user]
-    );
-
-    await balanceSheetEntityRepository.save(balanceSheetEntity);
+    const balanceSheetEntity =
+      await balanceSheetEntityRepository.saveBalanceSheet(
+        undefined,
+        balanceSheetFactory.emptyV508(),
+        [user]
+      );
     const query = `SELECT * from balance_sheet_entities_users where "userId" = ${user.id} and "balanceSheetEntityId" = ${balanceSheetEntity.id}`;
     let relation = await dataSource.query(query);
     expect(relation).toHaveLength(1);

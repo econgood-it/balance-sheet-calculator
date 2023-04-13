@@ -66,18 +66,3 @@ export class BalanceSheetEntity {
     };
   }
 }
-
-export function createFromBalanceSheet(
-  balanceSheetId: number | undefined,
-  balanceSheet: BalanceSheet,
-  users: User[]
-): BalanceSheetEntity {
-  return new BalanceSheetEntity(
-    balanceSheetId,
-    balanceSheet.type,
-    balanceSheet.version,
-    balanceSheet.ratings,
-    balanceSheet.companyFacts,
-    users
-  );
-}
