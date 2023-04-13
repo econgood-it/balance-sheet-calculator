@@ -6,6 +6,7 @@ export type OpenApiParams = {
   SaveFlagParam: any;
   LanguageParam: any;
   BalanceSheetIdParam: any;
+  OrganizationIdParam: any;
 };
 
 export function registerParams(registry: OpenAPIRegistry) {
@@ -48,6 +49,17 @@ export function registerParams(registry: OpenAPIRegistry) {
     })
   );
 
+  const OrganizationIdParam = registry.registerParameter(
+    'OrganizationId',
+    z.string().openapi({
+      param: {
+        name: 'id',
+        in: 'path',
+        description: 'The id of the organization',
+      },
+    })
+  );
+
   const LanguageParam = registry.registerParameter(
     'Language',
     z
@@ -68,5 +80,6 @@ export function registerParams(registry: OpenAPIRegistry) {
     SaveFlagParam,
     LanguageParam,
     BalanceSheetIdParam,
+    OrganizationIdParam,
   };
 }

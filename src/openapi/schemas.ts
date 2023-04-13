@@ -9,6 +9,7 @@ export type OpenApiSchemas = {
   BalanceSheetCreateRequestApiSchema: any;
   BalanceSheetPatchRequestApiSchema: any;
   OrganizationCreateRequestApiSchema: any;
+  OrganizationPutRequestApiSchema: any;
 };
 
 export function registerSchemas(registry: OpenAPIRegistry): OpenApiSchemas {
@@ -28,5 +29,6 @@ export function registerSchemas(registry: OpenAPIRegistry): OpenApiSchemas {
     BalanceSheetCreateRequestApiSchema,
     BalanceSheetPatchRequestApiSchema,
     OrganizationCreateRequestApiSchema,
+    OrganizationPutRequestApiSchema: OrganizationCreateRequestApiSchema,
   };
 }

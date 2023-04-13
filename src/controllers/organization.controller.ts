@@ -24,6 +24,7 @@ export class OrganizationController {
     );
     this.app.put(
       OrganizationPaths.put,
+      allowUserOnly,
       this.organizationService.updateOrganization.bind(this.organizationService)
     );
   }
