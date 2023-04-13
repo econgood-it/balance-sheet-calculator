@@ -6,20 +6,15 @@ import { IUserEntityRepo } from '../repositories/user.entity.repo';
 export namespace Authorization {
   export async function checkBalanceSheetPermissionForCurrentUser(
     request: Request,
-    balanceSheet: BalanceSheetEntity,
-    userRepo: IUserEntityRepo
+    balanceSheetEntity: BalanceSheetEntity
   ): Promise<void> {
-    if (request.userInfo) {
-      const foundUser = await userRepo.findOneByEmail(request.userInfo.email);
-      if (foundUser) {
-        const userWithAccess = balanceSheet.users.find(
-          (u) => u.id === foundUser.id
-        );
-        if (userWithAccess) {
-          return;
-        }
-      }
+    if (
+      !(
+        request.userInfo &&
+        balanceSheetEntity.userWithEmailHasAccess(request.userInfo.email)
+      )
+    ) {
+      throw new NoAccessError();
     }
-    throw new NoAccessError();
   }
 }

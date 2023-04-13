@@ -57,6 +57,10 @@ export class BalanceSheetEntity {
     this.users = users;
   }
 
+  public userWithEmailHasAccess(userEmail: string) {
+    return this.users.some((u) => u.email === userEmail);
+  }
+
   public toBalanceSheet(): BalanceSheet {
     return {
       type: this.type,
