@@ -69,7 +69,7 @@ class App {
       configuration.jwtSecret
     );
     this.userController = new UserController(this.app, userService);
-    const apiKeyService = new ApiKeyService(dataSource);
+    const apiKeyService = new ApiKeyService(dataSource, repoProvider);
     this.apiKeyController = new ApiKeyController(this.app, apiKeyService);
     this.healthCheckController = new HealthCheckController(
       this.app,

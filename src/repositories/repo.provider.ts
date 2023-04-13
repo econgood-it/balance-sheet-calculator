@@ -8,6 +8,7 @@ import {
   BalanceSheetEntityRepository,
   IBalanceSheetEntityRepo,
 } from './balance.sheet.entity.repo';
+import { ApiKeyRepository, IApiKeyRepo } from './api.key.entity.repo';
 
 export interface IRepoProvider {
   getOrganizationEntityRepo(
@@ -19,6 +20,7 @@ export interface IRepoProvider {
   ): IBalanceSheetEntityRepo;
 
   getUserEntityRepo(entityManager: EntityManager): IUserEntityRepo;
+  getApiKeyRepo(entityManager: EntityManager): IApiKeyRepo;
 }
 
 export class RepoProvider implements IRepoProvider {
@@ -36,5 +38,9 @@ export class RepoProvider implements IRepoProvider {
     entityManager: EntityManager
   ): IBalanceSheetEntityRepo {
     return new BalanceSheetEntityRepository(entityManager);
+  }
+
+  getApiKeyRepo(entityManager: EntityManager): IApiKeyRepo {
+    return new ApiKeyRepository(entityManager);
   }
 }

@@ -1,12 +1,15 @@
 import { NextFunction, Request, Response } from 'express';
 import { DataSource } from 'typeorm';
-import { User } from '../entities/user';
 import { handle } from '../exceptions/error.handler';
-import { API_KEY_RELATIONS, ApiKey } from '../entities/api.key';
+import { ApiKey } from '../entities/api.key';
 import UnauthorizedException from '../exceptions/unauthorized.exception';
+import { IRepoProvider } from '../repositories/repo.provider';
 
 export class ApiKeyService {
-  constructor(private dataSource: DataSource) {}
+  constructor(
+    private dataSource: DataSource,
+    private repoProvider: IRepoProvider
+  ) {}
 
   public async createApiKey(req: Request, res: Response, next: NextFunction) {
     this.dataSource.manager
@@ -16,15 +19,14 @@ export class ApiKeyService {
         }
         const userId = req.userInfo.id;
 
-        const userRepository = entityManager.getRepository(User);
-        const foundUser = await userRepository.findOneOrFail({
-          where: { id: userId },
-        });
+        const userRepository =
+          this.repoProvider.getUserEntityRepo(entityManager);
+        const foundUser = await userRepository.findByIdOrFail(userId);
 
         const apiKey = new ApiKey(undefined, undefined, foundUser);
         const apiKeyValueBeforeHashing = apiKey.value;
 
-        const apiKeyRepository = entityManager.getRepository(ApiKey);
+        const apiKeyRepository = this.repoProvider.getApiKeyRepo(entityManager);
         const result = await apiKeyRepository.save(apiKey);
         res.json({
           apiKey: `${result.id}.${apiKeyValueBeforeHashing}`,
@@ -44,11 +46,8 @@ export class ApiKeyService {
         const userId = req.userInfo.id;
         const apiKeyId: number = Number(req.params.id);
 
-        const apiKeyRepository = entityManager.getRepository(ApiKey);
-        const result = await apiKeyRepository.findOneOrFail({
-          where: { id: apiKeyId },
-          relations: API_KEY_RELATIONS,
-        });
+        const apiKeyRepository = this.repoProvider.getApiKeyRepo(entityManager);
+        const result = await apiKeyRepository.findByIdOrFail(apiKeyId);
         if (result?.user.id !== userId) {
           throw new UnauthorizedException(
             'User has no permission to delete api key'
