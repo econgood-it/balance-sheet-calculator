@@ -8,9 +8,13 @@ import {
 import { User } from '../../src/entities/user';
 import { Role } from '../../src/entities/enums';
 import { v4 as uuid4 } from 'uuid';
+import {
+  IOrganizationEntityRepo,
+  OrganizationEntityRepository,
+} from '../../src/repositories/organization.entity.repo';
 
 describe('OrganizationEntityRepo', () => {
-  let organizationEntityRepo: Repository<OrganizationEntity>;
+  let organizationEntityRepo: IOrganizationEntityRepo;
   let dataSource: DataSource;
   const organization = {
     address: {
@@ -25,7 +29,9 @@ describe('OrganizationEntityRepo', () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
       ConfigurationReader.read()
     );
-    organizationEntityRepo = dataSource.getRepository(OrganizationEntity);
+    organizationEntityRepo = new OrganizationEntityRepository(
+      dataSource.manager
+    );
   });
 
   afterAll(async () => {
@@ -46,12 +52,9 @@ describe('OrganizationEntityRepo', () => {
     );
     const id = (await organizationEntityRepo.save(organizationEntity)).id;
 
-    const organizationEnityFound = await organizationEntityRepo.findOneOrFail({
-      where: {
-        id: id,
-      },
-      relations: ORGANIZATION_RELATIONS,
-    });
+    const organizationEnityFound = await organizationEntityRepo.findByIdOrFail(
+      id!
+    );
     expect(organizationEnityFound.organization).toStrictEqual(organization);
     expect(organizationEnityFound.members).toStrictEqual(members);
   });
@@ -61,13 +64,10 @@ describe('OrganizationEntityRepo', () => {
       new User(undefined, `${uuid4()}@example.com`, 'test1234', Role.User),
     ]);
     const id = (await organizationEntityRepo.save(organizationEntity)).id;
-    const organizationEnityFound = await organizationEntityRepo.findOneOrFail({
-      where: {
-        id: id,
-      },
-      relations: ORGANIZATION_RELATIONS,
-    });
-    expect(organizationEnityFound.members).toHaveLength(0);
+    const organizationEntityFound = await organizationEntityRepo.findByIdOrFail(
+      id!
+    );
+    expect(organizationEntityFound.members).toHaveLength(0);
   });
 
   it('does remove relation to member on organization delete', async () => {

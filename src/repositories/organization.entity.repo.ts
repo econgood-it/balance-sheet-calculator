@@ -7,6 +7,7 @@ import { EntityManager, Repository } from 'typeorm';
 export interface IOrganizationEntityRepo {
   findByIdOrFail(id: number): Promise<OrganizationEntity>;
   save(organizationEntity: OrganizationEntity): Promise<OrganizationEntity>;
+  remove(organizationEntity: OrganizationEntity): Promise<OrganizationEntity>;
 }
 
 export class OrganizationEntityRepository implements IOrganizationEntityRepo {
@@ -24,5 +25,9 @@ export class OrganizationEntityRepository implements IOrganizationEntityRepo {
 
   save(organizationEntity: OrganizationEntity): Promise<OrganizationEntity> {
     return this.repo.save(organizationEntity);
+  }
+
+  remove(organizationEntity: OrganizationEntity): Promise<OrganizationEntity> {
+    return this.repo.remove(organizationEntity);
   }
 }

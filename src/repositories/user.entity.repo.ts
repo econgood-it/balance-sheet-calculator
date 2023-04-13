@@ -10,6 +10,7 @@ export interface IUserEntityRepo {
   save(organizationEntity: User): Promise<User>;
   findCurrentUserOrFail(req: Request): Promise<User>;
   removeByEmail(email: string): Promise<User>;
+  remove(user: User): Promise<User>;
 }
 
 export class UserEntityRepository implements IUserEntityRepo {
@@ -42,8 +43,12 @@ export class UserEntityRepository implements IUserEntityRepo {
     return this.findByIdOrFail(userId);
   }
 
+  remove(user: User): Promise<User> {
+    return this.repo.remove(user);
+  }
+
   async removeByEmail(email: string): Promise<User> {
     const user = await this.findByEmailOrFail(email);
-    return this.repo.remove(user);
+    return this.remove(user);
   }
 }

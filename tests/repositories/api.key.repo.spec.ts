@@ -1,22 +1,30 @@
 import { User } from '../../src/entities/user';
 import { Role } from '../../src/entities/enums';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { DatabaseSourceCreator } from '../../src/databaseSourceCreator';
 import { ConfigurationReader } from '../../src/configuration.reader';
-import { API_KEY_RELATIONS, ApiKey } from '../../src/entities/api.key';
+import { ApiKey } from '../../src/entities/api.key';
 import { v4 as uuid4 } from 'uuid';
+import {
+  ApiKeyRepository,
+  IApiKeyRepo,
+} from '../../src/repositories/api.key.entity.repo';
+import {
+  IUserEntityRepo,
+  UserEntityRepository,
+} from '../../src/repositories/user.entity.repo';
 
-describe('ApiKey', () => {
-  let apiKeyRepository: Repository<ApiKey>;
-  let userRepository: Repository<User>;
+describe('ApiKeyRepo', () => {
+  let apiKeyRepository: IApiKeyRepo;
+  let userRepository: IUserEntityRepo;
   let dataSource: DataSource;
 
   beforeAll(async () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
       ConfigurationReader.read()
     );
-    apiKeyRepository = dataSource.getRepository(ApiKey);
-    userRepository = dataSource.getRepository(User);
+    apiKeyRepository = new ApiKeyRepository(dataSource.manager);
+    userRepository = new UserEntityRepository(dataSource.manager);
   });
 
   afterAll(async () => {
@@ -30,10 +38,7 @@ describe('ApiKey', () => {
     let apiKey = new ApiKey(undefined, undefined, user);
     const valueBeforeHashing = apiKey.value;
     const savedApiKey = await apiKeyRepository.save(apiKey);
-    apiKey = await apiKeyRepository.findOneOrFail({
-      where: { id: savedApiKey.id },
-      relations: API_KEY_RELATIONS,
-    });
+    apiKey = await apiKeyRepository.findByIdOrFail(savedApiKey.id!);
     expect(apiKey.user.id).toBe(user.id);
     expect(apiKey.compareValue(valueBeforeHashing)).toBeTruthy();
     expect(apiKey.compareValue('wrongAPIKey')).toBeFalsy();

@@ -11,7 +11,7 @@ import {
   IBalanceSheetEntityRepo,
 } from '../../src/repositories/balance.sheet.entity.repo';
 
-describe('Balance Sheet', () => {
+describe('BalanceSheetRepo', () => {
   let balanceSheetEntityRepository: IBalanceSheetEntityRepo;
   let dataSource: DataSource;
 

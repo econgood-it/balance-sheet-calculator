@@ -1,18 +1,22 @@
 import { DatabaseSourceCreator } from '../../src/databaseSourceCreator';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { ConfigurationReader } from '../../src/configuration.reader';
 import { parseAsUser, User } from '../../src/entities/user';
 import { Role } from '../../src/entities/enums';
+import {
+  IUserEntityRepo,
+  UserEntityRepository,
+} from '../../src/repositories/user.entity.repo';
 
-describe('User', () => {
-  let userRepository: Repository<User>;
+describe('UserRepo', () => {
+  let userRepository: IUserEntityRepo;
   let dataSource: DataSource;
 
   beforeAll(async () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
       ConfigurationReader.read()
     );
-    userRepository = dataSource.getRepository(User);
+    userRepository = new UserEntityRepository(dataSource.manager);
   });
 
   afterAll(async () => {
