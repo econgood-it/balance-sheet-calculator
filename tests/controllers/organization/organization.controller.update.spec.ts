@@ -102,4 +102,27 @@ describe('Organization Controller', () => {
       .send(orgaJson);
     expect(response.status).toBe(403);
   });
+
+  it('should fail to update organization if user is no member of organization', async () => {
+    const orgaJson = organizationFactory.default();
+    const testApp = supertest(app);
+    const responsePost = await postOrganization(testApp, orgaJson);
+
+    expect(responsePost.status).toBe(200);
+    const tokenOfUnauhtorizedUser = await TokenProvider.provideValidAuthHeader(
+      app,
+      dataSource,
+      Role.User,
+      'invalid@example.com'
+    );
+    const orgaJsonUpdate = {
+      ...orgaJson,
+      address: { ...orgaJson.address, city: 'Example city 2' },
+    };
+    const response = await testApp
+      .put(`${OrganizationPaths.post}/${responsePost.body.id}`)
+      .set(tokenOfUnauhtorizedUser.key, tokenOfUnauhtorizedUser.value)
+      .send(orgaJsonUpdate);
+    expect(response.status).toBe(403);
+  });
 });

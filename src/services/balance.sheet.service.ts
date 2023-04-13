@@ -179,7 +179,7 @@ export class BalanceSheetService {
         const balanceSheetEntity = await balanceSheetRepository.findByIdOrFail(
           balanceSheetIdParam
         );
-        await Authorization.checkBalanceSheetPermissionForCurrentUser(
+        await Authorization.checkIfCurrentUserHasEditorPermissions(
           req,
           balanceSheetEntity
         );
@@ -253,7 +253,7 @@ export class BalanceSheetService {
         const balanceSheetEntity = await balanceSheetRepository.findByIdOrFail(
           balanceSheetId
         );
-        await Authorization.checkBalanceSheetPermissionForCurrentUser(
+        await Authorization.checkIfCurrentUserHasEditorPermissions(
           req,
           balanceSheetEntity
         );
@@ -284,7 +284,7 @@ export class BalanceSheetService {
         const balanceSheetEntity = await balanceSheetRepository.findByIdOrFail(
           balanceSheetId
         );
-        await Authorization.checkBalanceSheetPermissionForCurrentUser(
+        await Authorization.checkIfCurrentUserHasEditorPermissions(
           req,
           balanceSheetEntity
         );
@@ -313,7 +313,7 @@ export class BalanceSheetService {
         const balanceSheetEntity = await balanceSheetRepository.findByIdOrFail(
           balanceSheetId
         );
-        await Authorization.checkBalanceSheetPermissionForCurrentUser(
+        await Authorization.checkIfCurrentUserHasEditorPermissions(
           req,
           balanceSheetEntity
         );

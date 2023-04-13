@@ -54,6 +54,7 @@ export class OrganizationService {
           await organizationEntityRepository.findByIdOrFail(
             organizationIdParam
           );
+        await Authorization.checkIfCurrentUserIsMember(req, organizationEntity);
         const updatedOrganizationEntity =
           await organizationEntityRepository.save(
             new OrganizationEntity(

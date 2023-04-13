@@ -30,4 +30,8 @@ export class OrganizationEntity {
     this.organization = organization;
     this.members = members;
   }
+
+  public hasMemberWithEmail(userEmail: string) {
+    return this.members.some((u) => u.email === userEmail);
+  }
 }
