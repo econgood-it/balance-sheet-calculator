@@ -1,17 +1,19 @@
 import { Application, NextFunction, Request, Response } from 'express';
 import passport from 'passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { User } from '../entities/user';
 import { DataSource } from 'typeorm';
 import UnauthorizedException from '../exceptions/unauthorized.exception';
 import { Role } from '../entities/enums';
 import { Configuration } from '../configuration.reader';
 import { BasicStrategy } from 'passport-http';
 import { HeaderAPIKeyStrategy } from 'passport-headerapikey';
-import { API_KEY_RELATIONS, ApiKey } from '../entities/api.key';
+import { IRepoProvider } from '../repositories/repo.provider';
 
 class JWTAuthentication {
-  constructor(private dataSource: DataSource) {}
+  constructor(
+    private dataSource: DataSource,
+    private repoProvider: IRepoProvider
+  ) {}
 
   public initialize(jwtSecret: string) {
     passport.use('jwt', this.getStrategy(jwtSecret));
@@ -28,12 +30,11 @@ class JWTAuthentication {
     return new Strategy(params, (req: Request, payload: any, done: any) => {
       this.dataSource.manager
         .transaction(async (entityManager) => {
-          const userRepository = entityManager.getRepository(User);
-          const foundUser = await userRepository.findOneOrFail({
-            where: {
-              email: payload.email,
-            },
-          });
+          const userRepository =
+            this.repoProvider.getUserEntityRepo(entityManager);
+          const foundUser = await userRepository.findByEmailOrFail(
+            payload.email
+          );
 
           return done(null, {
             id: foundUser.id,
@@ -77,7 +78,10 @@ class JWTAuthentication {
 }
 
 class ApiKeyAuthentication {
-  constructor(private dataSource: DataSource) {}
+  constructor(
+    private dataSource: DataSource,
+    private repoProvider: IRepoProvider
+  ) {}
 
   public initialize() {
     passport.use('headerapikey', this.getStrategy());
@@ -91,14 +95,12 @@ class ApiKeyAuthentication {
       (apikey: string, done: any) => {
         this.dataSource.manager
           .transaction(async (entityManager) => {
-            const apiRepository = entityManager.getRepository(ApiKey);
+            const apiRepository =
+              this.repoProvider.getApiKeyRepo(entityManager);
             const [id, value] = apikey.split('.');
-            const foundApiKey = await apiRepository.findOneOrFail({
-              where: {
-                id: parseInt(id),
-              },
-              relations: API_KEY_RELATIONS,
-            });
+            const foundApiKey = await apiRepository.findByIdOrFail(
+              parseInt(id)
+            );
             if (!foundApiKey.compareValue(value)) {
               throw Error('Invalid value');
             }
@@ -149,9 +151,12 @@ export class Authentication {
   private jwtAuthentication: JWTAuthentication;
   private apiKeyAuthentication: ApiKeyAuthentication;
 
-  constructor(private dataSource: DataSource) {
-    this.jwtAuthentication = new JWTAuthentication(dataSource);
-    this.apiKeyAuthentication = new ApiKeyAuthentication(dataSource);
+  constructor(private dataSource: DataSource, repoProvider: IRepoProvider) {
+    this.jwtAuthentication = new JWTAuthentication(dataSource, repoProvider);
+    this.apiKeyAuthentication = new ApiKeyAuthentication(
+      dataSource,
+      repoProvider
+    );
   }
 
   public addBasicAuthToDocsEndpoint(

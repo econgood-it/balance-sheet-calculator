@@ -45,7 +45,7 @@ class App {
   ) {
     this.app = express();
     this.setConfig();
-    this.authentication = new Authentication(dataSource);
+    this.authentication = new Authentication(dataSource, repoProvider);
     this.authentication.addBasicAuthToDocsEndpoint(this.app, configuration);
     this.authentication.addAuthToApplication(this.app, configuration.jwtSecret);
     // Creating controllers
