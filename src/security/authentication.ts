@@ -63,11 +63,13 @@ class JWTAuthentication {
 
         if (!user) {
           if (info.name === 'TokenExpiredError') {
-            return res.status(401).json({
-              message: 'Your token has expired. Please generate a new one',
-            });
+            return next(
+              new UnauthorizedException(
+                'Your token has expired. Please generate a new one'
+              )
+            );
           } else {
-            return res.status(401).json({ message: info.message });
+            return next(new UnauthorizedException(info.message));
           }
         }
         req.userInfo = user;
@@ -132,13 +134,7 @@ class ApiKeyAuthentication {
         }
 
         if (!user) {
-          if (info.name === 'TokenExpiredError') {
-            return res.status(401).json({
-              message: 'Your token has expired. Please generate a new one',
-            });
-          } else {
-            return res.status(401).json({ message: info.message });
-          }
+          return next(new UnauthorizedException(info.message));
         }
         req.userInfo = user;
         return next();

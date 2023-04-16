@@ -20,15 +20,15 @@ export class UserEntityRepository implements IUserEntityRepo {
   }
 
   findOneByEmail(email: string): Promise<User | null> {
-    return this.repo.findOneBy({ email: email });
+    return this.repo.findOneBy({ email });
   }
 
   findByEmailOrFail(email: string): Promise<User> {
-    return this.repo.findOneByOrFail({ email: email });
+    return this.repo.findOneByOrFail({ email });
   }
 
   findByIdOrFail(id: number): Promise<User> {
-    return this.repo.findOneByOrFail({ id: id });
+    return this.repo.findOneByOrFail({ id });
   }
 
   save(organizationEntity: User): Promise<User> {

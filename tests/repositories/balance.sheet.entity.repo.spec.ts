@@ -67,7 +67,7 @@ describe('BalanceSheetRepo', () => {
 
     expect(result.users).toHaveLength(1);
     expect(result.users[0]).toMatchObject({
-      email: email,
+      email,
       role: Role.User,
     });
     const relation = await dataSource.query(

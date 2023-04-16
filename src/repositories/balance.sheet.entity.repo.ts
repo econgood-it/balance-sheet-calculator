@@ -44,7 +44,7 @@ export class BalanceSheetEntityRepository implements IBalanceSheetEntityRepo {
 
   findByIdOrFail(id: number): Promise<BalanceSheetEntity> {
     return this.repo.findOneOrFail({
-      where: { id: id },
+      where: { id },
       relations: BALANCE_SHEET_RELATIONS,
     });
   }

@@ -1,4 +1,4 @@
-import { DataSource, EntityManager } from 'typeorm';
+import { EntityManager } from 'typeorm';
 import {
   IOrganizationEntityRepo,
   OrganizationEntityRepository,

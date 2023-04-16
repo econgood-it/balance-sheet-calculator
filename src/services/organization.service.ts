@@ -2,13 +2,9 @@ import { NextFunction, Request, Response } from 'express';
 
 import { handle } from '../exceptions/error.handler';
 import { DataSource } from 'typeorm';
-import {
-  ORGANIZATION_RELATIONS,
-  OrganizationEntity,
-} from '../entities/organization.entity';
+import { OrganizationEntity } from '../entities/organization.entity';
 import { Authorization } from '../security/authorization';
 import { OrganizationParser } from '../models/organization';
-import { OrganizationEntityRepository } from '../repositories/organization.entity.repo';
 import { IRepoProvider } from '../repositories/repo.provider';
 
 export class OrganizationService {

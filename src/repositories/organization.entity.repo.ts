@@ -18,7 +18,7 @@ export class OrganizationEntityRepository implements IOrganizationEntityRepo {
 
   findByIdOrFail(id: number): Promise<OrganizationEntity> {
     return this.repo.findOneOrFail({
-      where: { id: id },
+      where: { id },
       relations: ORGANIZATION_RELATIONS,
     });
   }

@@ -22,13 +22,17 @@ export function registerSchemas(registry: OpenAPIRegistry): OpenApiSchemas {
     BalanceSheetPatchRequestBodySchema
   );
   const OrganizationCreateRequestApiSchema = registry.register(
-    'BalanceSheetPatchRequest',
+    'OrganizationCreateRequest',
+    OrganizationRequestSchema
+  );
+  const OrganizationPutRequestApiSchema = registry.register(
+    'OrganizationPutRequest',
     OrganizationRequestSchema
   );
   return {
     BalanceSheetCreateRequestApiSchema,
     BalanceSheetPatchRequestApiSchema,
     OrganizationCreateRequestApiSchema,
-    OrganizationPutRequestApiSchema: OrganizationCreateRequestApiSchema,
+    OrganizationPutRequestApiSchema,
   };
 }

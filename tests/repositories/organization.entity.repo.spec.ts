@@ -1,10 +1,7 @@
-import { DataSource, Repository } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { DatabaseSourceCreator } from '../../src/databaseSourceCreator';
 import { ConfigurationReader } from '../../src/configuration.reader';
-import {
-  ORGANIZATION_RELATIONS,
-  OrganizationEntity,
-} from '../../src/entities/organization.entity';
+import { OrganizationEntity } from '../../src/entities/organization.entity';
 import { User } from '../../src/entities/user';
 import { Role } from '../../src/entities/enums';
 import { v4 as uuid4 } from 'uuid';

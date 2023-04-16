@@ -15,7 +15,7 @@ export class ApiKeyRepository implements IApiKeyRepo {
 
   findByIdOrFail(id: number): Promise<ApiKey> {
     return this.repo.findOneOrFail({
-      where: { id: id },
+      where: { id },
       relations: API_KEY_RELATIONS,
     });
   }
