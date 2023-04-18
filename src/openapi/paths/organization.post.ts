@@ -25,7 +25,6 @@ export function registerOrganizationPost(
         content: {
           [applicationJson]: {
             schema: schemas.OrganizationCreateRequestApiSchema,
-            example: organizationFactory.default(),
             examples: {
               default: {
                 value: organizationFactory.default(),
