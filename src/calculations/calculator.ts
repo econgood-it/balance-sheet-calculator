@@ -9,6 +9,7 @@ import {
   SocialEnvironmentCalcResults,
 } from './social.environment.calc';
 import { CompanyFacts } from '../models/company.facts';
+import { isTopic, Rating } from '../models/rating';
 
 export interface CalcResults {
   supplyCalcResults: SupplyCalcResults;
@@ -46,4 +47,13 @@ export class Calculator {
         this.socialEnvironmentCalc.calculate(companyFacts),
     };
   }
+}
+
+const MAX_NEGATIVE_POINTS = -3600;
+
+export function calculateTotalPoints(ratings: Rating[]): number {
+  const sum = ratings
+    .filter((r) => isTopic(r))
+    .reduce((sum, currentRating) => sum + currentRating.points, 0);
+  return sum < MAX_NEGATIVE_POINTS ? MAX_NEGATIVE_POINTS : sum;
 }

@@ -25,8 +25,9 @@ import {
 import { RatingRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/rating.dto';
 import { none, Option, some } from '../calculations/option';
 import { roundWithPrecision } from '../math';
-import { MatrixRatingBodySchema } from '@ecogood/e-calculator-schemas/dist/matrix.dto';
+import { MatrixBodySchema } from '@ecogood/e-calculator-schemas/dist/matrix.dto';
 import { diff } from 'deep-diff';
+import { calculateTotalPoints } from '../calculations/calculator';
 
 export const BalanceSheetVersionSchema = z.nativeEnum(BalanceSheetVersion);
 export const BalanceSheetSchema = z.object({
@@ -82,32 +83,32 @@ export namespace BalanceSheetParser {
   }
 }
 
-type MatrixRatingBody = z.infer<typeof MatrixRatingBodySchema>;
-const MatrixResponseBodySchema = z.object({
-  ratings: MatrixRatingBodySchema.array(),
-});
+type MatrixBody = z.infer<typeof MatrixBodySchema>;
 
-export function balanceSheetToMatrixResponse(balanceSheet: BalanceSheet) {
-  return MatrixResponseBodySchema.parse({
+export function balanceSheetToMatrixResponse(
+  balanceSheet: BalanceSheet
+): MatrixBody {
+  return MatrixBodySchema.parse({
     ratings: filterTopics(sortRatings(balanceSheet.ratings)).map((r) =>
       ratingToMatrixRating(r)
     ),
+    totalPoints: calculateTotalPoints(balanceSheet.ratings),
   });
 }
 
-export function ratingToMatrixRating(rating: Rating): MatrixRatingBody {
+export function ratingToMatrixRating(rating: Rating) {
   const percentage = calcPercentage(rating.points, rating.maxPoints);
   const percentageReached = percentage.isPresent()
     ? percentage.get()
     : undefined;
-  return MatrixRatingBodySchema.parse({
+  return {
     shortName: rating.shortName,
     name: rating.name,
     points: roundWithPrecision(rating.points),
     maxPoints: roundWithPrecision(rating.maxPoints),
     percentageReached,
     notApplicable: notApplicable(rating.weight),
-  });
+  };
 }
 
 function calcPercentage(points: number, maxPoints: number): Option<number> {

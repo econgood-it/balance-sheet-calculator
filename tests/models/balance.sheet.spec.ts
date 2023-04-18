@@ -10,11 +10,12 @@ import {
   balanceSheetToMatrixResponse,
   ratingToMatrixRating,
 } from '../../src/models/balance.sheet';
-import { Rating } from '../../src/models/rating';
+import { isTopic, Rating } from '../../src/models/rating';
 import {
   balanceSheetFactory,
   companyFactsJsonFactory,
 } from '../../src/openapi/examples';
+import { calculateTotalPoints } from '../../src/calculations/calculator';
 
 describe('Parse', () => {
   it('json with a merged rating entity', () => {
@@ -246,6 +247,21 @@ describe('Matrix DTO', () => {
   it('is created from rating', async () => {
     const matrixDTO = balanceSheetToMatrixResponse(balanceSheet);
     expect(matrixDTO).toBeDefined();
+  });
+
+  it('has totalPoints of 1000', async () => {
+    const defaultRatings = RatingsFactory.createDefaultRatings(
+      BalanceSheetType.Full,
+      BalanceSheetVersion.v5_0_8
+    );
+    const ratings = defaultRatings.map((r) =>
+      isTopic(r) ? { ...r, points: 50 } : r
+    );
+    const matrixDTO = balanceSheetToMatrixResponse({
+      ...balanceSheet,
+      ratings: ratings,
+    });
+    expect(matrixDTO.totalPoints).toBe(calculateTotalPoints(ratings));
   });
 
   it('has a topics array of 20', async () => {
