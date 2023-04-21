@@ -85,6 +85,10 @@ class ApiKeyAuthentication {
     private repoProvider: IRepoProvider
   ) {}
 
+  public getHeaderKey() {
+    return 'Api-Key';
+  }
+
   public initialize() {
     passport.use('headerapikey', this.getStrategy());
     return passport.initialize();
@@ -92,7 +96,7 @@ class ApiKeyAuthentication {
 
   private getStrategy(): Strategy {
     return new HeaderAPIKeyStrategy(
-      { header: 'Api-Key', prefix: '' },
+      { header: this.getHeaderKey(), prefix: '' },
       false,
       (apikey: string, done: any) => {
         this.dataSource.manager
@@ -189,9 +193,9 @@ export class Authentication {
       ) {
         return next();
       }
-      return req.headers.authorization
-        ? this.jwtAuthentication.authenticate(req, res, next)
-        : this.apiKeyAuthentication.authenticate(req, res, next);
+      return req.rawHeaders.includes(this.apiKeyAuthentication.getHeaderKey())
+        ? this.apiKeyAuthentication.authenticate(req, res, next)
+        : this.jwtAuthentication.authenticate(req, res, next);
     });
   }
 }
