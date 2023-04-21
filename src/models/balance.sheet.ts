@@ -28,6 +28,7 @@ import { roundWithPrecision } from '../math';
 import { MatrixBodySchema } from '@ecogood/e-calculator-schemas/dist/matrix.dto';
 import { diff } from 'deep-diff';
 import { calculateTotalPoints } from '../calculations/calculator';
+import { BalanceSheetEntity } from '../entities/balance.sheet.entity';
 
 export const BalanceSheetVersionSchema = z.nativeEnum(BalanceSheetVersion);
 export const BalanceSheetSchema = z.object({
@@ -51,7 +52,7 @@ export namespace BalanceSheetParser {
 
   export function fromJson(
     json: z.input<typeof BalanceSheetCreateRequestBodySchema>
-  ) {
+  ): BalanceSheet {
     return BalanceSheetCreateRequestBodySchema.transform((b) => ({
       ...b,
       companyFacts: CompanyFactsCreateRequestBodyTransformedSchema.parse(

@@ -3,8 +3,6 @@ import {
   BALANCE_SHEET_RELATIONS,
   BalanceSheetEntity,
 } from '../entities/balance.sheet.entity';
-import { BalanceSheet } from '../models/balance.sheet';
-import { User } from '../entities/user';
 
 export interface IBalanceSheetEntityRepo {
   findByIdOrFail(id: number): Promise<BalanceSheetEntity>;
@@ -12,11 +10,6 @@ export interface IBalanceSheetEntityRepo {
 
   save(balanceSheetEntity: BalanceSheetEntity): Promise<BalanceSheetEntity>;
   remove(balanceSheetEntity: BalanceSheetEntity): Promise<BalanceSheetEntity>;
-  saveBalanceSheet(
-    balanceSheetId: number | undefined,
-    balanceSheet: BalanceSheet,
-    users: User[]
-  ): Promise<BalanceSheetEntity>;
 }
 
 export class BalanceSheetEntityRepository implements IBalanceSheetEntityRepo {
@@ -24,22 +17,6 @@ export class BalanceSheetEntityRepository implements IBalanceSheetEntityRepo {
 
   constructor(manager: EntityManager) {
     this.repo = manager.getRepository(BalanceSheetEntity);
-  }
-
-  saveBalanceSheet(
-    balanceSheetId: number | undefined,
-    balanceSheet: BalanceSheet,
-    users: User[]
-  ): Promise<BalanceSheetEntity> {
-    const balanceSheetEntity = new BalanceSheetEntity(
-      balanceSheetId,
-      balanceSheet.type,
-      balanceSheet.version,
-      balanceSheet.ratings,
-      balanceSheet.companyFacts,
-      users
-    );
-    return this.save(balanceSheetEntity);
   }
 
   findByIdOrFail(id: number): Promise<BalanceSheetEntity> {

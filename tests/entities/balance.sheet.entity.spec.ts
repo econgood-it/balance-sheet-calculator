@@ -1,8 +1,4 @@
 import { BalanceSheetEntity } from '../../src/entities/balance.sheet.entity';
-import {
-  BalanceSheetType,
-  BalanceSheetVersion,
-} from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import { balanceSheetFactory } from '../../src/openapi/examples';
 import { User } from '../../src/entities/user';
 import { Role } from '../../src/entities/enums';
@@ -12,10 +8,7 @@ describe('BalanceSheetEntity', () => {
     const userEmail = 'test@example.com';
     const balanceSheetEntity = new BalanceSheetEntity(
       undefined,
-      BalanceSheetType.Full,
-      BalanceSheetVersion.v5_0_8,
-      balanceSheetFactory.emptyV508().ratings,
-      balanceSheetFactory.emptyV508().companyFacts,
+      balanceSheetFactory.emptyV508(),
       [
         new User(undefined, userEmail, 'pass', Role.User),
         new User(undefined, 'other@example.com', 'pass', Role.User),

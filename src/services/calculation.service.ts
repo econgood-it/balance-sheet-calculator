@@ -6,24 +6,27 @@ import { StakeholderWeightCalculator } from '../calculations/stakeholder.weight.
 import { TopicWeightCalculator } from '../calculations/topic.weight.calculator';
 import Provider from '../providers/provider';
 import { BalanceSheet } from '../models/balance.sheet';
+import { BalanceSheetEntity } from '../entities/balance.sheet.entity';
 
 export namespace Calc {
-  export async function calculate(balanceSheet: BalanceSheet): Promise<{
+  export async function calculate(
+    balanceSheetEntity: BalanceSheetEntity
+  ): Promise<{
     updatedBalanceSheet: BalanceSheet;
     calcResults: CalcResults;
     stakeholderWeights: Provider<string, number>;
     topicWeights: Provider<string, number>;
   }> {
     const regionProvider = await RegionProvider.fromVersion(
-      balanceSheet.version
+      balanceSheetEntity.getVersion()
     );
     const industryProvider = await IndustryProvider.fromVersion(
-      balanceSheet.version
+      balanceSheetEntity.getVersion()
     );
     const calcResults: CalcResults = await new Calculator(
       regionProvider,
       industryProvider
-    ).calculate(balanceSheet.companyFacts);
+    ).calculate(balanceSheetEntity.companyFacts);
     const ratingsUpdater: RatingsUpdater = new RatingsUpdater();
     const stakeholderWeightCalculator = new StakeholderWeightCalculator();
     const topicWeightCalculator = new TopicWeightCalculator();
@@ -31,10 +34,10 @@ export namespace Calc {
       await stakeholderWeightCalculator.calcStakeholderWeights(calcResults);
     const topicWeights = topicWeightCalculator.calcTopicWeights(
       calcResults,
-      balanceSheet.companyFacts
+      balanceSheetEntity.companyFacts
     );
     const updatedBalanceSheet = await ratingsUpdater.update(
-      balanceSheet,
+      balanceSheetEntity,
       calcResults,
       stakeholderWeights,
       topicWeights

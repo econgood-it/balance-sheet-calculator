@@ -21,21 +21,10 @@ export class BalanceSheetEntity {
   @PrimaryGeneratedColumn()
   public readonly id: number | undefined;
 
-  @Column('text')
-  public readonly type: BalanceSheetType;
-
-  @Column('text')
-  public readonly version: BalanceSheetVersion;
-
   @Column({
     type: 'jsonb',
   })
-  public companyFacts: CompanyFacts;
-
-  @Column({
-    type: 'jsonb',
-  })
-  public ratings: Rating[];
+  public balanceSheet: BalanceSheet;
 
   @ManyToMany((type) => User, (user) => user.balanceSheetEntities)
   @JoinTable({ name: 'balance_sheet_entities_users' })
@@ -43,17 +32,11 @@ export class BalanceSheetEntity {
 
   public constructor(
     id: number | undefined,
-    type: BalanceSheetType,
-    version: BalanceSheetVersion,
-    ratings: Rating[],
-    companyFacts: CompanyFacts,
+    balanceSheet: BalanceSheet,
     users: User[]
   ) {
     this.id = id;
-    this.type = type;
-    this.version = version;
-    this.ratings = ratings;
-    this.companyFacts = companyFacts;
+    this.balanceSheet = balanceSheet;
     this.users = users;
   }
 
@@ -61,12 +44,14 @@ export class BalanceSheetEntity {
     return this.users.some((u) => u.email === userEmail);
   }
 
+  public getVersion(): BalanceSheetVersion {
+    return this.balanceSheet.version;
+  }
+  public getType(): BalanceSheetType {
+    return this.balanceSheet.type;
+  }
+
   public toBalanceSheet(): BalanceSheet {
-    return {
-      type: this.type,
-      version: this.version,
-      ratings: this.ratings,
-      companyFacts: this.companyFacts,
-    };
+    return this.balanceSheet;
   }
 }

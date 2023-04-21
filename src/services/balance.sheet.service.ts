@@ -31,6 +31,7 @@ import { Authorization } from '../security/authorization';
 import { Calc } from './calculation.service';
 import { IRepoProvider } from '../repositories/repo.provider';
 import { IBalanceSheetEntityRepo } from '../repositories/balance.sheet.entity.repo';
+import { BalanceSheetEntity } from '../entities/balance.sheet.entity';
 
 export class BalanceSheetService {
   constructor(
@@ -51,17 +52,19 @@ export class BalanceSheetService {
         const balanceSheetRepo =
           this.repoProvider.getBalanceSheetEntityRepo(entityManager);
         const foundUser = await userRepo.findCurrentUserOrFail(req);
-        const balanceSheet = BalanceSheetParser.fromJson(req.body);
+        const balanceSheetEntity = new BalanceSheetEntity(
+          undefined,
+          BalanceSheetParser.fromJson(req.body),
+          [foundUser]
+        );
 
-        const { updatedBalanceSheet } = await Calc.calculate(balanceSheet);
+        const { updatedBalanceSheet } = await Calc.calculate(
+          balanceSheetEntity.toBalanceSheet()
+        );
 
-        const { id, savedBalanceSheet } =
-          await this.saveBalanceSheetIfRequested(
-            saveFlag,
-            updatedBalanceSheet,
-            [foundUser],
-            balanceSheetRepo
-          );
+
+          const balanceSheetEntityResponse = saveFlag ? await balanceSheetRepo.saveBalanceSheet(
+
 
         res.json(BalanceSheetParser.toJson(id, savedBalanceSheet, language));
       })
