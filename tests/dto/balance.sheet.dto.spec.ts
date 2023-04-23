@@ -136,7 +136,7 @@ describe('MatrixRepresentation', () => {
     );
     const matrixResponse = new MatrixFormat({
       ...balanceSheet,
-      ratings: ratings,
+      ratings,
     }).apply();
 
     expect(matrixResponse.totalPoints).toBe(calculateTotalPoints(ratings));

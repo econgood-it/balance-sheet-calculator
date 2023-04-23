@@ -7,10 +7,10 @@ export class FillBalanceSheetColumn1681917409300 implements MigrationInterface {
     );
     for (const { id, type, version, companyFacts, ratings } of result) {
       const balanceSheetJson = {
-        type: type,
-        version: version,
-        companyFacts: companyFacts,
-        ratings: ratings,
+        type,
+        version,
+        companyFacts,
+        ratings,
       };
       await queryRunner.query(
         `UPDATE balance_sheet_entity SET "balanceSheet" = '${JSON.stringify(

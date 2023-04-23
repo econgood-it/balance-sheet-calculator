@@ -5,7 +5,6 @@ import { SupplyFractionReader } from './supply.fraction.reader';
 import { EmployeesFractionReader } from './employees.fraction.reader';
 import { IndustrySectorReader } from './industry.sector.reader';
 import { RatingReader } from './rating.reader';
-import { BalanceSheet } from '../../models/balance.sheet';
 import { Translations } from '../../language/translations';
 import { BalanceSheetType } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import { BalanceSheetEntity } from '../../entities/balance.sheet.entity';

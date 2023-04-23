@@ -7,12 +7,8 @@ import {
 } from 'typeorm';
 import { User } from './user';
 import { BalanceSheet } from '../models/balance.sheet';
-import { CompanyFacts, companyFactsToResponse } from '../models/company.facts';
-import { isTopic, Rating, sortRatings } from '../models/rating';
-import {
-  BalanceSheetType,
-  BalanceSheetVersion,
-} from '@ecogood/e-calculator-schemas/dist/shared.schemas';
+import { companyFactsToResponse } from '../models/company.facts';
+import { isTopic, sortRatings } from '../models/rating';
 import { RegionProvider } from '../providers/region.provider';
 import { IndustryProvider } from '../providers/industry.provider';
 import { CalcResults, Calculator } from '../calculations/calculator';

@@ -1,6 +1,5 @@
 import { CalcResults } from './calculator';
 import Provider from '../providers/provider';
-import { BalanceSheet } from '../models/balance.sheet';
 import { filterAspectsOfTopic, filterTopics, Rating } from '../models/rating';
 
 export class RatingsUpdater {
