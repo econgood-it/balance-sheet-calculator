@@ -9,14 +9,10 @@ import { RegionProvider } from '../../src/providers/region.provider';
 import { IndustryProvider } from '../../src/providers/industry.provider';
 import { StakeholderWeightCalculator } from '../../src/calculations/stakeholder.weight.calculator';
 import { TopicWeightCalculator } from '../../src/calculations/topic.weight.calculator';
-import { BalanceSheet } from '../../src/models/balance.sheet';
 import { CompanyFacts } from '../../src/models/company.facts';
 import { Rating } from '../../src/models/rating';
 import { companyFactsFactory } from '../../src/openapi/examples';
-import {
-  BalanceSheetType,
-  BalanceSheetVersion,
-} from '@ecogood/e-calculator-schemas/dist/shared.schemas';
+import { BalanceSheetVersion } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 
 describe('Ratings updater', () => {
   const stakeholderWeightCalculator = new StakeholderWeightCalculator();
@@ -43,22 +39,16 @@ describe('Ratings updater', () => {
       regionProvider,
       industryProvider
     ).calculate(companyFacts);
-    const balanceSheet = {
-      type: BalanceSheetType.Full,
-      version: BalanceSheetVersion.v5_0_4,
-      companyFacts,
-      ratings,
-    };
 
     const ratingsUpdater: RatingsUpdater = new RatingsUpdater();
     const stakeholderWeights =
       await stakeholderWeightCalculator.calcStakeholderWeights(calcResults);
     const topicWeights = topicWeightCalculator.calcTopicWeights(
       calcResults,
-      balanceSheet.companyFacts
+      companyFacts
     );
-    const updatedBalanceSheet = await ratingsUpdater.update(
-      balanceSheet,
+    const updatedRatings = await ratingsUpdater.update(
+      ratings,
       calcResults,
       stakeholderWeights,
       topicWeights
@@ -67,7 +57,7 @@ describe('Ratings updater', () => {
     const expected: Rating[] = await testDataReader.readRatingsFromCsv(
       pathToCsv
     );
-    Assertions.assertRatings(updatedBalanceSheet.ratings, expected);
+    Assertions.assertRatings(updatedRatings, expected);
   }
 
   it('should not calculate automatic weight', async () => {
@@ -78,10 +68,11 @@ describe('Ratings updater', () => {
       BalanceSheetVersion.v5_0_4
     );
 
+    const companyFacts = companyFactsFactory.nonEmpty();
     const calcResults: CalcResults = await new Calculator(
       regionProvider,
       industryProvider
-    ).calculate(companyFactsFactory.nonEmpty());
+    ).calculate(companyFacts);
     const ratings: Rating[] = [
       {
         shortName: 'A1',
@@ -94,26 +85,20 @@ describe('Ratings updater', () => {
         isPositive: true,
       },
     ];
-    const balanceSheet: BalanceSheet = {
-      type: BalanceSheetType.Full,
-      version: BalanceSheetVersion.v5_0_4,
-      companyFacts: companyFactsFactory.nonEmpty(),
-      ratings,
-    };
     const ratingsUpdater: RatingsUpdater = new RatingsUpdater();
     const stakeholderWeights =
       await stakeholderWeightCalculator.calcStakeholderWeights(calcResults);
     const topicWeights = topicWeightCalculator.calcTopicWeights(
       calcResults,
-      balanceSheet.companyFacts
+      companyFacts
     );
-    const updatedBalanceSheet = await ratingsUpdater.update(
-      balanceSheet,
+    const updatedRatings = await ratingsUpdater.update(
+      ratings,
       calcResults,
       stakeholderWeights,
       topicWeights
     );
-    expect(updatedBalanceSheet.ratings[0].weight).toBeCloseTo(2, 2);
+    expect(updatedRatings[0].weight).toBeCloseTo(2, 2);
   });
 
   it('should calculate rating when the company facts values and the rating values are empty', async () =>

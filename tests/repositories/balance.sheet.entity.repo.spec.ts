@@ -29,10 +29,13 @@ describe('BalanceSheetRepo', () => {
   });
 
   it('does not cascades users on insert', async () => {
-    const savedResult = await balanceSheetEntityRepository.saveBalanceSheet(
+    const balanceSheetEntity = new BalanceSheetEntity(
       undefined,
       balanceSheetFactory.emptyV508(),
       [new User(undefined, 'test@example.com', 'test1234', Role.User)]
+    );
+    const savedResult = await balanceSheetEntityRepository.save(
+      balanceSheetEntity
     );
     const result = await balanceSheetEntityRepository.findByIdOrFail(
       savedResult.id!
@@ -56,10 +59,13 @@ describe('BalanceSheetRepo', () => {
     const user = await dataSource
       .getRepository(User)
       .save(new User(undefined, email, 'test1234', Role.User));
-    const savedResult = await balanceSheetEntityRepository.saveBalanceSheet(
+    const balanceSheetEntity = new BalanceSheetEntity(
       undefined,
       balanceSheetFactory.emptyV508(),
       [user]
+    );
+    const savedResult = await balanceSheetEntityRepository.save(
+      balanceSheetEntity
     );
     const result = await balanceSheetEntityRepository.findByIdOrFail(
       savedResult.id!
@@ -86,12 +92,9 @@ describe('BalanceSheetRepo', () => {
     const user = await dataSource
       .getRepository(User)
       .save(new User(undefined, email, 'test1234', Role.User));
-    const balanceSheetEntity =
-      await balanceSheetEntityRepository.saveBalanceSheet(
-        undefined,
-        balanceSheetFactory.emptyV508(),
-        [user]
-      );
+    const balanceSheetEntity = await balanceSheetEntityRepository.save(
+      new BalanceSheetEntity(undefined, balanceSheetFactory.emptyV508(), [user])
+    );
     const query = `SELECT * from balance_sheet_entities_users where "userId" = ${user.id} and "balanceSheetEntityId" = ${balanceSheetEntity.id}`;
     let relation = await dataSource.query(query);
     expect(relation).toHaveLength(1);

@@ -8,6 +8,8 @@ import { RatingReader } from './rating.reader';
 import { BalanceSheet } from '../../models/balance.sheet';
 import { Translations } from '../../language/translations';
 import { BalanceSheetType } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
+import { BalanceSheetEntity } from '../../entities/balance.sheet.entity';
+import { User } from '../../entities/user';
 
 const range = (start: number, end: number): number[] =>
   Array.from(Array(end - start + 1).keys()).map((x) => x + start);
@@ -29,7 +31,7 @@ export const readLanguage = (workbook: Workbook): keyof Translations => {
 };
 
 export class BalanceSheetReader {
-  public readFromWorkbook(wb: Workbook): BalanceSheet {
+  public readFromWorkbook(wb: Workbook, users: User[]): BalanceSheetEntity {
     const cr = new CellReader();
     const sheet = wb.getWorksheet('2. Company Facts');
     const introSheet = wb.getWorksheet('0. Intro');
@@ -73,11 +75,15 @@ export class BalanceSheetReader {
       range(9, 93).map((row) => ratingReader.read(calcSheet.getRow(row)))
     );
     // TODO: Find a good way to distinguish between balance sheet types. Instead of hard coding Full.
-    return {
-      type: BalanceSheetType.Full,
-      version: cr.read(introSheet, 3, 'C').parseAsVersion(),
-      companyFacts,
-      ratings,
-    };
+    return new BalanceSheetEntity(
+      undefined,
+      {
+        type: BalanceSheetType.Full,
+        version: cr.read(introSheet, 3, 'C').parseAsVersion(),
+        companyFacts,
+        ratings,
+      },
+      users
+    );
   }
 }
