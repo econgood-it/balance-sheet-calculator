@@ -1,8 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { DataSource } from 'typeorm';
-import { EntityWithDtoMerger } from '../merge/entity.with.dto.merger';
 import { handle } from '../exceptions/error.handler';
-import { User } from '../entities/user';
 import { NoAccessError } from '../exceptions/no.access.error';
 import { Workbook } from 'exceljs';
 import { BalanceSheetReader } from '../reader/balanceSheetReader/balance.sheet.reader';
@@ -11,26 +9,16 @@ import { CalcResultsReader } from '../reader/balanceSheetReader/calc.results.rea
 import { diff } from 'deep-diff';
 import { TopicWeightsReader } from '../reader/balanceSheetReader/topic.weights.reader';
 import { StakeholderWeightsReader } from '../reader/balanceSheetReader/stakeholder.weights.reader';
-import {
-  BalanceSheet,
-  BalanceSheetParser,
-  balanceSheetToMatrixResponse,
-  diffBetweenBalanceSheets,
-} from '../models/balance.sheet';
 
-import {
-  parseLanguageParameter,
-  translateBalanceSheet,
-} from '../language/translations';
+import { parseLanguageParameter } from '../language/translations';
 import {
   BalanceSheetItemsResponseSchema,
   BalanceSheetPatchRequestBodySchema,
 } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
 import { BalanceSheetExcelDiffResponseBody } from '@ecogood/e-calculator-schemas/dist/balance.sheet.diff';
 import { Authorization } from '../security/authorization';
-import { Calc } from './calculation.service';
 import { IRepoProvider } from '../repositories/repo.provider';
-import { IBalanceSheetEntityRepo } from '../repositories/balance.sheet.entity.repo';
+import { BalanceSheetCreateRequest } from '../dto/balance.sheet.dto';
 
 export class BalanceSheetService {
   constructor(
@@ -51,19 +39,17 @@ export class BalanceSheetService {
         const balanceSheetRepo =
           this.repoProvider.getBalanceSheetEntityRepo(entityManager);
         const foundUser = await userRepo.findCurrentUserOrFail(req);
-        const balanceSheet = BalanceSheetParser.fromJson(req.body);
+        const balanceSheetEntity = new BalanceSheetCreateRequest(
+          req.body
+        ).toBalanceEntity([foundUser]);
 
-        const { updatedBalanceSheet } = await Calc.calculate(balanceSheet);
+        await balanceSheetEntity.reCalculate();
 
-        const { id, savedBalanceSheet } =
-          await this.saveBalanceSheetIfRequested(
-            saveFlag,
-            updatedBalanceSheet,
-            [foundUser],
-            balanceSheetRepo
-          );
+        if (saveFlag) {
+          await balanceSheetRepo.save(balanceSheetEntity);
+        }
 
-        res.json(BalanceSheetParser.toJson(id, savedBalanceSheet, language));
+        res.json(balanceSheetEntity.toJson(language));
       })
       .catch((error) => {
         handle(error, next);
@@ -83,18 +69,18 @@ export class BalanceSheetService {
         const topicWeightsReader = new TopicWeightsReader();
         const stakeholderWeightsReader = new StakeholderWeightsReader();
 
-        const balanceSheetUpload = balanceSheetReader.readFromWorkbook(wb);
+        const balanceSheetEntityUpload = balanceSheetReader.readFromWorkbook(
+          wb,
+          []
+        );
         const calcResultsUpload = calcResultsReader.readFromWorkbook(wb);
         const stakeholderWeightsUpload =
           stakeholderWeightsReader.readFromWorkbook(wb);
         const topicWeightsUpload = topicWeightsReader.readFromWorkbook(wb);
+        const balanceSheetEntityApi = balanceSheetEntityUpload.clone();
 
-        const {
-          updatedBalanceSheet,
-          calcResults,
-          stakeholderWeights,
-          topicWeights,
-        } = await Calc.calculate(balanceSheetUpload);
+        const { calcResults, stakeholderWeights, topicWeights } =
+          await balanceSheetEntityApi.reCalculate();
 
         res.json(
           BalanceSheetExcelDiffResponseBody.parse({
@@ -113,10 +99,7 @@ export class BalanceSheetService {
                 Object.fromEntries(topicWeights)
               ),
             diffCalc: calcResultsUpload && diff(calcResultsUpload, calcResults),
-            diff: diffBetweenBalanceSheets(
-              balanceSheetUpload,
-              updatedBalanceSheet
-            ),
+            diff: balanceSheetEntityUpload.diff(balanceSheetEntityApi),
           })
         );
       } else {
@@ -143,18 +126,15 @@ export class BalanceSheetService {
           const balanceSheetReader = new BalanceSheetReader();
           const balanceSheetRepo =
             this.repoProvider.getBalanceSheetEntityRepo(entityManager);
-          const balanceSheet = balanceSheetReader.readFromWorkbook(wb);
+          const balanceSheetEntity = balanceSheetReader.readFromWorkbook(wb, [
+            foundUser,
+          ]);
 
-          const { updatedBalanceSheet } = await Calc.calculate(balanceSheet);
-
-          const { id, savedBalanceSheet } =
-            await this.saveBalanceSheetIfRequested(
-              saveFlag,
-              updatedBalanceSheet,
-              [foundUser],
-              balanceSheetRepo
-            );
-          res.json(BalanceSheetParser.toJson(id, savedBalanceSheet, language));
+          await balanceSheetEntity.reCalculate();
+          if (saveFlag) {
+            await balanceSheetRepo.save(balanceSheetEntity);
+          }
+          res.json(balanceSheetEntity.toJson(language));
         } else {
           res.json({ message: 'File empty' });
         }
@@ -174,7 +154,7 @@ export class BalanceSheetService {
       .transaction(async (entityManager) => {
         const balanceSheetRepository =
           this.repoProvider.getBalanceSheetEntityRepo(entityManager);
-        const entityWithDTOMerger = new EntityWithDtoMerger();
+
         const balanceSheetIdParam: number = Number(req.params.id);
         const balanceSheetEntity = await balanceSheetRepository.findByIdOrFail(
           balanceSheetIdParam
@@ -185,27 +165,11 @@ export class BalanceSheetService {
         );
         const balanceSheetPatchRequestBody =
           BalanceSheetPatchRequestBodySchema.parse(req.body);
-        const mergedBalanceSheet = entityWithDTOMerger.mergeBalanceSheet(
-          balanceSheetEntity.toBalanceSheet(),
-          balanceSheetPatchRequestBody
-        );
-        const { updatedBalanceSheet } = await Calc.calculate(
-          mergedBalanceSheet
-        );
-        const savedBalanceSheetEntity =
-          await balanceSheetRepository.saveBalanceSheet(
-            balanceSheetEntity.id,
-            updatedBalanceSheet,
-            balanceSheetEntity.users
-          );
+        balanceSheetEntity.mergeWithPatchRequest(balanceSheetPatchRequestBody);
+        await balanceSheetEntity.reCalculate();
+        await balanceSheetRepository.save(balanceSheetEntity);
 
-        res.json(
-          BalanceSheetParser.toJson(
-            savedBalanceSheetEntity.id,
-            savedBalanceSheetEntity.toBalanceSheet(),
-            language
-          )
-        );
+        res.json(balanceSheetEntity.toJson(language));
       })
       .catch((error) => {
         handle(error, next);
@@ -257,13 +221,7 @@ export class BalanceSheetService {
           req,
           balanceSheetEntity
         );
-        res.json(
-          BalanceSheetParser.toJson(
-            balanceSheetEntity.id,
-            balanceSheetEntity.toBalanceSheet(),
-            language
-          )
-        );
+        res.json(balanceSheetEntity.toJson(language));
       })
       .catch((error) => {
         handle(error, next);
@@ -289,11 +247,7 @@ export class BalanceSheetService {
           balanceSheetEntity
         );
 
-        res.json(
-          balanceSheetToMatrixResponse(
-            translateBalanceSheet(balanceSheetEntity.toBalanceSheet(), language)
-          )
-        );
+        res.json(balanceSheetEntity.asMatrixRepresentation(language));
       })
       .catch((error) => {
         handle(error, next);
@@ -326,26 +280,6 @@ export class BalanceSheetService {
       .catch((error) => {
         handle(error, next);
       });
-  }
-
-  private async saveBalanceSheetIfRequested(
-    saveFlag: boolean,
-    balanceSheet: BalanceSheet,
-    users: User[],
-    balanceSheetRepo: IBalanceSheetEntityRepo
-  ): Promise<{ id: number | undefined; savedBalanceSheet: BalanceSheet }> {
-    if (saveFlag) {
-      const balanceSheetEntity = await balanceSheetRepo.saveBalanceSheet(
-        undefined,
-        balanceSheet,
-        users
-      );
-      return {
-        id: balanceSheetEntity.id,
-        savedBalanceSheet: balanceSheetEntity.toBalanceSheet(),
-      };
-    }
-    return { id: undefined, savedBalanceSheet: balanceSheet };
   }
 
   private parseSaveFlag(saveParam: any): boolean {

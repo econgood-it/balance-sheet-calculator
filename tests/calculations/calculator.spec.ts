@@ -46,7 +46,7 @@ describe('calculateTotalPoints', () => {
     );
     const topicsWith200NegativePoints = topicsWithNegativeAspects.map((t) => ({
       ...t,
-      points: points,
+      points,
     }));
     return defaultRatings.map((r) => {
       const topicFound = topicsWith200NegativePoints.find(

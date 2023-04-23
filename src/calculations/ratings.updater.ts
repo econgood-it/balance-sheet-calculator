@@ -1,17 +1,16 @@
 import { CalcResults } from './calculator';
 import Provider from '../providers/provider';
-import { BalanceSheet } from '../models/balance.sheet';
 import { filterAspectsOfTopic, filterTopics, Rating } from '../models/rating';
 
 export class RatingsUpdater {
   public async update(
-    balanceSheet: BalanceSheet,
+    ratings: Rating[],
     calcResults: CalcResults,
     stakeholderWeights: Provider<string, number>,
     topicWeights: Provider<string, number>
-  ): Promise<BalanceSheet> {
+  ): Promise<Rating[]> {
     // Compute sum of topic weights
-    const topics = filterTopics(balanceSheet.ratings);
+    const topics = filterTopics(ratings);
     const topicsWithUpdatedWeight = topics.map((t) =>
       // Topic wheigt is set to 1 if data of company facts is empty.
       // See Weighting G69
@@ -38,7 +37,7 @@ export class RatingsUpdater {
       const stakeholderWeight = stakeholderWeights.getOrFail(stakeholderName);
       const topicMaxPoints =
         ((stakeholderWeight * t.weight) / sumOfTopicWeights) * 1000;
-      const aspects = filterAspectsOfTopic(balanceSheet.ratings, t.shortName);
+      const aspects = filterAspectsOfTopic(ratings, t.shortName);
       const updatedAspects = [
         ...this.updatedPositiveAspects(topicMaxPoints, aspects),
         ...this.updatedNegativeAspects(topicMaxPoints, aspects),
@@ -59,7 +58,7 @@ export class RatingsUpdater {
       );
     }
 
-    return { ...balanceSheet, ratings: updatedRatings };
+    return updatedRatings;
   }
 
   private updatedPositiveAspects(

@@ -12,8 +12,8 @@ describe('BalanceSheetReader', () => {
     const pathToCsv = path.join(__dirname, 'full_5_0_6.xlsx');
     const wb: Workbook = await new Workbook().xlsx.readFile(pathToCsv);
 
-    const balancesheet = balanceSheetReader.readFromWorkbook(wb);
-    const companyFacts = balancesheet.companyFacts;
+    const balanceSheetEntity = balanceSheetReader.readFromWorkbook(wb, []);
+    const companyFacts = balanceSheetEntity.companyFacts;
     expect(companyFacts.totalPurchaseFromSuppliers).toBe(200000);
     expect(companyFacts.profit).toBe(456456456);
     expect(companyFacts.financialCosts).toBe(266);
@@ -59,8 +59,8 @@ describe('BalanceSheetReader', () => {
     const balanceSheetReader = new BalanceSheetReader();
     const pathToCsv = path.join(__dirname, 'full_5_0_6.xlsx');
     const wb: Workbook = await new Workbook().xlsx.readFile(pathToCsv);
-    const balancesheet = balanceSheetReader.readFromWorkbook(wb);
-    const ratings = balancesheet.ratings;
+    const balanceSheetEntity = balanceSheetReader.readFromWorkbook(wb, []);
+    const ratings = balanceSheetEntity.ratings;
     expect(ratings).toHaveLength(80);
     expect(ratings).toContainEqual({
       shortName: 'E3.2',
@@ -78,8 +78,8 @@ describe('BalanceSheetReader', () => {
     const balanceSheetReader = new BalanceSheetReader();
     const pathToCsv = path.join(__dirname, 'full_5_0_6.xlsx');
     const wb: Workbook = await new Workbook().xlsx.readFile(pathToCsv);
-    const balancesheet = balanceSheetReader.readFromWorkbook(wb);
-    expect(balancesheet.version).toBe(BalanceSheetVersion.v5_0_6);
-    expect(balancesheet.type).toBe(BalanceSheetType.Full);
+    const balanceSheetEntity = balanceSheetReader.readFromWorkbook(wb, []);
+    expect(balanceSheetEntity.version).toBe(BalanceSheetVersion.v5_0_6);
+    expect(balanceSheetEntity.type).toBe(BalanceSheetType.Full);
   });
 });
