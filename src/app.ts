@@ -7,7 +7,7 @@ import errorMiddleware from './middleware/error.middleware';
 
 import { LoggingService } from './logging';
 import { BalanceSheetService } from './services/balance.sheet.service';
-import { Configuration } from './configuration.reader';
+import { Configuration } from './reader/configuration.reader';
 import { UserController } from './controllers/user.controller';
 import { UserService } from './services/user.service';
 import { HealthCheckService } from './services/health.check.service';
@@ -24,6 +24,8 @@ import { OrganizationController } from './controllers/organization.controller';
 import { OrganizationService } from './services/organization.service';
 import { DataSource } from 'typeorm';
 import { IRepoProvider } from './repositories/repo.provider';
+import { WorkbookController } from './controllers/workbook.controller';
+import { WorkbookService } from './services/workbook.service';
 
 class App {
   public readonly app: Application;
@@ -37,6 +39,7 @@ class App {
   private organizationController: OrganizationController;
   private docsController: DocsController;
   private authentication: Authentication;
+  private workbookController: WorkbookController;
 
   constructor(
     dataSource: DataSource,
@@ -62,6 +65,10 @@ class App {
     this.industryController = new IndustryController(
       this.app,
       new IndustryService()
+    );
+    this.workbookController = new WorkbookController(
+      this.app,
+      new WorkbookService(repoProvider)
     );
     const userService = new UserService(
       dataSource,

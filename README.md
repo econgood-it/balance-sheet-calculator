@@ -73,7 +73,8 @@ application on a different port just replace the _4000_ by the your port.
     "DOCS_USER": "docsuser",
     "DOCS_PASSWORD": "docspwd",
     "JWT_SECRET": "6,AfDvPl<#{qPYu?-~",
-    "PORT": 4000
+    "PORT": 4000,
+    "WORKBOOK_API_TOKEN": "apitoken"
   }
 }
 ```

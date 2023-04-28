@@ -1,7 +1,7 @@
 import supertest from 'supertest';
 import { DataSource } from 'typeorm';
 import { Application } from 'express';
-import { ConfigurationReader } from '../../src/configuration.reader';
+import { ConfigurationReader } from '../../src/reader/configuration.reader';
 import { DatabaseSourceCreator } from '../../src/databaseSourceCreator';
 import App from '../../src/app';
 import { TokenProvider } from '../TokenProvider';
@@ -18,7 +18,8 @@ describe('Authentication', () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
       configuration
     );
-    app = new App(dataSource, configuration, new RepoProvider()).app;
+    app = new App(dataSource, configuration, new RepoProvider(configuration))
+      .app;
   });
 
   afterAll(async () => {

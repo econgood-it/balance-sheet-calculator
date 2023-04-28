@@ -1,6 +1,6 @@
 import { Application } from 'express';
 import { DocsService } from '../services/docs.service';
-import { Configuration } from '../configuration.reader';
+import { Configuration } from '../reader/configuration.reader';
 const swaggerUi = require('swagger-ui-express');
 export class DocsController {
   private docsService: DocsService;

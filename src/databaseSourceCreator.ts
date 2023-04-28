@@ -1,5 +1,5 @@
 import { DataSource } from 'typeorm';
-import { Configuration } from './configuration.reader';
+import { Configuration } from './reader/configuration.reader';
 
 export class DatabaseSourceCreator {
   public static async createDataSource(

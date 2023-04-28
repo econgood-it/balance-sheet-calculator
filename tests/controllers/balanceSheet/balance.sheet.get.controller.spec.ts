@@ -1,6 +1,6 @@
 import { DatabaseSourceCreator } from '../../../src/databaseSourceCreator';
 import App from '../../../src/app';
-import { ConfigurationReader } from '../../../src/configuration.reader';
+import { ConfigurationReader } from '../../../src/reader/configuration.reader';
 
 import { DataSource } from 'typeorm';
 import { Application } from 'express';
@@ -30,7 +30,8 @@ describe('Balance Sheet Controller', () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
       configuration
     );
-    app = new App(dataSource, configuration, new RepoProvider()).app;
+    app = new App(dataSource, configuration, new RepoProvider(configuration))
+      .app;
     token = `Bearer ${await TokenProvider.provideValidUserToken(
       app,
       dataSource

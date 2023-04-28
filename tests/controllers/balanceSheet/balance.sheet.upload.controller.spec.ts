@@ -3,7 +3,7 @@ import { DataSource, Repository } from 'typeorm';
 import { DatabaseSourceCreator } from '../../../src/databaseSourceCreator';
 import App from '../../../src/app';
 import { Application } from 'express';
-import { ConfigurationReader } from '../../../src/configuration.reader';
+import { ConfigurationReader } from '../../../src/reader/configuration.reader';
 
 import { TokenProvider } from '../../TokenProvider';
 import { BalanceSheetEntity } from '../../../src/entities/balance.sheet.entity';
@@ -27,7 +27,8 @@ describe('Balance Sheet Controller', () => {
       configuration
     );
     balaneSheetRepository = dataSource.getRepository(BalanceSheetEntity);
-    app = new App(dataSource, configuration, new RepoProvider()).app;
+    app = new App(dataSource, configuration, new RepoProvider(configuration))
+      .app;
     tokenHeader.value = `Bearer ${await TokenProvider.provideValidUserToken(
       app,
       dataSource

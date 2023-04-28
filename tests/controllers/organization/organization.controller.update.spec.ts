@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm';
 import { Application } from 'express';
-import { ConfigurationReader } from '../../../src/configuration.reader';
+import { ConfigurationReader } from '../../../src/reader/configuration.reader';
 import App from '../../../src/app';
 import { AuthHeader, TokenProvider } from '../../TokenProvider';
 import supertest, { Response } from 'supertest';
@@ -25,7 +25,7 @@ describe('Organization Controller', () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
       configuration
     );
-    const repoProvider = new RepoProvider();
+    const repoProvider = new RepoProvider(configuration);
     organizationRepo = repoProvider.getOrganizationEntityRepo(
       dataSource.manager
     );

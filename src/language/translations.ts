@@ -11,14 +11,7 @@ const DefaultTranslations = {
   en: '',
 };
 type ValidLanguage = keyof Translations;
-export const createTranslations = (
-  lng: keyof Translations,
-  value: string
-): Translations => {
-  const defaultTranslations = { ...DefaultTranslations };
-  defaultTranslations[lng] = value;
-  return defaultTranslations;
-};
+
 export const parseLanguageParameter = (lngParam: any): keyof Translations => {
   if (DefaultTranslations[lngParam as ValidLanguage] === '') {
     return lngParam as ValidLanguage;

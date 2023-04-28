@@ -3,7 +3,7 @@ import { OpenAPIObject } from 'openapi3-ts';
 import { buildSwaggerDoc } from '../openapi/swagger.doc';
 import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
 import { z } from 'zod';
-import { Configuration } from '../configuration.reader';
+import { Configuration } from '../reader/configuration.reader';
 
 extendZodWithOpenApi(z);
 

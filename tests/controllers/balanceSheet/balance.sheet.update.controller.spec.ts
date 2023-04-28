@@ -3,7 +3,7 @@ import { DataSource } from 'typeorm';
 import { DatabaseSourceCreator } from '../../../src/databaseSourceCreator';
 import App from '../../../src/app';
 import { Application } from 'express';
-import { ConfigurationReader } from '../../../src/configuration.reader';
+import { ConfigurationReader } from '../../../src/reader/configuration.reader';
 
 import { TokenProvider } from '../../TokenProvider';
 import { CORRELATION_HEADER_NAME } from '../../../src/middleware/correlation.id.middleware';
@@ -28,7 +28,8 @@ describe('Update endpoint of Balance Sheet Controller', () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
       configuration
     );
-    app = new App(dataSource, configuration, new RepoProvider()).app;
+    app = new App(dataSource, configuration, new RepoProvider(configuration))
+      .app;
     tokenHeader.value = `Bearer ${await TokenProvider.provideValidUserToken(
       app,
       dataSource

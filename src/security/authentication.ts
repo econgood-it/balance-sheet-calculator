@@ -4,7 +4,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { DataSource } from 'typeorm';
 import UnauthorizedException from '../exceptions/unauthorized.exception';
 import { Role } from '../entities/enums';
-import { Configuration } from '../configuration.reader';
+import { Configuration } from '../reader/configuration.reader';
 import { BasicStrategy } from 'passport-http';
 import { HeaderAPIKeyStrategy } from 'passport-headerapikey';
 import { IRepoProvider } from '../repositories/repo.provider';

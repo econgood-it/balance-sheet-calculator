@@ -19,7 +19,8 @@ export class Configuration {
     public readonly appPort: number,
     public readonly jwtSecret: string,
     public readonly docsUser: string,
-    public readonly docsPassword: string
+    public readonly docsPassword: string,
+    public readonly workbookApiToken: string
   ) {
     const basePath = [Environment.TEST, Environment.PROD].includes(environment)
       ? 'dist/'
@@ -48,6 +49,7 @@ export class ConfigurationReader {
     const adminEmail = process.env.ADMIN_EMAIL;
     const adminPassword = process.env.ADMIN_PASSWORD;
     const jwtsecret = process.env.JWT_SECRET;
+    const workbookApiToken = process.env.WORKBOOK_API_TOKEN;
     ConfigurationReader.checkIfEnvironmentVariableIsSet('DB_NAME', dbName);
     ConfigurationReader.checkIfEnvironmentVariableIsSet('DB_PORT', dbPort);
     ConfigurationReader.checkIfEnvironmentVariableIsSet('DB_HOST', dbPort);
@@ -78,6 +80,10 @@ export class ConfigurationReader {
       jwtsecret
     );
     ConfigurationReader.checkIfEnvironmentVariableIsSet('PORT', appPort);
+    ConfigurationReader.checkIfEnvironmentVariableIsSet(
+      'WORKBOOK_API_TOKEN',
+      workbookApiToken
+    );
     let environmentAsEnum: Environment;
     if (environment === 'DEV') {
       environmentAsEnum = Environment.DEV;
@@ -102,7 +108,8 @@ export class ConfigurationReader {
       Number(appPort),
       jwtsecret as string,
       docsUser as string,
-      docsPassword as string
+      docsPassword as string,
+      workbookApiToken as string
     );
   }
 

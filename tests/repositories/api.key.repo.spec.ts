@@ -2,7 +2,7 @@ import { User } from '../../src/entities/user';
 import { Role } from '../../src/entities/enums';
 import { DataSource } from 'typeorm';
 import { DatabaseSourceCreator } from '../../src/databaseSourceCreator';
-import { ConfigurationReader } from '../../src/configuration.reader';
+import { ConfigurationReader } from '../../src/reader/configuration.reader';
 import { ApiKey } from '../../src/entities/api.key';
 import { v4 as uuid4 } from 'uuid';
 import {

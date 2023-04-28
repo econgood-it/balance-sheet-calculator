@@ -6,7 +6,7 @@ import { OpenAPIObject } from 'openapi3-ts';
 import { registerSchemas } from './schemas';
 import { registerParams } from './params';
 import { registerPaths } from './paths/paths';
-import { Configuration, Environment } from '../configuration.reader';
+import { Configuration, Environment } from '../reader/configuration.reader';
 
 export function buildSwaggerDoc(configuration: Configuration): OpenAPIObject {
   const registry = new OpenAPIRegistry();

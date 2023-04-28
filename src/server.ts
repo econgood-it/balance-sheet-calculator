@@ -3,7 +3,7 @@ import { DatabaseSourceCreator } from './databaseSourceCreator';
 import { DataSource } from 'typeorm';
 
 import { LoggingService } from './logging';
-import { ConfigurationReader } from './configuration.reader';
+import { ConfigurationReader } from './reader/configuration.reader';
 import { AdminAccountCreator } from './admin.account.creator';
 import { Role } from './entities/enums';
 import App from './app';
@@ -24,7 +24,11 @@ const configuration = ConfigurationReader.read();
 DatabaseSourceCreator.createDataSourceAndRunMigrations(configuration)
   .then(async (dataSource: DataSource) => {
     await AdminAccountCreator.saveAdmin(dataSource, configuration);
-    const app = new App(dataSource, configuration, new RepoProvider());
+    const app = new App(
+      dataSource,
+      configuration,
+      new RepoProvider(configuration)
+    );
     app.start();
   })
   .catch((error) => {

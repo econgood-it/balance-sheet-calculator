@@ -1,6 +1,6 @@
 import { DatabaseSourceCreator } from '../../src/databaseSourceCreator';
 import { DataSource } from 'typeorm';
-import { ConfigurationReader } from '../../src/configuration.reader';
+import { ConfigurationReader } from '../../src/reader/configuration.reader';
 import { BalanceSheetEntity } from '../../src/entities/balance.sheet.entity';
 import { Role } from '../../src/entities/enums';
 import { User } from '../../src/entities/user';

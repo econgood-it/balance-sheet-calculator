@@ -1,5 +1,5 @@
 import { DataSource } from 'typeorm';
-import { Configuration } from './configuration.reader';
+import { Configuration } from './reader/configuration.reader';
 import { User } from './entities/user';
 import { Role } from './entities/enums';
 

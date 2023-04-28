@@ -1,6 +1,6 @@
 import { DataSource, Repository } from 'typeorm';
 import { Application } from 'express';
-import { ConfigurationReader } from '../../src/configuration.reader';
+import { ConfigurationReader } from '../../src/reader/configuration.reader';
 import { DatabaseSourceCreator } from '../../src/databaseSourceCreator';
 import App from '../../src/app';
 import { TokenProvider } from '../TokenProvider';
@@ -33,7 +33,8 @@ describe('User Controller', () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
       configuration
     );
-    app = new App(dataSource, configuration, new RepoProvider()).app;
+    app = new App(dataSource, configuration, new RepoProvider(configuration))
+      .app;
     userRepository = dataSource.getRepository(User);
     userTokenHeader.value = `Bearer ${await TokenProvider.provideValidUserToken(
       app,
