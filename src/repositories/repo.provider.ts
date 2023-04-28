@@ -15,7 +15,6 @@ import {
   WorkbookEntityRepo,
 } from './workbook.entity.repo';
 import { Configuration } from '../reader/configuration.reader';
-import { NotImplementedError } from '../exceptions/not.implemented.error';
 
 export interface IRepoProvider {
   getOrganizationEntityRepo(
