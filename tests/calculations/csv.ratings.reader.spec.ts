@@ -1,10 +1,10 @@
 import * as path from 'path';
-import { RatingsReader } from '../../src/reader/ratings.reader';
+import { CsvRatingsReader } from './csv.ratings.reader';
 import { Rating } from '../../src/models/rating';
 
 describe('RatingsReader', () => {
   it('should read ratings from csv', async () => {
-    const ratingsReader = new RatingsReader();
+    const ratingsReader = new CsvRatingsReader();
     const pathToCsv = path.join(__dirname, 'rating.csv');
     const ratings: Rating[] = await ratingsReader.readRatingsFromCsv(pathToCsv);
     expect(ratings[0]).toMatchObject({

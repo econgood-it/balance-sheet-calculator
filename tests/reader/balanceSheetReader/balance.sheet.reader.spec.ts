@@ -82,4 +82,13 @@ describe('BalanceSheetReader', () => {
     expect(balanceSheetEntity.version).toBe(BalanceSheetVersion.v5_0_6);
     expect(balanceSheetEntity.type).toBe(BalanceSheetType.Full);
   });
+
+  it('should read company facts from excel', async () => {
+    const balanceSheetReader = new BalanceSheetReader();
+    const pathToCsv = path.join(__dirname, 'compact_5_0_6.xlsx');
+    const wb: Workbook = await new Workbook().xlsx.readFile(pathToCsv);
+
+    const balanceSheetEntity = balanceSheetReader.readFromWorkbook(wb, []);
+    console.log(balanceSheetEntity.toBalanceSheet().ratings)
+  })
 });

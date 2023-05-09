@@ -2,7 +2,7 @@ import { RatingsUpdater } from '../../src/calculations/ratings.updater';
 
 import { Assertions } from '../Assertions';
 import * as path from 'path';
-import { RatingsReader } from '../../src/reader/ratings.reader';
+import { CsvRatingsReader } from './csv.ratings.reader';
 
 import { CalcResults, Calculator } from '../../src/calculations/calculator';
 import { RegionProvider } from '../../src/providers/region.provider';
@@ -23,7 +23,7 @@ describe('Ratings updater', () => {
     fileNameOfRatingExpectedData: string,
     companyFacts: CompanyFacts
   ) {
-    const testDataReader = new RatingsReader();
+    const testDataReader = new CsvRatingsReader();
     const testDataDir = path.resolve(__dirname, '../testData');
     let pathToCsv = path.join(testDataDir, fileNameOfRatingInputData);
     const ratings: Rating[] = await testDataReader.readRatingsFromCsv(

@@ -1,5 +1,5 @@
 import { Workbook, Row, Worksheet } from 'exceljs';
-import { Rating } from '../models/rating';
+import { Rating } from '../../src/models/rating';
 
 interface Headers {
   shortNameIndex: number;
@@ -12,7 +12,7 @@ interface Headers {
   isPositive: number;
 }
 
-export class RatingsReader {
+export class CsvRatingsReader {
   private static readonly DEFAULT_HEADERS: Headers = {
     shortNameIndex: 1,
     nameIndex: 2,
@@ -26,7 +26,7 @@ export class RatingsReader {
 
   public async readRatingsFromCsv(
     path: string,
-    headers: Headers = RatingsReader.DEFAULT_HEADERS
+    headers: Headers = CsvRatingsReader.DEFAULT_HEADERS
   ): Promise<Rating[]> {
     const wb: Workbook = new Workbook();
     const sheet: Worksheet = await wb.csv.readFile(path, {
