@@ -8,13 +8,18 @@ import { TokenProvider } from '../../TokenProvider';
 import { BalanceSheetEntity } from '../../../src/entities/balance.sheet.entity';
 import { CORRELATION_HEADER_NAME } from '../../../src/middleware/correlation.id.middleware';
 import { INDUSTRY_CODE_FOR_FINANCIAL_SERVICES } from '../../../src/models/company.facts';
-import { companyFactsJsonFactory } from '../../../src/openapi/examples';
+import {
+  balanceSheetJsonFactory,
+  companyFactsFactory,
+  companyFactsJsonFactory,
+} from '../../../src/openapi/examples';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import { Rating, RatingResponseBody } from '../../../src/models/rating';
 import { RepoProvider } from '../../../src/repositories/repo.provider';
+import { RatingsFactory } from '../../../src/factories/ratings.factory';
 
 describe('Balance Sheet Controller', () => {
   let dataSource: DataSource;
@@ -59,7 +64,7 @@ describe('Balance Sheet Controller', () => {
   beforeEach(() => {
     balanceSheetJson = {
       type: BalanceSheetType.Full,
-      version: BalanceSheetVersion.v5_0_4,
+      version: BalanceSheetVersion.v5_0_8,
       companyFacts: companyFactsJsonFactory.empty(),
     };
   });
@@ -84,6 +89,33 @@ describe('Balance Sheet Controller', () => {
       },
     });
     expect(foundBalanceSheet).toBeDefined();
+  });
+
+  it('creates BalanceSheet of type compact', async () => {
+    const testApp = supertest(app);
+    const response = await testApp
+      .post(endpointPath)
+      .set(tokenHeader.key, tokenHeader.value)
+      .send(balanceSheetJsonFactory.minimalCompactV506());
+    expect(response.status).toEqual(200);
+    const expectedType = balanceSheetJsonFactory.minimalCompactV506().type;
+    const expectedVersion =
+      balanceSheetJsonFactory.minimalCompactV506().version;
+    const expectedRatings = RatingsFactory.createDefaultRatings(
+      expectedType,
+      expectedVersion
+    );
+    const balanceSheetEntity = new BalanceSheetEntity(
+      response.body.id,
+      {
+        type: expectedType,
+        version: expectedVersion,
+        companyFacts: companyFactsFactory.emptyWithoutOptionalValues(),
+        ratings: expectedRatings,
+      },
+      []
+    );
+    expect(response.body).toMatchObject(balanceSheetEntity.toJson('en'));
   });
 
   it('creates BalanceSheet from company facts without saving results', async () => {
@@ -217,8 +249,8 @@ describe('Balance Sheet Controller', () => {
       .post(endpointPath)
       .set(tokenHeader.key, tokenHeader.value)
       .send({
-        type: BalanceSheetType.Compact,
-        version: BalanceSheetVersion.v5_0_4,
+        type: BalanceSheetType.Full,
+        version: BalanceSheetVersion.v5_0_8,
         companyFacts,
       });
     expect(response.status).toEqual(200);

@@ -12,9 +12,12 @@ export class RatingsFactory {
     balanceSheetType: BalanceSheetType,
     balanceSheetVersion: BalanceSheetVersion
   ): Rating[] {
+    const fileName = `ratings_${balanceSheetType
+      .toString()
+      .toLowerCase()}_${balanceSheetVersion.toString().toLowerCase()}.json`;
     const pathToRatings = path.join(
       path.resolve(__dirname, '../files/factories/'),
-      'ratings_5.08.json'
+      fileName
     );
     return RatingsFactory.fromFile(pathToRatings);
   }

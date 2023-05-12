@@ -20,7 +20,7 @@ describe('Transform', () => {
   it('json with a merged rating to a balance sheet entity', () => {
     const json = {
       type: BalanceSheetType.Full,
-      version: BalanceSheetVersion.v5_0_4,
+      version: BalanceSheetVersion.v5_0_8,
       ratings: [
         { shortName: 'A1.1', estimations: 5, weight: 1 },
         { shortName: 'D1', weight: 1.5 },
@@ -74,7 +74,7 @@ describe('Transform', () => {
   it('json with default rating to balance sheet entity', async () => {
     const json = {
       type: BalanceSheetType.Full,
-      version: BalanceSheetVersion.v5_0_4,
+      version: BalanceSheetVersion.v5_0_8,
     };
     const result = new BalanceSheetCreateRequest(json).toBalanceEntity([]);
 
@@ -89,7 +89,7 @@ describe('Transform', () => {
     const companyFactsAsJson = companyFactsJsonFactory.nonEmpty();
     const json = {
       type: BalanceSheetType.Full,
-      version: BalanceSheetVersion.v5_0_4,
+      version: BalanceSheetVersion.v5_0_8,
       companyFacts: companyFactsAsJson,
     };
     const result = new BalanceSheetCreateRequest(json).toBalanceEntity([]);

@@ -49,7 +49,7 @@ describe('Balance Sheet Controller', () => {
   beforeEach(() => {
     balanceSheetJson = {
       type: BalanceSheetType.Full,
-      version: BalanceSheetVersion.v5_0_4,
+      version: BalanceSheetVersion.v5_0_8,
       companyFacts: companyFactsJsonFactory.empty(),
     };
   });

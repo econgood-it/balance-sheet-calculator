@@ -22,6 +22,10 @@ export const balanceSheetJsonFactory = {
       BalanceSheetVersion.v5_0_8
     ),
   }),
+  minimalCompactV506: () => ({
+    type: BalanceSheetType.Compact,
+    version: BalanceSheetVersion.v5_0_6,
+  }),
 };
 export const companyFactsFactory = {
   empty: (): CompanyFacts => ({
@@ -42,6 +46,24 @@ export const companyFactsFactory = {
     employeesFractions: [],
     industrySectors: [],
     mainOriginOfOtherSuppliers: { countryCode: DEFAULT_COUNTRY_CODE, costs: 0 },
+  }),
+  emptyWithoutOptionalValues: (): CompanyFacts => ({
+    totalPurchaseFromSuppliers: 0,
+    totalStaffCosts: 0,
+    profit: 0,
+    financialCosts: 0,
+    incomeFromFinancialInvestments: 0,
+    additionsToFixedAssets: 0,
+    turnover: 0,
+    totalAssets: 0,
+    financialAssetsAndCashBalance: 0,
+    numberOfEmployees: 0,
+    averageJourneyToWorkForStaffInKm: 0,
+    isB2B: false,
+    supplyFractions: [],
+    employeesFractions: [],
+    industrySectors: [],
+    mainOriginOfOtherSuppliers: { costs: 0 },
   }),
   nonEmpty: (): CompanyFacts => ({
     totalPurchaseFromSuppliers: 10_000,

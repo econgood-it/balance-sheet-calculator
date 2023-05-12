@@ -47,8 +47,8 @@ describe('Update endpoint of Balance Sheet Controller', () => {
       .post(endpointPath)
       .set(tokenHeader.key, tokenHeader.value)
       .send({
-        type: BalanceSheetType.Compact,
-        version: BalanceSheetVersion.v5_0_4,
+        type: BalanceSheetType.Full,
+        version: BalanceSheetVersion.v5_0_8,
         companyFacts: companyFactsJsonFactory.empty(),
       });
     const balanceSheetUpdate = {
@@ -91,7 +91,7 @@ describe('Update endpoint of Balance Sheet Controller', () => {
       .set(tokenHeader.key, tokenHeader.value)
       .send({
         type: BalanceSheetType.Full,
-        version: BalanceSheetVersion.v5_0_6,
+        version: BalanceSheetVersion.v5_0_8,
         companyFacts: companyFactsJsonFactory.nonEmpty(),
       });
     const balanceSheetUpdate = {
@@ -116,15 +116,22 @@ describe('Update endpoint of Balance Sheet Controller', () => {
   });
 
   it('should update rating of full balance sheet', async () => {
-    await testEstimationsUpdate(BalanceSheetType.Full);
+    await testEstimationsUpdate(
+      BalanceSheetType.Full,
+      BalanceSheetVersion.v5_0_8
+    );
   });
 
   it('should update rating of compact balance sheet', async () => {
-    await testEstimationsUpdate(BalanceSheetType.Compact);
+    await testEstimationsUpdate(
+      BalanceSheetType.Compact,
+      BalanceSheetVersion.v5_0_6
+    );
   });
 
   async function testEstimationsUpdate(
-    balanceSheetType: BalanceSheetType
+    balanceSheetType: BalanceSheetType,
+    balanceSheetVersion: BalanceSheetVersion
   ): Promise<void> {
     const testApp = supertest(app);
 
@@ -133,7 +140,7 @@ describe('Update endpoint of Balance Sheet Controller', () => {
       .set(tokenHeader.key, tokenHeader.value)
       .send({
         type: balanceSheetType,
-        version: BalanceSheetVersion.v5_0_4,
+        version: balanceSheetVersion,
         companyFacts: companyFactsJsonFactory.nonEmpty(),
       });
     const balanceSheetUpdate = {
@@ -191,8 +198,8 @@ describe('Update endpoint of Balance Sheet Controller', () => {
         .post(endpointPath)
         .set(tokenHeader.key, tokenHeader.value)
         .send({
-          type: BalanceSheetType.Compact,
-          version: BalanceSheetVersion.v5_0_4,
+          type: BalanceSheetType.Full,
+          version: BalanceSheetVersion.v5_0_8,
           companyFacts: companyFactsJsonFactory.nonEmpty(),
         });
       const balanceSheetUpdate = {

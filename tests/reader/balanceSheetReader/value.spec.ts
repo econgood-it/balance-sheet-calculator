@@ -53,13 +53,8 @@ describe('Value', () => {
 
   it('should be parsed as version', async () => {
     let value = new Value('5.04');
-    expect(value.parseAsVersion()).toBe(BalanceSheetVersion.v5_0_4);
-    value = new Value('5.05');
-    expect(value.parseAsVersion()).toBe(BalanceSheetVersion.v5_0_5);
     value = new Value('5.06');
     expect(value.parseAsVersion()).toBe(BalanceSheetVersion.v5_0_6);
-    value = new Value('5.07');
-    expect(value.parseAsVersion()).toBe(BalanceSheetVersion.v5_0_7);
     value = new Value('5.08');
     expect(value.parseAsVersion()).toBe(BalanceSheetVersion.v5_0_8);
   });
