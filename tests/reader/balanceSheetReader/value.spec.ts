@@ -30,6 +30,7 @@ describe('Value', () => {
     expect(value.parseAsOptionalBoolean()).toBeTruthy();
     value = new Value('no');
     expect(value.parseAsOptionalBoolean()).toBeFalsy();
+    expect(value.parseAsOptionalBoolean()).toBeDefined();
     value = new Value('');
     expect(value.parseAsOptionalBoolean()).toBeUndefined();
   });
@@ -49,6 +50,11 @@ describe('Value', () => {
     expect(value.parseAsOptionalNumber().get() as number).toBe(0.93);
     value = new Value('-');
     expect(value.parseAsOptionalNumber().isPresent()).toBeFalsy();
+  });
+
+  it('with comma seperator should be parsed as number', async () => {
+    const value = new Value('0,0');
+    expect(value.number).toBe(0);
   });
 
   it('should be parsed as version', async () => {

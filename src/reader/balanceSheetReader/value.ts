@@ -21,6 +21,10 @@ export class Value {
         return true;
       case 'ja':
         return true;
+      case 'no':
+        return false;
+      case 'nein':
+        return false;
       default:
         return undefined;
     }
