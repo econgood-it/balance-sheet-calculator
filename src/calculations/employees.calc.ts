@@ -68,13 +68,22 @@ export class EmployeesCalc {
     );
   }
 
-  // In excel this is equal to the cell $'11.Region'.G10
+  /**
+   * In excel this is equal to the cell $'11.Region'.G10
+   * @param companyFacts
+   * @private
+   */
   private calculateNormedEmployeesRisk(companyFacts: CompanyFacts): number {
     const employeesRisk = this.employeesRisks(companyFacts);
 
     return employeesRisk + this.employeesRisksNormalizer(companyFacts);
   }
 
+  /**
+   * In excel this is equal to the cell $'11.Region'.I14
+   * @param companyFacts
+   * @private
+   */
   private calculateItucAverage(companyFacts: CompanyFacts): number {
     let result = 0;
     for (const employeesFraction of companyFacts.employeesFractions) {

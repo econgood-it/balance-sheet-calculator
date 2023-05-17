@@ -20,6 +20,11 @@ export class SocialEnvironmentCalc {
     };
   }
 
+  /**
+   * In Excel this is equal to the cell $'11.Weighting'.I20
+   * @param companyFacts
+   * @private
+   */
   private calcProfitInPercentOfTotalSales(
     companyFacts: CompanyFacts
   ): Option<number> {
@@ -28,6 +33,11 @@ export class SocialEnvironmentCalc {
       : some(companyFacts.profit / companyFacts.turnover);
   }
 
+  /**
+   * In Excel this is equal to the cell $'11.Weighting'.H35
+   * @param companyFacts
+   * @private
+   */
   private checkCompanysActivityInMiningOrConstructionIndustry(
     companyFacts: CompanyFacts
   ): boolean {

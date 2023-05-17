@@ -96,7 +96,11 @@ export class StakeholderWeightCalculator {
       : this.defaultIfDenominatorIsZero;
   }
 
-  // =WENNFEHLER((60*(I19+I21+I22+G24)/($'11.Region'.G3+$'11.Region'.G10+(I19+I21+I22+G24))*10);100)
+  /**
+   * In excel this is equal to the cell $'9.Weighting'.I50
+   *  =WENNFEHLER((60*(I19+I21+I22+G24)/($'11.Region'.G3+$'11.Region'.G10+(I19+I21+I22+G24))*10);100)
+   * @param calcResults
+   */
   public async calculateFinancialRisk(
     calcResults: CalcResults
   ): Promise<number> {
@@ -110,7 +114,13 @@ export class StakeholderWeightCalculator {
       : this.defaultIfDenominatorIsZero;
   }
 
-  // =WENNFEHLER((60*$'11.Region'.G10/($'11.Region'.G3+$'11.Region'.G10+(I19+I21+I22+G24))*10);100)
+  /**
+   * In excel this is equal to the cell $'9.Weighting'.I51
+   *
+   * =WENNFEHLER((60*$'11.Region'.G10/($'11.Region'.G3+$'11.Region'.G10+(I19+I21+I22+G24))*10);100)
+   * @param calcResults
+   */
+
   public async calculateEmployeesRisk(
     calcResults: CalcResults
   ): Promise<number> {

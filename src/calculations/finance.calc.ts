@@ -54,7 +54,11 @@ export class FinanceCalc {
     );
   }
 
-  // In Excel Weight.E23
+  /**
+   * In Excel Weight.E23
+   * @param companyFacts
+   * @private
+   */
   private calculateEconomicRatio(companyFacts: CompanyFacts): Option<number> {
     return companyFacts.totalAssets === 0
       ? none()
