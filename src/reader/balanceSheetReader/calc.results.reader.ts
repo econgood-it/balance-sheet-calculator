@@ -43,7 +43,7 @@ export class CalcResultsReader {
         companyIsActiveInFinancialServices:
           cr.read(weightingSheet, 35, 'H').text ===
           INDUSTRY_CODE_FOR_FINANCIAL_SERVICES,
-        economicRatio: cr.read(weightingSheet, 23, 'E').number,
+        economicRatio: cr.read(weightingSheet, 23, 'E').numberWithDefault0,
         economicRatioE22: cr.read(weightingSheet, 22, 'E').number,
         sumOfFinancialAspects,
       },
