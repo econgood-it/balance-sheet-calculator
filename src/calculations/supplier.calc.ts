@@ -5,6 +5,7 @@ import {
   MainOriginOfOtherSuppliers,
   SupplyFraction,
 } from '../models/company.facts';
+import { DEFAULT_COUNTRY_CODE } from '../models/region';
 
 export interface SupplyCalcResults {
   supplyRiskSum: number;
@@ -105,16 +106,20 @@ export class SupplierCalc {
   ): number {
     let result: number = 0;
     for (const supplyFraction of companyFacts.supplyFractions) {
-      const ituc = supplyFraction.countryCode
-        ? this.regionProvider.getOrFail(supplyFraction.countryCode).ituc
-        : SupplierCalc.DEFAULT_ITUC;
+      // TODO: EXCEL Limitation: Excel does not consider ITUC of country code AWO(World)
+      const ituc =
+        supplyFraction.countryCode &&
+        supplyFraction.countryCode !== DEFAULT_COUNTRY_CODE
+          ? this.regionProvider.getOrFail(supplyFraction.countryCode).ituc
+          : SupplierCalc.DEFAULT_ITUC;
       result += ituc * this.supplyRisk(supplyFraction, supplyRiskSum);
     }
-    const ituc = companyFacts.mainOriginOfOtherSuppliers.countryCode
-      ? this.regionProvider.getOrFail(
-          companyFacts.mainOriginOfOtherSuppliers.countryCode
-        ).ituc
-      : SupplierCalc.DEFAULT_ITUC;
+    // TODO: EXCEL Limitation: Excel does not consider ITUC of country code AWO(World)
+    const countryCode = companyFacts.mainOriginOfOtherSuppliers.countryCode;
+    const ituc =
+      countryCode && countryCode !== DEFAULT_COUNTRY_CODE
+        ? this.regionProvider.getOrFail(countryCode).ituc
+        : SupplierCalc.DEFAULT_ITUC;
     result +=
       ituc *
       this.supplyRisk(companyFacts.mainOriginOfOtherSuppliers, supplyRiskSum);

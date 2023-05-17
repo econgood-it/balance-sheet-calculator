@@ -45,13 +45,14 @@ describe('Supply Calculator', () => {
     ];
     companyFactsWithSupplyFractions = {
       ...companyFactsFactory.empty(),
+      totalPurchaseFromSuppliers: 1500,
       supplyFractions,
     };
     regionProvider = await RegionProvider.fromVersion(
-      BalanceSheetVersion.v5_0_4
+      BalanceSheetVersion.v5_0_8
     );
     industryProvider = await IndustryProvider.fromVersion(
-      BalanceSheetVersion.v5_0_4
+      BalanceSheetVersion.v5_0_8
     );
   });
 
@@ -60,12 +61,12 @@ describe('Supply Calculator', () => {
       regionProvider,
       industryProvider
     ).calculate(companyFactsWithSupplyFractions);
-    expect(supplyCalcResults.supplyRiskSum).toBeCloseTo(3197.88426323363, 13);
+    expect(supplyCalcResults.supplyRiskSum).toBeCloseTo(2982.815370678042, 13);
     expect(supplyCalcResults.supplyChainWeight).toBeCloseTo(
-      1.62000609960581,
+      1.5930344232155826,
       13
     );
-    expect(supplyCalcResults.itucAverage).toBeCloseTo(3.96945539178631, 13);
+    expect(supplyCalcResults.itucAverage).toBeCloseTo(4.520531400615803, 13);
   });
 
   it('should calculate supply risk sum', async () => {
@@ -73,13 +74,13 @@ describe('Supply Calculator', () => {
       companyFactsWithSupplyFractions
     );
     regionProvider = await RegionProvider.fromVersion(
-      BalanceSheetVersion.v5_0_4
+      BalanceSheetVersion.v5_0_8
     );
     const supplyCalcResults: SupplyCalcResults = new SupplierCalc(
       regionProvider,
       industryProvider
     ).calculate(companyFacts);
-    expect(supplyCalcResults.supplyRiskSum).toBeCloseTo(4088.020319545176, 13);
+    expect(supplyCalcResults.supplyRiskSum).toBeCloseTo(3712.7287045169523, 13);
   });
 
   it('should calculate supply risk of mainOriginOfOtherSuppliers', async () => {
@@ -87,7 +88,7 @@ describe('Supply Calculator', () => {
       companyFactsWithSupplyFractions
     );
     regionProvider = await RegionProvider.fromVersion(
-      BalanceSheetVersion.v5_0_4
+      BalanceSheetVersion.v5_0_8
     );
     const supplyRiskSum = new SupplierCalc(
       regionProvider,
@@ -97,14 +98,14 @@ describe('Supply Calculator', () => {
       regionProvider,
       industryProvider
     ).supplyRisk(companyFacts.mainOriginOfOtherSuppliers, supplyRiskSum);
-    expect(supplyRisk).toBeCloseTo(0.21774257139959138, 13);
+    expect(supplyRisk).toBeCloseTo(0.1965975410352198, 13);
   });
   it('should calculate ituc average', async () => {
     const companyFacts = useNonDefaultMainOriginOfOtherSuppliers(
       companyFactsWithSupplyFractions
     );
     regionProvider = await RegionProvider.fromVersion(
-      BalanceSheetVersion.v5_0_4
+      BalanceSheetVersion.v5_0_8
     );
     const supplyRiskSum = new SupplierCalc(
       regionProvider,
@@ -114,7 +115,7 @@ describe('Supply Calculator', () => {
       regionProvider,
       industryProvider
     ).itucAverage(companyFacts, supplyRiskSum);
-    expect(itucAverage).toBeCloseTo(3.7583636819215593, 13);
+    expect(itucAverage).toBeCloseTo(4.614793748258338, 13);
   });
 
   it('should use default value for ituc if country code not provided in itucAverage calculation', async () => {
@@ -147,6 +148,41 @@ describe('Supply Calculator', () => {
       industryProvider
     ).itucAverage(companyFacts, supplyRiskSum);
     expect(itucAverage).toBeCloseTo(4.285944815273135, 13);
+  });
+
+  // TODO: EXCEL Limitation: Excel does not consider ITUC of country code AWO(World)
+  it('should calculate ituc average if some country code is AWO', async () => {
+    const companyFactsList = [
+      {
+        ...companyFactsFactory.empty(),
+        totalPurchaseFromSuppliers: 200,
+        mainOriginOfOtherSuppliers: {
+          countryCode: 'AWO',
+          costs: 100,
+        },
+      },
+      {
+        ...companyFactsFactory.empty(),
+        totalPurchaseFromSuppliers: 200,
+        supplyFractions: [
+          { countryCode: 'AWO', costs: 100, industryCode: 'DEU' },
+        ],
+      },
+    ];
+    regionProvider = await RegionProvider.fromVersion(
+      BalanceSheetVersion.v5_0_8
+    );
+    for (const companyFacts of companyFactsList) {
+      const supplyRiskSum = new SupplierCalc(
+        regionProvider,
+        industryProvider
+      ).supplyRiskSum(companyFacts);
+      const itucAverage = new SupplierCalc(
+        regionProvider,
+        industryProvider
+      ).itucAverage(companyFacts, supplyRiskSum);
+      expect(itucAverage).toBeCloseTo(2.99, 13);
+    }
   });
 
   it('should use default ppp index if country code not provided in supplyRiskSum calculation', async () => {
