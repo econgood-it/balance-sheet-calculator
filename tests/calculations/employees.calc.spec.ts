@@ -18,7 +18,7 @@ describe('Employees Calculator', () => {
       companyFacts: CompanyFacts
     ): Promise<EmployeesCalcResults> => {
       regionProvider = await RegionProvider.fromVersion(
-        BalanceSheetVersion.v5_0_4
+        BalanceSheetVersion.v5_0_8
       );
       return new EmployeesCalc(regionProvider).calculate(companyFacts);
     };
@@ -32,10 +32,10 @@ describe('Employees Calculator', () => {
     it('when employeesFractions array has size 1', async () => {
       const companyFacts: CompanyFacts = {
         ...companyFactsFactory.empty(),
-        employeesFractions: [{ countryCode: 'CRI', percentage: 3 }],
+        employeesFractions: [{ countryCode: 'CRI', percentage: 0.7 }],
       };
       const employeesCalcResults = await calc(companyFacts);
-      expect(employeesCalcResults.itucAverage).toBeCloseTo(9);
+      expect(employeesCalcResults.itucAverage).toBeCloseTo(1.4);
     });
 
     it('when employeesFractions contains item without country code', async () => {
@@ -71,12 +71,12 @@ describe('Employees Calculator', () => {
       const companyFacts: CompanyFacts = {
         ...companyFactsFactory.empty(),
         employeesFractions: [
-          { countryCode: 'CRI', percentage: 3 },
-          { countryCode: 'CHN', percentage: 2 },
+          { countryCode: 'CRI', percentage: 0.7 },
+          { countryCode: 'CHN', percentage: 0.2 },
         ],
       };
       const employeesCalcResults = await calc(companyFacts);
-      expect(employeesCalcResults.itucAverage).toBeCloseTo(19);
+      expect(employeesCalcResults.itucAverage).toBeCloseTo(2.4);
     });
   });
 
@@ -94,7 +94,7 @@ describe('Employees Calculator', () => {
     };
     beforeEach(async () => {
       regionProvider = await RegionProvider.fromVersion(
-        BalanceSheetVersion.v5_0_4
+        BalanceSheetVersion.v5_0_8
       );
     });
 

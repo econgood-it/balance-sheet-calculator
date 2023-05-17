@@ -15,10 +15,10 @@ describe('Stakeholder Weight Calculator', () => {
   beforeEach(async () => {
     companyFacts = companyFactsFactory.nonEmpty2();
     regionProvider = await RegionProvider.fromVersion(
-      BalanceSheetVersion.v5_0_4
+      BalanceSheetVersion.v5_0_8
     );
     industryProvider = await IndustryProvider.fromVersion(
-      BalanceSheetVersion.v5_0_4
+      BalanceSheetVersion.v5_0_8
     );
   });
 
@@ -32,7 +32,7 @@ describe('Stakeholder Weight Calculator', () => {
       await stakeholderWeightCalculator.calculateSupplierAndEmployeesRiskRatio(
         precalculations
       );
-    expect(result).toBeCloseTo(17.906127839775003, 13);
+    expect(result).toBeCloseTo(21.27827099197247, 13);
   });
 
   it('should calculate employees risk', async () => {
@@ -44,7 +44,7 @@ describe('Stakeholder Weight Calculator', () => {
     const result = await stakeholderWeightCalculator.calculateEmployeesRisk(
       precalculations
     );
-    expect(result).toBeCloseTo(497.44416815211025, 12);
+    expect(result).toBeCloseTo(470.73223919736705, 12);
   });
 
   it('should calculate financial risk', async () => {
@@ -56,7 +56,7 @@ describe('Stakeholder Weight Calculator', () => {
     const result = await stakeholderWeightCalculator.calculateFinancialRisk(
       precalculations
     );
-    expect(result).toBeCloseTo(66.74357616833971, 13);
+    expect(result).toBeCloseTo(86.71121881868801, 13);
   });
 
   it('should map to value between 60 and 300', () => {

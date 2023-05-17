@@ -30,10 +30,10 @@ describe('Ratings updater', () => {
       pathToCsv
     );
     const regionProvider = await RegionProvider.fromVersion(
-      BalanceSheetVersion.v5_0_4
+      BalanceSheetVersion.v5_0_8
     );
     const industryProvider = await IndustryProvider.fromVersion(
-      BalanceSheetVersion.v5_0_4
+      BalanceSheetVersion.v5_0_8
     );
     const calcResults: CalcResults = await new Calculator(
       regionProvider,
@@ -57,15 +57,16 @@ describe('Ratings updater', () => {
     const expected: Rating[] = await testDataReader.readRatingsFromCsv(
       pathToCsv
     );
+    expect(updatedRatings).toHaveLength(expected.length);
     Assertions.assertRatings(updatedRatings, expected);
   }
 
   it('should not calculate automatic weight', async () => {
     const regionProvider = await RegionProvider.fromVersion(
-      BalanceSheetVersion.v5_0_4
+      BalanceSheetVersion.v5_0_8
     );
     const industryProvider = await IndustryProvider.fromVersion(
-      BalanceSheetVersion.v5_0_4
+      BalanceSheetVersion.v5_0_8
     );
 
     const companyFacts = companyFactsFactory.nonEmpty();
