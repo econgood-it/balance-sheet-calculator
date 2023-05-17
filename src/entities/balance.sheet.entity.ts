@@ -126,15 +126,26 @@ export class BalanceSheetEntity {
   }
 
   public diff(otherBalanceSheet: BalanceSheet) {
-    const differences = diff(this.balanceSheet, otherBalanceSheet);
-    return differences?.map((d) =>
-      d.path && d.path.length >= 2 && d.path[0] === 'ratings'
-        ? {
-            ...d,
-            shortName: this.balanceSheet.ratings[d.path[1]].shortName,
-          }
-        : d
+    const diffRatings = diff(this.ratings, otherBalanceSheet.ratings);
+    const diffCompanyFacts = diff(
+      this.companyFacts,
+      otherBalanceSheet.companyFacts
     );
+    console.log(this.ratings);
+
+    return {
+      diffRatings: diffRatings?.map((d) =>
+        d.path && d.path.length >= 2 && d.path[0] === 'ratings'
+          ? {
+              ...d,
+              shortName: this.ratings[d.path[1]].shortName,
+            }
+          : d
+      ),
+      diffCompanyFacts,
+      diffVersion: diff(this.version, otherBalanceSheet.version),
+      diffType: diff(this.type, otherBalanceSheet.type),
+    };
   }
 
   public toJson(language: keyof Translations) {
