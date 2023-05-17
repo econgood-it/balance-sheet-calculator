@@ -39,6 +39,7 @@ describe('BalanceSheetReader', () => {
 
     expect(companyFacts.averageJourneyToWorkForStaffInKm).toBe(456456);
     expect(companyFacts.hasCanteen).toBeFalsy();
+    expect(companyFacts.hasCanteen).toBeDefined();
     expect(companyFacts.turnover).toBe(124);
     expect(companyFacts.isB2B).toBeTruthy();
 
