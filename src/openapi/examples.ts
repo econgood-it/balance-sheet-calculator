@@ -96,10 +96,13 @@ export const companyFactsFactory = {
       { countryCode: arabEmiratesCode, percentage: 0.5 },
     ],
     industrySectors: [],
-    mainOriginOfOtherSuppliers: { countryCode: DEFAULT_COUNTRY_CODE, costs: 0 },
+    mainOriginOfOtherSuppliers: {
+      countryCode: DEFAULT_COUNTRY_CODE,
+      costs: 8_900,
+    },
   }),
   nonEmpty2: (): CompanyFacts => ({
-    totalPurchaseFromSuppliers: 0,
+    totalPurchaseFromSuppliers: 330,
     totalStaffCosts: 2345,
     profit: 238,
     financialCosts: 473,
@@ -126,10 +129,13 @@ export const companyFactsFactory = {
     ],
     employeesFractions: [
       { countryCode: arabEmiratesCode, percentage: 0.3 },
-      { countryCode: afghanistanCode, percentage: 1 },
+      { countryCode: afghanistanCode, percentage: 0.7 },
     ],
     industrySectors: [],
-    mainOriginOfOtherSuppliers: { countryCode: DEFAULT_COUNTRY_CODE, costs: 0 },
+    mainOriginOfOtherSuppliers: {
+      countryCode: DEFAULT_COUNTRY_CODE,
+      costs: 10,
+    },
   }),
 };
 export const companyFactsJsonFactory = {
