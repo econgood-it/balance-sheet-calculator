@@ -7,10 +7,7 @@ import { BalanceSheetVersion } from '@ecogood/e-calculator-schemas/dist/shared.s
 
 export class RegionProvider extends Provider<string, Region> {
   public static async fromVersion(version: BalanceSheetVersion) {
-    const regionFileName =
-      version === BalanceSheetVersion.v5_0_4
-        ? 'regions_5_0_4.json'
-        : 'regions_5_0_5.json';
+    const regionFileName = 'regions_5_0_5.json';
     const regionPath = path.join(
       path.resolve(__dirname, '../files/providers'),
       regionFileName
