@@ -1,34 +1,36 @@
-import { RatingsUpdater } from '../../src/calculations/ratings.updater';
+import { RatingsUpdater } from '../../../src/calculations/ratings.updater';
 
-import { Assertions } from '../Assertions';
+import { Assertions } from '../../Assertions';
 import * as path from 'path';
-import { CsvRatingsReader } from './csv.ratings.reader';
 
-import { CalcResults, Calculator } from '../../src/calculations/calculator';
-import { RegionProvider } from '../../src/providers/region.provider';
-import { IndustryProvider } from '../../src/providers/industry.provider';
-import { StakeholderWeightCalculator } from '../../src/calculations/stakeholder.weight.calculator';
-import { TopicWeightCalculator } from '../../src/calculations/topic.weight.calculator';
-import { CompanyFacts } from '../../src/models/company.facts';
-import { Rating } from '../../src/models/rating';
-import { companyFactsFactory } from '../../src/openapi/examples';
+import { CalcResults, Calculator } from '../../../src/calculations/calculator';
+import { RegionProvider } from '../../../src/providers/region.provider';
+import { IndustryProvider } from '../../../src/providers/industry.provider';
+import { StakeholderWeightCalculator } from '../../../src/calculations/stakeholder.weight.calculator';
+import { TopicWeightCalculator } from '../../../src/calculations/topic.weight.calculator';
+import { CompanyFacts } from '../../../src/models/company.facts';
+import { Rating, RatingSchema } from '../../../src/models/rating';
+import { companyFactsFactory } from '../../../src/openapi/examples';
 import { BalanceSheetVersion } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
+import fs from 'fs';
 
 describe('Ratings updater', () => {
   const stakeholderWeightCalculator = new StakeholderWeightCalculator();
   const topicWeightCalculator = new TopicWeightCalculator();
+
+  async function readRatingsFromJsonFile(fileName: string): Promise<Rating[]> {
+    const pathToFile = path.join(path.resolve(__dirname), fileName);
+    const fileText = fs.readFileSync(pathToFile);
+    const jsonParsed = JSON.parse(fileText.toString());
+    return RatingSchema.array().parse(jsonParsed);
+  }
 
   async function testCalculation(
     fileNameOfRatingInputData: string,
     fileNameOfRatingExpectedData: string,
     companyFacts: CompanyFacts
   ) {
-    const testDataReader = new CsvRatingsReader();
-    const testDataDir = path.resolve(__dirname, '../testData');
-    let pathToCsv = path.join(testDataDir, fileNameOfRatingInputData);
-    const ratings: Rating[] = await testDataReader.readRatingsFromCsv(
-      pathToCsv
-    );
+    const ratings = await readRatingsFromJsonFile(fileNameOfRatingInputData);
     const regionProvider = await RegionProvider.fromVersion(
       BalanceSheetVersion.v5_0_8
     );
@@ -53,9 +55,9 @@ describe('Ratings updater', () => {
       stakeholderWeights,
       topicWeights
     );
-    pathToCsv = path.join(testDataDir, fileNameOfRatingExpectedData);
-    const expected: Rating[] = await testDataReader.readRatingsFromCsv(
-      pathToCsv
+
+    const expected = await readRatingsFromJsonFile(
+      fileNameOfRatingExpectedData
     );
     expect(updatedRatings).toHaveLength(expected.length);
     Assertions.assertRatings(updatedRatings, expected);
@@ -104,22 +106,22 @@ describe('Ratings updater', () => {
 
   it('should calculate rating when the company facts values and the rating values are empty', async () =>
     testCalculation(
-      'fullRating01Input.csv',
-      'fullRating0Expected.csv',
+      'emptyRatingsInput.json',
+      'emptyRatingExpected.json',
       companyFactsFactory.empty()
     ));
 
   it('should calculate rating when the company facts values filled out but estimations, and weights are not set', async () =>
     testCalculation(
-      'fullRating01Input.csv',
-      'fullRating1Expected.csv',
+      'emptyRatingsInput.json',
+      'nonEmptyCompanyFactsExpected.json',
       companyFactsFactory.nonEmpty()
     ));
 
   it('should calculate rating when the company facts values and rating values filled out', async () =>
     testCalculation(
-      'fullRating2Input.csv',
-      'fullRating2Expected.csv',
+      'filledRatingsInput.json',
+      'filledRatingsExpected.json',
       companyFactsFactory.nonEmpty()
     ));
 });
