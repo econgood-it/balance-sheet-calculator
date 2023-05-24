@@ -131,7 +131,6 @@ export class BalanceSheetEntity {
       this.companyFacts,
       otherBalanceSheet.companyFacts
     );
-    console.log(this.ratings);
 
     return {
       diffRatings: diffRatings?.map((d) =>

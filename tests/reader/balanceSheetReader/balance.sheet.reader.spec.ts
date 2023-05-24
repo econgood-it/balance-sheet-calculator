@@ -84,12 +84,12 @@ describe('BalanceSheetReader', () => {
     expect(balanceSheetEntity.type).toBe(BalanceSheetType.Full);
   });
 
+  // TODO: Make possible to read compact excel from csv
   it.skip('should read ratings from compact excel', async () => {
     const balanceSheetReader = new BalanceSheetReader();
     const pathToCsv = path.join(__dirname, 'compact_5_0_6.xlsx');
     const wb: Workbook = await new Workbook().xlsx.readFile(pathToCsv);
 
-    const balanceSheetEntity = balanceSheetReader.readFromWorkbook(wb, []);
-    console.log(JSON.stringify(balanceSheetEntity.toBalanceSheet().ratings));
+    balanceSheetReader.readFromWorkbook(wb, []);
   });
 });

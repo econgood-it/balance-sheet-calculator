@@ -8,7 +8,7 @@ import supertest from 'supertest';
 import { User } from '../../src/entities/user';
 import { Role } from '../../src/entities/enums';
 import { RepoProvider } from '../../src/repositories/repo.provider';
-
+import { v4 as uuid4 } from 'uuid';
 describe('User Controller', () => {
   let dataSource: DataSource;
   let app: Application;
@@ -112,7 +112,7 @@ describe('User Controller', () => {
     const testApp = supertest(app);
     const newUser2 = {
       ...newUser,
-      email: newUser.email + 2,
+      email: `${uuid4()}@example.com`,
     };
     await userRepository.save(
       new User(undefined, newUser2.email, newUser2.password, Role.User)
