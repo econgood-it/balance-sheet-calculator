@@ -5,30 +5,30 @@ import {
 
 describe('ConfigurationReader', () => {
   const OLD_ENV = process.env;
+  const dbName = 'balancesheet';
+  const dbHost = 'localhost';
+  const dbPort = '5433';
+  const dbUser = 'postgres';
+  const dbPwd = 'crazypwd';
+  const env = 'DEV';
+  const adminMail = 'admin@example.com';
+  const adminPwd = 'crazyadminpwd';
+  const docsUser = 'docsuser';
+  const docsPwd = 'crazydocspwd';
+  const port = '4000';
+  const jwtSecrect = 'crazyjwtPwd';
+  const workbookToken = 'crazyworkbookPwd';
 
   beforeEach(() => {
     jest.resetModules(); // Most important - it clears the cache
     process.env = { ...OLD_ENV }; // Make a copy
   });
 
-  afterAll(() => {
+  afterEach(() => {
     process.env = OLD_ENV; // Restore old environment
   });
 
-  it('should use environment variables for config', function () {
-    const dbName = 'balancesheet';
-    const dbHost = 'localhost';
-    const dbPort = '5433';
-    const dbUser = 'postgres';
-    const dbPwd = 'crazypwd';
-    const env = 'DEV';
-    const adminMail = 'admin@example.com';
-    const adminPwd = 'crazyadminpwd';
-    const docsUser = 'docsuser';
-    const docsPwd = 'crazydocspwd';
-    const port = '4000';
-    const jwtSecrect = 'crazyjwtPwd';
-    const workbookToken = 'crazyworkbookPwd';
+  function setAllEnvironmentVariables() {
     process.env.DB_NAME = dbName;
     process.env.DB_HOST = dbHost;
     process.env.DB_PORT = dbPort;
@@ -42,6 +42,10 @@ describe('ConfigurationReader', () => {
     process.env.ADMIN_PASSWORD = adminPwd;
     process.env.JWT_SECRET = jwtSecrect;
     process.env.WORKBOOK_API_TOKEN = workbookToken;
+  }
+
+  it('should use environment variables for config', function () {
+    setAllEnvironmentVariables();
     const config = ConfigurationReader.read();
     expect(config.dbName).toBe(dbName);
     expect(config.dbHost).toBe(dbHost);
@@ -56,5 +60,13 @@ describe('ConfigurationReader', () => {
     expect(config.adminPassword).toBe(adminPwd);
     expect(config.jwtSecret).toBe(jwtSecrect);
     expect(config.workbookApiToken).toBe(workbookToken);
+  });
+
+  it('should fail if dbHost is missing', function () {
+    setAllEnvironmentVariables();
+    delete process.env.DB_HOST;
+    expect(() => {
+      ConfigurationReader.read();
+    }).toThrow('Environment variable DB_HOST is not set.');
   });
 });

@@ -52,7 +52,7 @@ export class ConfigurationReader {
     const workbookApiToken = process.env.WORKBOOK_API_TOKEN;
     ConfigurationReader.checkIfEnvironmentVariableIsSet('DB_NAME', dbName);
     ConfigurationReader.checkIfEnvironmentVariableIsSet('DB_PORT', dbPort);
-    ConfigurationReader.checkIfEnvironmentVariableIsSet('DB_HOST', dbPort);
+    ConfigurationReader.checkIfEnvironmentVariableIsSet('DB_HOST', dbHost);
     ConfigurationReader.checkIfEnvironmentVariableIsSet('DB_USER', dbUser);
     ConfigurationReader.checkIfEnvironmentVariableIsSet(
       'DB_PASSWORD',
