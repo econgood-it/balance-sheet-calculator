@@ -70,14 +70,20 @@ export class BalanceSheetReader {
     };
     const ratingReader = new RatingReader();
     const calcSheet = wb.getWorksheet('3. Calc');
+    const maxRowsFull = 93;
+    const balanceSheetType = ratingReader.read(calcSheet.getRow(maxRowsFull))
+      ? BalanceSheetType.Full
+      : BalanceSheetType.Compact;
     const ratings = filterUndef(
-      range(9, 93).map((row) => ratingReader.read(calcSheet.getRow(row)))
+      range(9, maxRowsFull).map((row) =>
+        ratingReader.read(calcSheet.getRow(row))
+      )
     );
     // TODO: Find a good way to distinguish between balance sheet types. Instead of hard coding Full.
     return new BalanceSheetEntity(
       undefined,
       {
-        type: BalanceSheetType.Full,
+        type: balanceSheetType,
         version: cr.read(introSheet, 3, 'C').parseAsVersion(),
         companyFacts,
         ratings,
