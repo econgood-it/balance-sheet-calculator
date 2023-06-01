@@ -9,7 +9,7 @@ import {
 describe('BalanceSheetReader', () => {
   it('should read company facts from excel', async () => {
     const balanceSheetReader = new BalanceSheetReader();
-    const pathToCsv = path.join(__dirname, 'full_5_0_6.xlsx');
+    const pathToCsv = path.join(__dirname, 'full_5_0_8.xlsx');
     const wb: Workbook = await new Workbook().xlsx.readFile(pathToCsv);
 
     const balanceSheetEntity = balanceSheetReader.readFromWorkbook(wb, []);
@@ -58,7 +58,7 @@ describe('BalanceSheetReader', () => {
 
   it('should read ratings from excel', async () => {
     const balanceSheetReader = new BalanceSheetReader();
-    const pathToCsv = path.join(__dirname, 'full_5_0_6.xlsx');
+    const pathToCsv = path.join(__dirname, 'full_5_0_8.xlsx');
     const wb: Workbook = await new Workbook().xlsx.readFile(pathToCsv);
     const balanceSheetEntity = balanceSheetReader.readFromWorkbook(wb, []);
     const ratings = balanceSheetEntity.ratings;
@@ -68,8 +68,8 @@ describe('BalanceSheetReader', () => {
       name: 'Relative impact',
       estimations: 4,
       weight: 1.5,
-      points: 11.7073170731707,
-      maxPoints: 29.2682926829268,
+      points: 11.428571428571427,
+      maxPoints: 28.571428571428566,
       isPositive: true,
       isWeightSelectedByUser: true,
     });
@@ -77,14 +77,13 @@ describe('BalanceSheetReader', () => {
 
   it('should read version and type from excel', async () => {
     const balanceSheetReader = new BalanceSheetReader();
-    const pathToCsv = path.join(__dirname, 'full_5_0_6.xlsx');
+    const pathToCsv = path.join(__dirname, 'full_5_0_8.xlsx');
     const wb: Workbook = await new Workbook().xlsx.readFile(pathToCsv);
     const balanceSheetEntity = balanceSheetReader.readFromWorkbook(wb, []);
-    expect(balanceSheetEntity.version).toBe(BalanceSheetVersion.v5_0_6);
+    expect(balanceSheetEntity.version).toBe(BalanceSheetVersion.v5_0_8);
     expect(balanceSheetEntity.type).toBe(BalanceSheetType.Full);
   });
 
-  // TODO: Make possible to read compact excel from csv
   it('should read ratings from compact excel', async () => {
     const balanceSheetReader = new BalanceSheetReader();
     const pathToCsv = path.join(__dirname, 'compact_5_0_6.xlsx');
@@ -93,5 +92,27 @@ describe('BalanceSheetReader', () => {
     const balanceSheetEntity = balanceSheetReader.readFromWorkbook(wb, []);
     expect(balanceSheetEntity.version).toBe(BalanceSheetVersion.v5_0_6);
     expect(balanceSheetEntity.type).toBe(BalanceSheetType.Compact);
+    expect(balanceSheetEntity.ratings[1]).toEqual({
+      shortName: 'A1.1',
+      name: 'Human dignity in the supply chain',
+      estimations: 0,
+      points: 0,
+      maxPoints: 50,
+      weight: 1,
+      isWeightSelectedByUser: false,
+      isPositive: true,
+    });
+    expect(
+      balanceSheetEntity.ratings[balanceSheetEntity.ratings.length - 1]
+    ).toEqual({
+      shortName: 'E4.2',
+      name: 'Negative aspect: lack of transparency and wilful misinformation',
+      estimations: 0,
+      points: 0,
+      maxPoints: -200,
+      weight: 1,
+      isWeightSelectedByUser: false,
+      isPositive: false,
+    });
   });
 });

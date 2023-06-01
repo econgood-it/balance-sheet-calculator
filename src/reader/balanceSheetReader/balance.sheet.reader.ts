@@ -1,4 +1,4 @@
-import { Workbook } from 'exceljs';
+import { Workbook, Worksheet } from 'exceljs';
 
 import { CellReader } from './cell.reader';
 import { SupplyFractionReader } from './supply.fraction.reader';
@@ -6,9 +6,14 @@ import { EmployeesFractionReader } from './employees.fraction.reader';
 import { IndustrySectorReader } from './industry.sector.reader';
 import { RatingReader } from './rating.reader';
 import { Translations } from '../../language/translations';
-import { BalanceSheetType } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
+import {
+  BalanceSheetType,
+  BalanceSheetVersion,
+} from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import { BalanceSheetEntity } from '../../entities/balance.sheet.entity';
 import { User } from '../../entities/user';
+import { RatingsFactory } from '../../factories/ratings.factory';
+import { Rating } from '../../models/rating';
 
 const range = (start: number, end: number): number[] =>
   Array.from(Array(end - start + 1).keys()).map((x) => x + start);
@@ -30,6 +35,8 @@ export const readLanguage = (workbook: Workbook): keyof Translations => {
 };
 
 export class BalanceSheetReader {
+  private static readonly MAX_ROWS_FULL = 93;
+  private static readonly MAX_ROWS_COMPACT = 72;
   public readFromWorkbook(wb: Workbook, users: User[]): BalanceSheetEntity {
     const cr = new CellReader();
     const sheet = wb.getWorksheet('2. Company Facts');
@@ -70,25 +77,65 @@ export class BalanceSheetReader {
     };
     const ratingReader = new RatingReader();
     const calcSheet = wb.getWorksheet('3. Calc');
-    const maxRowsFull = 93;
-    const balanceSheetType = ratingReader.read(calcSheet.getRow(maxRowsFull))
+
+    const balanceSheetType = ratingReader.read(
+      calcSheet.getRow(BalanceSheetReader.MAX_ROWS_FULL)
+    )
       ? BalanceSheetType.Full
       : BalanceSheetType.Compact;
-    const ratings = filterUndef(
-      range(9, maxRowsFull).map((row) =>
-        ratingReader.read(calcSheet.getRow(row))
-      )
+    const balanceSheetVersion = cr.read(introSheet, 3, 'C').parseAsVersion();
+    const ratings = this.readRatings(
+      calcSheet,
+      balanceSheetType,
+      balanceSheetVersion
     );
-    // TODO: Find a good way to distinguish between balance sheet types. Instead of hard coding Full.
     return new BalanceSheetEntity(
       undefined,
       {
         type: balanceSheetType,
-        version: cr.read(introSheet, 3, 'C').parseAsVersion(),
+        version: balanceSheetVersion,
         companyFacts,
         ratings,
       },
       users
     );
+  }
+
+  // TODO: Make this reading method better
+  private readRatings(
+    calcSheet: Worksheet,
+    balanceSheetType: BalanceSheetType,
+    balanceSheetVersion: BalanceSheetVersion
+  ) {
+    const ratingReader = new RatingReader();
+    const maxRows =
+      balanceSheetType === BalanceSheetType.Full
+        ? BalanceSheetReader.MAX_ROWS_FULL
+        : BalanceSheetReader.MAX_ROWS_COMPACT;
+
+    const ratings = filterUndef(
+      range(9, maxRows).map((row) => ratingReader.read(calcSheet.getRow(row)))
+    );
+    const defaultRatings = RatingsFactory.createDefaultRatings(
+      balanceSheetType,
+      balanceSheetVersion
+    );
+    const foundShortNames = new Map<string, Rating>();
+    return defaultRatings.map((defaultRating) => {
+      const foundRating = ratings.find(
+        (r) =>
+          r.shortName === defaultRating.shortName ||
+          ((foundShortNames.has(r.shortName) ||
+            r.shortName === '[object Object]') &&
+            r.name === defaultRating.name)
+      );
+      if (!foundRating) {
+        throw new Error(
+          `Rating with shortName ${defaultRating.shortName} not found in Excel file`
+        );
+      }
+      foundShortNames.set(defaultRating.shortName, defaultRating);
+      return { ...foundRating, shortName: defaultRating.shortName };
+    });
   }
 }
