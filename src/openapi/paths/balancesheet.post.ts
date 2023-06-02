@@ -35,8 +35,11 @@ export function registerBalanceSheetPost(
           [applicationJson]: {
             schema: schemas.BalanceSheetCreateRequestApiSchema,
             examples: {
-              default: {
-                value: balanceSheetJsonFactory.emptyV508(),
+              'Full 5.08': {
+                value: balanceSheetJsonFactory.emptyFullV508(),
+              },
+              'Compact 5.06': {
+                value: balanceSheetJsonFactory.emptyCompactV506(),
               },
               minimal: {
                 value: {

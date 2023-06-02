@@ -118,7 +118,7 @@ describe('MatrixRepresentation', () => {
   let balanceSheet: BalanceSheet;
 
   beforeEach(() => {
-    balanceSheet = balanceSheetFactory.emptyV508();
+    balanceSheet = balanceSheetFactory.emptyFullV508();
   });
 
   it('is created from rating', async () => {

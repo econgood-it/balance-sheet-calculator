@@ -8,7 +8,7 @@ describe('BalanceSheetEntity', () => {
     const userEmail = 'test@example.com';
     const balanceSheetEntity = new BalanceSheetEntity(
       undefined,
-      balanceSheetFactory.emptyV508(),
+      balanceSheetFactory.emptyFullV508(),
       [
         new User(undefined, userEmail, 'pass', Role.User),
         new User(undefined, 'other@example.com', 'pass', Role.User),
@@ -26,9 +26,9 @@ describe('toJson', () => {
     const balanceSheetEntity = new BalanceSheetEntity(
       undefined,
       {
-        ...balanceSheetFactory.emptyV508(),
+        ...balanceSheetFactory.emptyFullV508(),
         companyFacts: {
-          ...balanceSheetFactory.emptyV508().companyFacts,
+          ...balanceSheetFactory.emptyFullV508().companyFacts,
           supplyFractions: [
             { countryCode: 'ARE', industryCode: 'A', costs: 9 },
             { industryCode: 'Be', costs: 7 },
@@ -49,9 +49,9 @@ describe('toJson', () => {
     const balanceSheetEntity = new BalanceSheetEntity(
       undefined,
       {
-        ...balanceSheetFactory.emptyV508(),
+        ...balanceSheetFactory.emptyFullV508(),
         companyFacts: {
-          ...balanceSheetFactory.emptyV508().companyFacts,
+          ...balanceSheetFactory.emptyFullV508().companyFacts,
           employeesFractions: [
             { countryCode: 'ARE', percentage: 0.3 },
             { percentage: 0.5 },
@@ -87,9 +87,9 @@ describe('toJson', () => {
     const balanceSheetEntity = new BalanceSheetEntity(
       undefined,
       {
-        ...balanceSheetFactory.emptyV508(),
+        ...balanceSheetFactory.emptyFullV508(),
         companyFacts: {
-          ...balanceSheetFactory.emptyV508().companyFacts,
+          ...balanceSheetFactory.emptyFullV508().companyFacts,
           employeesFractions: [
             { countryCode: 'ARE', percentage: 0.3 },
             { percentage: 0.5 },
@@ -112,9 +112,9 @@ describe('toJson', () => {
     const balanceSheetEntity = new BalanceSheetEntity(
       undefined,
       {
-        ...balanceSheetFactory.emptyV508(),
+        ...balanceSheetFactory.emptyFullV508(),
         companyFacts: {
-          ...balanceSheetFactory.emptyV508().companyFacts,
+          ...balanceSheetFactory.emptyFullV508().companyFacts,
           hasCanteen: undefined,
         },
       },
@@ -128,9 +128,9 @@ describe('toJson', () => {
     const balanceSheetEntity = new BalanceSheetEntity(
       undefined,
       {
-        ...balanceSheetFactory.emptyV508(),
+        ...balanceSheetFactory.emptyFullV508(),
         companyFacts: {
-          ...balanceSheetFactory.emptyV508().companyFacts,
+          ...balanceSheetFactory.emptyFullV508().companyFacts,
           mainOriginOfOtherSuppliers: { costs: 9 },
         },
       },

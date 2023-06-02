@@ -13,13 +13,22 @@ const afghanistanCode = 'AFG';
 const agricultureCode = 'A';
 const pharmaceuticCode = 'Ce';
 export const balanceSheetJsonFactory = {
-  emptyV508: (): BalanceSheet => ({
+  emptyFullV508: (): BalanceSheet => ({
     type: BalanceSheetType.Full,
     version: BalanceSheetVersion.v5_0_8,
     companyFacts: companyFactsJsonFactory.empty(),
     ratings: RatingsFactory.createDefaultRatings(
       BalanceSheetType.Full,
       BalanceSheetVersion.v5_0_8
+    ),
+  }),
+  emptyCompactV506: (): BalanceSheet => ({
+    type: BalanceSheetType.Compact,
+    version: BalanceSheetVersion.v5_0_6,
+    companyFacts: companyFactsJsonFactory.empty(),
+    ratings: RatingsFactory.createDefaultRatings(
+      BalanceSheetType.Compact,
+      BalanceSheetVersion.v5_0_6
     ),
   }),
   minimalCompactV506: () => ({
@@ -194,7 +203,7 @@ export const companyFactsJsonFactory = {
   }),
 };
 export const balanceSheetFactory = {
-  emptyV508: (): BalanceSheet => ({
+  emptyFullV508: (): BalanceSheet => ({
     type: BalanceSheetType.Full,
     version: BalanceSheetVersion.v5_0_8,
     companyFacts: companyFactsFactory.empty(),

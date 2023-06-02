@@ -90,6 +90,11 @@ describe('BalanceSheetReader', () => {
     const wb: Workbook = await new Workbook().xlsx.readFile(pathToCsv);
 
     const balanceSheetEntity = balanceSheetReader.readFromWorkbook(wb, []);
+    expect(balanceSheetEntity.companyFacts.totalStaffCosts).toBe(0);
+    expect(balanceSheetEntity.companyFacts.numberOfEmployees).toBe(0);
+    expect(
+      balanceSheetEntity.companyFacts.averageJourneyToWorkForStaffInKm
+    ).toBe(0);
     expect(balanceSheetEntity.version).toBe(BalanceSheetVersion.v5_0_6);
     expect(balanceSheetEntity.type).toBe(BalanceSheetType.Compact);
     expect(balanceSheetEntity.ratings[1]).toEqual({

@@ -43,7 +43,7 @@ export function registerBalanceSheetPatch(
             schema: schemas.BalanceSheetPatchRequestApiSchema,
             examples: {
               default: {
-                value: balanceSheetJsonFactory.emptyV508(),
+                value: balanceSheetJsonFactory.emptyFullV508(),
               },
               minimal: {
                 value: {

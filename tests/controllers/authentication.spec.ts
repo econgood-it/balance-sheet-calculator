@@ -39,7 +39,7 @@ describe('Authentication', () => {
     const response = await testApp
       .post(endpointPath)
       .set('Api-Key', `${apiKeyResponse.body.apiKey}`)
-      .send(balanceSheetJsonFactory.emptyV508());
+      .send(balanceSheetJsonFactory.emptyFullV508());
     expect(response.status).toEqual(200);
   });
 
@@ -48,7 +48,7 @@ describe('Authentication', () => {
     const response = await testApp
       .post(endpointPath)
       .set('Api-Key', `38.wrongkey`)
-      .send(balanceSheetJsonFactory.emptyV508());
+      .send(balanceSheetJsonFactory.emptyFullV508());
     expect(response.status).toEqual(401);
   });
 });

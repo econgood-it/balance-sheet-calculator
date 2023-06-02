@@ -17,7 +17,8 @@ export class CompanyFactsSheet {
     return {
       totalPurchaseFromSuppliers: this.cr.read(this.sheet, 7, this.valueColumn)
         .number,
-      totalStaffCosts: this.cr.read(this.sheet, 27, this.valueColumn).number,
+      totalStaffCosts: this.cr.read(this.sheet, 27, this.valueColumn)
+        .numberWithDefault0,
       profit: this.cr.read(this.sheet, 18, this.valueColumn).number,
       financialCosts: this.cr.read(this.sheet, 19, this.valueColumn).number,
       incomeFromFinancialInvestments: this.cr.read(
@@ -35,7 +36,8 @@ export class CompanyFactsSheet {
         23,
         this.valueColumn
       ).number,
-      numberOfEmployees: this.cr.read(this.sheet, 26, this.valueColumn).number,
+      numberOfEmployees: this.cr.read(this.sheet, 26, this.valueColumn)
+        .numberWithDefault0,
       hasCanteen: this.cr
         .read(this.sheet, 34, this.valueColumn)
         .parseAsOptionalBoolean(),
@@ -43,7 +45,7 @@ export class CompanyFactsSheet {
         this.sheet,
         33,
         this.valueColumn
-      ).number,
+      ).numberWithDefault0,
       isB2B: this.cr.read(this.sheet, 38, this.valueColumn).boolean,
       supplyFractions: filterUndef(
         range(10, 14).map((row) =>
