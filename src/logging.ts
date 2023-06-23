@@ -8,6 +8,7 @@ export class LoggingService {
     return origWinston.createLogger({
       level: 'info',
       format: origWinston.format.combine(
+        origWinston.format.timestamp(),
         origWinston.format.json(),
         origWinston.format.errors({ stack: true })
       ),
