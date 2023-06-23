@@ -45,6 +45,19 @@ describe('Value', () => {
     expect(value.countryCode).toBeUndefined();
   });
 
+  it('should be parsed as industry code', async () => {
+    let value = new Value(
+      'A - agriculture, forestry management, fishing industry'
+    );
+    expect(value.industryCode).toBe('A');
+    value = new Value('Please choose');
+    expect(value.industryCode).toBeUndefined();
+    value = new Value('Bitte Auswählen');
+    expect(value.industryCode).toBeUndefined();
+    value = new Value('Please enter');
+    expect(value.industryCode).toBeUndefined();
+  });
+
   it('should be parsed as optional number', async () => {
     let value = new Value('0.93');
     expect(value.parseAsOptionalNumber().get() as number).toBe(0.93);

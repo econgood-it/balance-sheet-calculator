@@ -55,8 +55,12 @@ export class Value {
       : undefined;
   }
 
-  public get industryCode(): string {
-    return this.splitAndGetFirst('-');
+  public get industryCode(): string | undefined {
+    return this.value !== 'Please choose' &&
+      this.value !== 'Bitte Auswählen' &&
+      this.value !== 'Please enter'
+      ? this.splitAndGetFirst('-')
+      : undefined;
   }
 
   public get isWeightSelectedByUser(): boolean {
