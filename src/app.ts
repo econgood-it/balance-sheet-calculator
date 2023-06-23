@@ -26,6 +26,7 @@ import { DataSource } from 'typeorm';
 import { IRepoProvider } from './repositories/repo.provider';
 import { WorkbookController } from './controllers/workbook.controller';
 import { WorkbookService } from './services/workbook.service';
+import morganMiddleware from './middleware/morgan.http.logging.middleware';
 
 class App {
   public readonly app: Application;
@@ -47,6 +48,8 @@ class App {
     repoProvider: IRepoProvider
   ) {
     this.app = express();
+    this.app.use(morganMiddleware);
+    this.app.use(errorMiddleware);
     this.setConfig();
     this.authentication = new Authentication(dataSource, repoProvider);
     this.authentication.addBasicAuthToDocsEndpoint(this.app, configuration);
@@ -87,7 +90,6 @@ class App {
       new OrganizationService(dataSource, repoProvider)
     );
     this.docsController = new DocsController(this.app, configuration);
-    this.app.use(errorMiddleware);
   }
 
   public start() {
