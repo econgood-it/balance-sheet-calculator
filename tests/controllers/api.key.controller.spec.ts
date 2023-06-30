@@ -3,7 +3,7 @@ import { Application } from 'express';
 import { ConfigurationReader } from '../../src/reader/configuration.reader';
 import { DatabaseSourceCreator } from '../../src/databaseSourceCreator';
 import App from '../../src/app';
-import { TokenProvider } from '../TokenProvider';
+import { AuthBuilder } from '../AuthBuilder';
 import supertest from 'supertest';
 import { ApiKey } from '../../src/entities/api.key';
 import { v4 as uuid4 } from 'uuid';
@@ -29,43 +29,35 @@ describe('ApiKeyController', () => {
   });
 
   it('should create new api key for user', async () => {
-    const userEmail = `${uuid4()}@example.com`;
-    const token = `Bearer ${await TokenProvider.provideValidUserToken(
-      app,
-      dataSource,
-      userEmail
-    )}`;
+    const auth = await new AuthBuilder(app, dataSource).build();
     const testApp = supertest(app);
     const response = await testApp
       .post(`/v1/apikeys`)
-      .set('Authorization', token);
+      .set(auth.authHeader.key, auth.authHeader.value);
     expect(response.status).toBe(200);
 
     const apiKey = await apiKeyRepository.findOne({
-      where: { user: { email: userEmail } },
+      where: { user: { email: auth.email } },
     });
     expect(apiKey).toBeDefined();
     expect(parseInt(response.body.apiKey.split('.')[0])).toBe(apiKey?.id);
   });
 
   it('should delete api key', async () => {
-    const userEmail = `${uuid4()}@example.com`;
-    const token = `Bearer ${await TokenProvider.provideValidUserToken(
-      app,
-      dataSource,
-      userEmail
-    )}`;
+    const auth = await new AuthBuilder(app, dataSource).build();
     const testApp = supertest(app);
-    await testApp.post(`/v1/apikeys`).set('Authorization', token);
+    await testApp
+      .post(`/v1/apikeys`)
+      .set(auth.authHeader.key, auth.authHeader.value);
 
     const apiKey = await apiKeyRepository.findOne({
-      where: { user: { email: userEmail } },
+      where: { user: { email: auth.email } },
     });
     expect(apiKey).toBeDefined();
 
     const response = await testApp
       .del(`/v1/apikeys/${apiKey?.id}`)
-      .set('Authorization', token);
+      .set(auth.authHeader.key, auth.authHeader.value);
     expect(response.status).toBe(200);
     const apiKeyFound = await apiKeyRepository.findOne({
       where: { id: apiKey?.id },
@@ -74,31 +66,30 @@ describe('ApiKeyController', () => {
   });
 
   it('should fail on api key deletion if user has not the permissions', async () => {
-    const userEmail = `${uuid4()}@example.com`;
-    const token = `Bearer ${await TokenProvider.provideValidUserToken(
-      app,
-      dataSource,
-      userEmail
-    )}`;
+    const auth = await new AuthBuilder(app, dataSource).build();
     const testApp = supertest(app);
-    await testApp.post(`/v1/apikeys`).set('Authorization', token);
+    await testApp
+      .post(`/v1/apikeys`)
+      .set(auth.authHeader.key, auth.authHeader.value);
     const apiKey = await apiKeyRepository.findOne({
-      where: { user: { email: userEmail } },
+      where: { user: { email: auth.email } },
     });
 
-    const tokenWithoutPermission = `Bearer ${await TokenProvider.provideValidUserToken(
+    const authWithoutPermission = await new AuthBuilder(
       app,
-      dataSource,
-      `${uuid4()}@example.com`
-    )}`;
+      dataSource
+    ).build();
 
     const response = await testApp
       .del(`/v1/apikeys/${apiKey?.id}`)
-      .set('Authorization', tokenWithoutPermission);
+      .set(
+        authWithoutPermission.authHeader.key,
+        authWithoutPermission.authHeader.value
+      );
     expect(response.status).toBe(401);
     expect(
       await apiKeyRepository.findOne({
-        where: { user: { email: userEmail } },
+        where: { user: { email: auth.email } },
       })
     ).toBeDefined();
   });

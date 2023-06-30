@@ -4,7 +4,7 @@ import { DatabaseSourceCreator } from '../../../src/databaseSourceCreator';
 import App from '../../../src/app';
 import { Application } from 'express';
 import { ConfigurationReader } from '../../../src/reader/configuration.reader';
-import { TokenProvider } from '../../TokenProvider';
+import { Auth, AuthBuilder } from '../../AuthBuilder';
 import { BalanceSheetEntity } from '../../../src/entities/balance.sheet.entity';
 import { CORRELATION_HEADER_NAME } from '../../../src/middleware/correlation.id.middleware';
 import { INDUSTRY_CODE_FOR_FINANCIAL_SERVICES } from '../../../src/models/company.facts';
@@ -28,10 +28,7 @@ describe('Balance Sheet Controller', () => {
   const configuration = ConfigurationReader.read();
   let balanceSheetJson: any;
   const endpointPath = '/v1/balancesheets';
-  const tokenHeader = {
-    key: 'Authorization',
-    value: '',
-  };
+  let auth: Auth;
   const assertTopicWeight = (
     shortName: string,
     expectedWeight: number,
@@ -51,10 +48,7 @@ describe('Balance Sheet Controller', () => {
     balaneSheetRepository = dataSource.getRepository(BalanceSheetEntity);
     app = new App(dataSource, configuration, new RepoProvider(configuration))
       .app;
-    tokenHeader.value = `Bearer ${await TokenProvider.provideValidUserToken(
-      app,
-      dataSource
-    )}`;
+    auth = await new AuthBuilder(app, dataSource).build();
   });
 
   afterAll(async () => {
@@ -73,7 +67,7 @@ describe('Balance Sheet Controller', () => {
     const testApp = supertest(app);
     const response = await testApp
       .post(endpointPath)
-      .set(tokenHeader.key, tokenHeader.value)
+      .set(auth.authHeader.key, auth.authHeader.value)
       .send(balanceSheetJson);
     expect(response.status).toEqual(200);
     const companyFacts = balanceSheetJson.companyFacts;
@@ -95,7 +89,7 @@ describe('Balance Sheet Controller', () => {
     const testApp = supertest(app);
     const response = await testApp
       .post(endpointPath)
-      .set(tokenHeader.key, tokenHeader.value)
+      .set(auth.authHeader.key, auth.authHeader.value)
       .send(balanceSheetJsonFactory.minimalCompactV506());
     expect(response.status).toEqual(200);
     const expectedType = balanceSheetJsonFactory.minimalCompactV506().type;
@@ -112,6 +106,7 @@ describe('Balance Sheet Controller', () => {
         version: expectedVersion,
         companyFacts: companyFactsFactory.emptyWithoutOptionalValues(),
         ratings: expectedRatings,
+        stakeholderWeights: [],
       },
       []
     );
@@ -122,7 +117,7 @@ describe('Balance Sheet Controller', () => {
     const testApp = supertest(app);
     const response = await testApp
       .post(endpointPath)
-      .set(tokenHeader.key, tokenHeader.value)
+      .set(auth.authHeader.key, auth.authHeader.value)
       .query({ save: 'false' })
       .send(balanceSheetJson);
     expect(response.status).toEqual(200);
@@ -158,7 +153,7 @@ describe('Balance Sheet Controller', () => {
     };
     const response = await testApp
       .post(endpointPath)
-      .set(tokenHeader.key, tokenHeader.value)
+      .set(auth.authHeader.key, auth.authHeader.value)
       .send(json);
     expect(response.status).toEqual(200);
     assertTopicWeight('B1', 2, response.body.ratings);
@@ -176,7 +171,7 @@ describe('Balance Sheet Controller', () => {
     };
     const response = await testApp
       .post(endpointPath)
-      .set(tokenHeader.key, tokenHeader.value)
+      .set(auth.authHeader.key, auth.authHeader.value)
       .send(json);
     expect(response.status).toEqual(200);
     assertTopicWeight('B2', 1.5, response.body.ratings);
@@ -194,7 +189,7 @@ describe('Balance Sheet Controller', () => {
 
     const response = await testApp
       .post(endpointPath)
-      .set(tokenHeader.key, tokenHeader.value)
+      .set(auth.authHeader.key, auth.authHeader.value)
       .send(json);
     expect(response.status).toEqual(200);
     assertTopicWeight('B4', 0.5, response.body.ratings);
@@ -211,7 +206,7 @@ describe('Balance Sheet Controller', () => {
     };
     const response = await testApp
       .post(endpointPath)
-      .set(tokenHeader.key, tokenHeader.value)
+      .set(auth.authHeader.key, auth.authHeader.value)
       .send(json);
     expect(response.status).toEqual(200);
     assertTopicWeight('B4', 1, response.body.ratings);
@@ -247,7 +242,7 @@ describe('Balance Sheet Controller', () => {
   ): Promise<void> {
     const response = await testApp
       .post(endpointPath)
-      .set(tokenHeader.key, tokenHeader.value)
+      .set(auth.authHeader.key, auth.authHeader.value)
       .send({
         type: BalanceSheetType.Full,
         version: BalanceSheetVersion.v5_0_8,
@@ -260,7 +255,7 @@ describe('Balance Sheet Controller', () => {
     const testApp = supertest(app);
     const response = await testApp
       .post(endpointPath)
-      .set(tokenHeader.key, tokenHeader.value)
+      .set(auth.authHeader.key, auth.authHeader.value)
       .send(balanceSheetJson);
     expect(response.status).toEqual(200);
     expect(response.headers[CORRELATION_HEADER_NAME]).toBeDefined();
@@ -270,7 +265,7 @@ describe('Balance Sheet Controller', () => {
     const testApp = supertest(app);
     const response = await testApp
       .post(endpointPath)
-      .set(tokenHeader.key, tokenHeader.value)
+      .set(auth.authHeader.key, auth.authHeader.value)
       .set(CORRELATION_HEADER_NAME, 'my-own-corr-id')
       .send(balanceSheetJson);
 

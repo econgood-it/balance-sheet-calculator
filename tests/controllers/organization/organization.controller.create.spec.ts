@@ -2,11 +2,9 @@ import { DataSource } from 'typeorm';
 import { Application } from 'express';
 import { ConfigurationReader } from '../../../src/reader/configuration.reader';
 import App from '../../../src/app';
-import { AuthHeader, TokenProvider } from '../../TokenProvider';
+import { Auth, AuthBuilder } from '../../AuthBuilder';
 import supertest from 'supertest';
 import { organizationFactory } from '../../../src/openapi/examples';
-import { Role } from '../../../src/entities/enums';
-import { v4 as uuid4 } from 'uuid';
 import { OrganizationPaths } from '../../../src/controllers/organization.controller';
 import { RepoProvider } from '../../../src/repositories/repo.provider';
 import { DatabaseSourceCreator } from '../../../src/databaseSourceCreator';
@@ -16,9 +14,8 @@ describe('Organization Controller', () => {
   let dataSource: DataSource;
   let app: Application;
   const configuration = ConfigurationReader.read();
-  let userTokenHeader: AuthHeader;
   let organizationRepo: IOrganizationEntityRepo;
-  const userEmail = `${uuid4()}@example.com`;
+  let auth: Auth;
 
   beforeAll(async () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
@@ -29,12 +26,7 @@ describe('Organization Controller', () => {
       dataSource.manager
     );
     app = new App(dataSource, configuration, repoProvider).app;
-    userTokenHeader = await TokenProvider.provideValidAuthHeader(
-      app,
-      dataSource,
-      Role.User,
-      userEmail
-    );
+    auth = await new AuthBuilder(app, dataSource).build();
   });
 
   afterAll(async () => {
@@ -46,7 +38,7 @@ describe('Organization Controller', () => {
     const testApp = supertest(app);
     const response = await testApp
       .post(OrganizationPaths.post)
-      .set(userTokenHeader.key, userTokenHeader.value)
+      .set(auth.authHeader.key, auth.authHeader.value)
       .send(orgaJson);
     expect(response.status).toBe(200);
     expect(response.body).toMatchObject(orgaJson);
@@ -55,7 +47,7 @@ describe('Organization Controller', () => {
     );
     expect(organizationEntity.organization).toMatchObject(orgaJson);
     expect(organizationEntity.members).toHaveLength(1);
-    expect(organizationEntity.members[0].email).toBe(userEmail);
+    expect(organizationEntity.members[0].email).toBe(auth.email);
   });
 
   it('should fail to create organization if user is unauthenticated', async () => {
@@ -63,22 +55,18 @@ describe('Organization Controller', () => {
     const testApp = supertest(app);
     const response = await testApp
       .post(OrganizationPaths.post)
-      .set(userTokenHeader.key, 'Bearer invalid token')
+      .set(auth.authHeader.key, 'Bearer invalid token')
       .send(orgaJson);
     expect(response.status).toBe(401);
   });
 
   it('should fail to create organization if user is admin', async () => {
-    const adminTokenHeader = await TokenProvider.provideValidAuthHeader(
-      app,
-      dataSource,
-      Role.Admin
-    );
+    const adminAuth = await new AuthBuilder(app, dataSource).admin().build();
     const orgaJson = organizationFactory.default();
     const testApp = supertest(app);
     const response = await testApp
       .post(OrganizationPaths.post)
-      .set(adminTokenHeader.key, adminTokenHeader.value)
+      .set(adminAuth.authHeader.key, adminAuth.authHeader.value)
       .send(orgaJson);
     expect(response.status).toBe(403);
   });

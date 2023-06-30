@@ -3,31 +3,22 @@ import { Application } from 'express';
 import { ConfigurationReader } from '../../src/reader/configuration.reader';
 import { DatabaseSourceCreator } from '../../src/databaseSourceCreator';
 import App from '../../src/app';
-import { TokenProvider } from '../TokenProvider';
+import { Auth, AuthBuilder } from '../AuthBuilder';
 import supertest from 'supertest';
 import { User } from '../../src/entities/user';
 import { Role } from '../../src/entities/enums';
 import { RepoProvider } from '../../src/repositories/repo.provider';
 import { v4 as uuid4 } from 'uuid';
+
 describe('User Controller', () => {
   let dataSource: DataSource;
   let app: Application;
   const configuration = ConfigurationReader.read();
   let userRepository: Repository<User>;
-  const newUser = {
-    email: 'new@example.com',
-    password: "qS-1G,h6:'J=^o(g4W8i",
-  };
 
-  const userTokenHeader = {
-    key: 'Authorization',
-    value: '',
-  };
+  let auth: Auth;
 
-  const adminTokenHeader = {
-    key: 'Authorization',
-    value: '',
-  };
+  let adminAuth: Auth;
 
   beforeAll(async () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
@@ -36,31 +27,23 @@ describe('User Controller', () => {
     app = new App(dataSource, configuration, new RepoProvider(configuration))
       .app;
     userRepository = dataSource.getRepository(User);
-    userTokenHeader.value = `Bearer ${await TokenProvider.provideValidUserToken(
-      app,
-      dataSource
-    )}`;
-    adminTokenHeader.value = `Bearer ${await TokenProvider.provideValidAdminToken(
-      app,
-      dataSource
-    )}`;
+    auth = await new AuthBuilder(app, dataSource).build();
+    adminAuth = await new AuthBuilder(app, dataSource).admin().build();
   });
 
   afterAll(async () => {
     await dataSource.destroy();
   });
-
-  beforeEach(async () => {
-    const user = await userRepository.findOne({
-      where: { email: newUser.email },
-    });
-    if (user) {
-      await userRepository.remove(user);
-    }
-  });
+  function createNewUser() {
+    return {
+      email: `${uuid4()}@example.com`,
+      password: "qS-1G,h6:'J=^o(g4W8i",
+    };
+  }
 
   it('should allow users to reset their own password', async () => {
     const testApp = supertest(app);
+    const newUser = createNewUser();
     await userRepository.save(
       new User(undefined, newUser.email, newUser.password, Role.User)
     );
@@ -86,9 +69,10 @@ describe('User Controller', () => {
 
   it('should deny the right to create users for the role User', async () => {
     const testApp = supertest(app);
+    const newUser = createNewUser();
     const response = await testApp
       .post('/v1/users')
-      .set(userTokenHeader.key, userTokenHeader.value)
+      .set(auth.authHeader.key, auth.authHeader.value)
       .send({
         email: newUser.email,
         password: newUser.password,
@@ -98,9 +82,10 @@ describe('User Controller', () => {
 
   it('should allow admins to create users', async () => {
     const testApp = supertest(app);
+    const newUser = createNewUser();
     const response = await testApp
       .post('/v1/users')
-      .set(adminTokenHeader.key, adminTokenHeader.value)
+      .set(adminAuth.authHeader.key, adminAuth.authHeader.value)
       .send({
         email: newUser.email,
         password: newUser.password,
@@ -110,26 +95,24 @@ describe('User Controller', () => {
 
   it('should allow admins to delete users', async () => {
     const testApp = supertest(app);
-    const newUser2 = {
-      ...newUser,
-      email: `${uuid4()}@example.com`,
-    };
+    const newUser = createNewUser();
+
     await userRepository.save(
-      new User(undefined, newUser2.email, newUser2.password, Role.User)
+      new User(undefined, newUser.email, newUser.password, Role.User)
     );
     expect(
-      await userRepository.findOne({ where: { email: newUser2.email } })
+      await userRepository.findOne({ where: { email: newUser.email } })
     ).toBeDefined();
 
     const response = await testApp
       .delete('/v1/users')
-      .set(adminTokenHeader.key, adminTokenHeader.value)
+      .set(adminAuth.authHeader.key, adminAuth.authHeader.value)
       .send({
-        email: newUser2.email,
+        email: newUser.email,
       });
     expect(response.status).toBe(200);
     expect(
-      await userRepository.findOne({ where: { email: newUser2.email } })
+      await userRepository.findOne({ where: { email: newUser.email } })
     ).toBeNull();
   });
 });

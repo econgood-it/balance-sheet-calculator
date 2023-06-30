@@ -22,6 +22,7 @@ export class BalanceSheetReader {
         version: introSheet.getBalanceSheetVersion(),
         companyFacts: companyFactsSheet.toCompanyFacts(),
         ratings: ratingSheet.toRatings(),
+        stakeholderWeights: [],
       },
       users
     );

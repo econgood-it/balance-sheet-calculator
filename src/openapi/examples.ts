@@ -7,6 +7,7 @@ import {
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import { Organization } from '../models/organization';
+import { StakeholderWeight } from '../models/stakeholder.weight';
 
 const arabEmiratesCode = 'ARE';
 const afghanistanCode = 'AFG';
@@ -21,6 +22,7 @@ export const balanceSheetJsonFactory = {
       BalanceSheetType.Full,
       BalanceSheetVersion.v5_0_8
     ),
+    stakeholderWeights: [],
   }),
   emptyCompactV506: (): BalanceSheet => ({
     type: BalanceSheetType.Compact,
@@ -30,6 +32,7 @@ export const balanceSheetJsonFactory = {
       BalanceSheetType.Compact,
       BalanceSheetVersion.v5_0_6
     ),
+    stakeholderWeights: [],
   }),
   minimalCompactV506: () => ({
     type: BalanceSheetType.Compact,
@@ -202,6 +205,14 @@ export const companyFactsJsonFactory = {
     industrySectors: [{ industryCode: 'A', amountOfTotalTurnover: 100 }],
   }),
 };
+
+export const StakeholderWeightsFactory = {
+  default: (): StakeholderWeight[] => [
+    { shortName: 'A', weight: 0.5 },
+    { shortName: 'C', weight: 1.5 },
+  ],
+};
+
 export const balanceSheetFactory = {
   emptyFullV508: (): BalanceSheet => ({
     type: BalanceSheetType.Full,
@@ -211,6 +222,7 @@ export const balanceSheetFactory = {
       BalanceSheetType.Full,
       BalanceSheetVersion.v5_0_8
     ),
+    stakeholderWeights: [],
   }),
 };
 

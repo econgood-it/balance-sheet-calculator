@@ -4,7 +4,7 @@ import { Application } from 'express';
 import { ConfigurationReader } from '../../src/reader/configuration.reader';
 import { DatabaseSourceCreator } from '../../src/databaseSourceCreator';
 import App from '../../src/app';
-import { TokenProvider } from '../TokenProvider';
+import { AuthBuilder } from '../AuthBuilder';
 import { balanceSheetJsonFactory } from '../../src/openapi/examples';
 import { RepoProvider } from '../../src/repositories/repo.provider';
 
@@ -27,14 +27,11 @@ describe('Authentication', () => {
   });
 
   it('should allow requests with a valid api token', async () => {
-    const token = `Bearer ${await TokenProvider.provideValidUserToken(
-      app,
-      dataSource
-    )}`;
+    const auth = await new AuthBuilder(app, dataSource).build();
     const testApp = supertest(app);
     const apiKeyResponse = await testApp
       .post(`/v1/apikeys`)
-      .set('Authorization', token);
+      .set(auth.authHeader.key, auth.authHeader.value);
     expect(apiKeyResponse.status).toBe(200);
     const response = await testApp
       .post(endpointPath)

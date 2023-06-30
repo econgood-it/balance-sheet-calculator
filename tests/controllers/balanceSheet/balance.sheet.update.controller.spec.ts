@@ -5,7 +5,7 @@ import App from '../../../src/app';
 import { Application } from 'express';
 import { ConfigurationReader } from '../../../src/reader/configuration.reader';
 
-import { TokenProvider } from '../../TokenProvider';
+import { Auth, AuthBuilder } from '../../AuthBuilder';
 import { CORRELATION_HEADER_NAME } from '../../../src/middleware/correlation.id.middleware';
 import { Rating } from '../../../src/models/rating';
 import { companyFactsJsonFactory } from '../../../src/openapi/examples';
@@ -20,20 +20,14 @@ describe('Update endpoint of Balance Sheet Controller', () => {
   let app: Application;
   const configuration = ConfigurationReader.read();
   const endpointPath = '/v1/balancesheets';
-  const tokenHeader = {
-    key: 'Authorization',
-    value: '',
-  };
+  let auth: Auth;
   beforeAll(async () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
       configuration
     );
     app = new App(dataSource, configuration, new RepoProvider(configuration))
       .app;
-    tokenHeader.value = `Bearer ${await TokenProvider.provideValidUserToken(
-      app,
-      dataSource
-    )}`;
+    auth = await new AuthBuilder(app, dataSource).build();
   });
 
   afterAll(async () => {
@@ -45,7 +39,7 @@ describe('Update endpoint of Balance Sheet Controller', () => {
 
     let response = await testApp
       .post(endpointPath)
-      .set(tokenHeader.key, tokenHeader.value)
+      .set(auth.authHeader.key, auth.authHeader.value)
       .send({
         type: BalanceSheetType.Full,
         version: BalanceSheetVersion.v5_0_8,
@@ -75,7 +69,7 @@ describe('Update endpoint of Balance Sheet Controller', () => {
     };
     response = await testApp
       .patch(`${endpointPath}/${response.body.id}`)
-      .set(tokenHeader.key, tokenHeader.value)
+      .set(auth.authHeader.key, auth.authHeader.value)
       .send({ ...balanceSheetUpdate });
     expect(response.status).toEqual(200);
     expect(response.body.companyFacts).toMatchObject(
@@ -88,7 +82,7 @@ describe('Update endpoint of Balance Sheet Controller', () => {
 
     let response = await testApp
       .post(endpointPath)
-      .set(tokenHeader.key, tokenHeader.value)
+      .set(auth.authHeader.key, auth.authHeader.value)
       .send({
         type: BalanceSheetType.Full,
         version: BalanceSheetVersion.v5_0_8,
@@ -106,7 +100,7 @@ describe('Update endpoint of Balance Sheet Controller', () => {
     };
     response = await testApp
       .patch(`${endpointPath}/${response.body.id}`)
-      .set(tokenHeader.key, tokenHeader.value)
+      .set(auth.authHeader.key, auth.authHeader.value)
       .send({ ...balanceSheetUpdate });
     expect(response.status).toEqual(200);
     for (const rating of balanceSheetUpdate.ratings) {
@@ -137,7 +131,7 @@ describe('Update endpoint of Balance Sheet Controller', () => {
 
     let response = await testApp
       .post(endpointPath)
-      .set(tokenHeader.key, tokenHeader.value)
+      .set(auth.authHeader.key, auth.authHeader.value)
       .send({
         type: balanceSheetType,
         version: balanceSheetVersion,
@@ -160,7 +154,7 @@ describe('Update endpoint of Balance Sheet Controller', () => {
     };
     response = await testApp
       .patch(`${endpointPath}/${response.body.id}`)
-      .set(tokenHeader.key, tokenHeader.value)
+      .set(auth.authHeader.key, auth.authHeader.value)
       .send({ ...balanceSheetUpdate });
 
     expect(response.status).toEqual(200);
@@ -183,20 +177,16 @@ describe('Update endpoint of Balance Sheet Controller', () => {
   }
 
   describe('block access to balance sheet ', () => {
-    let tokenOfUnauthorizedUser: string;
+    let authOfUnauthorizedUser: Auth;
     beforeAll(async () => {
-      tokenOfUnauthorizedUser = `Bearer ${await TokenProvider.provideValidUserToken(
-        app,
-        dataSource,
-        'unauthorizedUser@example.com'
-      )}`;
+      authOfUnauthorizedUser = await new AuthBuilder(app, dataSource).build();
     });
 
     const postAndPatchWithDifferentUsers = async (): Promise<any> => {
       const testApp = supertest(app);
       const postResponse = await testApp
         .post(endpointPath)
-        .set(tokenHeader.key, tokenHeader.value)
+        .set(auth.authHeader.key, auth.authHeader.value)
         .send({
           type: BalanceSheetType.Full,
           version: BalanceSheetVersion.v5_0_8,
@@ -211,7 +201,10 @@ describe('Update endpoint of Balance Sheet Controller', () => {
 
       return await testApp
         .patch(`${endpointPath}/${postResponse.body.id}`)
-        .set(tokenHeader.key, tokenOfUnauthorizedUser)
+        .set(
+          authOfUnauthorizedUser.authHeader.key,
+          authOfUnauthorizedUser.authHeader.value
+        )
         .send({ ...balanceSheetUpdate });
     };
 
@@ -225,7 +218,7 @@ describe('Update endpoint of Balance Sheet Controller', () => {
     const testApp = supertest(app);
     const response = await testApp
       .put(`${endpointPath}/9999999`)
-      .set(tokenHeader.key, tokenHeader.value)
+      .set(auth.authHeader.key, auth.authHeader.value)
       .set(CORRELATION_HEADER_NAME, 'my-own-corr-id')
       .send();
     expect(response.status).toEqual(404);
@@ -236,7 +229,7 @@ describe('Update endpoint of Balance Sheet Controller', () => {
     const testApp = supertest(app);
     const response = await testApp
       .put(`${endpointPath}/9999999`)
-      .set(tokenHeader.key, tokenHeader.value)
+      .set(auth.authHeader.key, auth.authHeader.value)
       .send();
     expect(response.status).toEqual(404);
     expect(response.headers[CORRELATION_HEADER_NAME]).toBeDefined();

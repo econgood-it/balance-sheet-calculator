@@ -3,7 +3,7 @@ import { Application } from 'express';
 import { ConfigurationReader } from '../../src/reader/configuration.reader';
 import { DatabaseSourceCreator } from '../../src/databaseSourceCreator';
 import App from '../../src/app';
-import { TokenProvider } from '../TokenProvider';
+import { Auth, AuthBuilder } from '../AuthBuilder';
 import supertest from 'supertest';
 import { RepoProvider } from '../../src/repositories/repo.provider';
 
@@ -11,10 +11,7 @@ describe('Industry Controller', () => {
   let dataSource: DataSource;
   let app: Application;
   const configuration = ConfigurationReader.read();
-  const userTokenHeader = {
-    key: 'Authorization',
-    value: '',
-  };
+  let auth: Auth;
 
   beforeAll(async () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
@@ -22,10 +19,7 @@ describe('Industry Controller', () => {
     );
     app = new App(dataSource, configuration, new RepoProvider(configuration))
       .app;
-    userTokenHeader.value = `Bearer ${await TokenProvider.provideValidUserToken(
-      app,
-      dataSource
-    )}`;
+    auth = await new AuthBuilder(app, dataSource).build();
   });
 
   afterAll(async () => {
@@ -36,7 +30,7 @@ describe('Industry Controller', () => {
     const testApp = supertest(app);
     const response = await testApp
       .get('/v1/industries')
-      .set(userTokenHeader.key, userTokenHeader.value)
+      .set(auth.authHeader.key, auth.authHeader.value)
       .send();
     expect(response.status).toBe(200);
     expect(response.body).toEqual(

@@ -125,7 +125,7 @@ export class BalanceSheetEntity {
     ).apply();
   }
 
-  public diff(otherBalanceSheet: BalanceSheet) {
+  public diff(otherBalanceSheet: BalanceSheetEntity) {
     const diffRatings = diff(this.ratings, otherBalanceSheet.ratings);
     const diffCompanyFacts = diff(
       this.companyFacts,

@@ -5,7 +5,7 @@ import App from '../../../src/app';
 import { Application } from 'express';
 import { ConfigurationReader } from '../../../src/reader/configuration.reader';
 
-import { TokenProvider } from '../../TokenProvider';
+import { Auth, AuthBuilder } from '../../AuthBuilder';
 import { BalanceSheetEntity } from '../../../src/entities/balance.sheet.entity';
 import path from 'path';
 import { Rating, RatingResponseBody } from '../../../src/models/rating';
@@ -17,10 +17,7 @@ describe('Balance Sheet Controller', () => {
   let app: Application;
   const configuration = ConfigurationReader.read();
 
-  const tokenHeader = {
-    key: 'Authorization',
-    value: '',
-  };
+  let auth: Auth;
 
   beforeAll(async () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
@@ -29,10 +26,7 @@ describe('Balance Sheet Controller', () => {
     balaneSheetRepository = dataSource.getRepository(BalanceSheetEntity);
     app = new App(dataSource, configuration, new RepoProvider(configuration))
       .app;
-    tokenHeader.value = `Bearer ${await TokenProvider.provideValidUserToken(
-      app,
-      dataSource
-    )}`;
+    auth = await new AuthBuilder(app, dataSource).build();
   });
 
   afterAll(async () => {
@@ -44,7 +38,7 @@ describe('Balance Sheet Controller', () => {
     const fileDir = path.resolve(__dirname, '../../testData');
     const response = await testApp
       .post('/v1/balancesheets/upload')
-      .set(tokenHeader.key, tokenHeader.value)
+      .set(auth.authHeader.key, auth.authHeader.value)
       .attach(
         'balanceSheet',
         path.join(fileDir, 'full_5_0_7_unprotected.xlsx')

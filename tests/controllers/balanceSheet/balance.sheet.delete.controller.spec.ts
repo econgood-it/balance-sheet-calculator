@@ -5,7 +5,7 @@ import { ConfigurationReader } from '../../../src/reader/configuration.reader';
 import { DataSource } from 'typeorm';
 import { Application } from 'express';
 
-import { TokenProvider } from '../../TokenProvider';
+import { Auth, AuthBuilder } from '../../AuthBuilder';
 import { CORRELATION_HEADER_NAME } from '../../../src/middleware/correlation.id.middleware';
 import {
   BALANCE_SHEET_RELATIONS,
@@ -25,10 +25,7 @@ describe('Balance Sheet Controller', () => {
   const configuration = ConfigurationReader.read();
   let balanceSheetJson: any;
   const endpointPath = '/v1/balancesheets';
-  const tokenHeader = {
-    key: 'Authorization',
-    value: '',
-  };
+  let auth: Auth;
 
   beforeAll(async () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
@@ -36,10 +33,7 @@ describe('Balance Sheet Controller', () => {
     );
     app = new App(dataSource, configuration, new RepoProvider(configuration))
       .app;
-    tokenHeader.value = `Bearer ${await TokenProvider.provideValidUserToken(
-      app,
-      dataSource
-    )}`;
+    auth = await new AuthBuilder(app, dataSource).build();
   });
 
   afterAll(async () => {
@@ -71,7 +65,7 @@ describe('Balance Sheet Controller', () => {
     ];
     const postResponse = await testApp
       .post(endpointPath)
-      .set(tokenHeader.key, tokenHeader.value)
+      .set(auth.authHeader.key, auth.authHeader.value)
       .send(balanceSheetJson);
 
     await dataSource.getRepository(BalanceSheetEntity).findOneOrFail({
@@ -81,37 +75,36 @@ describe('Balance Sheet Controller', () => {
 
     const response = await testApp
       .delete(`${endpointPath}/${postResponse.body.id}`)
-      .set(tokenHeader.key, tokenHeader.value)
+      .set(auth.authHeader.key, auth.authHeader.value)
       .send();
     expect(response.status).toEqual(200);
 
     const responseGet = await testApp
       .get(`${endpointPath}/${postResponse.body.id}`)
-      .set(tokenHeader.key, tokenHeader.value)
+      .set(auth.authHeader.key, auth.authHeader.value)
       .send();
     expect(responseGet.status).toEqual(404);
   });
 
   describe('block access to balance sheet ', () => {
-    let tokenOfUnauthorizedUser: string;
+    let authOfUnauthorizedUser: Auth;
     beforeAll(async () => {
-      tokenOfUnauthorizedUser = `Bearer ${await TokenProvider.provideValidUserToken(
-        app,
-        dataSource,
-        'unauthorizedUser@example.com'
-      )}`;
+      authOfUnauthorizedUser = await new AuthBuilder(app, dataSource).build();
     });
 
     const postAndDeleteWithDifferentUsers = async (): Promise<any> => {
       const testApp = supertest(app);
       const postResponse = await testApp
         .post(endpointPath)
-        .set(tokenHeader.key, tokenHeader.value)
+        .set(auth.authHeader.key, auth.authHeader.value)
         .send(balanceSheetJson);
 
       return await testApp
         .delete(`${endpointPath}/${postResponse.body.id}`)
-        .set(tokenHeader.key, tokenOfUnauthorizedUser)
+        .set(
+          authOfUnauthorizedUser.authHeader.key,
+          authOfUnauthorizedUser.authHeader.value
+        )
         .send();
     };
 
@@ -125,7 +118,7 @@ describe('Balance Sheet Controller', () => {
     const testApp = supertest(app);
     const response = await testApp
       .delete(`${endpointPath}/9999999`)
-      .set(tokenHeader.key, tokenHeader.value)
+      .set(auth.authHeader.key, auth.authHeader.value)
       .set(CORRELATION_HEADER_NAME, 'my-own-corr-id')
       .send();
     expect(response.status).toEqual(404);
@@ -136,7 +129,7 @@ describe('Balance Sheet Controller', () => {
     const testApp = supertest(app);
     const response = await testApp
       .delete(`${endpointPath}/9999999`)
-      .set(tokenHeader.key, tokenHeader.value)
+      .set(auth.authHeader.key, auth.authHeader.value)
       .send();
     expect(response.status).toEqual(404);
     expect(response.headers[CORRELATION_HEADER_NAME]).toBeDefined();
