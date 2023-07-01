@@ -1,19 +1,70 @@
 import { EntityWithDtoMerger } from '../../src/merge/entity.with.dto.merger';
-
+import {
+  balanceSheetFactory,
+  companyFactsFactory,
+  StakeholderWeightsFactory,
+} from '../../src/openapi/examples';
 import { CompanyFacts } from '../../src/models/company.facts';
-
-import { companyFactsFactory } from '../../src/openapi/examples';
 import { CompanyFactsPatchRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/company.facts.dto';
 
-describe('EntityWithDTOMerger', () => {
-  let companyFacts: CompanyFacts;
+describe('EntityWithDtoMerger', () => {
   const entityWithDtoMerger = new EntityWithDtoMerger();
 
-  beforeEach(() => {
-    companyFacts = companyFactsFactory.empty();
+  it('should merge using empty stakeholder weights from request', async () => {
+    const merged = entityWithDtoMerger.mergeBalanceSheet(
+      {
+        ...balanceSheetFactory.emptyFullV508(),
+        stakeholderWeights: StakeholderWeightsFactory.default(),
+      },
+      {
+        ratings: [],
+        stakeholderWeights: [],
+      }
+    );
+    expect(merged.stakeholderWeights).toEqual([]);
   });
 
-  describe('should merge companyFacts', () => {
+  it('should merge using stakeholder weights from database', async () => {
+    const merged = entityWithDtoMerger.mergeBalanceSheet(
+      {
+        ...balanceSheetFactory.emptyFullV508(),
+        stakeholderWeights: StakeholderWeightsFactory.default(),
+      },
+      {
+        ratings: [],
+        stakeholderWeights: undefined,
+      }
+    );
+    expect(merged.stakeholderWeights).toEqual(
+      StakeholderWeightsFactory.default()
+    );
+  });
+
+  it('should merge using non empty stakeholder weights from request', async () => {
+    const requestWeights = [
+      { shortName: 'A', weight: 2 },
+      { shortName: 'D', weight: 1.5 },
+    ];
+    const merged = entityWithDtoMerger.mergeBalanceSheet(
+      {
+        ...balanceSheetFactory.emptyFullV508(),
+        stakeholderWeights: StakeholderWeightsFactory.default(),
+      },
+      {
+        ratings: [],
+        stakeholderWeights: requestWeights,
+      }
+    );
+    expect(merged.stakeholderWeights).toEqual(requestWeights);
+  });
+
+  describe('merge company facts', () => {
+    let companyFacts: CompanyFacts;
+    const entityWithDtoMerger = new EntityWithDtoMerger();
+
+    beforeEach(() => {
+      companyFacts = companyFactsFactory.empty();
+    });
     const merge = (json: any) =>
       entityWithDtoMerger.mergeCompanyFacts(
         companyFacts,
