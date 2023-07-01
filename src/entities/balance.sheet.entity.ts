@@ -1,4 +1,5 @@
 import {
+  AfterLoad,
   Column,
   Entity,
   JoinTable,
@@ -6,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from './user';
-import { BalanceSheet } from '../models/balance.sheet';
+import { BalanceSheet, BalanceSheetSchema } from '../models/balance.sheet';
 import { companyFactsToResponse } from '../models/company.facts';
 import { isTopic, sortRatings } from '../models/rating';
 import { RegionProvider } from '../providers/region.provider';
@@ -25,6 +26,9 @@ import { z } from 'zod';
 import { EntityWithDtoMerger } from '../merge/entity.with.dto.merger';
 import { MatrixFormat } from '../dto/balance.sheet.dto';
 import { diff } from 'deep-diff';
+import { LoggingService } from '../logging';
+import HttpException from '../exceptions/http.exception';
+import { DatabaseValidationError } from '../exceptions/databaseValidationError';
 
 export const BALANCE_SHEET_RELATIONS = ['users'];
 
@@ -163,6 +167,18 @@ export class BalanceSheetEntity {
         }))
       ),
     });
+  }
+
+  @AfterLoad()
+  validateBalanceSheet() {
+    const result = BalanceSheetSchema.strict().safeParse(this.balanceSheet);
+    if (!result.success) {
+      throw new DatabaseValidationError(
+        result.error,
+        'Column balanceSheet is not valid',
+        this.id
+      );
+    }
   }
 
   public toBalanceSheet(): BalanceSheet {

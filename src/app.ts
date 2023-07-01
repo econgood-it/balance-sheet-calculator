@@ -49,8 +49,9 @@ class App {
   ) {
     this.app = express();
     this.app.use(morganMiddleware);
-    this.app.use(errorMiddleware);
+
     this.setConfig();
+
     this.authentication = new Authentication(dataSource, repoProvider);
     this.authentication.addBasicAuthToDocsEndpoint(this.app, configuration);
     this.authentication.addAuthToApplication(this.app, configuration.jwtSecret);
@@ -90,6 +91,7 @@ class App {
       new OrganizationService(dataSource, repoProvider)
     );
     this.docsController = new DocsController(this.app, configuration);
+    this.app.use(errorMiddleware);
   }
 
   public start() {

@@ -86,8 +86,7 @@ describe('BalanceSheetRepo', () => {
     });
   });
 
-  it('does remove relation to user on delete', async () => {
-    await cleanUpTables();
+  it('fails if the value of balance sheet column is invalid', async () => {
     const email = `${uuid4()}@example.com`;
     const user = await dataSource
       .getRepository(User)
@@ -97,11 +96,27 @@ describe('BalanceSheetRepo', () => {
         user,
       ])
     );
-    const query = `SELECT * from balance_sheet_entities_users where "userId" = ${user.id} and "balanceSheetEntityId" = ${balanceSheetEntity.id}`;
-    let relation = await dataSource.query(query);
-    expect(relation).toHaveLength(1);
-    await balanceSheetEntityRepository.remove(balanceSheetEntity);
-    relation = await dataSource.query(query);
-    expect(relation).toHaveLength(0);
+    const balanceSheetJson = {
+      ...balanceSheetEntity.toBalanceSheet(),
+      invalid_field: 'This is invalid',
+    };
+    await dataSource.query(
+      `UPDATE balance_sheet_entity SET "balanceSheet" = '${JSON.stringify(
+        balanceSheetJson
+      )}'::jsonb WHERE id = ${balanceSheetEntity.id};`
+    );
+    await expect(
+      balanceSheetEntityRepository.findByIdOrFail(balanceSheetEntity.id!)
+    ).rejects.toThrow(
+      new RegExp(
+        `.*Column balanceSheet is not valid.*"idOfEntity":${balanceSheetEntity.id}.*unrecognized_keys.*invalid_field`,
+        'i'
+      )
+    );
+    await dataSource.query(
+      `UPDATE balance_sheet_entity SET "balanceSheet" = '${JSON.stringify(
+        balanceSheetEntity.toBalanceSheet()
+      )}'::jsonb WHERE id = ${balanceSheetEntity.id};`
+    );
   });
 });

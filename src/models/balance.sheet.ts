@@ -13,7 +13,7 @@ export const BalanceSheetSchema = z.object({
   version: BalanceSheetVersionSchema,
   companyFacts: CompanyFactsSchema,
   ratings: RatingSchema.array(),
-  stakeholderWeights: StakeholderWeightSchema.array().default([]),
+  stakeholderWeights: StakeholderWeightSchema.array(),
 });
 
 export type BalanceSheet = z.infer<typeof BalanceSheetSchema>;

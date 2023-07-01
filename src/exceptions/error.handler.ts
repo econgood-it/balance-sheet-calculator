@@ -7,6 +7,7 @@ import { NoAccessError } from './no.access.error';
 import ForbiddenException from './forbidden.exception';
 import UnauthorizedException from './unauthorized.exception';
 import { ZodError } from 'zod';
+import { DatabaseValidationError } from './databaseValidationError';
 
 export const handle = (error: Error, next: NextFunction) => {
   if (error instanceof ZodError) {
@@ -17,6 +18,9 @@ export const handle = (error: Error, next: NextFunction) => {
   }
   if (error instanceof NoAccessError) {
     return next(new ForbiddenException(error.message));
+  }
+  if (error instanceof DatabaseValidationError) {
+    return next(new InternalServerException(JSON.parse(error.message)));
   }
   if (
     error instanceof BadRequestException ||
