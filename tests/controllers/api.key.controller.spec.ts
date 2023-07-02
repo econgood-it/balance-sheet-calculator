@@ -6,7 +6,6 @@ import App from '../../src/app';
 import { AuthBuilder } from '../AuthBuilder';
 import supertest from 'supertest';
 import { ApiKey } from '../../src/entities/api.key';
-import { v4 as uuid4 } from 'uuid';
 import { RepoProvider } from '../../src/repositories/repo.provider';
 
 describe('ApiKeyController', () => {

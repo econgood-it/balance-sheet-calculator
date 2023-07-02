@@ -10,10 +10,6 @@ import * as _ from 'lodash';
 import { BalanceSheetPatchRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
 import { z } from 'zod';
 import { CompanyFactsPatchRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/company.facts.dto';
-import {
-  StakeholderWeight,
-  StakeholderWeightSchema,
-} from '../models/stakeholder.weight';
 
 function overrideArray(objValue: any, srcValue: any): any {
   if (_.isArray(srcValue)) {

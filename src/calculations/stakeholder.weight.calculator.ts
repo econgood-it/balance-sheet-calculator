@@ -1,5 +1,4 @@
 import { CalcResults } from './calculator';
-import Provider from '../providers/provider';
 import { StakeholderWeightsProvider } from '../providers/stakeholder.weights.provider';
 
 export class StakeholderWeightCalculator {

@@ -26,8 +26,6 @@ import { z } from 'zod';
 import { EntityWithDtoMerger } from '../merge/entity.with.dto.merger';
 import { MatrixFormat } from '../dto/balance.sheet.dto';
 import { diff } from 'deep-diff';
-import { LoggingService } from '../logging';
-import HttpException from '../exceptions/http.exception';
 import { DatabaseValidationError } from '../exceptions/databaseValidationError';
 
 export const BALANCE_SHEET_RELATIONS = ['users'];
