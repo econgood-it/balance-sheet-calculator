@@ -78,6 +78,10 @@ export class BalanceSheetEntity {
     return this.balanceSheet.ratings;
   }
 
+  public get stakeholderWeights() {
+    return this.balanceSheet.stakeholderWeights;
+  }
+
   public userWithEmailHasAccess(userEmail: string) {
     return this.users.some((u) => u.email === userEmail);
   }
@@ -92,8 +96,10 @@ export class BalanceSheetEntity {
     const ratingsUpdater: RatingsUpdater = new RatingsUpdater();
     const stakeholderWeightCalculator = new StakeholderWeightCalculator();
     const topicWeightCalculator = new TopicWeightCalculator();
-    const stakeholderWeights =
-      await stakeholderWeightCalculator.calcStakeholderWeights(calcResults);
+    const stakeholderWeights = (
+      await stakeholderWeightCalculator.calcStakeholderWeights(calcResults)
+    ).merge(this.stakeholderWeights);
+
     const topicWeights = topicWeightCalculator.calcTopicWeights(
       calcResults,
       this.companyFacts

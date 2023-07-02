@@ -1,5 +1,6 @@
 import { CalcResults } from './calculator';
 import Provider from '../providers/provider';
+import { StakeholderWeightsProvider } from '../providers/stakeholder.weights.provider';
 
 export class StakeholderWeightCalculator {
   private readonly defaultPPPIndex = 0.978035862587365;
@@ -7,8 +8,8 @@ export class StakeholderWeightCalculator {
 
   public async calcStakeholderWeights(
     calcResults: CalcResults
-  ): Promise<Provider<string, number>> {
-    return new Provider<string, number>([
+  ): Promise<StakeholderWeightsProvider> {
+    return new StakeholderWeightsProvider([
       ['A', await this.calculateSupplierWeightFromCompanyFacts(calcResults)],
       ['B', await this.calculateFinancialWeightFromCompanyFacts(calcResults)],
       ['C', await this.calculateEmployeeWeightFromCompanyFacts(calcResults)],
