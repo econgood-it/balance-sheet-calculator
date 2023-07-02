@@ -77,8 +77,8 @@ describe('BalanceSheetReader', () => {
 
   it('should read version and type from excel', async () => {
     const balanceSheetReader = new BalanceSheetReader();
-    const pathToCsv = path.join(__dirname, 'full_5_0_8.xlsx');
-    const wb: Workbook = await new Workbook().xlsx.readFile(pathToCsv);
+    const pathToExcel = path.join(__dirname, 'full_5_0_8.xlsx');
+    const wb: Workbook = await new Workbook().xlsx.readFile(pathToExcel);
     const balanceSheetEntity = balanceSheetReader.readFromWorkbook(wb, []);
     expect(balanceSheetEntity.version).toBe(BalanceSheetVersion.v5_0_8);
     expect(balanceSheetEntity.type).toBe(BalanceSheetType.Full);
@@ -86,8 +86,8 @@ describe('BalanceSheetReader', () => {
 
   it('should read ratings from compact excel', async () => {
     const balanceSheetReader = new BalanceSheetReader();
-    const pathToCsv = path.join(__dirname, 'compact_5_0_6.xlsx');
-    const wb: Workbook = await new Workbook().xlsx.readFile(pathToCsv);
+    const pathToExcel = path.join(__dirname, 'compact_5_0_6.xlsx');
+    const wb: Workbook = await new Workbook().xlsx.readFile(pathToExcel);
 
     const balanceSheetEntity = balanceSheetReader.readFromWorkbook(wb, []);
     expect(balanceSheetEntity.companyFacts.totalStaffCosts).toBe(0);
@@ -119,5 +119,22 @@ describe('BalanceSheetReader', () => {
       isWeightSelectedByUser: false,
       isPositive: false,
     });
+  });
+
+  it('should read stakeholder weights from excel', async () => {
+    const balanceSheetReader = new BalanceSheetReader();
+    const pathToExcel = path.join(
+      __dirname,
+      'full_5_0_8_custom_stakeholder_weights.xlsx'
+    );
+    const wb: Workbook = await new Workbook().xlsx.readFile(pathToExcel);
+
+    const balanceSheetEntity = balanceSheetReader.readFromWorkbook(wb, []);
+    expect(balanceSheetEntity.stakeholderWeights).toEqual([
+      { shortName: 'A', weight: 1 },
+      { shortName: 'B', weight: 0.5 },
+      { shortName: 'C', weight: 2 },
+      { shortName: 'D', weight: 0 },
+    ]);
   });
 });

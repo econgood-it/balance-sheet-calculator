@@ -35,14 +35,11 @@ describe('Balance Sheet Controller', () => {
 
   it('creates BalanceSheet from uploaded excel file', async () => {
     const testApp = supertest(app);
-    const fileDir = path.resolve(__dirname, '../../testData');
+    const fileDir = path.resolve(__dirname, '../../reader/balanceSheetReader');
     const response = await testApp
       .post('/v1/balancesheets/upload')
       .set(auth.authHeader.key, auth.authHeader.value)
-      .attach(
-        'balanceSheet',
-        path.join(fileDir, 'full_5_0_7_unprotected.xlsx')
-      );
+      .attach('balanceSheet', path.join(fileDir, 'full_5_0_8.xlsx'));
     expect(response.status).toEqual(200);
     expect(
       response.body.ratings

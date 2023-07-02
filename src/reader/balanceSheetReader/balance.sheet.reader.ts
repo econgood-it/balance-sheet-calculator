@@ -4,6 +4,7 @@ import { User } from '../../entities/user';
 import { RatingSheet } from './rating.sheet';
 import { CompanyFactsSheet } from './company.facts.sheet';
 import { IntroSheet } from './intro.sheet';
+import { StakeholderWeightsReader } from './stakeholder.weights.reader';
 
 export class BalanceSheetReader {
   public readFromWorkbook(wb: Workbook, users: User[]): BalanceSheetEntity {
@@ -15,6 +16,8 @@ export class BalanceSheetReader {
       wb.getWorksheet('3. Calc'),
       introSheet.getBalanceSheetVersion()
     );
+    const stakeholderWeights =
+      new StakeholderWeightsReader().readUserSelectedFromWorkbook(wb);
     return new BalanceSheetEntity(
       undefined,
       {
@@ -22,7 +25,7 @@ export class BalanceSheetReader {
         version: introSheet.getBalanceSheetVersion(),
         companyFacts: companyFactsSheet.toCompanyFacts(),
         ratings: ratingSheet.toRatings(),
-        stakeholderWeights: [],
+        stakeholderWeights,
       },
       users
     );

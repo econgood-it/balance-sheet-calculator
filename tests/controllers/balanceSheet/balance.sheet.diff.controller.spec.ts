@@ -31,20 +31,13 @@ describe('Balance Sheet Controller', () => {
 
   it('returns diff between uploaded excel file and API', async () => {
     const testApp = supertest(app);
-    const fileDir = path.resolve(__dirname, '../../testData');
+    const fileDir = path.resolve(__dirname, '../../reader/balanceSheetReader');
     const response = await testApp
       .post('/v1/balancesheets/diff/upload')
       .set(auth.authHeader.key, auth.authHeader.value)
-      .attach(
-        'balanceSheet',
-        path.join(fileDir, 'full_5_0_7_unprotected.xlsx')
-      );
+      .attach('balanceSheet', path.join(fileDir, 'full_5_0_8.xlsx'));
     expect(response.status).toEqual(200);
     expect(response.body).toMatchObject({ lhs: 'upload', rhs: 'api' });
-    expect(response.body.diffTopicWeights).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({ kind: 'E', lhs: 1, path: ['E4'], rhs: 0.5 }),
-      ])
-    );
+    expect(response.body.diffTopicWeights).toBeUndefined();
   });
 });
