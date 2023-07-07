@@ -8,10 +8,7 @@ import {
 import { Organization } from '../models/organization';
 import { User } from './user';
 import { z } from 'zod';
-import {
-  OrganizationRequestSchema,
-  OrganizationResponseSchema,
-} from '@ecogood/e-calculator-schemas/dist/organization.dto';
+import { OrganizationResponseSchema } from '@ecogood/e-calculator-schemas/dist/organization.dto';
 export const ORGANIZATION_RELATIONS = ['members'];
 
 @Entity()

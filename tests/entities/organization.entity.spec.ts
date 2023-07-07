@@ -32,7 +32,7 @@ describe('OrganizationEntity', () => {
       ]
     );
     expect(organizationEntity.toJson()).toEqual({
-      id: id,
+      id,
       ...organizationFactory.default(),
     });
   });

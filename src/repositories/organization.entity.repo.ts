@@ -3,7 +3,6 @@ import {
   OrganizationEntity,
 } from '../entities/organization.entity';
 import { EntityManager, Repository } from 'typeorm';
-import { BALANCE_SHEET_RELATIONS } from '../entities/balance.sheet.entity';
 
 export interface IOrganizationEntityRepo {
   findByIdOrFail(id: number): Promise<OrganizationEntity>;
