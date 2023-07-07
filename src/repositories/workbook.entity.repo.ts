@@ -1,7 +1,6 @@
 import { z } from 'zod';
 import { WorkbookEntity } from '../entities/workbook.entity';
 import axios from 'axios';
-import { workbookEntityFromFile } from '../../tests/workbook';
 
 export interface IWorkbookEntityRepo {
   getWorkbookEntity(): Promise<WorkbookEntity>;
@@ -15,19 +14,11 @@ export class WorkbookEntityRepo implements IWorkbookEntityRepo {
   constructor(private apiToken: string) {}
   public async getWorkbookEntity(): Promise<WorkbookEntity> {
     const response = await axios.get(
-      'https://git.ecogood.org/api/v1/repos/public/matrix-development/contents/jekyll/workbook.json',
+      'https://git.ecogood.org/api/v1/repos/public/matrix-development/contents/workbook.json',
       { headers: { Authorization: `token ${this.apiToken}` } }
     );
     const { content } = ApiResponseSchema.parse(response.data);
     const contentAsJson = JSON.parse(Buffer.from(content, 'base64').toString());
     return new WorkbookEntity(contentAsJson);
-  }
-}
-
-export class InMemoryWorkbookEntityRepo implements IWorkbookEntityRepo {
-  private workbookEntity = workbookEntityFromFile();
-
-  getWorkbookEntity(): Promise<WorkbookEntity> {
-    return Promise.resolve(this.workbookEntity);
   }
 }

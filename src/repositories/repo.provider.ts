@@ -10,7 +10,6 @@ import {
 } from './balance.sheet.entity.repo';
 import { ApiKeyRepository, IApiKeyRepo } from './api.key.entity.repo';
 import {
-  InMemoryWorkbookEntityRepo,
   IWorkbookEntityRepo,
   WorkbookEntityRepo,
 } from './workbook.entity.repo';
@@ -54,33 +53,5 @@ export class RepoProvider implements IRepoProvider {
 
   getWorkbookEntityRepo(): IWorkbookEntityRepo {
     return new WorkbookEntityRepo(this.configuration.workbookApiToken);
-  }
-}
-
-export class InMemoryRepoProvider implements IRepoProvider {
-  constructor(private inMemoryWorkbookEntityRepo: InMemoryWorkbookEntityRepo) {}
-
-  getOrganizationEntityRepo(
-    entityManager: EntityManager
-  ): IOrganizationEntityRepo {
-    return new OrganizationEntityRepository(entityManager);
-  }
-
-  getUserEntityRepo(entityManager: EntityManager): IUserEntityRepo {
-    return new UserEntityRepository(entityManager);
-  }
-
-  getBalanceSheetEntityRepo(
-    entityManager: EntityManager
-  ): IBalanceSheetEntityRepo {
-    return new BalanceSheetEntityRepository(entityManager);
-  }
-
-  getApiKeyRepo(entityManager: EntityManager): IApiKeyRepo {
-    return new ApiKeyRepository(entityManager);
-  }
-
-  getWorkbookEntityRepo(): IWorkbookEntityRepo {
-    return this.inMemoryWorkbookEntityRepo;
   }
 }

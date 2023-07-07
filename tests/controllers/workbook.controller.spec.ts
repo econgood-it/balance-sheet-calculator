@@ -5,11 +5,14 @@ import { DatabaseSourceCreator } from '../../src/databaseSourceCreator';
 import App from '../../src/app';
 import { Auth, AuthBuilder } from '../AuthBuilder';
 import supertest from 'supertest';
-import { InMemoryRepoProvider } from '../../src/repositories/repo.provider';
-import { InMemoryWorkbookEntityRepo } from '../../src/repositories/workbook.entity.repo';
+
 import { organizationFactory } from '../../src/openapi/examples';
 import { WorkbookPaths } from '../../src/controllers/workbook.controller';
 import { workbookEntityFromFile } from '../workbook';
+import {
+  InMemoryRepoProvider,
+  InMemoryWorkbookEntityRepo,
+} from '../repositories/workbook.entity.repo.spec';
 
 describe('Workbook Controller', () => {
   let dataSource: DataSource;
