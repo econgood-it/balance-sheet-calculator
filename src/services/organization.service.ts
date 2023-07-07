@@ -4,8 +4,12 @@ import { handle } from '../exceptions/error.handler';
 import { DataSource } from 'typeorm';
 import { OrganizationEntity } from '../entities/organization.entity';
 import { Authorization } from '../security/authorization';
-import { OrganizationParser } from '../models/organization';
 import { IRepoProvider } from '../repositories/repo.provider';
+import {
+  OrganizationItemsResponseSchema,
+  OrganizationRequestSchema,
+} from '@ecogood/e-calculator-schemas/dist/organization.dto';
+import { NoAccessError } from '../exceptions/no.access.error';
 
 export class OrganizationService {
   constructor(
@@ -23,12 +27,12 @@ export class OrganizationService {
         const orgaRepo =
           this.repoProvider.getOrganizationEntityRepo(entityManager);
         const userRepo = this.repoProvider.getUserEntityRepo(entityManager);
-        const organization = OrganizationParser.fromJson(req.body);
+        const organization = OrganizationRequestSchema.parse(req.body);
         const currentUser = await userRepo.findCurrentUserOrFail(req);
         const organizationEntity = await orgaRepo.save(
           new OrganizationEntity(undefined, organization, [currentUser])
         );
-        res.json(OrganizationParser.toJson(organizationEntity));
+        res.json(organizationEntity.toJson());
       })
       .catch((error) => {
         handle(error, next);
@@ -45,7 +49,7 @@ export class OrganizationService {
         const organizationEntityRepository =
           this.repoProvider.getOrganizationEntityRepo(entityManager);
         const organizationIdParam: number = Number(req.params.id);
-        const organization = OrganizationParser.fromJson(req.body);
+        const organization = OrganizationRequestSchema.parse(req.body);
         const organizationEntity =
           await organizationEntityRepository.findByIdOrFail(
             organizationIdParam
@@ -60,7 +64,33 @@ export class OrganizationService {
             )
           );
 
-        res.json(OrganizationParser.toJson(updatedOrganizationEntity));
+        res.json(updatedOrganizationEntity.toJson());
+      })
+      .catch((error) => {
+        handle(error, next);
+      });
+  }
+
+  public async getOrganizationsOfCurrentUser(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    this.dataSource.manager
+      .transaction(async (entityManager) => {
+        if (!req.userInfo) {
+          throw new NoAccessError();
+        }
+        const orgaRepo =
+          this.repoProvider.getOrganizationEntityRepo(entityManager);
+        const organizationEntities = await orgaRepo.findOrganizationsOfUser(
+          req.userInfo?.id
+        );
+        res.json(
+          OrganizationItemsResponseSchema.parse(
+            organizationEntities.map((o) => ({ id: o.id }))
+          )
+        );
       })
       .catch((error) => {
         handle(error, next);

@@ -9,9 +9,14 @@ import {
   IOrganizationEntityRepo,
   OrganizationEntityRepository,
 } from '../../src/repositories/organization.entity.repo';
+import {
+  IUserEntityRepo,
+  UserEntityRepository,
+} from '../../src/repositories/user.entity.repo';
 
 describe('OrganizationEntityRepo', () => {
   let organizationEntityRepo: IOrganizationEntityRepo;
+  let userEntityRepo: IUserEntityRepo;
   let dataSource: DataSource;
   const organization = {
     address: {
@@ -29,17 +34,16 @@ describe('OrganizationEntityRepo', () => {
     organizationEntityRepo = new OrganizationEntityRepository(
       dataSource.manager
     );
+    userEntityRepo = new UserEntityRepository(dataSource.manager);
   });
 
   afterAll(async () => {
     await dataSource.destroy();
   });
   it('should be save', async () => {
-    const user = await dataSource
-      .getRepository(User)
-      .save(
-        new User(undefined, `${uuid4()}@example.com`, 'test1234', Role.User)
-      );
+    const user = await userEntityRepo.save(
+      new User(undefined, `${uuid4()}@example.com`, 'test1234', Role.User)
+    );
     const members = [user];
 
     const organizationEntity = new OrganizationEntity(
@@ -82,5 +86,30 @@ describe('OrganizationEntityRepo', () => {
     await organizationEntityRepo.remove(organizationEntity);
     relation = await dataSource.query(query);
     expect(relation).toHaveLength(0);
+  });
+
+  it('finds all organizations of user', async () => {
+    const user = await userEntityRepo.save(
+      new User(undefined, `${uuid4()}@example.com`, 'test1234', Role.User)
+    );
+    const members = [user];
+
+    const organizationEntity = new OrganizationEntity(
+      undefined,
+      organization,
+      members
+    );
+    const id1 = (await organizationEntityRepo.save(organizationEntity)).id;
+    const organizationEntity2 = new OrganizationEntity(
+      undefined,
+      organization,
+      members
+    );
+    const id2 = (await organizationEntityRepo.save(organizationEntity2)).id;
+
+    const organizations = await organizationEntityRepo.findOrganizationsOfUser(
+      user.id!
+    );
+    expect(organizations.map((o) => o.id)).toEqual([id1, id2]);
   });
 });

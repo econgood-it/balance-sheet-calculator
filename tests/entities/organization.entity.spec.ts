@@ -19,4 +19,21 @@ describe('OrganizationEntity', () => {
       organizationEntity.hasMemberWithEmail('invalid@example.com')
     ).toBeFalsy();
   });
+
+  it('should return json', function () {
+    const userEmail = 'test@example.com';
+    const id = 7;
+    const organizationEntity = new OrganizationEntity(
+      id,
+      organizationFactory.default(),
+      [
+        new User(undefined, userEmail, 'pass', Role.User),
+        new User(undefined, 'other@example.com', 'pass', Role.User),
+      ]
+    );
+    expect(organizationEntity.toJson()).toEqual({
+      id: id,
+      ...organizationFactory.default(),
+    });
+  });
 });

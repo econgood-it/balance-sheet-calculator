@@ -9,6 +9,7 @@ import { registerBalanceSheetPatch } from './balancesheet.patch';
 import { registerOrganizationPost } from './organization.post';
 import { registerOrganizationPut } from './organization.put';
 import { registerWorkbookGet } from './workbook.get';
+import { registerOrganizationGet } from './organization.get';
 export const Tags = {
   balanceSheets: 'balancesheets',
   organization: 'organization',
@@ -45,4 +46,5 @@ export function registerPaths(
   registerOrganizationPost(registry, schemas, params);
   registerOrganizationPut(registry, schemas, params);
   registerWorkbookGet(registry, schemas, params);
+  registerOrganizationGet(registry, schemas, params);
 }
