@@ -8,9 +8,11 @@ import { registerBalanceSheetDelete } from './balancesheet.delete';
 import { registerBalanceSheetPatch } from './balancesheet.patch';
 import { registerOrganizationPost } from './organization.post';
 import { registerOrganizationPut } from './organization.put';
+import { registerWorkbookGet } from './workbook.get';
 export const Tags = {
   balanceSheets: 'balancesheets',
   organization: 'organization',
+  workbook: 'workbook',
 };
 export const Methods: {
   [name: string]: 'get' | 'post' | 'put' | 'delete' | 'patch';
@@ -42,4 +44,5 @@ export function registerPaths(
   registerBalanceSheetDelete(registry, schemas, params);
   registerOrganizationPost(registry, schemas, params);
   registerOrganizationPut(registry, schemas, params);
+  registerWorkbookGet(registry, schemas, params);
 }

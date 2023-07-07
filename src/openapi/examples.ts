@@ -8,6 +8,7 @@ import {
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import { Organization } from '../models/organization';
 import { StakeholderWeight } from '../models/stakeholder.weight';
+import { WorkbookSection } from '../entities/workbook.entity';
 
 const arabEmiratesCode = 'ARE';
 const afghanistanCode = 'AFG';
@@ -204,6 +205,23 @@ export const companyFactsJsonFactory = {
     ],
     industrySectors: [{ industryCode: 'A', amountOfTotalTurnover: 100 }],
   }),
+};
+
+export const WorkbookSectionsJsonFactory = {
+  default: (): WorkbookSection[] => [
+    {
+      shortName: 'C',
+      title: 'C. Employees, including co-working employers',
+    },
+    {
+      shortName: 'C1',
+      title: 'C1 Human dignity in the workplace and working environment ',
+    },
+    {
+      shortName: 'C1.3',
+      title: 'C1.3 Diversity and equal opportunities',
+    },
+  ],
 };
 
 export const StakeholderWeightsFactory = {
