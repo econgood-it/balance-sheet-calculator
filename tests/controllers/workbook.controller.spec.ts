@@ -6,22 +6,15 @@ import App from '../../src/app';
 import { Auth, AuthBuilder } from '../AuthBuilder';
 import supertest from 'supertest';
 import { InMemoryRepoProvider } from '../../src/repositories/repo.provider';
-import { WorkbookEntity } from '../../src/entities/workbook.entity';
 import { InMemoryWorkbookEntityRepo } from '../../src/repositories/workbook.entity.repo';
 import { organizationFactory } from '../../src/openapi/examples';
+import { WorkbookPaths } from '../../src/controllers/workbook.controller';
+import { workbookEntityFromFile } from '../workbook';
 
 describe('Workbook Controller', () => {
   let dataSource: DataSource;
   let app: Application;
   const configuration = ConfigurationReader.read();
-
-  const sections = [
-    { shortName: 'A1', title: 'A1 title' },
-    { shortName: 'D1', title: 'D1 title' },
-    { shortName: 'C2', title: 'C2 title' },
-  ];
-  const workbook = new WorkbookEntity(sections);
-  const workbookPath = '/v1/workbook';
   let auth: Auth;
 
   beforeAll(async () => {
@@ -31,7 +24,7 @@ describe('Workbook Controller', () => {
     app = new App(
       dataSource,
       configuration,
-      new InMemoryRepoProvider(new InMemoryWorkbookEntityRepo(workbook))
+      new InMemoryRepoProvider(new InMemoryWorkbookEntityRepo())
     ).app;
     auth = await new AuthBuilder(app, dataSource).build();
   });
@@ -43,18 +36,18 @@ describe('Workbook Controller', () => {
   it('should return workbook', async () => {
     const testApp = supertest(app);
     const response = await testApp
-      .get(workbookPath)
+      .get(WorkbookPaths.get)
       .set(auth.authHeader.key, auth.authHeader.value)
       .send();
     expect(response.status).toBe(200);
-    expect(response.body).toEqual(workbook.toJson());
+    expect(response.body).toEqual(workbookEntityFromFile().toJson());
   });
 
   it('should fail return workbook if user is unauthenticated', async () => {
     const orgaJson = organizationFactory.default();
     const testApp = supertest(app);
     const response = await testApp
-      .get(workbookPath)
+      .get(WorkbookPaths.get)
       .set(auth.authHeader.key, 'Bearer invalid token')
       .send(orgaJson);
     expect(response.status).toBe(401);
@@ -65,7 +58,7 @@ describe('Workbook Controller', () => {
     const orgaJson = organizationFactory.default();
     const testApp = supertest(app);
     const response = await testApp
-      .get(workbookPath)
+      .get(WorkbookPaths.get)
       .set(adminAuth.authHeader.key, adminAuth.authHeader.value)
       .send(orgaJson);
     expect(response.status).toBe(403);

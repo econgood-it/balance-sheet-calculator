@@ -45,12 +45,12 @@ const StakeholderSchema = z
     ...st.group.values,
   ]);
 
-export class WorkbookEntity implements IWorkbookEntity {
-  constructor(private sections: WorkbookSection[]) {}
+export function workbookEntityFromFile() {}
 
-  static fromJson(json: any): WorkbookEntity {
-    const stakeholders = StakeholderSchema.array().parse(json).flat(2);
-    return new WorkbookEntity(stakeholders);
+export class WorkbookEntity implements IWorkbookEntity {
+  private sections: WorkbookSection[];
+  constructor(json: any) {
+    this.sections = StakeholderSchema.array().parse(json).flat(2);
   }
 
   findByShortName(shortName: string): WorkbookSection | undefined {
