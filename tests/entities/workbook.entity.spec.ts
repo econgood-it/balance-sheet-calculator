@@ -1,4 +1,3 @@
-import { WorkbookEntity } from '../../src/entities/workbook.entity';
 import { workbookEntityFromFile } from '../workbook';
 
 describe('WorkbookEntity', () => {

@@ -1,8 +1,6 @@
 import { z } from 'zod';
 import { WorkbookEntity } from '../entities/workbook.entity';
 import axios from 'axios';
-import path from 'path';
-import fs from 'fs';
 import { workbookEntityFromFile } from '../../tests/workbook';
 
 export interface IWorkbookEntityRepo {
@@ -11,10 +9,6 @@ export interface IWorkbookEntityRepo {
 
 const ApiResponseSchema = z.object({
   content: z.string(),
-});
-
-const AspectSchema = z.object({
-  title: z.string(),
 });
 
 export class WorkbookEntityRepo implements IWorkbookEntityRepo {

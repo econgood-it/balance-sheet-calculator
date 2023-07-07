@@ -2,7 +2,6 @@ import axios from 'axios';
 import { WorkbookEntityRepo } from '../../src/repositories/workbook.entity.repo';
 import path from 'path';
 import fs from 'fs';
-import { workbookEntityFromFile } from '../workbook';
 
 jest.mock('axios');
 const mockedAxios = jest.mocked(axios, true);
