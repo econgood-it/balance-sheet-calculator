@@ -96,4 +96,27 @@ export class OrganizationService {
         handle(error, next);
       });
   }
+
+  public async getOrganization(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    this.dataSource.manager
+      .transaction(async (entityManager) => {
+        const orgaRepo =
+          this.repoProvider.getOrganizationEntityRepo(entityManager);
+        const foundOrganizationEntity = await orgaRepo.findByIdOrFail(
+          Number(req.params.id)
+        );
+        await Authorization.checkIfCurrentUserIsMember(
+          req,
+          foundOrganizationEntity
+        );
+        res.json(foundOrganizationEntity.toJson());
+      })
+      .catch((error) => {
+        handle(error, next);
+      });
+  }
 }

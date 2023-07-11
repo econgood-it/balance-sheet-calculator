@@ -7,6 +7,7 @@ export const OrganizationPaths = {
   post: `${resourceUrl}`,
   put: `${resourceUrl}/:id`,
   getAll: `${resourceUrl}`,
+  get: `${resourceUrl}/:id`,
 };
 
 export class OrganizationController {
@@ -34,6 +35,11 @@ export class OrganizationController {
       this.organizationService.getOrganizationsOfCurrentUser.bind(
         this.organizationService
       )
+    );
+    this.app.get(
+      OrganizationPaths.get,
+      allowUserOnly,
+      this.organizationService.getOrganization.bind(this.organizationService)
     );
   }
 }

@@ -14,6 +14,7 @@ describe('Organization Controller Get Endpoint', () => {
   let app: Application;
   const configuration = ConfigurationReader.read();
   let auth: Auth;
+  let authOtherUser: Auth;
 
   beforeAll(async () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
@@ -22,6 +23,7 @@ describe('Organization Controller Get Endpoint', () => {
     const repoProvider = new RepoProvider(configuration);
     app = new App(dataSource, configuration, repoProvider).app;
     auth = await new AuthBuilder(app, dataSource).build();
+    authOtherUser = await new AuthBuilder(app, dataSource).build();
   });
 
   afterAll(async () => {
@@ -49,25 +51,64 @@ describe('Organization Controller Get Endpoint', () => {
       { id: responseSecondPost.body.id },
     ]);
   });
-
-  it('should fail to get organizations if user is unauthenticated', async () => {
+  it('should return organization by id', async () => {
     const orgaJson = organizationFactory.default();
     const testApp = supertest(app);
-    const response = await testApp
-      .get(OrganizationPaths.getAll)
-      .set(auth.authHeader.key, 'Bearer invalid token')
+    const responseFirstPost = await testApp
+      .post(OrganizationPaths.post)
+      .set(auth.authHeader.key, auth.authHeader.value)
       .send(orgaJson);
-    expect(response.status).toBe(401);
+    const response = await testApp
+      .get(`${OrganizationPaths.getAll}/${responseFirstPost.body.id}`)
+      .set(auth.authHeader.key, auth.authHeader.value)
+      .send(orgaJson);
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      id: responseFirstPost.body.id,
+      ...orgaJson,
+    });
   });
 
-  it('should fail to create organization if user is admin', async () => {
-    const adminAuth = await new AuthBuilder(app, dataSource).admin().build();
+  it('should block access to organization if user is unauthorized', async () => {
     const orgaJson = organizationFactory.default();
     const testApp = supertest(app);
-    const response = await testApp
-      .get(OrganizationPaths.getAll)
-      .set(adminAuth.authHeader.key, adminAuth.authHeader.value)
+    const responseFirstPost = await testApp
+      .post(OrganizationPaths.post)
+      .set(auth.authHeader.key, auth.authHeader.value)
       .send(orgaJson);
-    expect(response.status).toBe(403);
+
+    const response = await testApp
+      .get(`${OrganizationPaths.getAll}/${responseFirstPost.body.id}`)
+      .set(authOtherUser.authHeader.key, authOtherUser.authHeader.value)
+      .send(orgaJson);
+    expect(response.status).toEqual(403);
   });
+
+  it.each([OrganizationPaths.getAll, `${OrganizationPaths.getAll}/9`])(
+    'should fail to get organizations if user is unauthenticated',
+    async (path: string) => {
+      const orgaJson = organizationFactory.default();
+      const testApp = supertest(app);
+      const response = await testApp
+        .get(path)
+        .set(auth.authHeader.key, 'Bearer invalid token')
+        .send(orgaJson);
+      expect(response.status).toBe(401);
+    }
+  );
+
+  it.each([OrganizationPaths.getAll, `${OrganizationPaths.getAll}/9`])(
+    'should fail to get organization if user is admin',
+    async (path: string) => {
+      const adminAuth = await new AuthBuilder(app, dataSource).admin().build();
+      const orgaJson = organizationFactory.default();
+      const testApp = supertest(app);
+
+      const response = await testApp
+        .get(path)
+        .set(adminAuth.authHeader.key, adminAuth.authHeader.value)
+        .send(orgaJson);
+      expect(response.status).toBe(403);
+    }
+  );
 });

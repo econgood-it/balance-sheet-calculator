@@ -213,9 +213,8 @@ export class BalanceSheetService {
       .transaction(async (entityManager) => {
         const balanceSheetRepository =
           this.repoProvider.getBalanceSheetEntityRepo(entityManager);
-        const balanceSheetId: number = Number(req.params.id);
         const balanceSheetEntity = await balanceSheetRepository.findByIdOrFail(
-          balanceSheetId
+          Number(req.params.id)
         );
         await Authorization.checkIfCurrentUserHasEditorPermissions(
           req,

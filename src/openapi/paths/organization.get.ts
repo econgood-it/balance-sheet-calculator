@@ -1,9 +1,21 @@
-import { applicationJson, HttpCodes, Methods, Tags } from './paths';
+import {
+  applicationJson,
+  HttpCodes,
+  Methods,
+  replaceExpressIdByOpenApiId,
+  Tags,
+} from './paths';
 import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { OpenApiSchemas } from '../schemas';
 import { OpenApiParams } from '../params';
 import { OrganizationPaths } from '../../controllers/organization.controller';
-import { OrganizationItemsResponseSchema } from '@ecogood/e-calculator-schemas/dist/organization.dto';
+import {
+  OrganizationItemsResponseSchema,
+  OrganizationResponseSchema,
+} from '@ecogood/e-calculator-schemas/dist/organization.dto';
+import { BalanceSheetPaths } from '../../controllers/balance.sheet.controller';
+import { z } from 'zod';
+import { BalanceSheetResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
 
 export function registerOrganizationGet(
   registry: OpenAPIRegistry,
@@ -26,6 +38,32 @@ export function registerOrganizationGet(
         content: {
           [applicationJson]: {
             schema: OrganizationItemsResponseSchema,
+          },
+        },
+      },
+    },
+  });
+
+  registry.registerPath({
+    method: Methods.get,
+    path: replaceExpressIdByOpenApiId(OrganizationPaths.get),
+    tags: [Tags.organization],
+    description: 'Get organization by id',
+    summary: 'Get organization',
+
+    request: {
+      headers: [params.CorrelationIdHeader],
+      query: z.object({
+        lng: params.LanguageParam,
+      }),
+      params: z.object({ id: params.OrganizationIdParam }),
+    },
+    responses: {
+      [HttpCodes.okey]: {
+        description: 'Organization for given id',
+        content: {
+          [applicationJson]: {
+            schema: OrganizationResponseSchema,
           },
         },
       },
