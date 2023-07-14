@@ -13,9 +13,7 @@ import {
   OrganizationItemsResponseSchema,
   OrganizationResponseSchema,
 } from '@ecogood/e-calculator-schemas/dist/organization.dto';
-import { BalanceSheetPaths } from '../../controllers/balance.sheet.controller';
 import { z } from 'zod';
-import { BalanceSheetResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
 
 export function registerOrganizationGet(
   registry: OpenAPIRegistry,
