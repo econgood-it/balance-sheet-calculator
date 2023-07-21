@@ -1,4 +1,5 @@
 name: "Request"
+about: "feature, bug fix"
 title: ""
 body:
   - type: textarea
