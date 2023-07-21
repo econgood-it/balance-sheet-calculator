@@ -1,6 +1,8 @@
-name: "Request"
-about: "feature, bug fix"
+name: "Bug"
+about: "This template is for bug reports"
 title: ""
+labels:
+  - Bug
 body:
   - type: textarea
     attributes:
