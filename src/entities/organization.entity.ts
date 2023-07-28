@@ -3,12 +3,16 @@ import {
   Entity,
   JoinTable,
   ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Organization } from '../models/organization';
 import { User } from './user';
 import { z } from 'zod';
 import { OrganizationResponseSchema } from '@ecogood/e-calculator-schemas/dist/organization.dto';
+import { BalanceSheetEntity } from './balance.sheet.entity';
+import { balanceSheetFactory } from '../openapi/examples';
+import { ConflictError } from '../exceptions/conflict.error';
 export const ORGANIZATION_RELATIONS = ['members'];
 
 @Entity()
@@ -23,6 +27,12 @@ export class OrganizationEntity {
   @JoinTable({ name: 'organization_members' })
   public readonly members: User[];
 
+  @OneToMany(
+    (type) => BalanceSheetEntity,
+    (balanceSheetEntity) => balanceSheetEntity.organizationEntity
+  )
+  public balanceSheetEntities: BalanceSheetEntity[] | undefined;
+
   public constructor(
     id: number | undefined,
     organization: Organization,
@@ -31,6 +41,21 @@ export class OrganizationEntity {
     this.id = id;
     this.organization = organization;
     this.members = members;
+  }
+
+  public addBalanceSheetEntity(balanceSheetEntity: BalanceSheetEntity) {
+    if (!z.number().safeParse(balanceSheetEntity.id).success) {
+      throw new Error('Balance sheet has no Id');
+    }
+    if (
+      this.balanceSheetEntities &&
+      this.balanceSheetEntities.find((b) => b.id === balanceSheetEntity.id)
+    ) {
+      throw new ConflictError('Balance sheet already exists in organization');
+    }
+    this.balanceSheetEntities = this.balanceSheetEntities
+      ? [...this.balanceSheetEntities, balanceSheetEntity]
+      : [balanceSheetEntity];
   }
 
   public hasMemberWithEmail(userEmail: string) {

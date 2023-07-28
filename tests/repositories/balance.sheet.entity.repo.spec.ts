@@ -4,12 +4,18 @@ import { ConfigurationReader } from '../../src/reader/configuration.reader';
 import { BalanceSheetEntity } from '../../src/entities/balance.sheet.entity';
 import { Role } from '../../src/entities/enums';
 import { User } from '../../src/entities/user';
-import { balanceSheetFactory } from '../../src/openapi/examples';
+import {
+  balanceSheetFactory,
+  organizationFactory,
+} from '../../src/openapi/examples';
 import { v4 as uuid4 } from 'uuid';
 import {
   BalanceSheetEntityRepository,
   IBalanceSheetEntityRepo,
 } from '../../src/repositories/balance.sheet.entity.repo';
+import { OrganizationEntity } from '../../src/entities/organization.entity';
+import { UserEntityRepository } from '../../src/repositories/user.entity.repo';
+import { OrganizationEntityRepository } from '../../src/repositories/organization.entity.repo';
 
 describe('BalanceSheetRepo', () => {
   let balanceSheetEntityRepository: IBalanceSheetEntityRepo;
@@ -56,9 +62,9 @@ describe('BalanceSheetRepo', () => {
   it('does save relation to existing user', async () => {
     await cleanUpTables();
     const email = `${uuid4()}@example.com`;
-    const user = await dataSource
-      .getRepository(User)
-      .save(new User(undefined, email, 'test1234', Role.User));
+    const user = await new UserEntityRepository(dataSource.manager).save(
+      new User(undefined, email, 'test1234', Role.User)
+    );
     const balanceSheetEntity = new BalanceSheetEntity(
       undefined,
       balanceSheetFactory.emptyFullV508(),

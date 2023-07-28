@@ -13,9 +13,16 @@ import {
   IUserEntityRepo,
   UserEntityRepository,
 } from '../../src/repositories/user.entity.repo';
+import { BalanceSheetEntity } from '../../src/entities/balance.sheet.entity';
+import {
+  BalanceSheetEntityRepository,
+  IBalanceSheetEntityRepo,
+} from '../../src/repositories/balance.sheet.entity.repo';
+import { balanceSheetFactory } from '../../src/openapi/examples';
 
 describe('OrganizationEntityRepo', () => {
   let organizationEntityRepo: IOrganizationEntityRepo;
+  let balanceSheetEntityRepo: IBalanceSheetEntityRepo;
   let userEntityRepo: IUserEntityRepo;
   let dataSource: DataSource;
   const organization = {
@@ -32,6 +39,9 @@ describe('OrganizationEntityRepo', () => {
       ConfigurationReader.read()
     );
     organizationEntityRepo = new OrganizationEntityRepository(
+      dataSource.manager
+    );
+    balanceSheetEntityRepo = new BalanceSheetEntityRepository(
       dataSource.manager
     );
     userEntityRepo = new UserEntityRepository(dataSource.manager);
@@ -111,5 +121,42 @@ describe('OrganizationEntityRepo', () => {
       user.id!
     );
     expect(organizations.map((o) => o.id)).toEqual([id1, id2]);
+  });
+
+  it('saves and finds all balance sheet entities of organization', async () => {
+    const user = await userEntityRepo.save(
+      new User(undefined, `${uuid4()}@example.com`, 'test1234', Role.User)
+    );
+    const members = [user];
+
+    const organizationEntity = new OrganizationEntity(
+      undefined,
+      organization,
+      members
+    );
+    const balanceSheetEntities = [
+      new BalanceSheetEntity(undefined, balanceSheetFactory.emptyFullV508(), [
+        user,
+      ]),
+      new BalanceSheetEntity(undefined, balanceSheetFactory.emptyFullV508(), [
+        user,
+      ]),
+    ];
+    const savedBalanceSheetEntities = await Promise.all(
+      balanceSheetEntities.map(
+        async (b) => await balanceSheetEntityRepo.save(b)
+      )
+    );
+    savedBalanceSheetEntities.map((b) =>
+      organizationEntity.addBalanceSheetEntity(b)
+    );
+    const orgaId = (await organizationEntityRepo.save(organizationEntity)).id;
+    const foundOrganizationEntity = await organizationEntityRepo.findByIdOrFail(
+      orgaId!,
+      true
+    );
+    expect(
+      foundOrganizationEntity.balanceSheetEntities?.map((b) => b.id)
+    ).toEqual(savedBalanceSheetEntities.map((b) => b.id));
   });
 });

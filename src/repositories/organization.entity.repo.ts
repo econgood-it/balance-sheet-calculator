@@ -5,7 +5,10 @@ import {
 import { EntityManager, Repository } from 'typeorm';
 
 export interface IOrganizationEntityRepo {
-  findByIdOrFail(id: number): Promise<OrganizationEntity>;
+  findByIdOrFail(
+    id: number,
+    loadBalanceSheetEntities?: boolean
+  ): Promise<OrganizationEntity>;
   findOrganizationsOfUser(userId: number): Promise<OrganizationEntity[]>;
   save(organizationEntity: OrganizationEntity): Promise<OrganizationEntity>;
   remove(organizationEntity: OrganizationEntity): Promise<OrganizationEntity>;
@@ -28,10 +31,16 @@ export class OrganizationEntityRepository implements IOrganizationEntityRepo {
     });
   }
 
-  findByIdOrFail(id: number): Promise<OrganizationEntity> {
+  findByIdOrFail(
+    id: number,
+    loadBalanceSheetEntities: boolean = false
+  ): Promise<OrganizationEntity> {
     return this.repo.findOneOrFail({
       where: { id },
-      relations: ORGANIZATION_RELATIONS,
+      relations: [
+        ...ORGANIZATION_RELATIONS,
+        ...(loadBalanceSheetEntities ? ['balanceSheetEntities'] : []),
+      ],
     });
   }
 

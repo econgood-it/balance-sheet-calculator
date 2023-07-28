@@ -4,6 +4,7 @@ import {
   Entity,
   JoinTable,
   ManyToMany,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from './user';
@@ -27,6 +28,7 @@ import { EntityWithDtoMerger } from '../merge/entity.with.dto.merger';
 import { MatrixFormat } from '../dto/balance.sheet.dto';
 import { diff } from 'deep-diff';
 import { DatabaseValidationError } from '../exceptions/databaseValidationError';
+import { OrganizationEntity } from './organization.entity';
 
 export const BALANCE_SHEET_RELATIONS = ['users'];
 
@@ -49,6 +51,12 @@ export class BalanceSheetEntity {
   @ManyToMany((type) => User, (user) => user.balanceSheetEntities)
   @JoinTable({ name: 'balance_sheet_entities_users' })
   public readonly users: User[];
+
+  @ManyToOne(
+    () => OrganizationEntity,
+    (organizationEntity) => organizationEntity.balanceSheetEntities
+  )
+  public readonly organizationEntity: OrganizationEntity | undefined;
 
   public constructor(
     id: number | undefined,
