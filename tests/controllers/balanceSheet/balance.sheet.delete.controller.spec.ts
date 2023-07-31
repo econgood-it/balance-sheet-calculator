@@ -44,7 +44,7 @@ describe('Balance Sheet Controller', () => {
     balanceSheetJson = {
       type: BalanceSheetType.Full,
       version: BalanceSheetVersion.v5_0_8,
-      companyFacts: companyFactsJsonFactory.empty(),
+      companyFacts: companyFactsJsonFactory.emptyRequest(),
     };
   });
 

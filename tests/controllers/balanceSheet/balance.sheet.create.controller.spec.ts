@@ -59,7 +59,7 @@ describe('Balance Sheet Controller', () => {
     balanceSheetJson = {
       type: BalanceSheetType.Full,
       version: BalanceSheetVersion.v5_0_8,
-      companyFacts: companyFactsJsonFactory.empty(),
+      companyFacts: companyFactsJsonFactory.emptyRequest(),
     };
   });
 
@@ -70,8 +70,9 @@ describe('Balance Sheet Controller', () => {
       .set(auth.authHeader.key, auth.authHeader.value)
       .send(balanceSheetJson);
     expect(response.status).toEqual(200);
-    const companyFacts = balanceSheetJson.companyFacts;
-    expect(response.body.companyFacts).toMatchObject(companyFacts);
+    expect(response.body.companyFacts).toMatchObject(
+      companyFactsJsonFactory.emptyResponse()
+    );
     expect(
       response.body.ratings
         .filter((r: RatingResponseBody) => r.shortName.length === 2)
@@ -121,8 +122,9 @@ describe('Balance Sheet Controller', () => {
       .query({ save: 'false' })
       .send(balanceSheetJson);
     expect(response.status).toEqual(200);
-    const companyFacts = balanceSheetJson.companyFacts;
-    expect(response.body.companyFacts).toMatchObject(companyFacts);
+    expect(response.body.companyFacts).toMatchObject(
+      companyFactsJsonFactory.emptyResponse()
+    );
     expect(
       response.body.ratings
         .filter((r: RatingResponseBody) => r.shortName.length === 2)

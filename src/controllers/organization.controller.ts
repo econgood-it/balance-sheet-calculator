@@ -8,6 +8,7 @@ export const OrganizationPaths = {
   put: `${resourceUrl}/:id`,
   getAll: `${resourceUrl}`,
   get: `${resourceUrl}/:id`,
+  postBalanceSheet: `${resourceUrl}/:id/balancesheet`,
 };
 
 export class OrganizationController {
@@ -40,6 +41,11 @@ export class OrganizationController {
       OrganizationPaths.get,
       allowUserOnly,
       this.organizationService.getOrganization.bind(this.organizationService)
+    );
+    this.app.post(
+      OrganizationPaths.postBalanceSheet,
+      allowUserOnly,
+      this.organizationService.createBalanceSheet.bind(this.organizationService)
     );
   }
 }

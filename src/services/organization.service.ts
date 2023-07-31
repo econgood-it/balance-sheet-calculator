@@ -10,6 +10,10 @@ import {
   OrganizationRequestSchema,
 } from '@ecogood/e-calculator-schemas/dist/organization.dto';
 import { NoAccessError } from '../exceptions/no.access.error';
+import { BalanceSheetCreateRequest } from '../dto/balance.sheet.dto';
+import { parseLanguageParameter } from '../language/translations';
+import NotFoundException from '../exceptions/not.found.exception';
+import ForbiddenException from '../exceptions/forbidden.exception';
 
 export class OrganizationService {
   constructor(
@@ -114,6 +118,49 @@ export class OrganizationService {
           foundOrganizationEntity
         );
         res.json(foundOrganizationEntity.toJson());
+      })
+      .catch((error) => {
+        handle(error, next);
+      });
+  }
+
+  public async createBalanceSheet(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    const language = parseLanguageParameter(req.query.lng);
+
+    this.dataSource.manager
+      .transaction(async (entityManager) => {
+        const balanceSheetRepo =
+          this.repoProvider.getBalanceSheetEntityRepo(entityManager);
+        const orgaRepo =
+          this.repoProvider.getOrganizationEntityRepo(entityManager);
+        const balanceSheetEntity = new BalanceSheetCreateRequest(
+          req.body
+        ).toBalanceEntity([]);
+        const organizationEntity = await orgaRepo.findByIdOrFail(
+          Number(req.params.id),
+          true
+        );
+        if (!req.userInfo) {
+          throw new NoAccessError();
+        }
+        if (!organizationEntity) {
+          throw new NotFoundException('Organization not found');
+        }
+        await Authorization.checkIfCurrentUserIsMember(req, organizationEntity);
+
+        await balanceSheetEntity.reCalculate();
+
+        const savedBalanceSheetEntity = await balanceSheetRepo.save(
+          balanceSheetEntity
+        );
+        organizationEntity.addBalanceSheetEntity(savedBalanceSheetEntity);
+        await orgaRepo.save(organizationEntity);
+
+        res.json(savedBalanceSheetEntity.toJson(language));
       })
       .catch((error) => {
         handle(error, next);

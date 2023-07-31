@@ -43,7 +43,7 @@ describe('Update endpoint of Balance Sheet Controller', () => {
       .send({
         type: BalanceSheetType.Full,
         version: BalanceSheetVersion.v5_0_8,
-        companyFacts: companyFactsJsonFactory.empty(),
+        companyFacts: companyFactsJsonFactory.emptyRequest(),
       });
     const balanceSheetUpdate = {
       companyFacts: {
@@ -86,7 +86,7 @@ describe('Update endpoint of Balance Sheet Controller', () => {
       .send({
         type: BalanceSheetType.Full,
         version: BalanceSheetVersion.v5_0_8,
-        companyFacts: companyFactsJsonFactory.nonEmpty(),
+        companyFacts: companyFactsJsonFactory.nonEmptyRequest(),
       });
     const balanceSheetUpdate = {
       ratings: [
@@ -135,7 +135,7 @@ describe('Update endpoint of Balance Sheet Controller', () => {
       .send({
         type: balanceSheetType,
         version: balanceSheetVersion,
-        companyFacts: companyFactsJsonFactory.nonEmpty(),
+        companyFacts: companyFactsJsonFactory.nonEmptyRequest(),
       });
     const balanceSheetUpdate = {
       ratings: [
@@ -190,7 +190,7 @@ describe('Update endpoint of Balance Sheet Controller', () => {
         .send({
           type: BalanceSheetType.Full,
           version: BalanceSheetVersion.v5_0_8,
-          companyFacts: companyFactsJsonFactory.nonEmpty(),
+          companyFacts: companyFactsJsonFactory.nonEmptyRequest(),
         });
       const balanceSheetUpdate = {
         id: postResponse.body.id,

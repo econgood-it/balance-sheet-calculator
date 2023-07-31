@@ -58,7 +58,7 @@ describe('Company Facts', () => {
 
   it('parse object where no country code for main origin of other suppliers is provided', () => {
     const companyFacts = {
-      ...companyFactsJsonFactory.empty(),
+      ...companyFactsJsonFactory.emptyRequest(),
       mainOriginOfOtherSuppliers: { costs: 9 },
     };
     expect(CompanyFactsSchema.safeParse(companyFacts).success).toBeTruthy();
@@ -66,7 +66,7 @@ describe('Company Facts', () => {
 
   it('parse object where some of the supplier country codes are missing', () => {
     const companyFacts = {
-      ...companyFactsJsonFactory.empty(),
+      ...companyFactsJsonFactory.emptyRequest(),
       supplyFractions: [
         { countryCode: 'ARE', costs: 5, industryCode: 'A' },
         { costs: 7, industryCode: 'Be' },
@@ -78,7 +78,7 @@ describe('Company Facts', () => {
 
   it('parse object where some of the supplier industry codes are missing', () => {
     const companyFacts = {
-      ...companyFactsJsonFactory.empty(),
+      ...companyFactsJsonFactory.emptyRequest(),
       supplyFractions: [
         { countryCode: 'ARE', costs: 5, industryCode: 'A' },
         { countryCode: 'ARE', costs: 7 },
@@ -90,7 +90,7 @@ describe('Company Facts', () => {
 
   it('parse object where hasCanteen is undefined', () => {
     const companyFacts = {
-      ...companyFactsJsonFactory.empty(),
+      ...companyFactsJsonFactory.emptyRequest(),
       hasCanteen: undefined,
       mainOriginOfOtherSuppliers: { countryCode: 'DEU', costs: 9 },
     };
@@ -101,7 +101,7 @@ describe('Company Facts', () => {
 
   it('parse object where the industry codes of some industry sectors are missing', () => {
     const companyFacts = {
-      ...companyFactsJsonFactory.empty(),
+      ...companyFactsJsonFactory.emptyRequest(),
       industrySectors: [
         { amountOfTotalTurnover: 0.4, description: 'desc', industryCode: 'A' },
         { amountOfTotalTurnover: 0.6, description: 'desc' },
@@ -216,7 +216,7 @@ describe('CompanyFactsCreateRequestBodySchema', () => {
 
   it('parse json where no country code for main origin of other suppliers is provided', () => {
     const companyFactsJson = {
-      ...companyFactsJsonFactory.empty(),
+      ...companyFactsJsonFactory.emptyRequest(),
       totalPurchaseFromSuppliers: 9,
       mainOriginOfOtherSuppliers: undefined,
     };
@@ -233,7 +233,7 @@ describe('CompanyFactsCreateRequestBodySchema', () => {
 
   it('parse json where industry codes of some industry sectors are missing', () => {
     const companyFactsJson = {
-      ...companyFactsJsonFactory.empty(),
+      ...companyFactsJsonFactory.emptyRequest(),
       totalPurchaseFromSuppliers: 9,
       mainOriginOfOtherSuppliers: undefined,
       industrySectors: [
@@ -256,7 +256,7 @@ describe('CompanyFactsCreateRequestBodySchema', () => {
 
   it('parse json where some of the supplier country codes are missing', () => {
     const companyFacts = {
-      ...companyFactsJsonFactory.empty(),
+      ...companyFactsJsonFactory.emptyRequest(),
       supplyFractions: [
         { countryCode: 'ARE', costs: 5, industryCode: 'A' },
         { costs: 7, industryCode: 'Be' },

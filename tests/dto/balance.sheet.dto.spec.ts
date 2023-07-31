@@ -86,7 +86,7 @@ describe('Transform', () => {
   });
 
   it('json and divide percentage values by 100', async () => {
-    const companyFactsAsJson = companyFactsJsonFactory.nonEmpty();
+    const companyFactsAsJson = companyFactsJsonFactory.nonEmptyRequest();
     const json = {
       type: BalanceSheetType.Full,
       version: BalanceSheetVersion.v5_0_8,

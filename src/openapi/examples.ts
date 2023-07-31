@@ -9,6 +9,10 @@ import {
 import { Organization } from '../models/organization';
 import { StakeholderWeight } from '../models/stakeholder.weight';
 import { WorkbookSection } from '../entities/workbook.entity';
+import { BalanceSheetResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
+import { z } from 'zod';
+import { BalanceSheetEntity } from '../entities/balance.sheet.entity';
+import { CompanyFactsResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/company.facts.dto';
 
 const arabEmiratesCode = 'ARE';
 const afghanistanCode = 'AFG';
@@ -18,7 +22,7 @@ export const balanceSheetJsonFactory = {
   emptyFullV508: (): BalanceSheet => ({
     type: BalanceSheetType.Full,
     version: BalanceSheetVersion.v5_0_8,
-    companyFacts: companyFactsJsonFactory.empty(),
+    companyFacts: companyFactsJsonFactory.emptyRequest(),
     ratings: RatingsFactory.createDefaultRatings(
       BalanceSheetType.Full,
       BalanceSheetVersion.v5_0_8
@@ -28,7 +32,7 @@ export const balanceSheetJsonFactory = {
   emptyCompactV506: (): BalanceSheet => ({
     type: BalanceSheetType.Compact,
     version: BalanceSheetVersion.v5_0_6,
-    companyFacts: companyFactsJsonFactory.empty(),
+    companyFacts: companyFactsJsonFactory.emptyRequest(),
     ratings: RatingsFactory.createDefaultRatings(
       BalanceSheetType.Compact,
       BalanceSheetVersion.v5_0_6
@@ -152,7 +156,7 @@ export const companyFactsFactory = {
   }),
 };
 export const companyFactsJsonFactory = {
-  empty: (): any => ({
+  emptyRequest: (): any => ({
     totalPurchaseFromSuppliers: 0,
     totalStaffCosts: 0,
     profit: 0,
@@ -169,8 +173,13 @@ export const companyFactsJsonFactory = {
     supplyFractions: [],
     employeesFractions: [],
     industrySectors: [],
+    mainOriginOfOtherSuppliers: 'AWO',
   }),
-  nonEmpty: (): any => ({
+  emptyResponse: (): z.infer<typeof CompanyFactsResponseBodySchema> => ({
+    ...companyFactsJsonFactory.emptyRequest(),
+    mainOriginOfOtherSuppliers: { countryCode: 'AWO', costs: 0 },
+  }),
+  nonEmptyRequest: (): any => ({
     id: undefined,
     totalPurchaseFromSuppliers: 10000,
     totalStaffCosts: 900,
@@ -204,6 +213,7 @@ export const companyFactsJsonFactory = {
       { id: undefined, countryCode: afghanistanCode, percentage: 80 },
     ],
     industrySectors: [{ industryCode: 'A', amountOfTotalTurnover: 100 }],
+    mainOriginOfOtherSuppliers: 'AWO',
   }),
 };
 
