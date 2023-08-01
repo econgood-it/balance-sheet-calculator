@@ -60,7 +60,7 @@ export function registerOrganizationPost(
 
   registry.registerPath({
     method: Methods.post,
-    path: replaceExpressIdByOpenApiId(OrganizationPaths.postBalanceSheet),
+    path: replaceExpressIdByOpenApiId(OrganizationPaths.orgaBalanceSheet),
     tags: [Tags.organization],
     description: 'Create balance sheet for organization',
     summary: 'Create balance sheet for organization',

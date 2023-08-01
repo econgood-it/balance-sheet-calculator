@@ -14,6 +14,7 @@ import { BalanceSheetCreateRequest } from '../dto/balance.sheet.dto';
 import { parseLanguageParameter } from '../language/translations';
 import NotFoundException from '../exceptions/not.found.exception';
 import ForbiddenException from '../exceptions/forbidden.exception';
+import { BalanceSheetItemsResponseSchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
 
 export class OrganizationService {
   constructor(
@@ -161,6 +162,35 @@ export class OrganizationService {
         await orgaRepo.save(organizationEntity);
 
         res.json(savedBalanceSheetEntity.toJson(language));
+      })
+      .catch((error) => {
+        handle(error, next);
+      });
+  }
+
+  public async getBalanceSheets(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    this.dataSource.manager
+      .transaction(async (entityManager) => {
+        const organizationEntityRepo =
+          this.repoProvider.getOrganizationEntityRepo(entityManager);
+        const organizationEntity = await organizationEntityRepo.findByIdOrFail(
+          Number(req.params.id),
+          true
+        );
+        await Authorization.checkIfCurrentUserIsMember(req, organizationEntity);
+        res.json(
+          BalanceSheetItemsResponseSchema.parse(
+            organizationEntity.balanceSheetEntities
+              ? organizationEntity.balanceSheetEntities.map((b) => ({
+                  id: b.id,
+                }))
+              : []
+          )
+        );
       })
       .catch((error) => {
         handle(error, next);

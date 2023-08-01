@@ -112,7 +112,7 @@ describe('Organization Controller', () => {
     const balanceSheet = balanceSheetJsonFactory.emptyFullV508();
     const testApp = supertest(app);
     const response = await testApp
-      .post(`/v1/organization/${organizationId}/balancesheet`)
+      .post(`${OrganizationPaths.getAll}/${organizationId}/balancesheet`)
       .set(auth.authHeader.key, auth.authHeader.value)
       .send(balanceSheet);
     expect(response.status).toBe(200);
@@ -124,7 +124,7 @@ describe('Organization Controller', () => {
     await balanceSheetEntity.reCalculate();
     expect(response.body).toMatchObject(balanceSheetEntity.toJson('en'));
     const response2 = await testApp
-      .post(`/v1/organization/${organizationId}/balancesheet`)
+      .post(`${OrganizationPaths.getAll}/${organizationId}/balancesheet`)
       .set(auth.authHeader.key, auth.authHeader.value)
       .send(balanceSheet);
     const organizationEntity = await organizationRepo.findByIdOrFail(
@@ -142,7 +142,7 @@ describe('Organization Controller', () => {
     const testApp = supertest(app);
     const authNoMember = await new AuthBuilder(app, dataSource).build();
     const response = await testApp
-      .post(`/v1/organization/${organizationId}/balancesheet`)
+      .post(`${OrganizationPaths.getAll}/${organizationId}/balancesheet`)
       .set(authNoMember.authHeader.key, authNoMember.authHeader.value)
       .send(balanceSheet);
     expect(response.status).toEqual(403);
@@ -153,7 +153,7 @@ describe('Organization Controller', () => {
     const testApp = supertest(app);
     const adminAuth = await new AuthBuilder(app, dataSource).admin().build();
     const response = await testApp
-      .post(`/v1/organization/${organizationId}/balancesheet`)
+      .post(`${OrganizationPaths.getAll}/${organizationId}/balancesheet`)
       .set(adminAuth.authHeader.key, adminAuth.authHeader.value)
       .send(balanceSheet);
     expect(response.status).toEqual(403);

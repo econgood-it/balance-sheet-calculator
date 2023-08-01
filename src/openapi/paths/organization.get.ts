@@ -14,6 +14,7 @@ import {
   OrganizationResponseSchema,
 } from '@ecogood/e-calculator-schemas/dist/organization.dto';
 import { z } from 'zod';
+import { BalanceSheetItemsResponseSchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
 
 export function registerOrganizationGet(
   registry: OpenAPIRegistry,
@@ -62,6 +63,29 @@ export function registerOrganizationGet(
         content: {
           [applicationJson]: {
             schema: OrganizationResponseSchema,
+          },
+        },
+      },
+    },
+  });
+
+  registry.registerPath({
+    method: Methods.get,
+    path: replaceExpressIdByOpenApiId(OrganizationPaths.orgaBalanceSheet),
+    tags: [Tags.organization],
+    description: 'Get all balance sheets of organization',
+    summary: 'Get all balance sheets of organization',
+
+    request: {
+      params: z.object({ id: params.OrganizationIdParam }),
+      headers: [params.CorrelationIdHeader],
+    },
+    responses: {
+      [HttpCodes.okey]: {
+        description: 'Ids of balance sheet which are assigned to organization',
+        content: {
+          [applicationJson]: {
+            schema: BalanceSheetItemsResponseSchema,
           },
         },
       },
