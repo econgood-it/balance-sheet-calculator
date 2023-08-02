@@ -13,16 +13,10 @@ import {
   IUserEntityRepo,
   UserEntityRepository,
 } from '../../src/repositories/user.entity.repo';
-import { BalanceSheetEntity } from '../../src/entities/balance.sheet.entity';
-import {
-  BalanceSheetEntityRepository,
-  IBalanceSheetEntityRepo,
-} from '../../src/repositories/balance.sheet.entity.repo';
-import { balanceSheetFactory } from '../../src/openapi/examples';
+import { OrganizationBuilder } from '../OrganizationBuilder';
 
 describe('OrganizationEntityRepo', () => {
   let organizationEntityRepo: IOrganizationEntityRepo;
-  let balanceSheetEntityRepo: IBalanceSheetEntityRepo;
   let userEntityRepo: IUserEntityRepo;
   let dataSource: DataSource;
   const organization = {
@@ -39,9 +33,6 @@ describe('OrganizationEntityRepo', () => {
       ConfigurationReader.read()
     );
     organizationEntityRepo = new OrganizationEntityRepository(
-      dataSource.manager
-    );
-    balanceSheetEntityRepo = new BalanceSheetEntityRepository(
       dataSource.manager
     );
     userEntityRepo = new UserEntityRepository(dataSource.manager);
@@ -82,15 +73,11 @@ describe('OrganizationEntityRepo', () => {
   });
 
   it('does remove relation to member on organization delete', async () => {
-    const email = `${uuid4()}@example.com`;
-    const user = await dataSource
-      .getRepository(User)
-      .save(new User(undefined, email, 'test1234', Role.User));
-    const organizationEntity = await organizationEntityRepo.save(
-      new OrganizationEntity(undefined, organization, [user])
-    );
+    const { organizationEntity } = await new OrganizationBuilder(dataSource)
+      .addMember()
+      .build();
 
-    const query = `SELECT * from organization_members where "userId" = ${user.id} and "organizationEntityId" = ${organizationEntity.id}`;
+    const query = `SELECT * from organization_members where "userId" = ${organizationEntity.members[0].id} and "organizationEntityId" = ${organizationEntity.id}`;
     let relation = await dataSource.query(query);
     expect(relation).toHaveLength(1);
     await organizationEntityRepo.remove(organizationEntity);
@@ -102,61 +89,38 @@ describe('OrganizationEntityRepo', () => {
     const user = await userEntityRepo.save(
       new User(undefined, `${uuid4()}@example.com`, 'test1234', Role.User)
     );
-    const members = [user];
 
-    const organizationEntity = new OrganizationEntity(
-      undefined,
-      organization,
-      members
-    );
-    const id1 = (await organizationEntityRepo.save(organizationEntity)).id;
-    const organizationEntity2 = new OrganizationEntity(
-      undefined,
-      organization,
-      members
-    );
-    const id2 = (await organizationEntityRepo.save(organizationEntity2)).id;
+    const { organizationEntity: organizationEntity1 } =
+      await new OrganizationBuilder(dataSource).addMember(user).build();
+    const { organizationEntity: organizationEntity2 } =
+      await new OrganizationBuilder(dataSource).addMember(user).build();
 
     const organizations = await organizationEntityRepo.findOrganizationsOfUser(
       user.id!
     );
-    expect(organizations.map((o) => o.id)).toEqual([id1, id2]);
+    expect(organizations.map((o) => o.id)).toEqual([
+      organizationEntity1.id,
+      organizationEntity2.id,
+    ]);
   });
 
   it('saves and finds all balance sheet entities of organization', async () => {
-    const user = await userEntityRepo.save(
-      new User(undefined, `${uuid4()}@example.com`, 'test1234', Role.User)
-    );
-    const members = [user];
+    const { organizationEntity } = await new OrganizationBuilder(dataSource)
+      .addMember()
+      .addBalanceSheetEntity()
+      .addBalanceSheetEntity()
+      .build();
 
-    const organizationEntity = new OrganizationEntity(
-      undefined,
-      organization,
-      members
-    );
-    const balanceSheetEntities = [
-      new BalanceSheetEntity(undefined, balanceSheetFactory.emptyFullV508(), [
-        user,
-      ]),
-      new BalanceSheetEntity(undefined, balanceSheetFactory.emptyFullV508(), [
-        user,
-      ]),
-    ];
-    const savedBalanceSheetEntities = await Promise.all(
-      balanceSheetEntities.map(
-        async (b) => await balanceSheetEntityRepo.save(b)
-      )
-    );
-    savedBalanceSheetEntities.map((b) =>
-      organizationEntity.addBalanceSheetEntity(b)
-    );
-    const orgaId = (await organizationEntityRepo.save(organizationEntity)).id;
     const foundOrganizationEntity = await organizationEntityRepo.findByIdOrFail(
-      orgaId!,
+      organizationEntity.id!,
       true
+    );
+    expect(organizationEntity.balanceSheetEntities).toBeDefined();
+    organizationEntity.balanceSheetEntities?.forEach((b) =>
+      expect(b.id).toBeDefined()
     );
     expect(
       foundOrganizationEntity.balanceSheetEntities?.map((b) => b.id)
-    ).toEqual(savedBalanceSheetEntities.map((b) => b.id));
+    ).toEqual(organizationEntity.balanceSheetEntities?.map((b) => b.id));
   });
 });
