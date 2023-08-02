@@ -11,8 +11,6 @@ import {
 import { OrganizationPaths } from '../../../src/controllers/organization.controller';
 import { RepoProvider } from '../../../src/repositories/repo.provider';
 import { DatabaseSourceCreator } from '../../../src/databaseSourceCreator';
-import { IBalanceSheetEntityRepo } from '../../../src/repositories/balance.sheet.entity.repo';
-import { IOrganizationEntityRepo } from '../../../src/repositories/organization.entity.repo';
 import { BalanceSheetEntity } from '../../../src/entities/balance.sheet.entity';
 
 describe('Organization Controller Get Endpoint', () => {
@@ -177,7 +175,6 @@ describe('Organization Controller Get Balance Sheets Endpoint', () => {
 
   it('should return balance sheets of organization', async () => {
     const testApp = supertest(app);
-
     const response = await testApp
       .get(`${OrganizationPaths.getAll}/${organizationId}/balancesheet`)
       .set(auth.authHeader.key, auth.authHeader.value);

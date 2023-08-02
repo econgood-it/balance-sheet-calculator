@@ -92,6 +92,37 @@ describe('BalanceSheetRepo', () => {
     });
   });
 
+  it('loads organization relation', async () => {
+    await cleanUpTables();
+    const email = `${uuid4()}@example.com`;
+    const user = await new UserEntityRepository(dataSource.manager).save(
+      new User(undefined, email, 'test1234', Role.User)
+    );
+    const organizationRepo = new OrganizationEntityRepository(
+      dataSource.manager
+    );
+    const organizationEntity = await organizationRepo.save(
+      new OrganizationEntity(undefined, organizationFactory.default(), [user])
+    );
+    const balanceSheetEntity = new BalanceSheetEntity(
+      undefined,
+      balanceSheetFactory.emptyFullV508(),
+      []
+    );
+    const savedResult = await balanceSheetEntityRepository.save(
+      balanceSheetEntity
+    );
+    organizationEntity.addBalanceSheetEntity(balanceSheetEntity);
+    await organizationRepo.save(organizationEntity);
+    const result = await balanceSheetEntityRepository.findByIdOrFail(
+      savedResult.id!
+    );
+
+    expect(result.users).toHaveLength(0);
+    expect(result.organizationEntity?.id).toEqual(organizationEntity.id);
+    expect(result.organizationEntity?.hasMemberWithEmail(email)).toBeTruthy();
+  });
+
   it('fails if the value of balance sheet column is invalid', async () => {
     const email = `${uuid4()}@example.com`;
     const user = await dataSource

@@ -6,6 +6,7 @@ import {
   ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
+  RelationId,
 } from 'typeorm';
 import { User } from './user';
 import { BalanceSheet, BalanceSheetSchema } from '../models/balance.sheet';
@@ -30,7 +31,11 @@ import { diff } from 'deep-diff';
 import { DatabaseValidationError } from '../exceptions/databaseValidationError';
 import { OrganizationEntity } from './organization.entity';
 
-export const BALANCE_SHEET_RELATIONS = ['users'];
+export const BALANCE_SHEET_RELATIONS = [
+  'users',
+  'organizationEntity',
+  'organizationEntity.members',
+];
 
 type CalculationResult = {
   calcResults: CalcResults;
