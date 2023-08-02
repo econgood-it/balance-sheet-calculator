@@ -13,7 +13,6 @@ import { NoAccessError } from '../exceptions/no.access.error';
 import { BalanceSheetCreateRequest } from '../dto/balance.sheet.dto';
 import { parseLanguageParameter } from '../language/translations';
 import NotFoundException from '../exceptions/not.found.exception';
-import ForbiddenException from '../exceptions/forbidden.exception';
 import { BalanceSheetItemsResponseSchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
 
 export class OrganizationService {
@@ -59,7 +58,7 @@ export class OrganizationService {
           await organizationEntityRepository.findByIdOrFail(
             organizationIdParam
           );
-        await Authorization.checkIfCurrentUserIsMember(req, organizationEntity);
+        Authorization.checkIfCurrentUserIsMember(req, organizationEntity);
         const updatedOrganizationEntity =
           await organizationEntityRepository.save(
             new OrganizationEntity(
@@ -114,10 +113,7 @@ export class OrganizationService {
         const foundOrganizationEntity = await orgaRepo.findByIdOrFail(
           Number(req.params.id)
         );
-        await Authorization.checkIfCurrentUserIsMember(
-          req,
-          foundOrganizationEntity
-        );
+        Authorization.checkIfCurrentUserIsMember(req, foundOrganizationEntity);
         res.json(foundOrganizationEntity.toJson());
       })
       .catch((error) => {
@@ -151,7 +147,7 @@ export class OrganizationService {
         if (!organizationEntity) {
           throw new NotFoundException('Organization not found');
         }
-        await Authorization.checkIfCurrentUserIsMember(req, organizationEntity);
+        Authorization.checkIfCurrentUserIsMember(req, organizationEntity);
 
         await balanceSheetEntity.reCalculate();
 
@@ -181,7 +177,7 @@ export class OrganizationService {
           Number(req.params.id),
           true
         );
-        await Authorization.checkIfCurrentUserIsMember(req, organizationEntity);
+        Authorization.checkIfCurrentUserIsMember(req, organizationEntity);
         res.json(
           BalanceSheetItemsResponseSchema.parse(
             organizationEntity.balanceSheetEntities

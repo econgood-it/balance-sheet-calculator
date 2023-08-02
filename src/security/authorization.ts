@@ -4,24 +4,27 @@ import { NoAccessError } from '../exceptions/no.access.error';
 import { OrganizationEntity } from '../entities/organization.entity';
 
 export namespace Authorization {
-  export async function checkIfCurrentUserHasEditorPermissions(
+  export function checkIfCurrentUserHasEditorPermissions(
     request: Request,
     balanceSheetEntity: BalanceSheetEntity
-  ): Promise<void> {
+  ) {
     if (
       !(
         request.userInfo &&
-        balanceSheetEntity.userWithEmailHasAccess(request.userInfo.email)
+        (balanceSheetEntity.userWithEmailHasAccess(request.userInfo.email) ||
+          balanceSheetEntity.organizationEntity?.hasMemberWithEmail(
+            request.userInfo.email
+          ))
       )
     ) {
       throw new NoAccessError();
     }
   }
 
-  export async function checkIfCurrentUserIsMember(
+  export function checkIfCurrentUserIsMember(
     request: Request,
     organizationEntity: OrganizationEntity
-  ): Promise<void> {
+  ) {
     if (
       !(
         request.userInfo &&

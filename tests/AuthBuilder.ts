@@ -8,6 +8,7 @@ import { v4 as uuid4 } from 'uuid';
 export type Auth = {
   authHeader: { key: string; value: string };
   email: string;
+  user: User;
 };
 
 export class AuthBuilder {
@@ -24,12 +25,14 @@ export class AuthBuilder {
 
   public async build(): Promise<Auth> {
     const testApp = supertest(this.app);
-    await this.dataSource.manager.transaction(async (entityManager) => {
-      const userRepository = entityManager.getRepository(User);
-      await userRepository.save(
-        new User(undefined, this.email, this.password, this.role)
-      );
-    });
+    const user: User = await this.dataSource.manager.transaction(
+      async (entityManager) => {
+        const userRepository = entityManager.getRepository(User);
+        return await userRepository.save(
+          new User(undefined, this.email, this.password, this.role)
+        );
+      }
+    );
     const response = await testApp
       .post('/v1/users/token')
       .send({ email: this.email, password: this.password });
@@ -39,6 +42,7 @@ export class AuthBuilder {
         value: `Bearer ${response.body.token}`,
       },
       email: this.email,
+      user,
     };
   }
 }

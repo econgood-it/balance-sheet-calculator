@@ -8,12 +8,18 @@ import { ConfigurationReader } from '../../../src/reader/configuration.reader';
 import { Auth, AuthBuilder } from '../../AuthBuilder';
 import { CORRELATION_HEADER_NAME } from '../../../src/middleware/correlation.id.middleware';
 import { Rating } from '../../../src/models/rating';
-import { companyFactsJsonFactory } from '../../../src/openapi/examples';
+import {
+  balanceSheetFactory,
+  companyFactsJsonFactory,
+  organizationFactory,
+} from '../../../src/openapi/examples';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import { RepoProvider } from '../../../src/repositories/repo.provider';
+import { OrganizationEntity } from '../../../src/entities/organization.entity';
+import { BalanceSheetEntity } from '../../../src/entities/balance.sheet.entity';
 
 describe('Update endpoint of Balance Sheet Controller', () => {
   let dataSource: DataSource;
@@ -21,12 +27,14 @@ describe('Update endpoint of Balance Sheet Controller', () => {
   const configuration = ConfigurationReader.read();
   const endpointPath = '/v1/balancesheets';
   let auth: Auth;
+  let repoProvider: RepoProvider;
+
   beforeAll(async () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
       configuration
     );
-    app = new App(dataSource, configuration, new RepoProvider(configuration))
-      .app;
+    repoProvider = new RepoProvider(configuration);
+    app = new App(dataSource, configuration, repoProvider).app;
     auth = await new AuthBuilder(app, dataSource).build();
   });
 
@@ -69,6 +77,37 @@ describe('Update endpoint of Balance Sheet Controller', () => {
     };
     response = await testApp
       .patch(`${endpointPath}/${response.body.id}`)
+      .set(auth.authHeader.key, auth.authHeader.value)
+      .send({ ...balanceSheetUpdate });
+    expect(response.status).toEqual(200);
+    expect(response.body.companyFacts).toMatchObject(
+      balanceSheetUpdate.companyFacts
+    );
+  });
+
+  it('should update balance sheet if user is member of organization', async () => {
+    const testApp = supertest(app);
+    const orgaRepo = repoProvider.getOrganizationEntityRepo(dataSource.manager);
+    const organizationEntity = await orgaRepo.save(
+      new OrganizationEntity(undefined, organizationFactory.default(), [
+        auth.user,
+      ])
+    );
+    const balanceSheetRepo = repoProvider.getBalanceSheetEntityRepo(
+      dataSource.manager
+    );
+    const savedBalanceSheetEntity = await balanceSheetRepo.save(
+      new BalanceSheetEntity(undefined, balanceSheetFactory.emptyFullV508(), [])
+    );
+    organizationEntity.addBalanceSheetEntity(savedBalanceSheetEntity);
+    await orgaRepo.save(organizationEntity);
+    const balanceSheetUpdate = {
+      companyFacts: {
+        totalPurchaseFromSuppliers: 30000,
+      },
+    };
+    const response = await testApp
+      .patch(`${endpointPath}/${savedBalanceSheetEntity.id}`)
       .set(auth.authHeader.key, auth.authHeader.value)
       .send({ ...balanceSheetUpdate });
     expect(response.status).toEqual(200);
