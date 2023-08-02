@@ -4,14 +4,11 @@ import { ConfigurationReader } from '../../../src/reader/configuration.reader';
 import App from '../../../src/app';
 import { Auth, AuthBuilder } from '../../AuthBuilder';
 import supertest from 'supertest';
-import {
-  balanceSheetFactory,
-  organizationFactory,
-} from '../../../src/openapi/examples';
+import { organizationFactory } from '../../../src/openapi/examples';
 import { OrganizationPaths } from '../../../src/controllers/organization.controller';
 import { RepoProvider } from '../../../src/repositories/repo.provider';
 import { DatabaseSourceCreator } from '../../../src/databaseSourceCreator';
-import { BalanceSheetEntity } from '../../../src/entities/balance.sheet.entity';
+import { OrganizationBuilder } from '../../OrganizationBuilder';
 
 describe('Organization Controller Get Endpoint', () => {
   let dataSource: DataSource;
@@ -122,8 +119,6 @@ describe('Organization Controller Get Balance Sheets Endpoint', () => {
   let app: Application;
   const configuration = ConfigurationReader.read();
   let auth: Auth;
-  let organizationId: number;
-  let savedBalanceSheetEntities: BalanceSheetEntity[];
 
   beforeAll(async () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
@@ -132,41 +127,6 @@ describe('Organization Controller Get Balance Sheets Endpoint', () => {
     const repoProvider = new RepoProvider(configuration);
     app = new App(dataSource, configuration, repoProvider).app;
     auth = await new AuthBuilder(app, dataSource).build();
-    const balanceSheetEntityRepo = repoProvider.getBalanceSheetEntityRepo(
-      dataSource.manager
-    );
-    const orgaEnityRepo = repoProvider.getOrganizationEntityRepo(
-      dataSource.manager
-    );
-    const testApp = supertest(app);
-    organizationId = (
-      await testApp
-        .post(OrganizationPaths.post)
-        .set(auth.authHeader.key, auth.authHeader.value)
-        .send(organizationFactory.default())
-    ).body.id;
-    const balanceSheetEntities = [
-      new BalanceSheetEntity(
-        undefined,
-        balanceSheetFactory.emptyFullV508(),
-        []
-      ),
-      new BalanceSheetEntity(
-        undefined,
-        balanceSheetFactory.emptyFullV508(),
-        []
-      ),
-    ];
-    savedBalanceSheetEntities = await Promise.all(
-      balanceSheetEntities.map(
-        async (b) => await balanceSheetEntityRepo.save(b)
-      )
-    );
-    const orgaEntity = await orgaEnityRepo.findByIdOrFail(organizationId);
-    for (const balanceSheet of savedBalanceSheetEntities) {
-      orgaEntity.addBalanceSheetEntity(balanceSheet);
-    }
-    await orgaEnityRepo.save(orgaEntity);
   });
 
   afterAll(async () => {
@@ -175,12 +135,17 @@ describe('Organization Controller Get Balance Sheets Endpoint', () => {
 
   it('should return balance sheets of organization', async () => {
     const testApp = supertest(app);
+    const { organizationEntity } = await new OrganizationBuilder(dataSource)
+      .addMember(auth.user)
+      .addBalanceSheetEntity()
+      .addBalanceSheetEntity()
+      .build();
     const response = await testApp
-      .get(`${OrganizationPaths.getAll}/${organizationId}/balancesheet`)
+      .get(`${OrganizationPaths.getAll}/${organizationEntity.id}/balancesheet`)
       .set(auth.authHeader.key, auth.authHeader.value);
     expect(response.status).toBe(200);
     expect(response.body).toEqual(
-      savedBalanceSheetEntities.map((b) => ({
+      organizationEntity.balanceSheetEntities?.map((b) => ({
         id: b.id,
       }))
     );
@@ -188,18 +153,28 @@ describe('Organization Controller Get Balance Sheets Endpoint', () => {
 
   it('should fail for admin users', async () => {
     const testApp = supertest(app);
+    const { organizationEntity } = await new OrganizationBuilder(dataSource)
+      .addMember(auth.user)
+      .addBalanceSheetEntity()
+      .addBalanceSheetEntity()
+      .build();
     const authAdmin = await new AuthBuilder(app, dataSource).admin().build();
     const response = await testApp
-      .get(`${OrganizationPaths.getAll}/${organizationId}/balancesheet`)
+      .get(`${OrganizationPaths.getAll}/${organizationEntity.id}/balancesheet`)
       .set(authAdmin.authHeader.key, authAdmin.authHeader.value);
     expect(response.status).toBe(403);
   });
 
   it('should fail if user is not member of organization', async () => {
     const testApp = supertest(app);
+    const { organizationEntity } = await new OrganizationBuilder(dataSource)
+      .addMember(auth.user)
+      .addBalanceSheetEntity()
+      .addBalanceSheetEntity()
+      .build();
     const authNoMember = await new AuthBuilder(app, dataSource).build();
     const response = await testApp
-      .get(`${OrganizationPaths.getAll}/${organizationId}/balancesheet`)
+      .get(`${OrganizationPaths.getAll}/${organizationEntity.id}/balancesheet`)
       .set(authNoMember.authHeader.key, authNoMember.authHeader.value);
     expect(response.status).toBe(403);
   });

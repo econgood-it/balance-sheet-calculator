@@ -6,7 +6,6 @@ import {
   ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
-  RelationId,
 } from 'typeorm';
 import { User } from './user';
 import { BalanceSheet, BalanceSheetSchema } from '../models/balance.sheet';

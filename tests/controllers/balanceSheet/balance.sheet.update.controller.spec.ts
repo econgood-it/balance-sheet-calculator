@@ -8,18 +8,13 @@ import { ConfigurationReader } from '../../../src/reader/configuration.reader';
 import { Auth, AuthBuilder } from '../../AuthBuilder';
 import { CORRELATION_HEADER_NAME } from '../../../src/middleware/correlation.id.middleware';
 import { Rating } from '../../../src/models/rating';
-import {
-  balanceSheetFactory,
-  companyFactsJsonFactory,
-  organizationFactory,
-} from '../../../src/openapi/examples';
+import { companyFactsJsonFactory } from '../../../src/openapi/examples';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import { RepoProvider } from '../../../src/repositories/repo.provider';
-import { OrganizationEntity } from '../../../src/entities/organization.entity';
-import { BalanceSheetEntity } from '../../../src/entities/balance.sheet.entity';
+import { OrganizationBuilder } from '../../OrganizationBuilder';
 
 describe('Update endpoint of Balance Sheet Controller', () => {
   let dataSource: DataSource;
@@ -87,27 +82,19 @@ describe('Update endpoint of Balance Sheet Controller', () => {
 
   it('should update balance sheet if user is member of organization', async () => {
     const testApp = supertest(app);
-    const orgaRepo = repoProvider.getOrganizationEntityRepo(dataSource.manager);
-    const organizationEntity = await orgaRepo.save(
-      new OrganizationEntity(undefined, organizationFactory.default(), [
-        auth.user,
-      ])
-    );
-    const balanceSheetRepo = repoProvider.getBalanceSheetEntityRepo(
-      dataSource.manager
-    );
-    const savedBalanceSheetEntity = await balanceSheetRepo.save(
-      new BalanceSheetEntity(undefined, balanceSheetFactory.emptyFullV508(), [])
-    );
-    organizationEntity.addBalanceSheetEntity(savedBalanceSheetEntity);
-    await orgaRepo.save(organizationEntity);
+    const { organizationEntity } = await new OrganizationBuilder(dataSource)
+      .addMember(auth.user)
+      .addBalanceSheetEntity()
+      .build();
     const balanceSheetUpdate = {
       companyFacts: {
         totalPurchaseFromSuppliers: 30000,
       },
     };
     const response = await testApp
-      .patch(`${endpointPath}/${savedBalanceSheetEntity.id}`)
+      .patch(
+        `${endpointPath}/${organizationEntity.balanceSheetEntities?.[0].id}`
+      )
       .set(auth.authHeader.key, auth.authHeader.value)
       .send({ ...balanceSheetUpdate });
     expect(response.status).toEqual(200);
@@ -118,7 +105,9 @@ describe('Update endpoint of Balance Sheet Controller', () => {
     // should fail if user is not member
     const authNoMember = await new AuthBuilder(app, dataSource).build();
     const failingResponse = await testApp
-      .patch(`${endpointPath}/${savedBalanceSheetEntity.id}`)
+      .patch(
+        `${endpointPath}/${organizationEntity.balanceSheetEntities?.[0].id}`
+      )
       .set(authNoMember.authHeader.key, authNoMember.authHeader.value)
       .send({ ...balanceSheetUpdate });
     expect(failingResponse.status).toEqual(403);

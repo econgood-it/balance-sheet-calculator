@@ -1,8 +1,4 @@
-import {
-  balanceSheetFactory,
-  balanceSheetJsonFactory,
-  organizationFactory,
-} from '../examples';
+import { balanceSheetJsonFactory, organizationFactory } from '../examples';
 
 import {
   applicationJson,

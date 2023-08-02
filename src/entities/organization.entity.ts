@@ -11,7 +11,6 @@ import { User } from './user';
 import { z } from 'zod';
 import { OrganizationResponseSchema } from '@ecogood/e-calculator-schemas/dist/organization.dto';
 import { BalanceSheetEntity } from './balance.sheet.entity';
-import { balanceSheetFactory } from '../openapi/examples';
 import { ConflictError } from '../exceptions/conflict.error';
 export const ORGANIZATION_RELATIONS = ['members'];
 

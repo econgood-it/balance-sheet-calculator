@@ -9,9 +9,7 @@ import {
 import { Organization } from '../models/organization';
 import { StakeholderWeight } from '../models/stakeholder.weight';
 import { WorkbookSection } from '../entities/workbook.entity';
-import { BalanceSheetResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
 import { z } from 'zod';
-import { BalanceSheetEntity } from '../entities/balance.sheet.entity';
 import { CompanyFactsResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/company.facts.dto';
 
 const arabEmiratesCode = 'ARE';
