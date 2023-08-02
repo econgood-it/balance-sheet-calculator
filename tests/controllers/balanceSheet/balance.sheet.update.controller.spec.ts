@@ -114,6 +114,14 @@ describe('Update endpoint of Balance Sheet Controller', () => {
     expect(response.body.companyFacts).toMatchObject(
       balanceSheetUpdate.companyFacts
     );
+
+    // should fail if user is not member
+    const authNoMember = await new AuthBuilder(app, dataSource).build();
+    const failingResponse = await testApp
+      .patch(`${endpointPath}/${savedBalanceSheetEntity.id}`)
+      .set(authNoMember.authHeader.key, authNoMember.authHeader.value)
+      .send({ ...balanceSheetUpdate });
+    expect(failingResponse.status).toEqual(403);
   });
 
   it('should update ratings of balance sheet', async () => {
