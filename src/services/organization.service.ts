@@ -92,7 +92,10 @@ export class OrganizationService {
         );
         res.json(
           OrganizationItemsResponseSchema.parse(
-            organizationEntities.map((o) => ({ id: o.id }))
+            organizationEntities.map((o) => ({
+              id: o.id,
+              name: o.organization.name,
+            }))
           )
         );
       })

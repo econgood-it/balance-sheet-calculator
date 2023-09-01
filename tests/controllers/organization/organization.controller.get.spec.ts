@@ -38,18 +38,18 @@ describe('Organization Controller Get Endpoint', () => {
       .post(OrganizationPaths.post)
       .set(auth.authHeader.key, auth.authHeader.value)
       .send(orgaJson);
+    const nameOfSecondOrga = 'Second orga';
     const responseSecondPost = await testApp
       .post(OrganizationPaths.post)
       .set(auth.authHeader.key, auth.authHeader.value)
-      .send(orgaJson);
+      .send({ ...orgaJson, name: nameOfSecondOrga });
     const response = await testApp
       .get(OrganizationPaths.getAll)
-      .set(auth.authHeader.key, auth.authHeader.value)
-      .send(orgaJson);
+      .set(auth.authHeader.key, auth.authHeader.value);
     expect(response.status).toBe(200);
     expect(response.body).toEqual([
-      { id: responseFirstPost.body.id },
-      { id: responseSecondPost.body.id },
+      { id: responseFirstPost.body.id, name: orgaJson.name },
+      { id: responseSecondPost.body.id, name: nameOfSecondOrga },
     ]);
   });
   it('should return organization by id', async () => {

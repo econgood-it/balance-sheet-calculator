@@ -20,6 +20,7 @@ describe('OrganizationEntityRepo', () => {
   let userEntityRepo: IUserEntityRepo;
   let dataSource: DataSource;
   const organization = {
+    name: 'My organization',
     address: {
       street: 'Example street',
       houseNumber: '28s',

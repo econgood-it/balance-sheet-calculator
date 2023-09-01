@@ -254,6 +254,7 @@ export const balanceSheetFactory = {
 
 export const organizationFactory = {
   default: (): Organization => ({
+    name: 'My organization',
     address: {
       street: 'Example street',
       houseNumber: '28a',
