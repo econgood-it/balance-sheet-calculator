@@ -14,3 +14,4 @@ documentation
 .vscode
 .~lock.*
 *.tmp
+.env-docker

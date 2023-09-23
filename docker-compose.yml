@@ -1,26 +1,27 @@
 version: '3.4'
 
 services:
-  pgadmin4:
-    image: dpage/pgadmin4
-    ports:
-      - '81:80'
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=user@domain.com
-      - PGADMIN_DEFAULT_PASSWORD=SuperSecret
-    volumes:
-      - pgadmin:/var/lib/pgadmin
-    links:
+  calculator:
+    depends_on:
       - db
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000"
+    env_file:
+      - .env-docker/.env-calculator
+
 
   db:
     image: postgres
     ports:
-      - '5433:5432'
+      - "5433:5432"
     environment:
       - POSTGRES_PASSWORD=oKLyNUr2doEBlMup47ii
       - POSTGRES_USER=postgres
       - POSTGRES_DB=balancesheet
 
-volumes:
-  pgadmin:
+
+
+
