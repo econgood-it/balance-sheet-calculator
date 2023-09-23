@@ -17,10 +17,8 @@ services:
     image: postgres
     ports:
       - "5433:5432"
-    environment:
-      - POSTGRES_PASSWORD=oKLyNUr2doEBlMup47ii
-      - POSTGRES_USER=postgres
-      - POSTGRES_DB=balancesheet
+    env_file:
+      - .env-docker/.env-db
 
 
 
