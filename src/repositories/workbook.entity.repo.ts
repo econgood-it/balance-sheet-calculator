@@ -14,7 +14,7 @@ export class WorkbookEntityRepo implements IWorkbookEntityRepo {
   constructor(private apiToken: string) {}
   public async getWorkbookEntity(): Promise<WorkbookEntity> {
     const response = await axios.get(
-      'https://git.ecogood.org/api/v1/repos/public/matrix-development/contents/workbook.json',
+      'https://git.ecogood.org/api/v1/repos/public/matrix-development/contents/export/workbook-en.json',
       { headers: { Authorization: `token ${this.apiToken}` } }
     );
     const { content } = ApiResponseSchema.parse(response.data);

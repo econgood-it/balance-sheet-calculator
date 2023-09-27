@@ -82,7 +82,7 @@ describe('WorkbookEntityRepo', () => {
 
     const workbookEntity = await workbookRepo.getWorkbookEntity();
     expect(mockedAxios.get).toHaveBeenCalledWith(
-      'https://git.ecogood.org/api/v1/repos/public/matrix-development/contents/workbook.json',
+      'https://git.ecogood.org/api/v1/repos/public/matrix-development/contents/export/workbook-en.json',
       { headers: { Authorization: `token ${apiToken}` } }
     );
 
