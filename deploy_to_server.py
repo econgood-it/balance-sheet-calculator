@@ -3,6 +3,7 @@ import subprocess
 import shutil
 import logging
 import os
+import git
 
 yarn = 'yarn'
 run = 'run'
@@ -11,7 +12,9 @@ compose = 'compose'
 
 
 def check_for_uncommitted_files():
-    subprocess.run(['git', 'diff', '--quiet', 'HEAD'], check=True)
+    repo = git.Repo('.')
+    if repo.is_dirty():
+        raise Exception('Please commit and push your changes before a deployment')
 
 
 def install_dependencies(production: bool,):
