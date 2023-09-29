@@ -12,7 +12,7 @@ services:
     env_file:
       - .env-docker/.env-calculator
     volumes:
-      - ./volumes/logs:/app/logs
+      - ./volumes/logs:/home/node/app/logs
 
 
   db:
