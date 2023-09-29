@@ -16,7 +16,7 @@ services:
   db:
     image: postgres
     ports:
-      - "5433:5432"
+      - localhost:5433:5432
     env_file:
       - .env-docker/.env-db
     volumes:
