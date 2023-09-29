@@ -40,7 +40,7 @@ Our application uses a postgresql database to store the data. To run the databas
 the docker-compose.yml file. If docker-compose is not installed yet see [the installation guide](#Install docker and docker-compose).
 
 ```shell script
-docker-compose -f docker-compose.yml up
+docker compose -f docker-compose-db.yml up
 ```
 
 ## Run application
@@ -116,6 +116,6 @@ date +%s%300
 To deploy the application use the docker commands explained below:
 
 ```
-docker build -t deployment_server . -f Dockerfile_Deployment && docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock -v /usr/bin/docker:/usr/bin/docker -v ~/.ssh:/root/.ssh:ro -e ENVIRONMENT=test deployment_server
+python deploy_to_server [test|prod] 
 ```
 

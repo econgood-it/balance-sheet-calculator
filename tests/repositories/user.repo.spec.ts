@@ -7,6 +7,7 @@ import {
   IUserEntityRepo,
   UserEntityRepository,
 } from '../../src/repositories/user.entity.repo';
+import { v4 as uuid4 } from 'uuid';
 
 describe('UserRepo', () => {
   let userRepository: IUserEntityRepo;
@@ -24,14 +25,10 @@ describe('UserRepo', () => {
   });
 
   it('should be saved and deleted', async () => {
-    const user: User = new User(
-      undefined,
-      'mr@ecogood.org',
-      'takecare',
-      Role.User
-    );
+    const email = `${uuid4()}@ecogood.org`;
+    const user: User = new User(undefined, email, 'takecare', Role.User);
     const result = await userRepository.save(user);
-    expect(result.email).toBe('mr@ecogood.org');
+    expect(result.email).toBe(email);
     expect(result.password).not.toBe('takecare');
     expect(result.role).toBe(Role.User);
     expect(result.comparePassword('takecare')).toBeTruthy();

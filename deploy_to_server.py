@@ -6,8 +6,12 @@ import os
 
 yarn = 'yarn'
 run = 'run'
-docker_compose = 'docker-compose'
+docker = 'docker'
+compose = 'compose'
 
+
+def check_for_uncommitted_files():
+    subprocess.run(['git', 'diff', '--quiet', 'HEAD'], check=True)
 
 
 def install_dependencies(production: bool,):
@@ -22,27 +26,27 @@ def check_linting():
 
 
 def shutdown_test_database():
-    subprocess.run([docker_compose, "-f", "docker-compose-db.yml", 'down'], check=True)
+    subprocess.run([docker, compose, "-f", "docker-compose-db.yml", 'down'], check=True)
 
 
 def startup_test_database():
-    subprocess.run([docker_compose, "-f", "docker-compose-db.yml", 'up', '-d'], check=True)
+    subprocess.run([docker, compose, "-f", "docker-compose-db.yml", 'up', '-d'], check=True)
 
 
 def run_tests():
     subprocess.run([yarn, run, 'test:ci'], check=True)
 
 
-def compile():
-    subprocess.run([yarn, run, 'build'], check=True)
-
-
-def rsync(folder: str, server_domain: str):
-    subprocess.run(['rsync', '-a', folder, f"{server_domain}:", '--delete'], check=True)
-
-
-def restart_server(server_domain: str):
-    subprocess.run(['ssh', server_domain, 'bash bin/node-svc.sh restart'], check=True)
+def build_and_deploy_remotely(server_domain: str):
+    commands = [
+        'cd balance-sheet-calculator',
+        'git pull',
+        f"{docker} {compose} down",
+        f"{docker} {compose} build",
+        f"{docker} {compose} up -d"
+    ]
+    full_command = " && ".join(commands)
+    subprocess.run(['ssh', server_domain, full_command], check=True)
 
 def rm_folder(folder: str):
     if os.path.exists(folder) and os.path.isdir(folder):
@@ -50,6 +54,7 @@ def rm_folder(folder: str):
 
 def main(args):
     logging.info(f"Start build and deployment process for the environment {args.environment}")
+    check_for_uncommitted_files()
     logging.info(f"Install dependencies")
     rm_folder('node_modules')
     install_dependencies(production=False)
@@ -60,16 +65,9 @@ def main(args):
     startup_test_database()
     run_tests()
     shutdown_test_database()
-    logging.info(f"Build and compile")
-    compile()
-    rm_folder('node_modules')
-    install_dependencies(production=True)
-    server_domain = 'ecg00-bcalc@ecg00.hostsharing.net' if args.environment == 'prod' else 'ecg04-bcalc_test@ecg04.hostsharing.net'
-    logging.info(f"Copy dist and node_modules folder to {server_domain}")
-    rsync(folder='dist', server_domain=server_domain)
-    rsync(folder='node_modules', server_domain=server_domain)
-    logging.info(f"Restarting the server at {server_domain}")
-    restart_server(server_domain=server_domain)
+    server_domain = 'ecg@prod.econgood.org' if args.environment == 'prod' else 'ecg@dev.econgood.org'
+    logging.info(f"Build and deploy docker image to {server_domain}")
+    build_and_deploy_remotely(server_domain=server_domain)
 
 
 if __name__ == "__main__":

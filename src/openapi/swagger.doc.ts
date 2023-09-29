@@ -24,18 +24,18 @@ export function buildSwaggerDoc(configuration: Configuration): OpenAPIObject {
 
   const generator = new OpenAPIGenerator(registry.definitions, '3.0.0');
 
-  const version = '3.4.1';
+  const version = '3.4.2';
 
   const devServer = {
     url: 'http://localhost:4000',
     description: 'Local development server',
   };
   const testServer = {
-    url: 'https://calculator.test.ecogood.org',
+    url: 'https://balance-sheet-api.dev.econgood.org',
     description: 'Test server',
   };
   const prodServer = {
-    url: 'https://calculator.ecogood.org',
+    url: 'https://balance-sheet-api.prod.econgood.org',
     description: 'Production server',
   };
 

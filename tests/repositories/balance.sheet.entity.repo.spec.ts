@@ -49,18 +49,7 @@ describe('BalanceSheetRepo', () => {
     expect(result.users).toHaveLength(0);
   });
 
-  async function cleanUpTables() {
-    const balanceSheetEntityRepository = await dataSource.getRepository(
-      BalanceSheetEntity
-    );
-    const balanceSheetEntities = await balanceSheetEntityRepository.find();
-    for (const balanceSheetEntity of balanceSheetEntities) {
-      await balanceSheetEntityRepository.delete({ id: balanceSheetEntity.id });
-    }
-  }
-
   it('does save relation to existing user', async () => {
-    await cleanUpTables();
     const email = `${uuid4()}@example.com`;
     const user = await new UserEntityRepository(dataSource.manager).save(
       new User(undefined, email, 'test1234', Role.User)
@@ -93,7 +82,6 @@ describe('BalanceSheetRepo', () => {
   });
 
   it('loads organization relation', async () => {
-    await cleanUpTables();
     const email = `${uuid4()}@example.com`;
     const user = await new UserEntityRepository(dataSource.manager).save(
       new User(undefined, email, 'test1234', Role.User)
