@@ -22,5 +22,5 @@ services:
     env_file:
       - .env-docker/.env-db
     volumes:
-      - ./volumes/db:/var/lib/postgresql
+      - ./volumes/db:/var/lib/postgresql/data
 

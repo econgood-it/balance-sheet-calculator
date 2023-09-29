@@ -13,4 +13,4 @@ documentation
 *.tmp
 .env-docker
 logs
-.volumes
+volumes
