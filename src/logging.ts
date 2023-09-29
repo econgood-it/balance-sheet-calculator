@@ -5,6 +5,7 @@ export class LoggingService {
     LoggingService.createLogger();
 
   private static createLogger(): origWinston.Logger {
+    const logDir = 'logs';
     return origWinston.createLogger({
       level: 'info',
       format: origWinston.format.combine(
@@ -20,14 +21,19 @@ export class LoggingService {
         //
         new origWinston.transports.Console(),
         new origWinston.transports.File({
+          dirname: logDir,
           filename: 'error.log',
           level: 'error',
         }),
         new origWinston.transports.File({
+          dirname: logDir,
           filename: 'warn.log',
           level: 'warn',
         }),
-        new origWinston.transports.File({ filename: 'combined.log' }),
+        new origWinston.transports.File({
+          dirname: logDir,
+          filename: 'combined.log',
+        }),
       ],
     });
   }

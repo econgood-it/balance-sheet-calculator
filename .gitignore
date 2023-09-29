@@ -6,12 +6,11 @@ venv
 .idea
 .env-cmdrc.json
 coverage/
-combined.log
-error.log
-warn.log
 *.csv#
 documentation
 .vscode
 .~lock.*
 *.tmp
 .env-docker
+logs
+.volumes
