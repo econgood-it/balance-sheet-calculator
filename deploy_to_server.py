@@ -22,11 +22,11 @@ def check_linting():
 
 
 def shutdown_test_database():
-    subprocess.run([docker_compose, 'down'], check=True)
+    subprocess.run([docker_compose, "-f", "docker-compose-db.yml", 'down'], check=True)
 
 
 def startup_test_database():
-    subprocess.run([docker_compose, 'up', '-d'], check=True)
+    subprocess.run([docker_compose, "-f", "docker-compose-db.yml", 'up', '-d'], check=True)
 
 
 def run_tests():
