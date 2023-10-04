@@ -235,7 +235,7 @@ describe('Update endpoint of Balance Sheet Controller', () => {
         },
       };
 
-      return await testApp
+      return testApp
         .patch(`${endpointPath}/${postResponse.body.id}`)
         .set(
           authOfUnauthorizedUser.authHeader.key,

@@ -99,7 +99,7 @@ describe('Balance Sheet Controller', () => {
         .set(auth.authHeader.key, auth.authHeader.value)
         .send(balanceSheetJson);
 
-      return await testApp
+      return testApp
         .delete(`${endpointPath}/${postResponse.body.id}`)
         .set(
           authOfUnauthorizedUser.authHeader.key,
