@@ -21,7 +21,7 @@ services:
       - "127.0.0.1:5433:5432"
     env_file:
       - .env-docker/.env-db
-    user: "1001:1002"
+    user: "${UID}:${GID}"
     volumes:
       - ./volumes/db:/var/lib/postgresql/data
 
