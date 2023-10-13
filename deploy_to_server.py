@@ -72,7 +72,7 @@ def build_and_deploy_remotely(server_domain: str):
         'git pull',
         f"{docker} {compose} down",
         f"{docker} {compose} build",
-        f"{docker} {compose} up -d"
+        f"{docker} {compose} --env-file .env-docker/.env-user-permissions up -d"
     ]
     full_command = " && ".join(commands)
     subprocess.run(['ssh', server_domain, full_command], check=True)
