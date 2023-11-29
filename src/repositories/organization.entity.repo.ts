@@ -1,15 +1,12 @@
-import {
-  ORGANIZATION_RELATIONS,
-  OrganizationEntity,
-} from '../entities/organization.entity';
-import { EntityManager, Repository } from 'typeorm';
+import { OrganizationEntity } from '../entities/organization.entity';
+import { ArrayContains, EntityManager, Repository } from 'typeorm';
 
 export interface IOrganizationEntityRepo {
   findByIdOrFail(
     id: number,
     loadBalanceSheetEntities?: boolean
   ): Promise<OrganizationEntity>;
-  findOrganizationsOfUser(userId: number): Promise<OrganizationEntity[]>;
+  findOrganizationsOfUser(userEmail: string): Promise<OrganizationEntity[]>;
   save(organizationEntity: OrganizationEntity): Promise<OrganizationEntity>;
   remove(organizationEntity: OrganizationEntity): Promise<OrganizationEntity>;
 }
@@ -20,15 +17,13 @@ export class OrganizationEntityRepository implements IOrganizationEntityRepo {
     this.repo = manager.getRepository(OrganizationEntity);
   }
 
-  findOrganizationsOfUser(userId: number): Promise<OrganizationEntity[]> {
-    return this.repo.find({
-      where: {
-        members: {
-          id: userId,
-        },
-      },
-      relations: ORGANIZATION_RELATIONS,
-    });
+  findOrganizationsOfUser(userEmail: string): Promise<OrganizationEntity[]> {
+    return this.repo
+      .createQueryBuilder('entity')
+      .where('entity.members @> :criteria', {
+        criteria: JSON.stringify([{ id: userEmail }]),
+      })
+      .getMany();
   }
 
   findByIdOrFail(
@@ -38,7 +33,6 @@ export class OrganizationEntityRepository implements IOrganizationEntityRepo {
     return this.repo.findOneOrFail({
       where: { id },
       relations: [
-        ...ORGANIZATION_RELATIONS,
         ...(loadBalanceSheetEntities ? ['balanceSheetEntities'] : []),
       ],
     });

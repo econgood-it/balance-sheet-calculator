@@ -27,17 +27,13 @@ describe('Recalculation of ratings', () => {
   ) {
     const ratings = await readRatingsFromJsonFile(fileNameOfRatingInputData);
 
-    const balanceSheetEntity = new BalanceSheetEntity(
-      undefined,
-      {
-        version: BalanceSheetVersion.v5_0_8,
-        type: BalanceSheetType.Full,
-        companyFacts,
-        ratings,
-        stakeholderWeights,
-      },
-      []
-    );
+    const balanceSheetEntity = new BalanceSheetEntity(undefined, {
+      version: BalanceSheetVersion.v5_0_8,
+      type: BalanceSheetType.Full,
+      companyFacts,
+      ratings,
+      stakeholderWeights,
+    });
     await balanceSheetEntity.reCalculate();
 
     const expected = await readRatingsFromJsonFile(
@@ -61,17 +57,13 @@ describe('Recalculation of ratings', () => {
         isPositive: true,
       },
     ];
-    const balanceSheetEntity = new BalanceSheetEntity(
-      undefined,
-      {
-        version: BalanceSheetVersion.v5_0_8,
-        type: BalanceSheetType.Full,
-        companyFacts,
-        ratings,
-        stakeholderWeights: [],
-      },
-      []
-    );
+    const balanceSheetEntity = new BalanceSheetEntity(undefined, {
+      version: BalanceSheetVersion.v5_0_8,
+      type: BalanceSheetType.Full,
+      companyFacts,
+      ratings,
+      stakeholderWeights: [],
+    });
 
     expect(balanceSheetEntity.ratings[0].weight).toBeCloseTo(2, 2);
   });

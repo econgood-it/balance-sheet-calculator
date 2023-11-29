@@ -1,28 +1,27 @@
-import { z } from 'zod';
 import { BalanceSheetCreateRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
-import { BalanceSheetEntity } from '../entities/balance.sheet.entity';
+import { MatrixBodySchema } from '@ecogood/e-calculator-schemas/dist/matrix.dto';
 import { RatingRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/rating.dto';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
-import { filterTopics, Rating, sortRatings } from '../models/rating';
-import { RatingsFactory } from '../factories/ratings.factory';
-import { mergeRatingsWithRequestBodies } from '../merge/ratingsWithDtoMerger';
-import { CompanyFactsCreateRequestBodyTransformedSchema } from '../models/company.facts';
-import { BalanceSheet, BalanceSheetSchema } from '../models/balance.sheet';
-import { User } from '../entities/user';
-import { MatrixBodySchema } from '@ecogood/e-calculator-schemas/dist/matrix.dto';
+import { z } from 'zod';
 import { calculateTotalPoints } from '../calculations/calculator';
+import { Option, none, some } from '../calculations/option';
+import { BalanceSheetEntity } from '../entities/balance.sheet.entity';
+import { RatingsFactory } from '../factories/ratings.factory';
 import { roundWithPrecision } from '../math';
-import { none, Option, some } from '../calculations/option';
+import { mergeRatingsWithRequestBodies } from '../merge/ratingsWithDtoMerger';
+import { BalanceSheet, BalanceSheetSchema } from '../models/balance.sheet';
+import { CompanyFactsCreateRequestBodyTransformedSchema } from '../models/company.facts';
+import { Rating, filterTopics, sortRatings } from '../models/rating';
 
 export class BalanceSheetCreateRequest {
   constructor(
     private jsonBody: z.input<typeof BalanceSheetCreateRequestBodySchema>
   ) {}
 
-  public toBalanceEntity(users: User[]): BalanceSheetEntity {
+  public toBalanceEntity(): BalanceSheetEntity {
     const balanceSheet = BalanceSheetCreateRequestBodySchema.transform((b) => ({
       ...b,
       companyFacts: CompanyFactsCreateRequestBodyTransformedSchema.parse(
@@ -32,7 +31,7 @@ export class BalanceSheetCreateRequest {
     }))
       .pipe(BalanceSheetSchema)
       .parse(this.jsonBody);
-    return new BalanceSheetEntity(undefined, balanceSheet, users);
+    return new BalanceSheetEntity(undefined, balanceSheet);
   }
 
   private mergeWithDefaultRatings(

@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { DataSource } from 'typeorm';
 import { handle } from '../exceptions/error.handler';
-import { NoAccessError } from '../exceptions/no.access.error';
 import { Workbook } from 'exceljs';
 import { BalanceSheetReader } from '../reader/balanceSheetReader/balance.sheet.reader';
 
@@ -11,14 +10,12 @@ import { TopicWeightsReader } from '../reader/balanceSheetReader/topic.weights.r
 import { StakeholderWeightsReader } from '../reader/balanceSheetReader/stakeholder.weights.reader';
 
 import { parseLanguageParameter } from '../language/translations';
-import {
-  BalanceSheetItemsResponseSchema,
-  BalanceSheetPatchRequestBodySchema,
-} from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
+import { BalanceSheetPatchRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
 import { BalanceSheetExcelDiffResponseBody } from '@ecogood/e-calculator-schemas/dist/balance.sheet.diff';
 import { Authorization } from '../security/authorization';
 import { IRepoProvider } from '../repositories/repo.provider';
 import { BalanceSheetCreateRequest } from '../dto/balance.sheet.dto';
+import { parseSaveFlag } from './utils';
 
 export class BalanceSheetService {
   constructor(
@@ -31,17 +28,15 @@ export class BalanceSheetService {
     res: Response,
     next: NextFunction
   ) {
-    const saveFlag = this.parseSaveFlag(req.query.save);
+    const saveFlag = parseSaveFlag(req.query.save);
     const language = parseLanguageParameter(req.query.lng);
     this.dataSource.manager
       .transaction(async (entityManager) => {
-        const userRepo = this.repoProvider.getUserEntityRepo(entityManager);
         const balanceSheetRepo =
           this.repoProvider.getBalanceSheetEntityRepo(entityManager);
-        const foundUser = await userRepo.findCurrentUserOrFail(req);
         const balanceSheetEntity = new BalanceSheetCreateRequest(
           req.body
-        ).toBalanceEntity([foundUser]);
+        ).toBalanceEntity();
 
         await balanceSheetEntity.reCalculate();
 
@@ -69,10 +64,8 @@ export class BalanceSheetService {
         const topicWeightsReader = new TopicWeightsReader();
         const stakeholderWeightsReader = new StakeholderWeightsReader();
 
-        const balanceSheetEntityUpload = balanceSheetReader.readFromWorkbook(
-          wb,
-          []
-        );
+        const balanceSheetEntityUpload =
+          balanceSheetReader.readFromWorkbook(wb);
         const calcResultsUpload = calcResultsReader.readFromWorkbook(wb);
         const stakeholderWeightsUpload =
           stakeholderWeightsReader.readFromWorkbook(wb);
@@ -110,40 +103,6 @@ export class BalanceSheetService {
     }
   }
 
-  public async uploadBalanceSheet(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
-    const language = parseLanguageParameter(req.query.lng);
-    const saveFlag = this.parseSaveFlag(req.query.save);
-    this.dataSource.manager
-      .transaction(async (entityManager) => {
-        if (req.file) {
-          const userRepo = this.repoProvider.getUserEntityRepo(entityManager);
-          const foundUser = await userRepo.findCurrentUserOrFail(req);
-          const wb = await new Workbook().xlsx.load(req.file.buffer);
-          const balanceSheetReader = new BalanceSheetReader();
-          const balanceSheetRepo =
-            this.repoProvider.getBalanceSheetEntityRepo(entityManager);
-          const balanceSheetEntity = balanceSheetReader.readFromWorkbook(wb, [
-            foundUser,
-          ]);
-
-          await balanceSheetEntity.reCalculate();
-          if (saveFlag) {
-            await balanceSheetRepo.save(balanceSheetEntity);
-          }
-          res.json(balanceSheetEntity.toJson(language));
-        } else {
-          res.json({ message: 'File empty' });
-        }
-      })
-      .catch((error) => {
-        handle(error, next);
-      });
-  }
-
   public async updateBalanceSheet(
     req: Request,
     res: Response,
@@ -170,33 +129,6 @@ export class BalanceSheetService {
         await balanceSheetRepository.save(balanceSheetEntity);
 
         res.json(balanceSheetEntity.toJson(language));
-      })
-      .catch((error) => {
-        handle(error, next);
-      });
-  }
-
-  public async getBalanceSheetsOfUser(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
-    this.dataSource.manager
-      .transaction(async (entityManager) => {
-        if (!req.userInfo) {
-          throw new NoAccessError();
-        }
-        const balanceSheetEntityRepo =
-          this.repoProvider.getBalanceSheetEntityRepo(entityManager);
-        const balanceSheetEntities =
-          await balanceSheetEntityRepo.findBalanceSheetsOfUser(req.userInfo.id);
-        res.json(
-          BalanceSheetItemsResponseSchema.parse(
-            balanceSheetEntities.map((b) => {
-              return { id: b.id };
-            })
-          )
-        );
       })
       .catch((error) => {
         handle(error, next);
@@ -279,13 +211,5 @@ export class BalanceSheetService {
       .catch((error) => {
         handle(error, next);
       });
-  }
-
-  private parseSaveFlag(saveParam: any): boolean {
-    return !(
-      saveParam !== undefined &&
-      typeof saveParam === 'string' &&
-      saveParam.toLowerCase() === 'false'
-    );
   }
 }

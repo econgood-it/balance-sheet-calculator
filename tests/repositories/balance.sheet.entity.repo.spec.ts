@@ -2,8 +2,7 @@ import { DatabaseSourceCreator } from '../../src/databaseSourceCreator';
 import { DataSource } from 'typeorm';
 import { ConfigurationReader } from '../../src/reader/configuration.reader';
 import { BalanceSheetEntity } from '../../src/entities/balance.sheet.entity';
-import { Role } from '../../src/entities/enums';
-import { User } from '../../src/entities/user';
+
 import {
   balanceSheetFactory,
   organizationFactory,
@@ -14,7 +13,6 @@ import {
   IBalanceSheetEntityRepo,
 } from '../../src/repositories/balance.sheet.entity.repo';
 import { OrganizationEntity } from '../../src/entities/organization.entity';
-import { UserEntityRepository } from '../../src/repositories/user.entity.repo';
 import { OrganizationEntityRepository } from '../../src/repositories/organization.entity.repo';
 
 describe('BalanceSheetRepo', () => {
@@ -34,58 +32,9 @@ describe('BalanceSheetRepo', () => {
     await dataSource.destroy();
   });
 
-  it('does not cascades users on insert', async () => {
-    const balanceSheetEntity = new BalanceSheetEntity(
-      undefined,
-      balanceSheetFactory.emptyFullV508(),
-      [new User(undefined, 'test@example.com', 'test1234', Role.User)]
-    );
-    const savedResult = await balanceSheetEntityRepository.save(
-      balanceSheetEntity
-    );
-    const result = await balanceSheetEntityRepository.findByIdOrFail(
-      savedResult.id!
-    );
-    expect(result.users).toHaveLength(0);
-  });
-
-  it('does save relation to existing user', async () => {
-    const email = `${uuid4()}@example.com`;
-    const user = await new UserEntityRepository(dataSource.manager).save(
-      new User(undefined, email, 'test1234', Role.User)
-    );
-    const balanceSheetEntity = new BalanceSheetEntity(
-      undefined,
-      balanceSheetFactory.emptyFullV508(),
-      [user]
-    );
-    const savedResult = await balanceSheetEntityRepository.save(
-      balanceSheetEntity
-    );
-    const result = await balanceSheetEntityRepository.findByIdOrFail(
-      savedResult.id!
-    );
-
-    expect(result.users).toHaveLength(1);
-    expect(result.users[0]).toMatchObject({
-      email,
-      role: Role.User,
-    });
-    const relation = await dataSource.query(
-      `SELECT * from balance_sheet_entities_users where "userId" = ${user.id} and "balanceSheetEntityId" = ${savedResult.id}`
-    );
-    expect(relation).toHaveLength(1);
-    expect(relation[0]).toMatchObject({
-      balanceSheetEntityId: savedResult.id,
-      userId: user.id,
-    });
-  });
-
   it('loads organization relation', async () => {
     const email = `${uuid4()}@example.com`;
-    const user = await new UserEntityRepository(dataSource.manager).save(
-      new User(undefined, email, 'test1234', Role.User)
-    );
+    const user = { id: email };
     const organizationRepo = new OrganizationEntityRepository(
       dataSource.manager
     );
@@ -94,8 +43,7 @@ describe('BalanceSheetRepo', () => {
     );
     const balanceSheetEntity = new BalanceSheetEntity(
       undefined,
-      balanceSheetFactory.emptyFullV508(),
-      []
+      balanceSheetFactory.emptyFullV508()
     );
     const savedResult = await balanceSheetEntityRepository.save(
       balanceSheetEntity
@@ -106,20 +54,13 @@ describe('BalanceSheetRepo', () => {
       savedResult.id!
     );
 
-    expect(result.users).toHaveLength(0);
     expect(result.organizationEntity?.id).toEqual(organizationEntity.id);
-    expect(result.organizationEntity?.hasMemberWithEmail(email)).toBeTruthy();
+    expect(result.organizationEntity?.hasMember(user)).toBeTruthy();
   });
 
   it('fails if the value of balance sheet column is invalid', async () => {
-    const email = `${uuid4()}@example.com`;
-    const user = await dataSource
-      .getRepository(User)
-      .save(new User(undefined, email, 'test1234', Role.User));
     const balanceSheetEntity = await balanceSheetEntityRepository.save(
-      new BalanceSheetEntity(undefined, balanceSheetFactory.emptyFullV508(), [
-        user,
-      ])
+      new BalanceSheetEntity(undefined, balanceSheetFactory.emptyFullV508())
     );
     const balanceSheetJson = {
       ...balanceSheetEntity.toBalanceSheet(),

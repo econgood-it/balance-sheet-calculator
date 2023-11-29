@@ -12,7 +12,7 @@ describe('BalanceSheetReader', () => {
     const pathToCsv = path.join(__dirname, 'full_5_0_8.xlsx');
     const wb: Workbook = await new Workbook().xlsx.readFile(pathToCsv);
 
-    const balanceSheetEntity = balanceSheetReader.readFromWorkbook(wb, []);
+    const balanceSheetEntity = balanceSheetReader.readFromWorkbook(wb);
     const companyFacts = balanceSheetEntity.companyFacts;
     expect(companyFacts.totalPurchaseFromSuppliers).toBe(200000);
     expect(companyFacts.profit).toBe(456456456);
@@ -60,7 +60,7 @@ describe('BalanceSheetReader', () => {
     const balanceSheetReader = new BalanceSheetReader();
     const pathToCsv = path.join(__dirname, 'full_5_0_8.xlsx');
     const wb: Workbook = await new Workbook().xlsx.readFile(pathToCsv);
-    const balanceSheetEntity = balanceSheetReader.readFromWorkbook(wb, []);
+    const balanceSheetEntity = balanceSheetReader.readFromWorkbook(wb);
     const ratings = balanceSheetEntity.ratings;
     expect(ratings).toHaveLength(80);
     expect(ratings).toContainEqual({
@@ -79,7 +79,7 @@ describe('BalanceSheetReader', () => {
     const balanceSheetReader = new BalanceSheetReader();
     const pathToExcel = path.join(__dirname, 'full_5_0_8.xlsx');
     const wb: Workbook = await new Workbook().xlsx.readFile(pathToExcel);
-    const balanceSheetEntity = balanceSheetReader.readFromWorkbook(wb, []);
+    const balanceSheetEntity = balanceSheetReader.readFromWorkbook(wb);
     expect(balanceSheetEntity.version).toBe(BalanceSheetVersion.v5_0_8);
     expect(balanceSheetEntity.type).toBe(BalanceSheetType.Full);
   });
@@ -89,7 +89,7 @@ describe('BalanceSheetReader', () => {
     const pathToExcel = path.join(__dirname, 'compact_5_0_6.xlsx');
     const wb: Workbook = await new Workbook().xlsx.readFile(pathToExcel);
 
-    const balanceSheetEntity = balanceSheetReader.readFromWorkbook(wb, []);
+    const balanceSheetEntity = balanceSheetReader.readFromWorkbook(wb);
     expect(balanceSheetEntity.companyFacts.totalStaffCosts).toBe(0);
     expect(balanceSheetEntity.companyFacts.numberOfEmployees).toBe(0);
     expect(
@@ -129,7 +129,7 @@ describe('BalanceSheetReader', () => {
     );
     const wb: Workbook = await new Workbook().xlsx.readFile(pathToExcel);
 
-    const balanceSheetEntity = balanceSheetReader.readFromWorkbook(wb, []);
+    const balanceSheetEntity = balanceSheetReader.readFromWorkbook(wb);
     expect(balanceSheetEntity.stakeholderWeights).toEqual([
       { shortName: 'A', weight: 1 },
       { shortName: 'B', weight: 0.5 },

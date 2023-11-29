@@ -5,32 +5,39 @@ import App from '../../../src/app';
 import { Application } from 'express';
 import { ConfigurationReader } from '../../../src/reader/configuration.reader';
 
-import { Auth, AuthBuilder } from '../../AuthBuilder';
+import { AuthBuilder } from '../../AuthBuilder';
 import { CORRELATION_HEADER_NAME } from '../../../src/middleware/correlation.id.middleware';
 import { Rating } from '../../../src/models/rating';
-import { companyFactsJsonFactory } from '../../../src/openapi/examples';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import { RepoProvider } from '../../../src/repositories/repo.provider';
 import { OrganizationBuilder } from '../../OrganizationBuilder';
+import { InMemoryAuthentication } from '../in.memory.authentication';
 
 describe('Update endpoint of Balance Sheet Controller', () => {
   let dataSource: DataSource;
   let app: Application;
   const configuration = ConfigurationReader.read();
   const endpointPath = '/v1/balancesheets';
-  let auth: Auth;
   let repoProvider: RepoProvider;
+  const authBuilder = new AuthBuilder();
+  const auth = authBuilder.addUser();
+  const authWithoutOrgaPermissions = authBuilder.addUser();
+  const organizationBuilder = new OrganizationBuilder().addMember(auth.user);
 
   beforeAll(async () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
       configuration
     );
     repoProvider = new RepoProvider(configuration);
-    app = new App(dataSource, configuration, repoProvider).app;
-    auth = await new AuthBuilder(app, dataSource).build();
+    app = new App(
+      dataSource,
+      configuration,
+      repoProvider,
+      new InMemoryAuthentication(authBuilder.getTokenMap())
+    ).app;
   });
 
   afterAll(async () => {
@@ -39,15 +46,10 @@ describe('Update endpoint of Balance Sheet Controller', () => {
 
   it('should update company facts of balance sheet', async () => {
     const testApp = supertest(app);
+    const [balanceSheetEntity] = (
+      await organizationBuilder.addBalanceSheetEntity().build(dataSource)
+    ).organizationEntity.balanceSheetEntities!;
 
-    let response = await testApp
-      .post(endpointPath)
-      .set(auth.authHeader.key, auth.authHeader.value)
-      .send({
-        type: BalanceSheetType.Full,
-        version: BalanceSheetVersion.v5_0_8,
-        companyFacts: companyFactsJsonFactory.emptyRequest(),
-      });
     const balanceSheetUpdate = {
       companyFacts: {
         totalPurchaseFromSuppliers: 30000,
@@ -70,60 +72,21 @@ describe('Update endpoint of Balance Sheet Controller', () => {
         industrySectors: [],
       },
     };
-    response = await testApp
-      .patch(`${endpointPath}/${response.body.id}`)
-      .set(auth.authHeader.key, auth.authHeader.value)
-      .send({ ...balanceSheetUpdate });
-    expect(response.status).toEqual(200);
-    expect(response.body.companyFacts).toMatchObject(
-      balanceSheetUpdate.companyFacts
-    );
-  });
-
-  it('should update balance sheet if user is member of organization', async () => {
-    const testApp = supertest(app);
-    const { organizationEntity } = await new OrganizationBuilder(dataSource)
-      .addMember(auth.user)
-      .addBalanceSheetEntity()
-      .build();
-    const balanceSheetUpdate = {
-      companyFacts: {
-        totalPurchaseFromSuppliers: 30000,
-      },
-    };
     const response = await testApp
-      .patch(
-        `${endpointPath}/${organizationEntity.balanceSheetEntities?.[0].id}`
-      )
-      .set(auth.authHeader.key, auth.authHeader.value)
+      .patch(`${endpointPath}/${balanceSheetEntity.id}`)
+      .set(auth.toHeaderPair().key, auth.toHeaderPair().value)
       .send({ ...balanceSheetUpdate });
     expect(response.status).toEqual(200);
     expect(response.body.companyFacts).toMatchObject(
       balanceSheetUpdate.companyFacts
     );
-
-    // should fail if user is not member
-    const authNoMember = await new AuthBuilder(app, dataSource).build();
-    const failingResponse = await testApp
-      .patch(
-        `${endpointPath}/${organizationEntity.balanceSheetEntities?.[0].id}`
-      )
-      .set(authNoMember.authHeader.key, authNoMember.authHeader.value)
-      .send({ ...balanceSheetUpdate });
-    expect(failingResponse.status).toEqual(403);
   });
 
   it('should update ratings of balance sheet', async () => {
     const testApp = supertest(app);
-
-    let response = await testApp
-      .post(endpointPath)
-      .set(auth.authHeader.key, auth.authHeader.value)
-      .send({
-        type: BalanceSheetType.Full,
-        version: BalanceSheetVersion.v5_0_8,
-        companyFacts: companyFactsJsonFactory.nonEmptyRequest(),
-      });
+    const [balanceSheetEntity] = (
+      await organizationBuilder.addBalanceSheetEntity().build(dataSource)
+    ).organizationEntity.balanceSheetEntities!;
     const balanceSheetUpdate = {
       ratings: [
         { shortName: 'A1.1', estimations: 2 },
@@ -134,9 +97,9 @@ describe('Update endpoint of Balance Sheet Controller', () => {
         { shortName: 'E3.3', estimations: -3 },
       ],
     };
-    response = await testApp
-      .patch(`${endpointPath}/${response.body.id}`)
-      .set(auth.authHeader.key, auth.authHeader.value)
+    const response = await testApp
+      .patch(`${endpointPath}/${balanceSheetEntity.id}`)
+      .set(auth.toHeaderPair().key, auth.toHeaderPair().value)
       .send({ ...balanceSheetUpdate });
     expect(response.status).toEqual(200);
     for (const rating of balanceSheetUpdate.ratings) {
@@ -165,14 +128,10 @@ describe('Update endpoint of Balance Sheet Controller', () => {
   ): Promise<void> {
     const testApp = supertest(app);
 
-    let response = await testApp
-      .post(endpointPath)
-      .set(auth.authHeader.key, auth.authHeader.value)
-      .send({
-        type: balanceSheetType,
-        version: balanceSheetVersion,
-        companyFacts: companyFactsJsonFactory.nonEmptyRequest(),
-      });
+    const [balanceSheetEntity] = (
+      await organizationBuilder.addBalanceSheetEntity().build(dataSource)
+    ).organizationEntity.balanceSheetEntities!;
+
     const balanceSheetUpdate = {
       ratings: [
         {
@@ -188,9 +147,9 @@ describe('Update endpoint of Balance Sheet Controller', () => {
         },
       ],
     };
-    response = await testApp
-      .patch(`${endpointPath}/${response.body.id}`)
-      .set(auth.authHeader.key, auth.authHeader.value)
+    const response = await testApp
+      .patch(`${endpointPath}/${balanceSheetEntity.id}`)
+      .set(auth.toHeaderPair().key, auth.toHeaderPair().value)
       .send({ ...balanceSheetUpdate });
 
     expect(response.status).toEqual(200);
@@ -213,39 +172,29 @@ describe('Update endpoint of Balance Sheet Controller', () => {
   }
 
   describe('block access to balance sheet ', () => {
-    let authOfUnauthorizedUser: Auth;
-    beforeAll(async () => {
-      authOfUnauthorizedUser = await new AuthBuilder(app, dataSource).build();
-    });
-
-    const postAndPatchWithDifferentUsers = async (): Promise<any> => {
+    const patchWithDifferentUsers = async (): Promise<any> => {
       const testApp = supertest(app);
-      const postResponse = await testApp
-        .post(endpointPath)
-        .set(auth.authHeader.key, auth.authHeader.value)
-        .send({
-          type: BalanceSheetType.Full,
-          version: BalanceSheetVersion.v5_0_8,
-          companyFacts: companyFactsJsonFactory.nonEmptyRequest(),
-        });
+      const [balanceSheetEntity] = (
+        await organizationBuilder.addBalanceSheetEntity().build(dataSource)
+      ).organizationEntity.balanceSheetEntities!;
       const balanceSheetUpdate = {
-        id: postResponse.body.id,
+        id: balanceSheetEntity.id,
         companyFacts: {
           totalPurchaseFromSuppliers: 30000,
         },
       };
 
       return testApp
-        .patch(`${endpointPath}/${postResponse.body.id}`)
+        .patch(`${endpointPath}/${balanceSheetEntity.id}`)
         .set(
-          authOfUnauthorizedUser.authHeader.key,
-          authOfUnauthorizedUser.authHeader.value
+          authWithoutOrgaPermissions.toHeaderPair().key,
+          authWithoutOrgaPermissions.toHeaderPair().value
         )
         .send({ ...balanceSheetUpdate });
     };
 
     it('when patch endpoint is called', async () => {
-      const response = await postAndPatchWithDifferentUsers();
+      const response = await patchWithDifferentUsers();
       expect(response.status).toEqual(403);
     });
   });
@@ -254,7 +203,7 @@ describe('Update endpoint of Balance Sheet Controller', () => {
     const testApp = supertest(app);
     const response = await testApp
       .put(`${endpointPath}/9999999`)
-      .set(auth.authHeader.key, auth.authHeader.value)
+      .set(auth.toHeaderPair().key, auth.toHeaderPair().value)
       .set(CORRELATION_HEADER_NAME, 'my-own-corr-id')
       .send();
     expect(response.status).toEqual(404);
@@ -265,7 +214,7 @@ describe('Update endpoint of Balance Sheet Controller', () => {
     const testApp = supertest(app);
     const response = await testApp
       .put(`${endpointPath}/9999999`)
-      .set(auth.authHeader.key, auth.authHeader.value)
+      .set(auth.toHeaderPair().key, auth.toHeaderPair().value)
       .send();
     expect(response.status).toEqual(404);
     expect(response.headers[CORRELATION_HEADER_NAME]).toBeDefined();

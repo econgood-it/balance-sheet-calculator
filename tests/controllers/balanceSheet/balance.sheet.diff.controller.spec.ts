@@ -5,24 +5,30 @@ import App from '../../../src/app';
 import { Application } from 'express';
 import { ConfigurationReader } from '../../../src/reader/configuration.reader';
 
-import { Auth, AuthBuilder } from '../../AuthBuilder';
+import { AuthBuilder } from '../../AuthBuilder';
 import path from 'path';
 import { RepoProvider } from '../../../src/repositories/repo.provider';
+import { InMemoryAuthentication } from '../in.memory.authentication';
+import { BalanceSheetPaths } from '../../../src/controllers/balance.sheet.controller';
 
 describe('Balance Sheet Controller', () => {
   let dataSource: DataSource;
   let app: Application;
   const configuration = ConfigurationReader.read();
 
-  let auth: Auth;
+  const authBuilder = new AuthBuilder();
+  const auth = authBuilder.addUser();
 
   beforeAll(async () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
       configuration
     );
-    app = new App(dataSource, configuration, new RepoProvider(configuration))
-      .app;
-    auth = await new AuthBuilder(app, dataSource).build();
+    app = new App(
+      dataSource,
+      configuration,
+      new RepoProvider(configuration),
+      new InMemoryAuthentication(authBuilder.getTokenMap())
+    ).app;
   });
 
   afterAll(async () => {
@@ -33,8 +39,8 @@ describe('Balance Sheet Controller', () => {
     const testApp = supertest(app);
     const fileDir = path.resolve(__dirname, '../../reader/balanceSheetReader');
     const response = await testApp
-      .post('/v1/balancesheets/diff/upload')
-      .set(auth.authHeader.key, auth.authHeader.value)
+      .post(BalanceSheetPaths.diff)
+      .set(auth.toHeaderPair().key, auth.toHeaderPair().value)
       .attach('balanceSheet', path.join(fileDir, 'full_5_0_8.xlsx'));
     expect(response.status).toEqual(200);
     expect(response.body).toMatchObject({ lhs: 'upload', rhs: 'api' });

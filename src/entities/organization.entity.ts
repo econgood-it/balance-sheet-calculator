@@ -1,18 +1,14 @@
-import {
-  Column,
-  Entity,
-  JoinTable,
-  ManyToMany,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Organization } from '../models/organization';
-import { User } from './user';
+
 import { z } from 'zod';
 import { OrganizationResponseSchema } from '@ecogood/e-calculator-schemas/dist/organization.dto';
 import { BalanceSheetEntity } from './balance.sheet.entity';
 import { ConflictError } from '../exceptions/conflict.error';
-export const ORGANIZATION_RELATIONS = ['members'];
+
+type Member = {
+  id: string;
+};
 
 @Entity()
 export class OrganizationEntity {
@@ -22,9 +18,8 @@ export class OrganizationEntity {
   @Column('jsonb')
   public readonly organization: Organization;
 
-  @ManyToMany((type) => User, (user) => user.organizationEntities)
-  @JoinTable({ name: 'organization_members' })
-  public readonly members: User[];
+  @Column('jsonb')
+  public readonly members: Member[];
 
   @OneToMany(
     (type) => BalanceSheetEntity,
@@ -35,7 +30,7 @@ export class OrganizationEntity {
   public constructor(
     id: number | undefined,
     organization: Organization,
-    members: User[]
+    members: Member[]
   ) {
     this.id = id;
     this.organization = organization;
@@ -57,8 +52,8 @@ export class OrganizationEntity {
       : [balanceSheetEntity];
   }
 
-  public hasMemberWithEmail(userEmail: string) {
-    return this.members.some((u) => u.email === userEmail);
+  public hasMember(member: Member) {
+    return this.members.some((m) => m.id === member.id);
   }
 
   public toJson(): z.infer<typeof OrganizationResponseSchema> {

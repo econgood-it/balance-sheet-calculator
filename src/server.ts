@@ -4,16 +4,16 @@ import { DataSource } from 'typeorm';
 
 import { LoggingService } from './logging';
 import { ConfigurationReader } from './reader/configuration.reader';
-import { AdminAccountCreator } from './admin.account.creator';
-import { Role } from './entities/enums';
+import { User as AuthUser } from './models/user';
 import App from './app';
 import { RepoProvider } from './repositories/repo.provider';
+import { ZitadelAuthentication } from './security/authentication';
 
 declare global {
   namespace Express {
     export interface Request {
       correlationId(): string | undefined;
-      userInfo?: { id: number; email: string; role: Role };
+      authenticatedUser?: AuthUser;
       file?: Express.Multer.File;
     }
   }
@@ -23,11 +23,16 @@ const configuration = ConfigurationReader.read();
 
 DatabaseSourceCreator.createDataSourceAndRunMigrations(configuration)
   .then(async (dataSource: DataSource) => {
-    await AdminAccountCreator.saveAdmin(dataSource, configuration);
     const app = new App(
       dataSource,
       configuration,
-      new RepoProvider(configuration)
+      new RepoProvider(configuration),
+      new ZitadelAuthentication(
+        configuration.zitadelKeyId,
+        configuration.zitadelKey,
+        configuration.zitadelAppId,
+        configuration.zitadelClientId
+      )
     );
     app.start();
   })

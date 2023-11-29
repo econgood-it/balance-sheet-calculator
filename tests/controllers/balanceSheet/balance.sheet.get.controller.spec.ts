@@ -4,70 +4,62 @@ import { ConfigurationReader } from '../../../src/reader/configuration.reader';
 
 import { DataSource } from 'typeorm';
 import { Application } from 'express';
-import { Auth, AuthBuilder } from '../../AuthBuilder';
+import { AuthBuilder } from '../../AuthBuilder';
 import { CORRELATION_HEADER_NAME } from '../../../src/middleware/correlation.id.middleware';
 import { Rating, RatingResponseBody } from '../../../src/models/rating';
-
-import { companyFactsJsonFactory } from '../../../src/openapi/examples';
-import {
-  BalanceSheetType,
-  BalanceSheetVersion,
-} from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import { RepoProvider } from '../../../src/repositories/repo.provider';
+import { OrganizationBuilder } from '../../OrganizationBuilder';
+import { InMemoryAuthentication } from '../in.memory.authentication';
 import supertest = require('supertest');
 
 describe('Balance Sheet Controller', () => {
   let dataSource: DataSource;
   let app: Application;
   const configuration = ConfigurationReader.read();
-  let balanceSheetJson: any;
-  const endpointPath = '/v1/balancesheets';
-  let auth: Auth;
-  let auth2: Auth;
+  const balanceSheetsEndpoint = '/v1/balancesheets';
+  const authBuilder = new AuthBuilder();
+  const auth = authBuilder.addUser();
+  const authWithoutOrgaPermissions = authBuilder.addUser();
+  const organizationBuilder = new OrganizationBuilder().addMember(auth.user);
 
   beforeAll(async () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
       configuration
     );
-    app = new App(dataSource, configuration, new RepoProvider(configuration))
-      .app;
-    auth = await new AuthBuilder(app, dataSource).build();
-    auth2 = await new AuthBuilder(app, dataSource).build();
+    app = new App(
+      dataSource,
+      configuration,
+      new RepoProvider(configuration),
+      new InMemoryAuthentication(authBuilder.getTokenMap())
+    ).app;
   });
 
   afterAll(async () => {
     await dataSource.destroy();
   });
 
-  beforeEach(() => {
-    balanceSheetJson = {
-      type: BalanceSheetType.Full,
-      version: BalanceSheetVersion.v5_0_8,
-      companyFacts: companyFactsJsonFactory.emptyRequest(),
-    };
-  });
-
-  const createBalanceSheet = async (authUser: Auth) => {
-    const testApp = supertest(app);
-    return testApp
-      .post(endpointPath)
-      .set(authUser.authHeader.key, authUser.authHeader.value)
-      .send(balanceSheetJson);
+  const createBalanceSheet = async () => {
+    const [balanceSheetEntity] = (
+      await organizationBuilder.addBalanceSheetEntity().build(dataSource)
+    ).organizationEntity.balanceSheetEntities!;
+    return balanceSheetEntity;
   };
 
   it('get balance sheet by id where company facts fields are empty', async () => {
     const testApp = supertest(app);
-    const postResponse = await createBalanceSheet(auth);
-    expect(postResponse.status).toEqual(200);
+    const createdBalanceSheet = await createBalanceSheet();
+
     const response = await testApp
-      .get(`${endpointPath}/${postResponse.body.id}`)
-      .set(auth.authHeader.key, auth.authHeader.value)
+      .get(`${balanceSheetsEndpoint}/${createdBalanceSheet.id}`)
+      .set(auth.toHeaderPair().key, auth.toHeaderPair().value)
       .send();
     expect(response.status).toEqual(200);
     expect(response.body.companyFacts).toMatchObject(
-      postResponse.body.companyFacts
+      createdBalanceSheet.toJson('en').companyFacts
     );
-    expect(response.body.ratings).toMatchObject(postResponse.body.ratings);
+    expect(response.body.ratings).toMatchObject(
+      createdBalanceSheet.toJson('en').ratings
+    );
     expect(
       response.body.ratings
         .filter((r: RatingResponseBody) => r.shortName.length === 2)
@@ -75,29 +67,12 @@ describe('Balance Sheet Controller', () => {
     ).toBeCloseTo(999.9999999999998);
   });
 
-  it('get balance sheets of current user', async () => {
-    const testApp = supertest(app);
-    const expectedIds = [];
-    for (let i = 0; i < 2; i++) {
-      expectedIds.push((await createBalanceSheet(auth)).body.id);
-    }
-    const balanceSheetIdOfUser2 = (await createBalanceSheet(auth2)).body.id;
-    const response = await testApp
-      .get(`${endpointPath}`)
-      .set(auth.authHeader.key, auth.authHeader.value)
-      .send();
-    for (const id of expectedIds) {
-      expect(response.body).toContainEqual({ id });
-    }
-    expect(response.body).not.toContainEqual({ id: balanceSheetIdOfUser2 });
-  });
-
   it('get matrix representation of balance sheet by id', async () => {
     const testApp = supertest(app);
-    const postResponse = await createBalanceSheet(auth);
+    const createdBalanceSheet = await createBalanceSheet();
     const response = await testApp
-      .get(`${endpointPath}/${postResponse.body.id}/matrix`)
-      .set(auth.authHeader.key, auth.authHeader.value)
+      .get(`${balanceSheetsEndpoint}/${createdBalanceSheet.id}/matrix`)
+      .set(auth.toHeaderPair().key, auth.toHeaderPair().value)
       .send();
     expect(response.status).toEqual(200);
     expect(response.body.ratings).toHaveLength(20);
@@ -105,10 +80,10 @@ describe('Balance Sheet Controller', () => {
 
   it('get balance sheet in a short format', async () => {
     const testApp = supertest(app);
-    const postResponse = await createBalanceSheet(auth);
+    const createdBalanceSheet = await createBalanceSheet();
     const response = await testApp
-      .get(`${endpointPath}/${postResponse.body.id}`)
-      .set(auth.authHeader.key, auth.authHeader.value)
+      .get(`${balanceSheetsEndpoint}/${createdBalanceSheet.id}`)
+      .set(auth.toHeaderPair().key, auth.toHeaderPair().value)
       .send();
     expect(response.status).toEqual(200);
     expect(response.body.ratings).toEqual(
@@ -142,10 +117,14 @@ describe('Balance Sheet Controller', () => {
       endpoint: string
     ): Promise<any> => {
       const testApp = supertest(app);
-      const postResponse = await createBalanceSheet(auth);
+      const createdBalanceSheet = await createBalanceSheet();
+
       return testApp
-        .get(`${endpointPath}/${postResponse.body.id}${endpoint}`)
-        .set(auth2.authHeader.key, auth2.authHeader.value)
+        .get(`${balanceSheetsEndpoint}/${createdBalanceSheet.id}${endpoint}`)
+        .set(
+          authWithoutOrgaPermissions.toHeaderPair().key,
+          authWithoutOrgaPermissions.toHeaderPair().value
+        )
         .send();
     };
 
@@ -162,8 +141,8 @@ describe('Balance Sheet Controller', () => {
   it('returns given correlation id on get request', async () => {
     const testApp = supertest(app);
     const response = await testApp
-      .get(`${endpointPath}/9999999`)
-      .set(auth.authHeader.key, auth.authHeader.value)
+      .get(`${balanceSheetsEndpoint}/9999999`)
+      .set(auth.toHeaderPair().key, auth.toHeaderPair().value)
       .set(CORRELATION_HEADER_NAME, 'my-own-corr-id')
       .send();
     expect(response.status).toEqual(404);
@@ -173,8 +152,8 @@ describe('Balance Sheet Controller', () => {
   it('creates correlation id on get request', async () => {
     const testApp = supertest(app);
     const response = await testApp
-      .get(`${endpointPath}/9999999`)
-      .set(auth.authHeader.key, auth.authHeader.value)
+      .get(`${balanceSheetsEndpoint}/9999999`)
+      .set(auth.toHeaderPair().key, auth.toHeaderPair().value)
       .send();
     expect(response.status).toEqual(404);
     expect(response.headers[CORRELATION_HEADER_NAME]).toBeDefined();

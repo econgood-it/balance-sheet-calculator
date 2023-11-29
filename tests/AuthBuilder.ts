@@ -1,48 +1,38 @@
-import { DataSource } from 'typeorm';
-import { User } from '../src/entities/user';
-import { Role } from '../src/entities/enums';
-import { Application } from 'express';
-import supertest from 'supertest';
 import { v4 as uuid4 } from 'uuid';
+import { Role, User } from '../src/models/user';
 
-export type Auth = {
-  authHeader: { key: string; value: string };
-  email: string;
-  user: User;
-};
-
-export class AuthBuilder {
-  private role: Role = Role.User;
-  private email: string = `${uuid4()}-user@example.com`;
-  private password: string = `${uuid4()}`;
-  constructor(private app: Application, private dataSource: DataSource) {}
-
-  public admin(): AuthBuilder {
-    this.role = Role.Admin;
-    this.email = `${uuid4()}-admin@example.com`;
-    return this;
+export class Auth {
+  public readonly token: string;
+  public readonly user: User;
+  constructor(role: Role) {
+    this.token = uuid4();
+    this.user = {
+      id: uuid4(),
+      email: `${uuid4()}@example.com`,
+      role,
+    };
   }
 
-  public async build(): Promise<Auth> {
-    const testApp = supertest(this.app);
-    const user: User = await this.dataSource.manager.transaction(
-      async (entityManager) => {
-        const userRepository = entityManager.getRepository(User);
-        return await userRepository.save(
-          new User(undefined, this.email, this.password, this.role)
-        );
-      }
-    );
-    const response = await testApp
-      .post('/v1/users/token')
-      .send({ email: this.email, password: this.password });
-    return {
-      authHeader: {
-        key: 'Authorization',
-        value: `Bearer ${response.body.token}`,
-      },
-      email: this.email,
-      user,
-    };
+  public toHeaderPair() {
+    return { key: 'Authorization', value: `Bearer ${this.token}` };
+  }
+}
+
+export class AuthBuilder {
+  private tokenToUserMap: Map<string, User> = new Map<string, User>();
+  public addAdmin(): Auth {
+    const auth = new Auth(Role.Admin);
+    this.tokenToUserMap.set(auth.token, auth.user);
+    return auth;
+  }
+
+  public addUser(): Auth {
+    const auth = new Auth(Role.User);
+    this.tokenToUserMap.set(auth.token, auth.user);
+    return auth;
+  }
+
+  public getTokenMap() {
+    return this.tokenToUserMap;
   }
 }

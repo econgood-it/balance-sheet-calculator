@@ -28,7 +28,7 @@ describe('Transform', () => {
         { shortName: 'E2.1', estimations: 3 },
       ],
     };
-    const result = new BalanceSheetCreateRequest(json).toBalanceEntity([]);
+    const result = new BalanceSheetCreateRequest(json).toBalanceEntity();
 
     const defaultRatings = RatingsFactory.createDefaultRatings(
       json.type,
@@ -76,7 +76,7 @@ describe('Transform', () => {
       type: BalanceSheetType.Full,
       version: BalanceSheetVersion.v5_0_8,
     };
-    const result = new BalanceSheetCreateRequest(json).toBalanceEntity([]);
+    const result = new BalanceSheetCreateRequest(json).toBalanceEntity();
 
     const expectedRatings = RatingsFactory.createDefaultRatings(
       json.type,
@@ -92,7 +92,7 @@ describe('Transform', () => {
       version: BalanceSheetVersion.v5_0_8,
       companyFacts: companyFactsAsJson,
     };
-    const result = new BalanceSheetCreateRequest(json).toBalanceEntity([]);
+    const result = new BalanceSheetCreateRequest(json).toBalanceEntity();
     expect(result.companyFacts.industrySectors).toHaveLength(
       companyFactsAsJson.industrySectors.length
     );

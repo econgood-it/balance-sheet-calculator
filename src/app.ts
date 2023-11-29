@@ -2,14 +2,15 @@ import express, { Application } from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import { BalanceSheetController } from './controllers/balance.sheet.controller';
-import { Authentication } from './security/authentication';
+import {
+  Authentication,
+  IAuthenticationProvider,
+} from './security/authentication';
 import errorMiddleware from './middleware/error.middleware';
 
 import { LoggingService } from './logging';
 import { BalanceSheetService } from './services/balance.sheet.service';
 import { Configuration } from './reader/configuration.reader';
-import { UserController } from './controllers/user.controller';
-import { UserService } from './services/user.service';
 import { HealthCheckService } from './services/health.check.service';
 import { HealthCheckController } from './controllers/health.check.controller';
 import { DocsController } from './controllers/docs.controller';
@@ -18,8 +19,6 @@ import { RegionService } from './services/region.service';
 import { RegionController } from './controllers/region.controller';
 import { IndustryController } from './controllers/industry.controller';
 import { IndustryService } from './services/industry.service';
-import { ApiKeyController } from './controllers/api.key.controller';
-import { ApiKeyService } from './services/api.key.service';
 import { OrganizationController } from './controllers/organization.controller';
 import { OrganizationService } from './services/organization.service';
 import { DataSource } from 'typeorm';
@@ -27,6 +26,7 @@ import { IRepoProvider } from './repositories/repo.provider';
 import { WorkbookController } from './controllers/workbook.controller';
 import { WorkbookService } from './services/workbook.service';
 import morganMiddleware from './middleware/morgan.http.logging.middleware';
+import { InMemoryAuthentication } from '../tests/controllers/in.memory.authentication';
 
 class App {
   public readonly app: Application;
@@ -34,8 +34,6 @@ class App {
   private balanceSheetController: BalanceSheetController;
   private regionController: RegionController;
   private industryController: IndustryController;
-  private userController: UserController;
-  private apiKeyController: ApiKeyController;
   private healthCheckController: HealthCheckController;
   private organizationController: OrganizationController;
   private docsController: DocsController;
@@ -45,16 +43,17 @@ class App {
   constructor(
     dataSource: DataSource,
     private configuration: Configuration,
-    repoProvider: IRepoProvider
+    repoProvider: IRepoProvider,
+    authProvider: IAuthenticationProvider
   ) {
     this.app = express();
     this.app.use(morganMiddleware);
 
     this.setConfig();
 
-    this.authentication = new Authentication(dataSource, repoProvider);
+    this.authentication = new Authentication(authProvider);
     this.authentication.addBasicAuthToDocsEndpoint(this.app, configuration);
-    this.authentication.addAuthToApplication(this.app, configuration.jwtSecret);
+    this.authentication.addAuthToApplication(this.app);
     // Creating controllers
     const balanceSheetService = new BalanceSheetService(
       dataSource,
@@ -74,14 +73,6 @@ class App {
       this.app,
       new WorkbookService(repoProvider)
     );
-    const userService = new UserService(
-      dataSource,
-      repoProvider,
-      configuration.jwtSecret
-    );
-    this.userController = new UserController(this.app, userService);
-    const apiKeyService = new ApiKeyService(dataSource, repoProvider);
-    this.apiKeyController = new ApiKeyController(this.app, apiKeyService);
     this.healthCheckController = new HealthCheckController(
       this.app,
       new HealthCheckService()

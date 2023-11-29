@@ -8,7 +8,8 @@ export class CreateOrganizationTableimplements1680444276300
       `CREATE TABLE "organization_entity"
                    (
                        "id"         SERIAL    NOT NULL,
-                       "organization" jsonb NOT NULL, 
+                       "organization" jsonb NOT NULL,
+                       "members" jsonb NOT NULL, 
                        CONSTRAINT "PK_organization_entity" PRIMARY KEY ("id")
                    )`,
     ];

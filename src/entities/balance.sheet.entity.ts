@@ -2,12 +2,9 @@ import {
   AfterLoad,
   Column,
   Entity,
-  JoinTable,
-  ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { User } from './user';
 import { BalanceSheet, BalanceSheetSchema } from '../models/balance.sheet';
 import { companyFactsToResponse } from '../models/company.facts';
 import { isTopic, sortRatings } from '../models/rating';
@@ -30,11 +27,7 @@ import { diff } from 'deep-diff';
 import { DatabaseValidationError } from '../exceptions/databaseValidationError';
 import { OrganizationEntity } from './organization.entity';
 
-export const BALANCE_SHEET_RELATIONS = [
-  'users',
-  'organizationEntity',
-  'organizationEntity.members',
-];
+export const BALANCE_SHEET_RELATIONS = ['organizationEntity'];
 
 type CalculationResult = {
   calcResults: CalcResults;
@@ -52,24 +45,15 @@ export class BalanceSheetEntity {
   })
   public balanceSheet: BalanceSheet;
 
-  @ManyToMany((type) => User, (user) => user.balanceSheetEntities)
-  @JoinTable({ name: 'balance_sheet_entities_users' })
-  public readonly users: User[];
-
   @ManyToOne(
     () => OrganizationEntity,
     (organizationEntity) => organizationEntity.balanceSheetEntities
   )
   public readonly organizationEntity: OrganizationEntity | undefined;
 
-  public constructor(
-    id: number | undefined,
-    balanceSheet: BalanceSheet,
-    users: User[]
-  ) {
+  public constructor(id: number | undefined, balanceSheet: BalanceSheet) {
     this.id = id;
     this.balanceSheet = balanceSheet;
-    this.users = users;
   }
 
   public get version() {
@@ -90,10 +74,6 @@ export class BalanceSheetEntity {
 
   public get stakeholderWeights() {
     return this.balanceSheet.stakeholderWeights;
-  }
-
-  public userWithEmailHasAccess(userEmail: string) {
-    return this.users.some((u) => u.email === userEmail);
   }
 
   public async reCalculate(): Promise<CalculationResult> {
@@ -124,7 +104,7 @@ export class BalanceSheetEntity {
   }
 
   public clone(): BalanceSheetEntity {
-    return new BalanceSheetEntity(undefined, this.balanceSheet, this.users);
+    return new BalanceSheetEntity(undefined, this.balanceSheet);
   }
 
   public mergeWithPatchRequest(

@@ -2,29 +2,33 @@ import { DataSource } from 'typeorm';
 import { Application } from 'express';
 import { ConfigurationReader } from '../../../src/reader/configuration.reader';
 import App from '../../../src/app';
-import { Auth, AuthBuilder } from '../../AuthBuilder';
+import { AuthBuilder } from '../../AuthBuilder';
 import supertest from 'supertest';
-import { organizationFactory } from '../../../src/openapi/examples';
 import { OrganizationPaths } from '../../../src/controllers/organization.controller';
 import { RepoProvider } from '../../../src/repositories/repo.provider';
 import { DatabaseSourceCreator } from '../../../src/databaseSourceCreator';
 import { OrganizationBuilder } from '../../OrganizationBuilder';
+import { InMemoryAuthentication } from '../in.memory.authentication';
 
 describe('Organization Controller Get Endpoint', () => {
   let dataSource: DataSource;
   let app: Application;
   const configuration = ConfigurationReader.read();
-  let auth: Auth;
-  let authOtherUser: Auth;
+  const authBuilder = new AuthBuilder();
+  const auth = authBuilder.addUser();
+  const authWithoutOrgaPermissions = authBuilder.addUser();
 
   beforeAll(async () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
       configuration
     );
     const repoProvider = new RepoProvider(configuration);
-    app = new App(dataSource, configuration, repoProvider).app;
-    auth = await new AuthBuilder(app, dataSource).build();
-    authOtherUser = await new AuthBuilder(app, dataSource).build();
+    app = new App(
+      dataSource,
+      configuration,
+      repoProvider,
+      new InMemoryAuthentication(authBuilder.getTokenMap())
+    ).app;
   });
 
   afterAll(async () => {
@@ -32,84 +36,61 @@ describe('Organization Controller Get Endpoint', () => {
   });
 
   it('should return organizations of current user', async () => {
-    const orgaJson = organizationFactory.default();
     const testApp = supertest(app);
-    const responseFirstPost = await testApp
-      .post(OrganizationPaths.post)
-      .set(auth.authHeader.key, auth.authHeader.value)
-      .send(orgaJson);
-    const nameOfSecondOrga = 'Second orga';
-    const responseSecondPost = await testApp
-      .post(OrganizationPaths.post)
-      .set(auth.authHeader.key, auth.authHeader.value)
-      .send({ ...orgaJson, name: nameOfSecondOrga });
+    const { organizationEntity: orgaEntity1 } = await new OrganizationBuilder()
+      .addMember(auth.user)
+      .build(dataSource);
+    const { organizationEntity: orgaEntity2 } = await new OrganizationBuilder()
+      .addMember(auth.user)
+      .build(dataSource);
+
     const response = await testApp
       .get(OrganizationPaths.getAll)
-      .set(auth.authHeader.key, auth.authHeader.value);
+      .set(auth.toHeaderPair().key, auth.toHeaderPair().value);
     expect(response.status).toBe(200);
     expect(response.body).toEqual([
-      { id: responseFirstPost.body.id, name: orgaJson.name },
-      { id: responseSecondPost.body.id, name: nameOfSecondOrga },
+      { id: orgaEntity1.id, name: orgaEntity1.organization.name },
+      { id: orgaEntity2.id, name: orgaEntity2.organization.name },
     ]);
   });
   it('should return organization by id', async () => {
-    const orgaJson = organizationFactory.default();
     const testApp = supertest(app);
-    const responseFirstPost = await testApp
-      .post(OrganizationPaths.post)
-      .set(auth.authHeader.key, auth.authHeader.value)
-      .send(orgaJson);
+    const { organizationEntity } = await new OrganizationBuilder()
+      .addMember(auth.user)
+      .build(dataSource);
     const response = await testApp
-      .get(`${OrganizationPaths.getAll}/${responseFirstPost.body.id}`)
-      .set(auth.authHeader.key, auth.authHeader.value)
-      .send(orgaJson);
+      .get(`${OrganizationPaths.getAll}/${organizationEntity.id}`)
+      .set(auth.toHeaderPair().key, auth.toHeaderPair().value)
+      .send();
     expect(response.status).toBe(200);
-    expect(response.body).toEqual({
-      id: responseFirstPost.body.id,
-      ...orgaJson,
-    });
+    expect(response.body).toEqual(organizationEntity.toJson());
   });
 
   it('should block access to organization if user is unauthorized', async () => {
-    const orgaJson = organizationFactory.default();
     const testApp = supertest(app);
-    const responseFirstPost = await testApp
-      .post(OrganizationPaths.post)
-      .set(auth.authHeader.key, auth.authHeader.value)
-      .send(orgaJson);
+    const { organizationEntity } = await new OrganizationBuilder()
+      .addMember(auth.user)
+      .build(dataSource);
 
     const response = await testApp
-      .get(`${OrganizationPaths.getAll}/${responseFirstPost.body.id}`)
-      .set(authOtherUser.authHeader.key, authOtherUser.authHeader.value)
-      .send(orgaJson);
+      .get(`${OrganizationPaths.getAll}/${organizationEntity.id}`)
+      .set(
+        authWithoutOrgaPermissions.toHeaderPair().key,
+        authWithoutOrgaPermissions.toHeaderPair().value
+      )
+      .send();
     expect(response.status).toEqual(403);
   });
 
   it.each([OrganizationPaths.getAll, `${OrganizationPaths.getAll}/9`])(
     'should fail to get organizations if user is unauthenticated',
     async (path: string) => {
-      const orgaJson = organizationFactory.default();
       const testApp = supertest(app);
       const response = await testApp
         .get(path)
-        .set(auth.authHeader.key, 'Bearer invalid token')
-        .send(orgaJson);
+        .set('Authorization', 'Bearer invalid token')
+        .send();
       expect(response.status).toBe(401);
-    }
-  );
-
-  it.each([OrganizationPaths.getAll, `${OrganizationPaths.getAll}/9`])(
-    'should fail to get organization if user is admin',
-    async (path: string) => {
-      const adminAuth = await new AuthBuilder(app, dataSource).admin().build();
-      const orgaJson = organizationFactory.default();
-      const testApp = supertest(app);
-
-      const response = await testApp
-        .get(path)
-        .set(adminAuth.authHeader.key, adminAuth.authHeader.value)
-        .send(orgaJson);
-      expect(response.status).toBe(403);
     }
   );
 });
@@ -118,15 +99,22 @@ describe('Organization Controller Get Balance Sheets Endpoint', () => {
   let dataSource: DataSource;
   let app: Application;
   const configuration = ConfigurationReader.read();
-  let auth: Auth;
+
+  const authBuilder = new AuthBuilder();
+  const auth = authBuilder.addUser();
+  const authWithoutOrgaPermissions = authBuilder.addUser();
 
   beforeAll(async () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
       configuration
     );
     const repoProvider = new RepoProvider(configuration);
-    app = new App(dataSource, configuration, repoProvider).app;
-    auth = await new AuthBuilder(app, dataSource).build();
+    app = new App(
+      dataSource,
+      configuration,
+      repoProvider,
+      new InMemoryAuthentication(authBuilder.getTokenMap())
+    ).app;
   });
 
   afterAll(async () => {
@@ -135,14 +123,14 @@ describe('Organization Controller Get Balance Sheets Endpoint', () => {
 
   it('should return balance sheets of organization', async () => {
     const testApp = supertest(app);
-    const { organizationEntity } = await new OrganizationBuilder(dataSource)
+    const { organizationEntity } = await new OrganizationBuilder()
       .addMember(auth.user)
       .addBalanceSheetEntity()
       .addBalanceSheetEntity()
-      .build();
+      .build(dataSource);
     const response = await testApp
       .get(`${OrganizationPaths.getAll}/${organizationEntity.id}/balancesheet`)
-      .set(auth.authHeader.key, auth.authHeader.value);
+      .set(auth.toHeaderPair().key, auth.toHeaderPair().value);
     expect(response.status).toBe(200);
     expect(response.body).toEqual(
       organizationEntity.balanceSheetEntities?.map((b) => ({
@@ -151,31 +139,20 @@ describe('Organization Controller Get Balance Sheets Endpoint', () => {
     );
   });
 
-  it('should fail for admin users', async () => {
-    const testApp = supertest(app);
-    const { organizationEntity } = await new OrganizationBuilder(dataSource)
-      .addMember(auth.user)
-      .addBalanceSheetEntity()
-      .addBalanceSheetEntity()
-      .build();
-    const authAdmin = await new AuthBuilder(app, dataSource).admin().build();
-    const response = await testApp
-      .get(`${OrganizationPaths.getAll}/${organizationEntity.id}/balancesheet`)
-      .set(authAdmin.authHeader.key, authAdmin.authHeader.value);
-    expect(response.status).toBe(403);
-  });
-
   it('should fail if user is not member of organization', async () => {
     const testApp = supertest(app);
-    const { organizationEntity } = await new OrganizationBuilder(dataSource)
+    const { organizationEntity } = await new OrganizationBuilder()
       .addMember(auth.user)
       .addBalanceSheetEntity()
       .addBalanceSheetEntity()
-      .build();
-    const authNoMember = await new AuthBuilder(app, dataSource).build();
+      .build(dataSource);
+
     const response = await testApp
       .get(`${OrganizationPaths.getAll}/${organizationEntity.id}/balancesheet`)
-      .set(authNoMember.authHeader.key, authNoMember.authHeader.value);
+      .set(
+        authWithoutOrgaPermissions.toHeaderPair().key,
+        authWithoutOrgaPermissions.toHeaderPair().value
+      );
     expect(response.status).toBe(403);
   });
 });

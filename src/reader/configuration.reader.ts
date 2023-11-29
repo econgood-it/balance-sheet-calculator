@@ -17,10 +17,13 @@ export class Configuration {
     public readonly adminEmail: string,
     public readonly adminPassword: string,
     public readonly appPort: number,
-    public readonly jwtSecret: string,
     public readonly docsUser: string,
     public readonly docsPassword: string,
-    public readonly workbookApiToken: string
+    public readonly workbookApiToken: string,
+    public readonly zitadelKeyId: string,
+    public readonly zitadelKey: string,
+    public readonly zitadelAppId: string,
+    public readonly zitadelClientId: string
   ) {
     const basePath = [Environment.TEST, Environment.PROD].includes(environment)
       ? 'dist/'
@@ -48,8 +51,11 @@ export class ConfigurationReader {
     const docsPassword = process.env.DOCS_PASSWORD;
     const adminEmail = process.env.ADMIN_EMAIL;
     const adminPassword = process.env.ADMIN_PASSWORD;
-    const jwtsecret = process.env.JWT_SECRET;
     const workbookApiToken = process.env.WORKBOOK_API_TOKEN;
+    const zitadelKeyId = process.env.ZITADEL_KEY_ID;
+    const zitadelKey = process.env.ZITADEL_KEY;
+    const zitadelAppId = process.env.ZITADEL_APP_ID;
+    const zitadelClientId = process.env.ZITADEL_CLIENT_ID;
     ConfigurationReader.checkIfEnvironmentVariableIsSet('DB_NAME', dbName);
     ConfigurationReader.checkIfEnvironmentVariableIsSet('DB_PORT', dbPort);
     ConfigurationReader.checkIfEnvironmentVariableIsSet('DB_HOST', dbHost);
@@ -75,11 +81,22 @@ export class ConfigurationReader {
       'DOCS_PASSWORD',
       docsPassword
     );
-    ConfigurationReader.checkIfEnvironmentVariableIsSet(
-      'JWT_SECRET',
-      jwtsecret
-    );
     ConfigurationReader.checkIfEnvironmentVariableIsSet('PORT', appPort);
+
+    ConfigurationReader.checkIfEnvironmentVariableIsSet(
+      'ZITADEL_KEY_ID',
+      appPort
+    );
+    ConfigurationReader.checkIfEnvironmentVariableIsSet('ZITADEL_KEY', appPort);
+    ConfigurationReader.checkIfEnvironmentVariableIsSet(
+      'ZITADEL_APP_ID',
+      appPort
+    );
+    ConfigurationReader.checkIfEnvironmentVariableIsSet(
+      'ZITADEL_CLIENT_ID',
+      appPort
+    );
+
     ConfigurationReader.checkIfEnvironmentVariableIsSet(
       'WORKBOOK_API_TOKEN',
       workbookApiToken
@@ -106,10 +123,13 @@ export class ConfigurationReader {
       adminEmail as string,
       adminPassword as string,
       Number(appPort),
-      jwtsecret as string,
       docsUser as string,
       docsPassword as string,
-      workbookApiToken as string
+      workbookApiToken as string,
+      zitadelKeyId as string,
+      zitadelKey as string,
+      zitadelAppId as string,
+      zitadelClientId as string
     );
   }
 

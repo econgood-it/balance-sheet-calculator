@@ -1,13 +1,12 @@
 import { Workbook } from 'exceljs';
 import { BalanceSheetEntity } from '../../entities/balance.sheet.entity';
-import { User } from '../../entities/user';
 import { RatingSheet } from './rating.sheet';
 import { CompanyFactsSheet } from './company.facts.sheet';
 import { IntroSheet } from './intro.sheet';
 import { StakeholderWeightsReader } from './stakeholder.weights.reader';
 
 export class BalanceSheetReader {
-  public readFromWorkbook(wb: Workbook, users: User[]): BalanceSheetEntity {
+  public readFromWorkbook(wb: Workbook): BalanceSheetEntity {
     const introSheet = new IntroSheet(wb.getWorksheet('0. Intro'));
     const companyFactsSheet = new CompanyFactsSheet(
       wb.getWorksheet('2. Company Facts')
@@ -18,16 +17,12 @@ export class BalanceSheetReader {
     );
     const stakeholderWeights =
       new StakeholderWeightsReader().readUserSelectedFromWorkbook(wb);
-    return new BalanceSheetEntity(
-      undefined,
-      {
-        type: ratingSheet.getBalanceSheetType(),
-        version: introSheet.getBalanceSheetVersion(),
-        companyFacts: companyFactsSheet.toCompanyFacts(),
-        ratings: ratingSheet.toRatings(),
-        stakeholderWeights,
-      },
-      users
-    );
+    return new BalanceSheetEntity(undefined, {
+      type: ratingSheet.getBalanceSheetType(),
+      version: introSheet.getBalanceSheetVersion(),
+      companyFacts: companyFactsSheet.toCompanyFacts(),
+      ratings: ratingSheet.toRatings(),
+      stakeholderWeights,
+    });
   }
 }

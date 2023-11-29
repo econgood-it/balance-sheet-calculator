@@ -2,22 +2,18 @@ import { DataSource } from 'typeorm';
 import { DatabaseSourceCreator } from '../../src/databaseSourceCreator';
 import { ConfigurationReader } from '../../src/reader/configuration.reader';
 import { OrganizationEntity } from '../../src/entities/organization.entity';
-import { User } from '../../src/entities/user';
-import { Role } from '../../src/entities/enums';
+
 import { v4 as uuid4 } from 'uuid';
 import {
   IOrganizationEntityRepo,
   OrganizationEntityRepository,
 } from '../../src/repositories/organization.entity.repo';
-import {
-  IUserEntityRepo,
-  UserEntityRepository,
-} from '../../src/repositories/user.entity.repo';
+
 import { OrganizationBuilder } from '../OrganizationBuilder';
+import { Role } from '../../src/models/user';
 
 describe('OrganizationEntityRepo', () => {
   let organizationEntityRepo: IOrganizationEntityRepo;
-  let userEntityRepo: IUserEntityRepo;
   let dataSource: DataSource;
   const organization = {
     name: 'My organization',
@@ -36,16 +32,14 @@ describe('OrganizationEntityRepo', () => {
     organizationEntityRepo = new OrganizationEntityRepository(
       dataSource.manager
     );
-    userEntityRepo = new UserEntityRepository(dataSource.manager);
   });
 
   afterAll(async () => {
     await dataSource.destroy();
   });
   it('should be save', async () => {
-    const user = await userEntityRepo.save(
-      new User(undefined, `${uuid4()}@example.com`, 'test1234', Role.User)
-    );
+    const user = { id: `${uuid4()}@example.com` };
+
     const members = [user];
 
     const organizationEntity = new OrganizationEntity(
@@ -62,42 +56,32 @@ describe('OrganizationEntityRepo', () => {
     expect(organizationEnityFound.members).toStrictEqual(members);
   });
 
-  it('does not cascades members on insert', async () => {
-    const organizationEntity = new OrganizationEntity(undefined, organization, [
-      new User(undefined, `${uuid4()}@example.com`, 'test1234', Role.User),
-    ]);
-    const id = (await organizationEntityRepo.save(organizationEntity)).id;
-    const organizationEntityFound = await organizationEntityRepo.findByIdOrFail(
-      id!
-    );
-    expect(organizationEntityFound.members).toHaveLength(0);
-  });
-
-  it('does remove relation to member on organization delete', async () => {
-    const { organizationEntity } = await new OrganizationBuilder(dataSource)
+  it('does remove organization ', async () => {
+    const { organizationEntity } = await new OrganizationBuilder()
       .addMember()
-      .build();
+      .build(dataSource);
+    const baseOrgaRepo = dataSource.getRepository(OrganizationEntity);
+    const findPredicate = { id: organizationEntity.id };
+    expect(await baseOrgaRepo.findOneBy(findPredicate)).toBeDefined();
 
-    const query = `SELECT * from organization_members where "userId" = ${organizationEntity.members[0].id} and "organizationEntityId" = ${organizationEntity.id}`;
-    let relation = await dataSource.query(query);
-    expect(relation).toHaveLength(1);
     await organizationEntityRepo.remove(organizationEntity);
-    relation = await dataSource.query(query);
-    expect(relation).toHaveLength(0);
+    expect(await baseOrgaRepo.findOneBy(findPredicate)).toBeNull();
   });
 
   it('finds all organizations of user', async () => {
-    const user = await userEntityRepo.save(
-      new User(undefined, `${uuid4()}@example.com`, 'test1234', Role.User)
-    );
+    const user = {
+      email: `${uuid4()}@example.com`,
+      id: 'test1234',
+      role: Role.User,
+    };
 
     const { organizationEntity: organizationEntity1 } =
-      await new OrganizationBuilder(dataSource).addMember(user).build();
+      await new OrganizationBuilder().addMember(user).build(dataSource);
     const { organizationEntity: organizationEntity2 } =
-      await new OrganizationBuilder(dataSource).addMember(user).build();
+      await new OrganizationBuilder().addMember(user).build(dataSource);
 
     const organizations = await organizationEntityRepo.findOrganizationsOfUser(
-      user.id!
+      user.email!
     );
     expect(organizations.map((o) => o.id)).toEqual([
       organizationEntity1.id,
@@ -106,11 +90,11 @@ describe('OrganizationEntityRepo', () => {
   });
 
   it('saves and finds all balance sheet entities of organization', async () => {
-    const { organizationEntity } = await new OrganizationBuilder(dataSource)
+    const { organizationEntity } = await new OrganizationBuilder()
       .addMember()
       .addBalanceSheetEntity()
       .addBalanceSheetEntity()
-      .build();
+      .build(dataSource);
 
     const foundOrganizationEntity = await organizationEntityRepo.findByIdOrFail(
       organizationEntity.id!,

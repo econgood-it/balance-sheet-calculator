@@ -13,17 +13,10 @@ import {
   OrganizationEntityRepository,
 } from '../../src/repositories/organization.entity.repo';
 import {
-  IUserEntityRepo,
-  UserEntityRepository,
-} from '../../src/repositories/user.entity.repo';
-import {
   BalanceSheetEntityRepository,
   IBalanceSheetEntityRepo,
 } from '../../src/repositories/balance.sheet.entity.repo';
-import {
-  ApiKeyRepository,
-  IApiKeyRepo,
-} from '../../src/repositories/api.key.entity.repo';
+
 import { IRepoProvider } from '../../src/repositories/repo.provider';
 
 jest.mock('axios');
@@ -38,18 +31,10 @@ export class InMemoryRepoProvider implements IRepoProvider {
     return new OrganizationEntityRepository(entityManager);
   }
 
-  getUserEntityRepo(entityManager: EntityManager): IUserEntityRepo {
-    return new UserEntityRepository(entityManager);
-  }
-
   getBalanceSheetEntityRepo(
     entityManager: EntityManager
   ): IBalanceSheetEntityRepo {
     return new BalanceSheetEntityRepository(entityManager);
-  }
-
-  getApiKeyRepo(entityManager: EntityManager): IApiKeyRepo {
-    return new ApiKeyRepository(entityManager);
   }
 
   getWorkbookEntityRepo(): IWorkbookEntityRepo {

@@ -1,6 +1,7 @@
 import { Application } from 'express';
 import { OrganizationService } from '../services/organization.service';
 import { allowUserOnly } from './role.access';
+import { upload } from './utils';
 
 const resourceUrl = '/v1/organization';
 export const OrganizationPaths = {
@@ -9,6 +10,7 @@ export const OrganizationPaths = {
   getAll: `${resourceUrl}`,
   get: `${resourceUrl}/:id`,
   orgaBalanceSheet: `${resourceUrl}/:id/balancesheet`,
+  orgaBalanceSheetUpload: `${resourceUrl}/:id/balancesheet/upload`,
 };
 
 export class OrganizationController {
@@ -46,6 +48,13 @@ export class OrganizationController {
       OrganizationPaths.orgaBalanceSheet,
       allowUserOnly,
       this.organizationService.createBalanceSheet.bind(this.organizationService)
+    );
+
+    this.app.post(
+      OrganizationPaths.orgaBalanceSheetUpload,
+      allowUserOnly,
+      upload.single('balanceSheet'),
+      this.organizationService.uploadBalanceSheet.bind(this.organizationService)
     );
 
     this.app.get(

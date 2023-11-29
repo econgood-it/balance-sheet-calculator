@@ -16,8 +16,11 @@ describe('ConfigurationReader', () => {
   const docsUser = 'docsuser';
   const docsPwd = 'crazydocspwd';
   const port = '4000';
-  const jwtSecrect = 'crazyjwtPwd';
   const workbookToken = 'crazyworkbookPwd';
+  const zitadelKeyId = '382903810845309';
+  const zitadelKey = 'fdjalrejwqpjl j---';
+  const zitadelAppId = '489328014';
+  const zitadelClientId = 'jdlasrjlrelqjrewq';
 
   beforeEach(() => {
     jest.resetModules(); // Most important - it clears the cache
@@ -40,8 +43,11 @@ describe('ConfigurationReader', () => {
     process.env.DOCS_PASSWORD = docsPwd;
     process.env.ADMIN_EMAIL = adminMail;
     process.env.ADMIN_PASSWORD = adminPwd;
-    process.env.JWT_SECRET = jwtSecrect;
     process.env.WORKBOOK_API_TOKEN = workbookToken;
+    process.env.ZITADEL_KEY_ID = zitadelKeyId;
+    process.env.ZITADEL_KEY = zitadelKey;
+    process.env.ZITADEL_APP_ID = zitadelAppId;
+    process.env.ZITADEL_CLIENT_ID = zitadelClientId;
   }
 
   it('should use environment variables for config', function () {
@@ -58,8 +64,11 @@ describe('ConfigurationReader', () => {
     expect(config.docsPassword).toBe(docsPwd);
     expect(config.adminEmail).toBe(adminMail);
     expect(config.adminPassword).toBe(adminPwd);
-    expect(config.jwtSecret).toBe(jwtSecrect);
     expect(config.workbookApiToken).toBe(workbookToken);
+    expect(config.zitadelKeyId).toBe(zitadelKeyId);
+    expect(config.zitadelKey).toBe(zitadelKey);
+    expect(config.zitadelAppId).toBe(zitadelAppId);
+    expect(config.zitadelClientId).toBe(zitadelClientId);
   });
 
   it('should fail if dbHost is missing', function () {

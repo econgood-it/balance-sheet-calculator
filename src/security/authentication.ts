@@ -1,146 +1,60 @@
-import { Application, NextFunction, Request, Response } from 'express';
+import express, { Application, NextFunction, Request, Response } from 'express';
 import passport from 'passport';
-import { ExtractJwt, Strategy } from 'passport-jwt';
-import { DataSource } from 'typeorm';
 import UnauthorizedException from '../exceptions/unauthorized.exception';
-import { Role } from '../entities/enums';
 import { Configuration } from '../reader/configuration.reader';
 import { BasicStrategy } from 'passport-http';
-import { HeaderAPIKeyStrategy } from 'passport-headerapikey';
-import { IRepoProvider } from '../repositories/repo.provider';
+import { ZitadelIntrospectionStrategy } from 'passport-zitadel';
+import { Strategy } from 'passport-strategy';
+import { Role } from '../models/user';
 
-class JWTAuthentication {
+export interface IAuthenticationProvider {
+  initialize: () => express.Handler;
+  authenticate: (req: Request, res: Response, next: NextFunction) => void;
+}
+
+export class ZitadelAuthentication implements IAuthenticationProvider {
   constructor(
-    private dataSource: DataSource,
-    private repoProvider: IRepoProvider
+    private keyId: string,
+    private key: string,
+    private appId: string,
+    private clientId: string
   ) {}
 
-  public initialize(jwtSecret: string) {
-    passport.use('jwt', this.getStrategy(jwtSecret));
+  public initialize() {
+    passport.use('zitadel-introspection', this.getStrategy());
     return passport.initialize();
   }
 
-  private getStrategy(jwtSecret: string): Strategy {
-    const params = {
-      secretOrKey: jwtSecret,
-      jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme('bearer'),
-      passReqToCallback: true,
-    };
-
-    return new Strategy(params, (req: Request, payload: any, done: any) => {
-      this.dataSource.manager
-        .transaction(async (entityManager) => {
-          const userRepository =
-            this.repoProvider.getUserEntityRepo(entityManager);
-          const foundUser = await userRepository.findByEmailOrFail(
-            payload.email
-          );
-
-          return done(null, {
-            id: foundUser.id,
-            email: foundUser.email,
-            role: foundUser.role,
-          });
-        })
-        .catch(() => {
-          done(new Error('Invalid token'));
-        });
+  private getStrategy(): Strategy {
+    return new ZitadelIntrospectionStrategy({
+      authority: 'https://econgood-kmtyuy.zitadel.cloud',
+      authorization: {
+        type: 'jwt-profile',
+        profile: {
+          type: 'application',
+          keyId: this.keyId,
+          key: this.key,
+          appId: this.appId,
+          clientId: this.clientId,
+        },
+      },
     });
   }
 
   public authenticate(req: Request, res: Response, next: NextFunction) {
     passport.authenticate(
-      'jwt',
-      { session: false, failWithError: true },
-      (
-        err: any,
-        user: { id: number; email: string; role: Role },
-        info: any
-      ) => {
+      'zitadel-introspection',
+      { session: false },
+      (err: any, user: any) => {
+        console.log(user);
         if (err) {
           return next(new UnauthorizedException(err.message));
         }
-
-        if (!user) {
-          if (info.name === 'TokenExpiredError') {
-            return next(
-              new UnauthorizedException(
-                'Your token has expired. Please generate a new one'
-              )
-            );
-          } else {
-            return next(new UnauthorizedException(info.message));
-          }
-        }
-        req.userInfo = user;
-        return next();
-      }
-    )(req, res, next);
-  }
-}
-
-class ApiKeyAuthentication {
-  constructor(
-    private dataSource: DataSource,
-    private repoProvider: IRepoProvider
-  ) {}
-
-  public getHeaderKey() {
-    return 'Api-Key';
-  }
-
-  public initialize() {
-    passport.use('headerapikey', this.getStrategy());
-    return passport.initialize();
-  }
-
-  private getStrategy(): Strategy {
-    return new HeaderAPIKeyStrategy(
-      { header: this.getHeaderKey(), prefix: '' },
-      false,
-      (apikey: string, done: any) => {
-        this.dataSource.manager
-          .transaction(async (entityManager) => {
-            const apiRepository =
-              this.repoProvider.getApiKeyRepo(entityManager);
-            const [id, value] = apikey.split('.');
-            const foundApiKey = await apiRepository.findByIdOrFail(
-              parseInt(id)
-            );
-            if (!foundApiKey.compareValue(value)) {
-              throw Error('Invalid value');
-            }
-
-            return done(null, {
-              id: foundApiKey.user.id,
-              email: foundApiKey.user.email,
-              role: foundApiKey.user.role,
-            });
-          })
-          .catch(() => {
-            done(new Error('Invalid api key'));
-          });
-      }
-    );
-  }
-
-  public authenticate(req: Request, res: Response, next: NextFunction) {
-    passport.authenticate(
-      'headerapikey',
-      { session: false, failWithError: true },
-      (
-        err: any,
-        user: { id: number; email: string; role: Role },
-        info: any
-      ) => {
-        if (err) {
-          return next(new UnauthorizedException(err.message));
-        }
-
-        if (!user) {
-          return next(new UnauthorizedException(info.message));
-        }
-        req.userInfo = user;
+        req.authenticatedUser = {
+          id: user.sub,
+          email: 'test@example.com',
+          role: Role.User,
+        };
         return next();
       }
     )(req, res, next);
@@ -148,16 +62,7 @@ class ApiKeyAuthentication {
 }
 
 export class Authentication {
-  private jwtAuthentication: JWTAuthentication;
-  private apiKeyAuthentication: ApiKeyAuthentication;
-
-  constructor(private dataSource: DataSource, repoProvider: IRepoProvider) {
-    this.jwtAuthentication = new JWTAuthentication(dataSource, repoProvider);
-    this.apiKeyAuthentication = new ApiKeyAuthentication(
-      dataSource,
-      repoProvider
-    );
-  }
+  constructor(private authenticationProvider: IAuthenticationProvider) {}
 
   public addBasicAuthToDocsEndpoint(
     app: Application,
@@ -180,9 +85,8 @@ export class Authentication {
     app.use('/v1/docs', passport.authenticate('basic', { session: false }));
   }
 
-  public addAuthToApplication(app: Application, jwtSecret: string) {
-    app.use(this.jwtAuthentication.initialize(jwtSecret));
-    app.use(this.apiKeyAuthentication.initialize());
+  public addAuthToApplication(app: Application) {
+    app.use(this.authenticationProvider.initialize());
     const pathsToExcludeFromAuthentication = ['users/token', 'check', 'docs'];
     const apiBase = '/';
     app.all(apiBase + '*', (req, res, next) => {
@@ -193,9 +97,7 @@ export class Authentication {
       ) {
         return next();
       }
-      return req.rawHeaders.includes(this.apiKeyAuthentication.getHeaderKey())
-        ? this.apiKeyAuthentication.authenticate(req, res, next)
-        : this.jwtAuthentication.authenticate(req, res, next);
+      return this.authenticationProvider.authenticate(req, res, next);
     });
   }
 }

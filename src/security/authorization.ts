@@ -9,12 +9,12 @@ export namespace Authorization {
     balanceSheetEntity: BalanceSheetEntity
   ) {
     if (
+      !request.authenticatedUser ||
       !(
-        request.userInfo &&
-        (balanceSheetEntity.userWithEmailHasAccess(request.userInfo.email) ||
-          balanceSheetEntity.organizationEntity?.hasMemberWithEmail(
-            request.userInfo.email
-          ))
+        request.authenticatedUser &&
+        balanceSheetEntity.organizationEntity?.hasMember({
+          id: request.authenticatedUser.email,
+        })
       )
     ) {
       throw new NoAccessError();
@@ -27,8 +27,8 @@ export namespace Authorization {
   ) {
     if (
       !(
-        request.userInfo &&
-        organizationEntity.hasMemberWithEmail(request.userInfo.email)
+        request.authenticatedUser &&
+        organizationEntity.hasMember({ id: request.authenticatedUser.email })
       )
     ) {
       throw new NoAccessError();

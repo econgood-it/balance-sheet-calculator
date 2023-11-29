@@ -1,25 +1,14 @@
 import { NextFunction, Request, Response } from 'express';
-import { Role } from '../entities/enums';
-import ForbiddenException from '../exceptions/forbidden.exception';
 
-export const allowAdminOnly = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  if (req.userInfo && req.userInfo.role === Role.Admin) {
-    return next();
-  } else {
-    return next(new ForbiddenException('No access'));
-  }
-};
+import ForbiddenException from '../exceptions/forbidden.exception';
+import { Role } from '../models/user';
 
 export const allowUserOnly = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  if (req.userInfo && req.userInfo.role === Role.User) {
+  if (req.authenticatedUser && req.authenticatedUser.role === Role.User) {
     return next();
   } else {
     return next(new ForbiddenException('No access'));

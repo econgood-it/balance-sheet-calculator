@@ -3,7 +3,7 @@ import { Application } from 'express';
 import { ConfigurationReader } from '../../src/reader/configuration.reader';
 import { DatabaseSourceCreator } from '../../src/databaseSourceCreator';
 import App from '../../src/app';
-import { Auth, AuthBuilder } from '../AuthBuilder';
+import { AuthBuilder } from '../AuthBuilder';
 import supertest from 'supertest';
 
 import { organizationFactory } from '../../src/openapi/examples';
@@ -13,12 +13,14 @@ import {
   InMemoryRepoProvider,
   InMemoryWorkbookEntityRepo,
 } from '../repositories/workbook.entity.repo.spec';
+import { InMemoryAuthentication } from './in.memory.authentication';
 
 describe('Workbook Controller', () => {
   let dataSource: DataSource;
   let app: Application;
   const configuration = ConfigurationReader.read();
-  let auth: Auth;
+  const authBuilder = new AuthBuilder();
+  const auth = authBuilder.addUser();
 
   beforeAll(async () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
@@ -27,9 +29,9 @@ describe('Workbook Controller', () => {
     app = new App(
       dataSource,
       configuration,
-      new InMemoryRepoProvider(new InMemoryWorkbookEntityRepo())
+      new InMemoryRepoProvider(new InMemoryWorkbookEntityRepo()),
+      new InMemoryAuthentication(authBuilder.getTokenMap())
     ).app;
-    auth = await new AuthBuilder(app, dataSource).build();
   });
 
   afterAll(async () => {
@@ -40,7 +42,7 @@ describe('Workbook Controller', () => {
     const testApp = supertest(app);
     const response = await testApp
       .get(WorkbookPaths.get)
-      .set(auth.authHeader.key, auth.authHeader.value)
+      .set(auth.toHeaderPair().key, auth.toHeaderPair().value)
       .send();
     expect(response.status).toBe(200);
     expect(response.body).toEqual(workbookEntityFromFile().toJson());
@@ -51,19 +53,8 @@ describe('Workbook Controller', () => {
     const testApp = supertest(app);
     const response = await testApp
       .get(WorkbookPaths.get)
-      .set(auth.authHeader.key, 'Bearer invalid token')
+      .set(auth.toHeaderPair().key, 'Bearer invalid token')
       .send(orgaJson);
     expect(response.status).toBe(401);
-  });
-
-  it('should fail to return workbook if user is admin', async () => {
-    const adminAuth = await new AuthBuilder(app, dataSource).admin().build();
-    const orgaJson = organizationFactory.default();
-    const testApp = supertest(app);
-    const response = await testApp
-      .get(WorkbookPaths.get)
-      .set(adminAuth.authHeader.key, adminAuth.authHeader.value)
-      .send(orgaJson);
-    expect(response.status).toBe(403);
   });
 });

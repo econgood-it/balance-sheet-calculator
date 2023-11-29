@@ -3,23 +3,28 @@ import { Application } from 'express';
 import { ConfigurationReader } from '../../src/reader/configuration.reader';
 import { DatabaseSourceCreator } from '../../src/databaseSourceCreator';
 import App from '../../src/app';
-import { Auth, AuthBuilder } from '../AuthBuilder';
+import { AuthBuilder } from '../AuthBuilder';
 import supertest from 'supertest';
 import { RepoProvider } from '../../src/repositories/repo.provider';
+import { InMemoryAuthentication } from './in.memory.authentication';
 
 describe('Region Controller', () => {
   let dataSource: DataSource;
   let app: Application;
   const configuration = ConfigurationReader.read();
-  let auth: Auth;
+  const authBuilder = new AuthBuilder();
+  const auth = authBuilder.addUser();
 
   beforeAll(async () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
       configuration
     );
-    app = new App(dataSource, configuration, new RepoProvider(configuration))
-      .app;
-    auth = await new AuthBuilder(app, dataSource).build();
+    app = new App(
+      dataSource,
+      configuration,
+      new RepoProvider(configuration),
+      new InMemoryAuthentication(authBuilder.getTokenMap())
+    ).app;
   });
 
   afterAll(async () => {
@@ -30,7 +35,7 @@ describe('Region Controller', () => {
     const testApp = supertest(app);
     const response = await testApp
       .get('/v1/regions')
-      .set(auth.authHeader.key, auth.authHeader.value)
+      .set(auth.toHeaderPair().key, auth.toHeaderPair().value)
       .send();
     expect(response.status).toBe(200);
     expect(response.body).toEqual(

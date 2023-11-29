@@ -3,37 +3,32 @@ import {
   balanceSheetFactory,
   organizationFactory,
 } from '../../src/openapi/examples';
-import { User } from '../../src/entities/user';
-import { Role } from '../../src/entities/enums';
+
 import { BalanceSheetEntity } from '../../src/entities/balance.sheet.entity';
+import { UserBuilder } from '../UserBuilder';
 
 describe('OrganizationEntity', () => {
   it('should check has member', function () {
-    const userEmail = 'test@example.com';
+    const userBuilder = new UserBuilder();
+    const member1 = userBuilder.build();
     const organizationEntity = new OrganizationEntity(
       undefined,
       organizationFactory.default(),
-      [
-        new User(undefined, userEmail, 'pass', Role.User),
-        new User(undefined, 'other@example.com', 'pass', Role.User),
-      ]
+      [{ id: member1.email }, { id: userBuilder.build().email }]
     );
-    expect(organizationEntity.hasMemberWithEmail(userEmail)).toBeTruthy();
+    expect(organizationEntity.hasMember({ id: member1.email })).toBeTruthy();
     expect(
-      organizationEntity.hasMemberWithEmail('invalid@example.com')
+      organizationEntity.hasMember({ id: 'invalid@example.com' })
     ).toBeFalsy();
   });
 
   it('should return json', function () {
-    const userEmail = 'test@example.com';
+    const userBuilder = new UserBuilder();
     const id = 7;
     const organizationEntity = new OrganizationEntity(
       id,
       organizationFactory.default(),
-      [
-        new User(undefined, userEmail, 'pass', Role.User),
-        new User(undefined, 'other@example.com', 'pass', Role.User),
-      ]
+      [{ id: userBuilder.build().email }, { id: userBuilder.build().email }]
     );
     expect(organizationEntity.toJson()).toEqual({
       id,
@@ -50,8 +45,8 @@ describe('OrganizationEntity', () => {
 
     expect(organizationEntity.balanceSheetEntities).toBeUndefined();
     const balanceSheetEntities = [
-      new BalanceSheetEntity(4, balanceSheetFactory.emptyFullV508(), []),
-      new BalanceSheetEntity(7, balanceSheetFactory.emptyFullV508(), []),
+      new BalanceSheetEntity(4, balanceSheetFactory.emptyFullV508()),
+      new BalanceSheetEntity(7, balanceSheetFactory.emptyFullV508()),
     ];
     balanceSheetEntities.forEach((b) =>
       organizationEntity.addBalanceSheetEntity(b)
@@ -69,8 +64,7 @@ describe('OrganizationEntity', () => {
     );
     const balanceSheetEntity = new BalanceSheetEntity(
       4,
-      balanceSheetFactory.emptyFullV508(),
-      []
+      balanceSheetFactory.emptyFullV508()
     );
     organizationEntity.addBalanceSheetEntity(balanceSheetEntity);
     expect(() =>
@@ -85,8 +79,7 @@ describe('OrganizationEntity', () => {
     );
     const balanceSheetEntity = new BalanceSheetEntity(
       undefined,
-      balanceSheetFactory.emptyFullV508(),
-      []
+      balanceSheetFactory.emptyFullV508()
     );
     expect(() =>
       organizationEntity.addBalanceSheetEntity(balanceSheetEntity)

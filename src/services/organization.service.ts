@@ -14,6 +14,10 @@ import { BalanceSheetCreateRequest } from '../dto/balance.sheet.dto';
 import { parseLanguageParameter } from '../language/translations';
 import NotFoundException from '../exceptions/not.found.exception';
 import { BalanceSheetItemsResponseSchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
+import { Workbook } from 'exceljs';
+import { BalanceSheetReader } from '../reader/balanceSheetReader/balance.sheet.reader';
+import { parseSaveFlag } from './utils';
+import { BalanceSheetEntity } from '../entities/balance.sheet.entity';
 
 export class OrganizationService {
   constructor(
@@ -28,13 +32,16 @@ export class OrganizationService {
   ) {
     this.dataSource.manager
       .transaction(async (entityManager) => {
+        if (!req.authenticatedUser) {
+          throw new NoAccessError();
+        }
         const orgaRepo =
           this.repoProvider.getOrganizationEntityRepo(entityManager);
-        const userRepo = this.repoProvider.getUserEntityRepo(entityManager);
         const organization = OrganizationRequestSchema.parse(req.body);
-        const currentUser = await userRepo.findCurrentUserOrFail(req);
         const organizationEntity = await orgaRepo.save(
-          new OrganizationEntity(undefined, organization, [currentUser])
+          new OrganizationEntity(undefined, organization, [
+            { id: req.authenticatedUser.email },
+          ])
         );
         res.json(organizationEntity.toJson());
       })
@@ -82,13 +89,13 @@ export class OrganizationService {
   ) {
     this.dataSource.manager
       .transaction(async (entityManager) => {
-        if (!req.userInfo) {
+        if (!req.authenticatedUser) {
           throw new NoAccessError();
         }
         const orgaRepo =
           this.repoProvider.getOrganizationEntityRepo(entityManager);
         const organizationEntities = await orgaRepo.findOrganizationsOfUser(
-          req.userInfo?.id
+          req.authenticatedUser.email
         );
         res.json(
           OrganizationItemsResponseSchema.parse(
@@ -129,42 +136,25 @@ export class OrganizationService {
     res: Response,
     next: NextFunction
   ) {
-    const language = parseLanguageParameter(req.query.lng);
+    const balanceSheetEntity = new BalanceSheetCreateRequest(
+      req.body
+    ).toBalanceEntity();
+    this.processBalanceSheet(req, res, next, balanceSheetEntity);
+  }
 
-    this.dataSource.manager
-      .transaction(async (entityManager) => {
-        const balanceSheetRepo =
-          this.repoProvider.getBalanceSheetEntityRepo(entityManager);
-        const orgaRepo =
-          this.repoProvider.getOrganizationEntityRepo(entityManager);
-        const balanceSheetEntity = new BalanceSheetCreateRequest(
-          req.body
-        ).toBalanceEntity([]);
-        const organizationEntity = await orgaRepo.findByIdOrFail(
-          Number(req.params.id),
-          true
-        );
-        if (!req.userInfo) {
-          throw new NoAccessError();
-        }
-        if (!organizationEntity) {
-          throw new NotFoundException('Organization not found');
-        }
-        Authorization.checkIfCurrentUserIsMember(req, organizationEntity);
-
-        await balanceSheetEntity.reCalculate();
-
-        const savedBalanceSheetEntity = await balanceSheetRepo.save(
-          balanceSheetEntity
-        );
-        organizationEntity.addBalanceSheetEntity(savedBalanceSheetEntity);
-        await orgaRepo.save(organizationEntity);
-
-        res.json(savedBalanceSheetEntity.toJson(language));
-      })
-      .catch((error) => {
-        handle(error, next);
-      });
+  public async uploadBalanceSheet(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    if (req.file) {
+      const wb = await new Workbook().xlsx.load(req.file.buffer);
+      const balanceSheetReader = new BalanceSheetReader();
+      const balanceSheetEntity = balanceSheetReader.readFromWorkbook(wb);
+      this.processBalanceSheet(req, res, next, balanceSheetEntity);
+    } else {
+      res.json({ message: 'File empty' });
+    }
   }
 
   public async getBalanceSheets(
@@ -190,6 +180,44 @@ export class OrganizationService {
               : []
           )
         );
+      })
+      .catch((error) => {
+        handle(error, next);
+      });
+  }
+
+  private processBalanceSheet(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+    balanceSheetEntity: BalanceSheetEntity
+  ) {
+    const language = parseLanguageParameter(req.query.lng);
+    const saveFlag = parseSaveFlag(req.query.save);
+    this.dataSource.manager
+      .transaction(async (entityManager) => {
+        const balanceSheetRepo =
+          this.repoProvider.getBalanceSheetEntityRepo(entityManager);
+        const orgaRepo =
+          this.repoProvider.getOrganizationEntityRepo(entityManager);
+
+        const organizationEntity = await orgaRepo.findByIdOrFail(
+          Number(req.params.id),
+          true
+        );
+        if (!organizationEntity) {
+          throw new NotFoundException('Organization not found');
+        }
+        Authorization.checkIfCurrentUserIsMember(req, organizationEntity);
+
+        await balanceSheetEntity.reCalculate();
+        if (saveFlag) {
+          await balanceSheetRepo.save(balanceSheetEntity);
+          organizationEntity.addBalanceSheetEntity(balanceSheetEntity);
+          await orgaRepo.save(organizationEntity);
+        }
+
+        res.json(balanceSheetEntity.toJson(language));
       })
       .catch((error) => {
         handle(error, next);

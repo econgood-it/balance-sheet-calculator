@@ -6,8 +6,6 @@ import {
 
 export interface IBalanceSheetEntityRepo {
   findByIdOrFail(id: number): Promise<BalanceSheetEntity>;
-  findBalanceSheetsOfUser(userId: number): Promise<BalanceSheetEntity[]>;
-
   save(balanceSheetEntity: BalanceSheetEntity): Promise<BalanceSheetEntity>;
   remove(balanceSheetEntity: BalanceSheetEntity): Promise<BalanceSheetEntity>;
 }
@@ -28,17 +26,6 @@ export class BalanceSheetEntityRepository implements IBalanceSheetEntityRepo {
 
   save(balanceSheetEntity: BalanceSheetEntity): Promise<BalanceSheetEntity> {
     return this.repo.save(balanceSheetEntity);
-  }
-
-  findBalanceSheetsOfUser(userId: number): Promise<BalanceSheetEntity[]> {
-    return this.repo.find({
-      where: {
-        users: {
-          id: userId,
-        },
-      },
-      relations: BALANCE_SHEET_RELATIONS,
-    });
   }
 
   remove(balanceSheetEntity: BalanceSheetEntity): Promise<BalanceSheetEntity> {

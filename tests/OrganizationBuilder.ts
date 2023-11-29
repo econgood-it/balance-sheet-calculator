@@ -1,17 +1,15 @@
 import { DataSource } from 'typeorm';
-import { User } from '../src/entities/user';
-import { Role } from '../src/entities/enums';
-import { v4 as uuid4 } from 'uuid';
 import { OrganizationEntity } from '../src/entities/organization.entity';
 import { Organization } from '../src/models/organization';
 import {
   balanceSheetFactory,
   organizationFactory,
 } from '../src/openapi/examples';
-import { UserEntityRepository } from '../src/repositories/user.entity.repo';
 import { OrganizationEntityRepository } from '../src/repositories/organization.entity.repo';
 import { BalanceSheetEntity } from '../src/entities/balance.sheet.entity';
 import { BalanceSheetEntityRepository } from '../src/repositories/balance.sheet.entity.repo';
+import { UserBuilder } from './UserBuilder';
+import { User } from '../src/models/user';
 
 export type OrganizationBuilderResult = {
   organizationEntity: OrganizationEntity;
@@ -19,17 +17,13 @@ export type OrganizationBuilderResult = {
 
 export class OrganizationBuilder {
   private organization: Organization = organizationFactory.default();
-  private members: User[] = [];
+  private members: { id: string }[] = [];
   private balanceSheetEntities: BalanceSheetEntity[] = [];
-  constructor(private dataSource: DataSource) {}
 
   public addMember(user?: User): OrganizationBuilder {
     this.members = user
-      ? [...this.members, user]
-      : [
-          ...this.members,
-          new User(undefined, `${uuid4()}@example.com`, uuid4(), Role.User),
-        ];
+      ? [...this.members, { id: user.email }]
+      : [...this.members, { id: new UserBuilder().build().email }];
     return this;
   }
 
@@ -42,37 +36,33 @@ export class OrganizationBuilder {
           ...this.balanceSheetEntities,
           new BalanceSheetEntity(
             undefined,
-            balanceSheetFactory.emptyFullV508(),
-            []
+            balanceSheetFactory.emptyFullV508()
           ),
         ];
     return this;
   }
 
-  public async build(): Promise<OrganizationBuilderResult> {
-    const savedOrganizationEntity = await this.dataSource.manager.transaction(
+  public async build(
+    dataSource: DataSource
+  ): Promise<OrganizationBuilderResult> {
+    const savedOrganizationEntity = await dataSource.manager.transaction(
       async (entityManager) => {
-        const userRepository = new UserEntityRepository(
-          this.dataSource.manager
-        );
         const balanceSheetEntityRepository = new BalanceSheetEntityRepository(
-          this.dataSource.manager
+          dataSource.manager
         );
-        for (const member of this.members) {
-          await userRepository.save(member);
-        }
         const organizationEntity = new OrganizationEntity(
           undefined,
           this.organization,
           this.members
         );
         for (const balanceSheetEntity of this.balanceSheetEntities) {
+          await balanceSheetEntity.reCalculate();
           organizationEntity.addBalanceSheetEntity(
             await balanceSheetEntityRepository.save(balanceSheetEntity)
           );
         }
 
-        return new OrganizationEntityRepository(this.dataSource.manager).save(
+        return new OrganizationEntityRepository(dataSource.manager).save(
           organizationEntity
         );
       }
