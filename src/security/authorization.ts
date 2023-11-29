@@ -1,24 +1,20 @@
 import { Request } from 'express';
 import { BalanceSheetEntity } from '../entities/balance.sheet.entity';
-import { NoAccessError } from '../exceptions/no.access.error';
 import { OrganizationEntity } from '../entities/organization.entity';
+import { NoAccessError } from '../exceptions/no.access.error';
 
 export namespace Authorization {
   export function checkIfCurrentUserHasEditorPermissions(
     request: Request,
     balanceSheetEntity: BalanceSheetEntity
   ) {
-    if (
-      !request.authenticatedUser ||
-      !(
-        request.authenticatedUser &&
-        balanceSheetEntity.organizationEntity?.hasMember({
-          id: request.authenticatedUser.email,
-        })
-      )
-    ) {
+    if (balanceSheetEntity.organizationEntity === undefined) {
       throw new NoAccessError();
     }
+    Authorization.checkIfCurrentUserIsMember(
+      request,
+      balanceSheetEntity.organizationEntity
+    );
   }
 
   export function checkIfCurrentUserIsMember(
@@ -28,7 +24,7 @@ export namespace Authorization {
     if (
       !(
         request.authenticatedUser &&
-        organizationEntity.hasMember({ id: request.authenticatedUser.email })
+        organizationEntity.hasMember({ id: request.authenticatedUser.id })
       )
     ) {
       throw new NoAccessError();

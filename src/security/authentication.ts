@@ -1,11 +1,11 @@
 import express, { Application, NextFunction, Request, Response } from 'express';
 import passport from 'passport';
-import UnauthorizedException from '../exceptions/unauthorized.exception';
-import { Configuration } from '../reader/configuration.reader';
 import { BasicStrategy } from 'passport-http';
-import { ZitadelIntrospectionStrategy } from 'passport-zitadel';
 import { Strategy } from 'passport-strategy';
+import { ZitadelIntrospectionStrategy } from 'passport-zitadel';
+import UnauthorizedException from '../exceptions/unauthorized.exception';
 import { Role } from '../models/user';
+import { Configuration } from '../reader/configuration.reader';
 
 export interface IAuthenticationProvider {
   initialize: () => express.Handler;
@@ -45,16 +45,21 @@ export class ZitadelAuthentication implements IAuthenticationProvider {
     passport.authenticate(
       'zitadel-introspection',
       { session: false },
-      (err: any, user: any) => {
-        console.log(user);
+      (err: any, user: { sub: string; email?: string; scope: string }) => {
         if (err) {
           return next(new UnauthorizedException(err.message));
         }
+        if (!(user && user.email)) {
+          return next(new UnauthorizedException('User information missing'));
+        }
         req.authenticatedUser = {
           id: user.sub,
-          email: 'test@example.com',
-          role: Role.User,
+          email: user.email,
+          role: user.scope.split(' ').some((s) => s.includes('role:admin'))
+            ? Role.Admin
+            : Role.User,
         };
+
         return next();
       }
     )(req, res, next);

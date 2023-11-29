@@ -1,21 +1,19 @@
+import { Workbook } from 'exceljs';
 import { NextFunction, Request, Response } from 'express';
 import { DataSource } from 'typeorm';
 import { handle } from '../exceptions/error.handler';
-import { Workbook } from 'exceljs';
 import { BalanceSheetReader } from '../reader/balanceSheetReader/balance.sheet.reader';
 
-import { CalcResultsReader } from '../reader/balanceSheetReader/calc.results.reader';
 import { diff } from 'deep-diff';
-import { TopicWeightsReader } from '../reader/balanceSheetReader/topic.weights.reader';
+import { CalcResultsReader } from '../reader/balanceSheetReader/calc.results.reader';
 import { StakeholderWeightsReader } from '../reader/balanceSheetReader/stakeholder.weights.reader';
+import { TopicWeightsReader } from '../reader/balanceSheetReader/topic.weights.reader';
 
-import { parseLanguageParameter } from '../language/translations';
-import { BalanceSheetPatchRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
 import { BalanceSheetExcelDiffResponseBody } from '@ecogood/e-calculator-schemas/dist/balance.sheet.diff';
-import { Authorization } from '../security/authorization';
+import { BalanceSheetPatchRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
+import { parseLanguageParameter } from '../language/translations';
 import { IRepoProvider } from '../repositories/repo.provider';
-import { BalanceSheetCreateRequest } from '../dto/balance.sheet.dto';
-import { parseSaveFlag } from './utils';
+import { Authorization } from '../security/authorization';
 
 export class BalanceSheetService {
   constructor(
@@ -23,28 +21,110 @@ export class BalanceSheetService {
     private repoProvider: IRepoProvider
   ) {}
 
-  public async createBalanceSheet(
+  public async getBalanceSheet(
     req: Request,
     res: Response,
     next: NextFunction
   ) {
-    const saveFlag = parseSaveFlag(req.query.save);
     const language = parseLanguageParameter(req.query.lng);
     this.dataSource.manager
       .transaction(async (entityManager) => {
-        const balanceSheetRepo =
+        const balanceSheetRepository =
           this.repoProvider.getBalanceSheetEntityRepo(entityManager);
-        const balanceSheetEntity = new BalanceSheetCreateRequest(
-          req.body
-        ).toBalanceEntity();
+        const balanceSheetEntity = await balanceSheetRepository.findByIdOrFail(
+          Number(req.params.id)
+        );
+        Authorization.checkIfCurrentUserHasEditorPermissions(
+          req,
+          balanceSheetEntity
+        );
+        res.json(balanceSheetEntity.toJson(language));
+      })
+      .catch((error) => {
+        handle(error, next);
+      });
+  }
 
+  public async getMatrixRepresentationOfBalanceSheet(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    const language = parseLanguageParameter(req.query.lng);
+    this.dataSource.manager
+      .transaction(async (entityManager) => {
+        const balanceSheetRepository =
+          this.repoProvider.getBalanceSheetEntityRepo(entityManager);
+        const balanceSheetId: number = Number(req.params.id);
+        const balanceSheetEntity = await balanceSheetRepository.findByIdOrFail(
+          balanceSheetId
+        );
+        Authorization.checkIfCurrentUserHasEditorPermissions(
+          req,
+          balanceSheetEntity
+        );
+
+        res.json(balanceSheetEntity.asMatrixRepresentation(language));
+      })
+      .catch((error) => {
+        handle(error, next);
+      });
+  }
+
+  public async updateBalanceSheet(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    const language = parseLanguageParameter(req.query.lng);
+    this.dataSource.manager
+      .transaction(async (entityManager) => {
+        const balanceSheetRepository =
+          this.repoProvider.getBalanceSheetEntityRepo(entityManager);
+
+        const balanceSheetIdParam: number = Number(req.params.id);
+        const balanceSheetEntity = await balanceSheetRepository.findByIdOrFail(
+          balanceSheetIdParam
+        );
+        Authorization.checkIfCurrentUserHasEditorPermissions(
+          req,
+          balanceSheetEntity
+        );
+        const balanceSheetPatchRequestBody =
+          BalanceSheetPatchRequestBodySchema.parse(req.body);
+        balanceSheetEntity.mergeWithPatchRequest(balanceSheetPatchRequestBody);
         await balanceSheetEntity.reCalculate();
-
-        if (saveFlag) {
-          await balanceSheetRepo.save(balanceSheetEntity);
-        }
+        await balanceSheetRepository.save(balanceSheetEntity);
 
         res.json(balanceSheetEntity.toJson(language));
+      })
+      .catch((error) => {
+        handle(error, next);
+      });
+  }
+
+  public async deleteBalanceSheet(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    this.dataSource.manager
+      .transaction(async (entityManager) => {
+        const balanceSheetId: number = Number(req.params.id);
+        const balanceSheetRepository =
+          this.repoProvider.getBalanceSheetEntityRepo(entityManager);
+        const balanceSheetEntity = await balanceSheetRepository.findByIdOrFail(
+          balanceSheetId
+        );
+        Authorization.checkIfCurrentUserHasEditorPermissions(
+          req,
+          balanceSheetEntity
+        );
+        await balanceSheetRepository.remove(balanceSheetEntity);
+
+        res.json({
+          message: `Deleted balance sheet with id ${balanceSheetId}`,
+        });
       })
       .catch((error) => {
         handle(error, next);
@@ -101,115 +181,5 @@ export class BalanceSheetService {
     } catch (error) {
       handle(error as Error, next);
     }
-  }
-
-  public async updateBalanceSheet(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
-    const language = parseLanguageParameter(req.query.lng);
-    this.dataSource.manager
-      .transaction(async (entityManager) => {
-        const balanceSheetRepository =
-          this.repoProvider.getBalanceSheetEntityRepo(entityManager);
-
-        const balanceSheetIdParam: number = Number(req.params.id);
-        const balanceSheetEntity = await balanceSheetRepository.findByIdOrFail(
-          balanceSheetIdParam
-        );
-        Authorization.checkIfCurrentUserHasEditorPermissions(
-          req,
-          balanceSheetEntity
-        );
-        const balanceSheetPatchRequestBody =
-          BalanceSheetPatchRequestBodySchema.parse(req.body);
-        balanceSheetEntity.mergeWithPatchRequest(balanceSheetPatchRequestBody);
-        await balanceSheetEntity.reCalculate();
-        await balanceSheetRepository.save(balanceSheetEntity);
-
-        res.json(balanceSheetEntity.toJson(language));
-      })
-      .catch((error) => {
-        handle(error, next);
-      });
-  }
-
-  public async getBalanceSheet(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
-    const language = parseLanguageParameter(req.query.lng);
-    this.dataSource.manager
-      .transaction(async (entityManager) => {
-        const balanceSheetRepository =
-          this.repoProvider.getBalanceSheetEntityRepo(entityManager);
-        const balanceSheetEntity = await balanceSheetRepository.findByIdOrFail(
-          Number(req.params.id)
-        );
-        Authorization.checkIfCurrentUserHasEditorPermissions(
-          req,
-          balanceSheetEntity
-        );
-        res.json(balanceSheetEntity.toJson(language));
-      })
-      .catch((error) => {
-        handle(error, next);
-      });
-  }
-
-  public async getMatrixRepresentationOfBalanceSheet(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
-    const language = parseLanguageParameter(req.query.lng);
-    this.dataSource.manager
-      .transaction(async (entityManager) => {
-        const balanceSheetRepository =
-          this.repoProvider.getBalanceSheetEntityRepo(entityManager);
-        const balanceSheetId: number = Number(req.params.id);
-        const balanceSheetEntity = await balanceSheetRepository.findByIdOrFail(
-          balanceSheetId
-        );
-        Authorization.checkIfCurrentUserHasEditorPermissions(
-          req,
-          balanceSheetEntity
-        );
-
-        res.json(balanceSheetEntity.asMatrixRepresentation(language));
-      })
-      .catch((error) => {
-        handle(error, next);
-      });
-  }
-
-  public async deleteBalanceSheet(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
-    this.dataSource.manager
-      .transaction(async (entityManager) => {
-        const balanceSheetId: number = Number(req.params.id);
-        const balanceSheetRepository =
-          this.repoProvider.getBalanceSheetEntityRepo(entityManager);
-        const balanceSheetEntity = await balanceSheetRepository.findByIdOrFail(
-          balanceSheetId
-        );
-        Authorization.checkIfCurrentUserHasEditorPermissions(
-          req,
-          balanceSheetEntity
-        );
-        await balanceSheetRepository.remove(balanceSheetEntity);
-
-        res.json({
-          message: `Deleted balance sheet with id ${balanceSheetId}`,
-        });
-      })
-      .catch((error) => {
-        handle(error, next);
-      });
   }
 }

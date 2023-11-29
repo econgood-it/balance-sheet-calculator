@@ -1,5 +1,5 @@
+import { EntityManager, Repository } from 'typeorm';
 import { OrganizationEntity } from '../entities/organization.entity';
-import { ArrayContains, EntityManager, Repository } from 'typeorm';
 
 export interface IOrganizationEntityRepo {
   findByIdOrFail(
@@ -17,11 +17,11 @@ export class OrganizationEntityRepository implements IOrganizationEntityRepo {
     this.repo = manager.getRepository(OrganizationEntity);
   }
 
-  findOrganizationsOfUser(userEmail: string): Promise<OrganizationEntity[]> {
+  findOrganizationsOfUser(userId: string): Promise<OrganizationEntity[]> {
     return this.repo
       .createQueryBuilder('entity')
       .where('entity.members @> :criteria', {
-        criteria: JSON.stringify([{ id: userEmail }]),
+        criteria: JSON.stringify([{ id: userId }]),
       })
       .getMany();
   }

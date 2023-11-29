@@ -1,15 +1,15 @@
 import { DataSource } from 'typeorm';
+import { BalanceSheetEntity } from '../src/entities/balance.sheet.entity';
 import { OrganizationEntity } from '../src/entities/organization.entity';
 import { Organization } from '../src/models/organization';
+import { User } from '../src/models/user';
 import {
   balanceSheetFactory,
   organizationFactory,
 } from '../src/openapi/examples';
-import { OrganizationEntityRepository } from '../src/repositories/organization.entity.repo';
-import { BalanceSheetEntity } from '../src/entities/balance.sheet.entity';
 import { BalanceSheetEntityRepository } from '../src/repositories/balance.sheet.entity.repo';
+import { OrganizationEntityRepository } from '../src/repositories/organization.entity.repo';
 import { UserBuilder } from './UserBuilder';
-import { User } from '../src/models/user';
 
 export type OrganizationBuilderResult = {
   organizationEntity: OrganizationEntity;
@@ -22,8 +22,8 @@ export class OrganizationBuilder {
 
   public addMember(user?: User): OrganizationBuilder {
     this.members = user
-      ? [...this.members, { id: user.email }]
-      : [...this.members, { id: new UserBuilder().build().email }];
+      ? [...this.members, { id: user.id }]
+      : [...this.members, { id: new UserBuilder().build().id }];
     return this;
   }
 

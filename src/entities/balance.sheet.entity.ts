@@ -1,30 +1,30 @@
 import {
+  BalanceSheetPatchRequestBodySchema,
+  BalanceSheetResponseBodySchema,
+} from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
+import { diff } from 'deep-diff';
+import {
   AfterLoad,
   Column,
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { BalanceSheet, BalanceSheetSchema } from '../models/balance.sheet';
-import { companyFactsToResponse } from '../models/company.facts';
-import { isTopic, sortRatings } from '../models/rating';
-import { RegionProvider } from '../providers/region.provider';
-import { IndustryProvider } from '../providers/industry.provider';
+import { z } from 'zod';
 import { CalcResults, Calculator } from '../calculations/calculator';
 import { RatingsUpdater } from '../calculations/ratings.updater';
 import { StakeholderWeightCalculator } from '../calculations/stakeholder.weight.calculator';
 import { TopicWeightCalculator } from '../calculations/topic.weight.calculator';
-import Provider from '../providers/provider';
-import { translateBalanceSheet, Translations } from '../language/translations';
-import {
-  BalanceSheetPatchRequestBodySchema,
-  BalanceSheetResponseBodySchema,
-} from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
-import { z } from 'zod';
-import { EntityWithDtoMerger } from '../merge/entity.with.dto.merger';
 import { MatrixFormat } from '../dto/balance.sheet.dto';
-import { diff } from 'deep-diff';
 import { DatabaseValidationError } from '../exceptions/databaseValidationError';
+import { Translations, translateBalanceSheet } from '../language/translations';
+import { EntityWithDtoMerger } from '../merge/entity.with.dto.merger';
+import { BalanceSheet, BalanceSheetSchema } from '../models/balance.sheet';
+import { companyFactsToResponse } from '../models/company.facts';
+import { isTopic, sortRatings } from '../models/rating';
+import { IndustryProvider } from '../providers/industry.provider';
+import Provider from '../providers/provider';
+import { RegionProvider } from '../providers/region.provider';
 import { OrganizationEntity } from './organization.entity';
 
 export const BALANCE_SHEET_RELATIONS = ['organizationEntity'];

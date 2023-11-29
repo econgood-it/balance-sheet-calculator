@@ -1,23 +1,23 @@
 import { NextFunction, Request, Response } from 'express';
 
-import { handle } from '../exceptions/error.handler';
-import { DataSource } from 'typeorm';
-import { OrganizationEntity } from '../entities/organization.entity';
-import { Authorization } from '../security/authorization';
-import { IRepoProvider } from '../repositories/repo.provider';
+import { BalanceSheetItemsResponseSchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
 import {
   OrganizationItemsResponseSchema,
   OrganizationRequestSchema,
 } from '@ecogood/e-calculator-schemas/dist/organization.dto';
-import { NoAccessError } from '../exceptions/no.access.error';
-import { BalanceSheetCreateRequest } from '../dto/balance.sheet.dto';
-import { parseLanguageParameter } from '../language/translations';
-import NotFoundException from '../exceptions/not.found.exception';
-import { BalanceSheetItemsResponseSchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
 import { Workbook } from 'exceljs';
-import { BalanceSheetReader } from '../reader/balanceSheetReader/balance.sheet.reader';
-import { parseSaveFlag } from './utils';
+import { DataSource } from 'typeorm';
+import { BalanceSheetCreateRequest } from '../dto/balance.sheet.dto';
 import { BalanceSheetEntity } from '../entities/balance.sheet.entity';
+import { OrganizationEntity } from '../entities/organization.entity';
+import { handle } from '../exceptions/error.handler';
+import { NoAccessError } from '../exceptions/no.access.error';
+import NotFoundException from '../exceptions/not.found.exception';
+import { parseLanguageParameter } from '../language/translations';
+import { BalanceSheetReader } from '../reader/balanceSheetReader/balance.sheet.reader';
+import { IRepoProvider } from '../repositories/repo.provider';
+import { Authorization } from '../security/authorization';
+import { parseSaveFlag } from './utils';
 
 export class OrganizationService {
   constructor(
@@ -40,7 +40,7 @@ export class OrganizationService {
         const organization = OrganizationRequestSchema.parse(req.body);
         const organizationEntity = await orgaRepo.save(
           new OrganizationEntity(undefined, organization, [
-            { id: req.authenticatedUser.email },
+            { id: req.authenticatedUser.id },
           ])
         );
         res.json(organizationEntity.toJson());
@@ -95,7 +95,7 @@ export class OrganizationService {
         const orgaRepo =
           this.repoProvider.getOrganizationEntityRepo(entityManager);
         const organizationEntities = await orgaRepo.findOrganizationsOfUser(
-          req.authenticatedUser.email
+          req.authenticatedUser.id
         );
         res.json(
           OrganizationItemsResponseSchema.parse(

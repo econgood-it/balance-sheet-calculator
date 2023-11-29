@@ -81,7 +81,7 @@ describe('Organization Controller', () => {
     );
     expect(organizationEntity.organization).toMatchObject(orgaJson);
     expect(organizationEntity.members).toHaveLength(1);
-    expect(organizationEntity.members[0].id).toBe(auth.user.email);
+    expect(organizationEntity.members[0].id).toBe(auth.user.id);
   });
 
   it('should fail to create organization if user is unauthenticated', async () => {

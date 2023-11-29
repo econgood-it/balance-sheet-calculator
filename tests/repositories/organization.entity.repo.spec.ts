@@ -1,7 +1,7 @@
 import { DataSource } from 'typeorm';
 import { DatabaseSourceCreator } from '../../src/databaseSourceCreator';
-import { ConfigurationReader } from '../../src/reader/configuration.reader';
 import { OrganizationEntity } from '../../src/entities/organization.entity';
+import { ConfigurationReader } from '../../src/reader/configuration.reader';
 
 import { v4 as uuid4 } from 'uuid';
 import {
@@ -9,8 +9,8 @@ import {
   OrganizationEntityRepository,
 } from '../../src/repositories/organization.entity.repo';
 
-import { OrganizationBuilder } from '../OrganizationBuilder';
 import { Role } from '../../src/models/user';
+import { OrganizationBuilder } from '../OrganizationBuilder';
 
 describe('OrganizationEntityRepo', () => {
   let organizationEntityRepo: IOrganizationEntityRepo;
@@ -38,7 +38,7 @@ describe('OrganizationEntityRepo', () => {
     await dataSource.destroy();
   });
   it('should be save', async () => {
-    const user = { id: `${uuid4()}@example.com` };
+    const user = { id: uuid4() };
 
     const members = [user];
 
@@ -71,7 +71,7 @@ describe('OrganizationEntityRepo', () => {
   it('finds all organizations of user', async () => {
     const user = {
       email: `${uuid4()}@example.com`,
-      id: 'test1234',
+      id: uuid4(),
       role: Role.User,
     };
 
@@ -81,7 +81,7 @@ describe('OrganizationEntityRepo', () => {
       await new OrganizationBuilder().addMember(user).build(dataSource);
 
     const organizations = await organizationEntityRepo.findOrganizationsOfUser(
-      user.email!
+      user.id!
     );
     expect(organizations.map((o) => o.id)).toEqual([
       organizationEntity1.id,

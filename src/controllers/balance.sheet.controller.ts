@@ -36,11 +36,6 @@ export class BalanceSheetController {
         this.balanceSheetService
       )
     );
-    this.app.post(
-      BalanceSheetPaths.post,
-      allowUserOnly,
-      this.balanceSheetService.createBalanceSheet.bind(this.balanceSheetService)
-    );
     this.app.patch(
       BalanceSheetPaths.patch,
       allowUserOnly,

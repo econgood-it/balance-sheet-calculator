@@ -1,17 +1,17 @@
-import { DataSource } from 'typeorm';
 import { Application } from 'express';
-import { ConfigurationReader } from '../../../src/reader/configuration.reader';
-import App from '../../../src/app';
-import { AuthBuilder } from '../../AuthBuilder';
-import supertest from 'supertest';
-import { organizationFactory } from '../../../src/openapi/examples';
-import { OrganizationPaths } from '../../../src/controllers/organization.controller';
-import { RepoProvider } from '../../../src/repositories/repo.provider';
-import { DatabaseSourceCreator } from '../../../src/databaseSourceCreator';
-import { IOrganizationEntityRepo } from '../../../src/repositories/organization.entity.repo';
-import { InMemoryAuthentication } from '../in.memory.authentication';
-import { OrganizationBuilder } from '../../OrganizationBuilder';
 import * as _ from 'lodash';
+import supertest from 'supertest';
+import { DataSource } from 'typeorm';
+import App from '../../../src/app';
+import { OrganizationPaths } from '../../../src/controllers/organization.controller';
+import { DatabaseSourceCreator } from '../../../src/databaseSourceCreator';
+import { organizationFactory } from '../../../src/openapi/examples';
+import { ConfigurationReader } from '../../../src/reader/configuration.reader';
+import { IOrganizationEntityRepo } from '../../../src/repositories/organization.entity.repo';
+import { RepoProvider } from '../../../src/repositories/repo.provider';
+import { AuthBuilder } from '../../AuthBuilder';
+import { OrganizationBuilder } from '../../OrganizationBuilder';
+import { InMemoryAuthentication } from '../in.memory.authentication';
 
 describe('Organization Controller', () => {
   let dataSource: DataSource;
@@ -65,7 +65,7 @@ describe('Organization Controller', () => {
     );
     expect(organizationEntityFound.organization).toMatchObject(orgaJsonUpdate);
     expect(organizationEntityFound.members).toHaveLength(1);
-    expect(organizationEntityFound.members[0].id).toBe(auth.user.email);
+    expect(organizationEntityFound.members[0].id).toBe(auth.user.id);
   });
 
   it('should fail to update organization if user is unauthenticated', async () => {
