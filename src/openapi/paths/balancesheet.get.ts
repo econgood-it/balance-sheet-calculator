@@ -1,6 +1,11 @@
-import { BalanceSheetPaths } from '../../controllers/balance.sheet.controller';
 import { z } from 'zod';
+import { BalanceSheetPaths } from '../../controllers/balance.sheet.controller';
 
+import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
+import { BalanceSheetResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
+import { MatrixBodySchema } from '@ecogood/e-calculator-schemas/dist/matrix.dto';
+import { OpenApiParams } from '../params';
+import { OpenApiSchemas } from '../schemas';
 import {
   applicationJson,
   HttpCodes,
@@ -8,44 +13,12 @@ import {
   replaceExpressIdByOpenApiId,
   Tags,
 } from './paths';
-import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
-import { OpenApiSchemas } from '../schemas';
-import { OpenApiParams } from '../params';
-import {
-  BalanceSheetItemsResponseSchema,
-  BalanceSheetResponseBodySchema,
-} from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
 
 export function registerBalanceSheetGet(
   registry: OpenAPIRegistry,
   schemas: OpenApiSchemas,
   params: OpenApiParams
 ) {
-  registry.registerPath({
-    method: Methods.get,
-    path: BalanceSheetPaths.getAll,
-    tags: [Tags.balanceSheets],
-    description: 'Get all balance sheets of the current user',
-    summary: 'Get balance sheets',
-
-    request: {
-      headers: [params.CorrelationIdHeader],
-      query: z.object({
-        lng: params.LanguageParam,
-      }),
-    },
-    responses: {
-      [HttpCodes.okey]: {
-        description: 'Balance sheet of current user',
-        content: {
-          [applicationJson]: {
-            schema: BalanceSheetItemsResponseSchema,
-          },
-        },
-      },
-    },
-  });
-
   registry.registerPath({
     method: Methods.get,
     path: replaceExpressIdByOpenApiId(BalanceSheetPaths.get),
@@ -66,6 +39,31 @@ export function registerBalanceSheetGet(
         content: {
           [applicationJson]: {
             schema: BalanceSheetResponseBodySchema,
+          },
+        },
+      },
+    },
+  });
+  registry.registerPath({
+    method: Methods.get,
+    path: replaceExpressIdByOpenApiId(BalanceSheetPaths.matrix),
+    tags: [Tags.balanceSheets],
+    description: 'Get matrix representation of balance sheet',
+    summary: 'Get matrix representation of balance sheet',
+
+    request: {
+      headers: [params.CorrelationIdHeader],
+      query: z.object({
+        lng: params.LanguageParam,
+      }),
+      params: z.object({ id: params.BalanceSheetIdParam }),
+    },
+    responses: {
+      [HttpCodes.okey]: {
+        description: 'Balance sheet as matrix for given id',
+        content: {
+          [applicationJson]: {
+            schema: MatrixBodySchema,
           },
         },
       },

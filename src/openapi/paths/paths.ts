@@ -1,15 +1,15 @@
 import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
-import { OpenApiSchemas } from '../schemas';
 import { OpenApiParams } from '../params';
-import { registerBalanceSheetPost } from './balancesheet.post';
-import { registerBalanceSheetGet } from './balancesheet.get';
+import { OpenApiSchemas } from '../schemas';
+
 import { registerBalanceSheetDelete } from './balancesheet.delete';
+import { registerBalanceSheetGet } from './balancesheet.get';
 import { registerBalanceSheetPatch } from './balancesheet.patch';
+import { registerOrganizationGet } from './organization.get';
 import { registerOrganizationPost } from './organization.post';
 import { registerOrganizationPut } from './organization.put';
 import { registerWorkbookGet } from './workbook.get';
-import { registerOrganizationGet } from './organization.get';
 export const Tags = {
   balanceSheets: 'balancesheets',
   organization: 'organization',
@@ -40,7 +40,6 @@ export function registerPaths(
   params: OpenApiParams
 ) {
   registerBalanceSheetGet(registry, schemas, params);
-  registerBalanceSheetPost(registry, schemas, params);
   registerBalanceSheetPatch(registry, schemas, params);
   registerBalanceSheetDelete(registry, schemas, params);
   registerOrganizationPost(registry, schemas, params);

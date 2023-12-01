@@ -3,19 +3,32 @@ import {
   OpenAPIRegistry,
 } from '@asteasolutions/zod-to-openapi';
 import { OpenAPIObject } from 'openapi3-ts';
-import { registerSchemas } from './schemas';
+import { Configuration, Environment } from '../reader/configuration.reader';
 import { registerParams } from './params';
 import { registerPaths } from './paths/paths';
-import { Configuration, Environment } from '../reader/configuration.reader';
+import { registerSchemas } from './schemas';
 
 export function buildSwaggerDoc(configuration: Configuration): OpenAPIObject {
   const registry = new OpenAPIRegistry();
 
-  const apiKeyAuth = registry.registerComponent('securitySchemes', 'apiKey', {
-    type: 'apiKey',
-    in: 'header',
-    name: 'Api-Key',
-  });
+  const oauth2SecuritySchema = registry.registerComponent(
+    'securitySchemes',
+    'oauth2',
+    {
+      type: 'oauth2',
+      flows: {
+        authorizationCode: {
+          authorizationUrl:
+            'https://econgood-kmtyuy.zitadel.cloud/oauth/v2/authorize',
+          tokenUrl: 'https://econgood-kmtyuy.zitadel.cloud/oauth/v2/token',
+          scopes: {
+            openid: 'openid',
+            email: 'email',
+          },
+        },
+      },
+    }
+  );
 
   const params = registerParams(registry);
   const schemas = registerSchemas(registry);
@@ -49,7 +62,7 @@ export function buildSwaggerDoc(configuration: Configuration): OpenAPIObject {
   return generator.generateDocument({
     info: {
       title: `ECG Balance Calculator ${version}`,
-      version: '3.4.0',
+      version: '3.4.6',
       description:
         'In the moment the ECG ratings for a company are calculated by a Excel file. The idea of this API is to replace the Excel file in the future.',
     },
@@ -57,6 +70,6 @@ export function buildSwaggerDoc(configuration: Configuration): OpenAPIObject {
       url: 'https://wiki.ecogood.org/pages/viewpage.action?pageId=69436026&scmLanguageKey=en',
     },
     servers,
-    security: [{ [apiKeyAuth.name]: [] }],
+    security: [{ [oauth2SecuritySchema.name]: [] }],
   });
 }
