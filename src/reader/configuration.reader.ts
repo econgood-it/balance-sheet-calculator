@@ -14,8 +14,6 @@ export class Configuration {
     public readonly dbUser: string,
     public readonly dbPassword: string,
     public readonly environment: Environment,
-    public readonly adminEmail: string,
-    public readonly adminPassword: string,
     public readonly appPort: number,
     public readonly docsUser: string,
     public readonly docsPassword: string,
@@ -49,8 +47,6 @@ export class ConfigurationReader {
     const appPort = process.env.PORT;
     const docsUser = process.env.DOCS_USER;
     const docsPassword = process.env.DOCS_PASSWORD;
-    const adminEmail = process.env.ADMIN_EMAIL;
-    const adminPassword = process.env.ADMIN_PASSWORD;
     const workbookApiToken = process.env.WORKBOOK_API_TOKEN;
     const zitadelKeyId = process.env.ZITADEL_KEY_ID;
     const zitadelKey = process.env.ZITADEL_KEY;
@@ -68,14 +64,7 @@ export class ConfigurationReader {
       'ENVIRONMENT',
       environment
     );
-    ConfigurationReader.checkIfEnvironmentVariableIsSet(
-      'ADMIN_EMAIL',
-      adminEmail
-    );
-    ConfigurationReader.checkIfEnvironmentVariableIsSet(
-      'ADMIN_PASSWORD',
-      adminPassword
-    );
+
     ConfigurationReader.checkIfEnvironmentVariableIsSet('DOCS_USER', docsUser);
     ConfigurationReader.checkIfEnvironmentVariableIsSet(
       'DOCS_PASSWORD',
@@ -120,8 +109,6 @@ export class ConfigurationReader {
       dbUser as string,
       dbPassword as string,
       environmentAsEnum,
-      adminEmail as string,
-      adminPassword as string,
       Number(appPort),
       docsUser as string,
       docsPassword as string,
