@@ -41,8 +41,6 @@ describe('ConfigurationReader', () => {
     process.env.PORT = port;
     process.env.DOCS_USER = docsUser;
     process.env.DOCS_PASSWORD = docsPwd;
-    process.env.ADMIN_EMAIL = adminMail;
-    process.env.ADMIN_PASSWORD = adminPwd;
     process.env.WORKBOOK_API_TOKEN = workbookToken;
     process.env.ZITADEL_KEY_ID = zitadelKeyId;
     process.env.ZITADEL_KEY = zitadelKey;
@@ -62,8 +60,6 @@ describe('ConfigurationReader', () => {
     expect(config.appPort).toBe(Number.parseInt(port));
     expect(config.docsUser).toBe(docsUser);
     expect(config.docsPassword).toBe(docsPwd);
-    expect(config.adminEmail).toBe(adminMail);
-    expect(config.adminPassword).toBe(adminPwd);
     expect(config.workbookApiToken).toBe(workbookToken);
     expect(config.zitadelKeyId).toBe(zitadelKeyId);
     expect(config.zitadelKey).toBe(zitadelKey);
