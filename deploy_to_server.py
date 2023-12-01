@@ -67,12 +67,13 @@ def run_tests():
 
 
 def build_and_deploy_remotely(server_domain: str):
+    permission_env_file = "--env-file .env-docker/.env-user-permissions"
     commands = [
         'cd balance-sheet-calculator',
         'git pull',
-        f"{docker} {compose} down",
-        f"{docker} {compose} build",
-        f"{docker} {compose} --env-file .env-docker/.env-user-permissions up -d"
+        f"{docker} {compose} {permission_env_file} down",
+        f"{docker} {compose} {permission_env_file} build",
+        f"{docker} {compose} {permission_env_file} up -d"
     ]
     full_command = " && ".join(commands)
     subprocess.run(['ssh', server_domain, full_command], check=True)
