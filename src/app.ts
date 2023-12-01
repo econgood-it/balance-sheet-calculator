@@ -1,32 +1,31 @@
-import express, { Application } from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
+import express, { Application } from 'express';
 import { BalanceSheetController } from './controllers/balance.sheet.controller';
+import errorMiddleware from './middleware/error.middleware';
 import {
   Authentication,
   IAuthenticationProvider,
 } from './security/authentication';
-import errorMiddleware from './middleware/error.middleware';
 
-import { LoggingService } from './logging';
-import { BalanceSheetService } from './services/balance.sheet.service';
-import { Configuration } from './reader/configuration.reader';
-import { HealthCheckService } from './services/health.check.service';
-import { HealthCheckController } from './controllers/health.check.controller';
-import { DocsController } from './controllers/docs.controller';
-import correlationIdMiddleware from './middleware/correlation.id.middleware';
-import { RegionService } from './services/region.service';
-import { RegionController } from './controllers/region.controller';
-import { IndustryController } from './controllers/industry.controller';
-import { IndustryService } from './services/industry.service';
-import { OrganizationController } from './controllers/organization.controller';
-import { OrganizationService } from './services/organization.service';
 import { DataSource } from 'typeorm';
-import { IRepoProvider } from './repositories/repo.provider';
+import { DocsController } from './controllers/docs.controller';
+import { HealthCheckController } from './controllers/health.check.controller';
+import { IndustryController } from './controllers/industry.controller';
+import { OrganizationController } from './controllers/organization.controller';
+import { RegionController } from './controllers/region.controller';
 import { WorkbookController } from './controllers/workbook.controller';
-import { WorkbookService } from './services/workbook.service';
+import { LoggingService } from './logging';
+import correlationIdMiddleware from './middleware/correlation.id.middleware';
 import morganMiddleware from './middleware/morgan.http.logging.middleware';
-import { InMemoryAuthentication } from '../tests/controllers/in.memory.authentication';
+import { Configuration } from './reader/configuration.reader';
+import { IRepoProvider } from './repositories/repo.provider';
+import { BalanceSheetService } from './services/balance.sheet.service';
+import { HealthCheckService } from './services/health.check.service';
+import { IndustryService } from './services/industry.service';
+import { OrganizationService } from './services/organization.service';
+import { RegionService } from './services/region.service';
+import { WorkbookService } from './services/workbook.service';
 
 class App {
   public readonly app: Application;
