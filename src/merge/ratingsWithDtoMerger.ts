@@ -28,11 +28,15 @@ function mergeRatingWithRequestBody(
   if (rating.shortName === ratingRequestBody.shortName) {
     return {
       ..._.merge(rating, ratingRequestBody),
-      ...(rating.isPositive &&
-        ratingRequestBody.weight !== undefined && {
-          isWeightSelectedByUser: true,
-          weight: mergeVal(rating.weight, ratingRequestBody.weight),
-        }),
+      ...(rating.isPositive && ratingRequestBody.weight !== undefined
+        ? {
+            isWeightSelectedByUser: true,
+            weight: mergeVal(rating.weight, ratingRequestBody.weight),
+          }
+        : {
+            isWeightSelectedByUser: false,
+            weight: rating.weight,
+          }),
     };
   } else {
     return rating;

@@ -136,10 +136,19 @@ export class OrganizationService {
     res: Response,
     next: NextFunction
   ) {
-    const balanceSheetEntity = new BalanceSheetCreateRequest(
-      req.body
-    ).toBalanceEntity();
-    this.processBalanceSheet(req, res, next, balanceSheetEntity);
+    try {
+      const balanceSheetEntity = new BalanceSheetCreateRequest(
+        req.body
+      ).toBalanceEntity();
+      this.createBalanceSheetEntityForOrganization(
+        req,
+        res,
+        next,
+        balanceSheetEntity
+      );
+    } catch (error: any) {
+      handle(error, next);
+    }
   }
 
   public async uploadBalanceSheet(
@@ -147,13 +156,22 @@ export class OrganizationService {
     res: Response,
     next: NextFunction
   ) {
-    if (req.file) {
-      const wb = await new Workbook().xlsx.load(req.file.buffer);
-      const balanceSheetReader = new BalanceSheetReader();
-      const balanceSheetEntity = balanceSheetReader.readFromWorkbook(wb);
-      this.processBalanceSheet(req, res, next, balanceSheetEntity);
-    } else {
-      res.json({ message: 'File empty' });
+    try {
+      if (req.file) {
+        const wb = await new Workbook().xlsx.load(req.file.buffer);
+        const balanceSheetReader = new BalanceSheetReader();
+        const balanceSheetEntity = balanceSheetReader.readFromWorkbook(wb);
+        this.createBalanceSheetEntityForOrganization(
+          req,
+          res,
+          next,
+          balanceSheetEntity
+        );
+      } else {
+        res.json({ message: 'File empty' });
+      }
+    } catch (error: any) {
+      handle(error, next);
     }
   }
 
@@ -186,7 +204,7 @@ export class OrganizationService {
       });
   }
 
-  private processBalanceSheet(
+  private createBalanceSheetEntityForOrganization(
     req: Request,
     res: Response,
     next: NextFunction,

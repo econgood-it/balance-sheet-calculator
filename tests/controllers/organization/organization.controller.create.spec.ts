@@ -14,7 +14,6 @@ import { RatingsFactory } from '../../../src/factories/ratings.factory';
 import { INDUSTRY_CODE_FOR_FINANCIAL_SERVICES } from '../../../src/models/company.facts';
 import { Rating, RatingResponseBody } from '../../../src/models/rating';
 import {
-  balanceSheetFactory,
   balanceSheetJsonFactory,
   companyFactsFactory,
   companyFactsJsonFactory,
@@ -27,6 +26,7 @@ import { RepoProvider } from '../../../src/repositories/repo.provider';
 import { AuthBuilder } from '../../AuthBuilder';
 import { OrganizationBuilder } from '../../OrganizationBuilder';
 import { InMemoryAuthentication } from '../in.memory.authentication';
+import { BalanceSheetMockBuilder } from '../../BalanceSheetMockBuilder';
 
 const assertTopicWeight = (
   shortName: string,
@@ -128,7 +128,7 @@ describe('Organization Controller', () => {
     await dataSource.destroy();
   });
   it('should create balance sheets for organization', async () => {
-    const balanceSheet = balanceSheetJsonFactory.emptyFullV508();
+    const balanceSheetBuilder = new BalanceSheetMockBuilder();
     const testApp = supertest(app);
     const { organizationEntity } = await new OrganizationBuilder()
       .addMember(auth.user)
@@ -136,18 +136,18 @@ describe('Organization Controller', () => {
     const response = await testApp
       .post(`${OrganizationPaths.getAll}/${organizationEntity.id}/balancesheet`)
       .set(auth.toHeaderPair().key, auth.toHeaderPair().value)
-      .send(balanceSheet);
+      .send(balanceSheetBuilder.buildRequestBody());
     expect(response.status).toBe(200);
     const balanceSheetEntity = new BalanceSheetEntity(
       response.body.id,
-      balanceSheetFactory.emptyFullV508()
+      balanceSheetBuilder.build()
     );
     await balanceSheetEntity.reCalculate();
     expect(response.body).toMatchObject(balanceSheetEntity.toJson('en'));
     const response2 = await testApp
       .post(`${OrganizationPaths.getAll}/${organizationEntity.id}/balancesheet`)
       .set(auth.toHeaderPair().key, auth.toHeaderPair().value)
-      .send(balanceSheet);
+      .send(balanceSheetBuilder.buildRequestBody());
     const foundOrganizationEntity = await organizationRepo.findByIdOrFail(
       organizationEntity.id!,
       true
