@@ -6,10 +6,10 @@ import {
 import { Rating } from '../src/models/rating';
 import { CompanyFacts } from '../src/models/company.facts';
 import { companyFactsFactory } from '../src/openapi/examples';
-import _ from 'lodash';
 import { BalanceSheetCreateRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
 import { z } from 'zod';
 import { BalanceSheet } from '../src/models/balance.sheet';
+
 export class RatingsMockBuilder {
   private ratings = RatingsFactory.createDefaultRatings(
     BalanceSheetType.Full,
