@@ -23,6 +23,7 @@ describe('OrganizationEntityRepo', () => {
       city: 'Example city',
       zip: '999999',
     },
+    invitations: [`${uuid4()}@example.com`, `${uuid4()}@example.com`],
   };
 
   beforeAll(async () => {

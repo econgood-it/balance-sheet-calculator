@@ -39,9 +39,11 @@ export class OrganizationService {
           this.repoProvider.getOrganizationEntityRepo(entityManager);
         const organization = OrganizationRequestSchema.parse(req.body);
         const organizationEntity = await orgaRepo.save(
-          new OrganizationEntity(undefined, organization, [
-            { id: req.authenticatedUser.id },
-          ])
+          new OrganizationEntity(
+            undefined,
+            { ...organization, invitations: [] },
+            [{ id: req.authenticatedUser.id }]
+          )
         );
         res.json(organizationEntity.toJson());
       })
@@ -66,14 +68,9 @@ export class OrganizationService {
             organizationIdParam
           );
         Authorization.checkIfCurrentUserIsMember(req, organizationEntity);
+        organizationEntity.mergeWithRequest(organization);
         const updatedOrganizationEntity =
-          await organizationEntityRepository.save(
-            new OrganizationEntity(
-              organizationEntity.id,
-              organization,
-              organizationEntity.members
-            )
-          );
+          await organizationEntityRepository.save(organizationEntity);
 
         res.json(updatedOrganizationEntity.toJson());
       })

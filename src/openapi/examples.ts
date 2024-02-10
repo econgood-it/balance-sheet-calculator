@@ -261,5 +261,6 @@ export const organizationFactory = {
       zip: '999999',
       city: 'Example city',
     },
+    invitations: [],
   }),
 };

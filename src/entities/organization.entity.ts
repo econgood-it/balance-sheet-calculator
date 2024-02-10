@@ -2,9 +2,14 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Organization } from '../models/organization';
 
 import { z } from 'zod';
-import { OrganizationResponseSchema } from '@ecogood/e-calculator-schemas/dist/organization.dto';
+import {
+  OrganizationRequestSchema,
+  OrganizationResponseSchema,
+} from '@ecogood/e-calculator-schemas/dist/organization.dto';
 import { BalanceSheetEntity } from './balance.sheet.entity';
 import { ConflictError } from '../exceptions/conflict.error';
+import { BalanceSheetPatchRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
+import { EntityWithDtoMerger } from '../merge/entity.with.dto.merger';
 
 type Member = {
   id: string;
@@ -16,7 +21,7 @@ export class OrganizationEntity {
   public readonly id: number | undefined;
 
   @Column('jsonb')
-  public readonly organization: Organization;
+  public organization: Organization;
 
   @Column('jsonb')
   public readonly members: Member[];
@@ -50,6 +55,21 @@ export class OrganizationEntity {
     this.balanceSheetEntities = this.balanceSheetEntities
       ? [...this.balanceSheetEntities, balanceSheetEntity]
       : [balanceSheetEntity];
+  }
+
+  public invite(email: string) {
+    if (!this.organization.invitations.find((i) => i === email)) {
+      this.organization.invitations = [...this.organization.invitations, email];
+    }
+  }
+
+  public mergeWithRequest(
+    organizationRequest: z.infer<typeof OrganizationRequestSchema>
+  ) {
+    this.organization = {
+      ...organizationRequest,
+      invitations: this.organization.invitations,
+    };
   }
 
   public hasMember(member: Member) {

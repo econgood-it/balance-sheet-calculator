@@ -6,6 +6,7 @@ import {
 
 import { BalanceSheetEntity } from '../../src/entities/balance.sheet.entity';
 import { UserBuilder } from '../UserBuilder';
+import { v4 as uuid4 } from 'uuid';
 
 describe('OrganizationEntity', () => {
   it('should check has member', function () {
@@ -84,5 +85,24 @@ describe('OrganizationEntity', () => {
     expect(() =>
       organizationEntity.addBalanceSheetEntity(balanceSheetEntity)
     ).toThrow('Balance sheet has no Id');
+  });
+
+  it('should invite user via email', function () {
+    const organizationEntity = new OrganizationEntity(
+      undefined,
+      organizationFactory.default(),
+      []
+    );
+    const email = `${uuid4()}@example.com`;
+    organizationEntity.invite(email);
+    const email2 = `${uuid4()}@example.com`;
+    organizationEntity.invite(email2);
+
+    organizationEntity.invite(email);
+
+    expect(organizationEntity.organization.invitations).toEqual([
+      email,
+      email2,
+    ]);
   });
 });
