@@ -27,7 +27,7 @@ export class ZitadelAuthentication implements IAuthenticationProvider {
 
   private getStrategy(): Strategy {
     return new ZitadelIntrospectionStrategy({
-      authority: 'https://econgood-kmtyuy.zitadel.cloud',
+      authority: 'https://zitadel.dev.econgood.org:443',
       authorization: {
         type: 'jwt-profile',
         profile: {
@@ -47,8 +47,11 @@ export class ZitadelAuthentication implements IAuthenticationProvider {
       { session: false },
       (err: any, user: { sub: string; email?: string; scope: string }) => {
         if (err) {
+          console.log('some error');
+
           return next(new UnauthorizedException(err.message));
         }
+        console.log(user);
         if (!(user && user.email)) {
           return next(new UnauthorizedException('User information missing'));
         }

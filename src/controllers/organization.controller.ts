@@ -9,6 +9,7 @@ export const OrganizationPaths = {
   put: `${resourceUrl}/:id`,
   getAll: `${resourceUrl}`,
   get: `${resourceUrl}/:id`,
+  orgaInvitation: `${resourceUrl}/:id/invitation/:email`,
   orgaBalanceSheet: `${resourceUrl}/:id/balancesheet`,
   orgaBalanceSheetUpload: `${resourceUrl}/:id/balancesheet/upload`,
 };

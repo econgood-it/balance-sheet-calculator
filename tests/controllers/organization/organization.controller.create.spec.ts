@@ -27,6 +27,7 @@ import { AuthBuilder } from '../../AuthBuilder';
 import { OrganizationBuilder } from '../../OrganizationBuilder';
 import { InMemoryAuthentication } from '../in.memory.authentication';
 import { BalanceSheetMockBuilder } from '../../BalanceSheetMockBuilder';
+import {v4 as uuid4} from "uuid";
 
 const assertTopicWeight = (
   shortName: string,
@@ -95,7 +96,7 @@ describe('Organization Controller', () => {
   });
 });
 
-describe('Organization Controller', () => {
+describe('Organization Balance Sheet Controller', () => {
   let dataSource: DataSource;
   let app: Application;
   const configuration = ConfigurationReader.read();
@@ -367,3 +368,62 @@ describe('Organization Controller', () => {
     expect(response.status).toEqual(403);
   });
 });
+
+describe('Organization Invitation Controller', () => {
+  let dataSource: DataSource;
+  let app: Application;
+  const configuration = ConfigurationReader.read();
+  let organizationRepo: IOrganizationEntityRepo;
+  const authBuilder = new AuthBuilder();
+  const auth = authBuilder.addUser();
+  const authNoMember = authBuilder.addUser();
+
+  beforeAll(async () => {
+    dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
+      configuration
+    );
+    const repoProvider = new RepoProvider(configuration);
+    organizationRepo = repoProvider.getOrganizationEntityRepo(
+      dataSource.manager
+    );
+    app = new App(
+      dataSource,
+      configuration,
+      repoProvider,
+      new InMemoryAuthentication(authBuilder.getTokenMap())
+    ).app;
+  });
+
+  afterAll(async () => {
+    await dataSource.destroy();
+  });
+  it('should invite user to organization', async () => {
+    const testApp = supertest(app);
+    const { organizationEntity } = await new OrganizationBuilder()
+      .addMember(auth.user)
+      .build(dataSource);
+    const email = `${uuid4()}@example.com`
+    const response = await testApp
+      .post(`${OrganizationPaths.getAll}/${organizationEntity.id}/invitation`)
+      .set(auth.toHeaderPair().key, auth.toHeaderPair().value)
+      .send(balanceSheetBuilder.buildRequestBody());
+    expect(response.status).toBe(200);
+    const balanceSheetEntity = new BalanceSheetEntity(
+      response.body.id,
+      balanceSheetBuilder.build()
+    );
+    await balanceSheetEntity.reCalculate();
+    expect(response.body).toMatchObject(balanceSheetEntity.toJson('en'));
+    const response2 = await testApp
+      .post(`${OrganizationPaths.getAll}/${organizationEntity.id}/balancesheet`)
+      .set(auth.toHeaderPair().key, auth.toHeaderPair().value)
+      .send(balanceSheetBuilder.buildRequestBody());
+    const foundOrganizationEntity = await organizationRepo.findByIdOrFail(
+      organizationEntity.id!,
+      true
+    );
+    expect(
+      foundOrganizationEntity.balanceSheetEntities?.map((b) => b.id)
+    ).toEqual([response.body.id, response2.body.id]);
+  });
+
