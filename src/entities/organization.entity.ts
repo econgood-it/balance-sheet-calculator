@@ -8,8 +8,6 @@ import {
 } from '@ecogood/e-calculator-schemas/dist/organization.dto';
 import { BalanceSheetEntity } from './balance.sheet.entity';
 import { ConflictError } from '../exceptions/conflict.error';
-import { BalanceSheetPatchRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
-import { EntityWithDtoMerger } from '../merge/entity.with.dto.merger';
 
 type Member = {
   id: string;
