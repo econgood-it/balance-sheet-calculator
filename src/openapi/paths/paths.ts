@@ -30,7 +30,7 @@ export const HttpCodes = {
 };
 
 export function replaceExpressIdByOpenApiId(expressPath: string) {
-  return expressPath.replace(':id', '{id}');
+  return expressPath.replace(':id', '{id}').replace(':email', '{email}');
 }
 
 export const applicationJson = 'application/json';

@@ -88,4 +88,23 @@ export function registerOrganizationPost(
       },
     },
   });
+  registry.registerPath({
+    method: Methods.post,
+    path: replaceExpressIdByOpenApiId(OrganizationPaths.orgaInvitation),
+    tags: [Tags.organization],
+    description: 'Invite user to organization',
+    summary: 'Invite user to organization',
+    request: {
+      params: z.object({
+        id: params.OrganizationIdParam,
+        email: params.InvitationEmailParam,
+      }),
+      headers: [params.CorrelationIdHeader],
+    },
+    responses: {
+      [HttpCodes.created]: {
+        description: 'Created',
+      },
+    },
+  });
 }

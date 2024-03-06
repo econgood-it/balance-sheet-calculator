@@ -18,6 +18,7 @@ import { BalanceSheetReader } from '../reader/balanceSheetReader/balance.sheet.r
 import { IRepoProvider } from '../repositories/repo.provider';
 import { Authorization } from '../security/authorization';
 import { parseSaveFlag } from './utils';
+import { z } from 'zod';
 
 export class OrganizationService {
   constructor(
@@ -195,6 +196,27 @@ export class OrganizationService {
               : []
           )
         );
+      })
+      .catch((error) => {
+        handle(error, next);
+      });
+  }
+
+  public inviteUser(req: Request, res: Response, next: NextFunction) {
+    this.dataSource.manager
+      .transaction(async (entityManager) => {
+        const orgaRepo =
+          this.repoProvider.getOrganizationEntityRepo(entityManager);
+        const organizationEntity = await orgaRepo.findByIdOrFail(
+          Number(req.params.id),
+          false
+        );
+        Authorization.checkIfCurrentUserIsMember(req, organizationEntity);
+        const email = z.string().email().parse(req.params.email);
+        organizationEntity.invite(email);
+        await orgaRepo.save(organizationEntity);
+        res.status(201);
+        res.send();
       })
       .catch((error) => {
         handle(error, next);

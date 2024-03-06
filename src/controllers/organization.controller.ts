@@ -63,5 +63,10 @@ export class OrganizationController {
       allowUserOnly,
       this.organizationService.getBalanceSheets.bind(this.organizationService)
     );
+    this.app.post(
+      OrganizationPaths.orgaInvitation,
+      allowUserOnly,
+      this.organizationService.inviteUser.bind(this.organizationService)
+    );
   }
 }

@@ -7,6 +7,7 @@ export type OpenApiParams = {
   LanguageParam: any;
   BalanceSheetIdParam: any;
   OrganizationIdParam: any;
+  InvitationEmailParam: any;
 };
 
 export function registerParams(registry: OpenAPIRegistry) {
@@ -60,6 +61,20 @@ export function registerParams(registry: OpenAPIRegistry) {
     })
   );
 
+  const InvitationEmailParam = registry.registerParameter(
+    'InvitationEmail',
+    z
+      .string()
+      .email()
+      .openapi({
+        param: {
+          name: 'email',
+          in: 'path',
+          description: 'The email address for invitation',
+        },
+      })
+  );
+
   const LanguageParam = registry.registerParameter(
     'Language',
     z
@@ -81,5 +96,6 @@ export function registerParams(registry: OpenAPIRegistry) {
     LanguageParam,
     BalanceSheetIdParam,
     OrganizationIdParam,
+    InvitationEmailParam,
   };
 }

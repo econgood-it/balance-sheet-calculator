@@ -37,7 +37,7 @@ export function buildSwaggerDoc(configuration: Configuration): OpenAPIObject {
 
   const generator = new OpenAPIGenerator(registry.definitions, '3.0.0');
 
-  const version = '3.4.6';
+  const version = '3.5.0';
 
   const devServer = {
     url: 'http://localhost:4000',
