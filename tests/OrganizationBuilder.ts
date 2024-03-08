@@ -20,10 +20,20 @@ export class OrganizationBuilder {
   private members: { id: string }[] = [];
   private balanceSheetEntities: BalanceSheetEntity[] = [];
 
+  public rename(name: string): OrganizationBuilder {
+    this.organization.name = name;
+    return this;
+  }
+
   public addMember(user?: User): OrganizationBuilder {
     this.members = user
       ? [...this.members, { id: user.id }]
       : [...this.members, { id: new UserBuilder().build().id }];
+    return this;
+  }
+
+  public inviteMember(email: string): OrganizationBuilder {
+    this.organization.invitations = [...this.organization.invitations, email];
     return this;
   }
 

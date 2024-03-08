@@ -6,7 +6,6 @@ import { OpenAPIObject } from 'openapi3-ts';
 import { Configuration, Environment } from '../reader/configuration.reader';
 import { registerParams } from './params';
 import { registerPaths } from './paths/paths';
-import { registerSchemas } from './schemas';
 
 export function buildSwaggerDoc(configuration: Configuration): OpenAPIObject {
   const registry = new OpenAPIRegistry();
@@ -19,8 +18,8 @@ export function buildSwaggerDoc(configuration: Configuration): OpenAPIObject {
       flows: {
         authorizationCode: {
           authorizationUrl:
-            'https://econgood-kmtyuy.zitadel.cloud/oauth/v2/authorize',
-          tokenUrl: 'https://econgood-kmtyuy.zitadel.cloud/oauth/v2/token',
+            'https://zitadel.dev.econgood.org:443/oauth/v2/authorize',
+          tokenUrl: 'https://zitadel.dev.econgood.org:443/oauth/v2/token',
           scopes: {
             openid: 'openid',
             email: 'email',
@@ -31,13 +30,12 @@ export function buildSwaggerDoc(configuration: Configuration): OpenAPIObject {
   );
 
   const params = registerParams(registry);
-  const schemas = registerSchemas(registry);
 
-  registerPaths(registry, schemas, params);
+  registerPaths(registry, params);
 
   const generator = new OpenAPIGenerator(registry.definitions, '3.0.0');
 
-  const version = '3.5.0';
+  const version = '3.6.0';
 
   const devServer = {
     url: 'http://localhost:4000',

@@ -8,15 +8,16 @@ import {
   Tags,
 } from './paths';
 import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
-import { OpenApiSchemas } from '../schemas';
 import { OpenApiParams } from '../params';
 import { OrganizationPaths } from '../../controllers/organization.controller';
-import { OrganizationResponseSchema } from '@ecogood/e-calculator-schemas/dist/organization.dto';
+import {
+  OrganizationRequestSchema,
+  OrganizationResponseSchema,
+} from '@ecogood/e-calculator-schemas/dist/organization.dto';
 import { z } from 'zod';
 
 export function registerOrganizationPut(
   registry: OpenAPIRegistry,
-  schemas: OpenApiSchemas,
   params: OpenApiParams
 ) {
   registry.registerPath({
@@ -32,7 +33,7 @@ export function registerOrganizationPut(
       body: {
         content: {
           [applicationJson]: {
-            schema: schemas.OrganizationPutRequestApiSchema,
+            schema: OrganizationRequestSchema,
             examples: {
               default: {
                 value: organizationFactory.default(),

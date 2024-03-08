@@ -90,6 +90,38 @@ describe('OrganizationEntityRepo', () => {
     ]);
   });
 
+  it('finds all organizations where user is invited', async () => {
+    const email = `${uuid4()}@example.com`;
+    const email2 = `${uuid4()}@example.com`;
+    const otherEmail = `${uuid4()}@example.com`;
+    const { organizationEntity: organizationEntity1 } =
+      await new OrganizationBuilder()
+        .inviteMember(email)
+        .inviteMember(otherEmail)
+        .inviteMember(email2)
+        .build(dataSource);
+    const { organizationEntity: organizationEntity2 } =
+      await new OrganizationBuilder().inviteMember(email).build(dataSource);
+
+    const { organizationEntity: organizationEntity3 } =
+      await new OrganizationBuilder().inviteMember(email2).build(dataSource);
+    await new OrganizationBuilder().build(dataSource);
+
+    const organizations1 =
+      await organizationEntityRepo.findOrganizationsWithInvitation(email);
+    expect(organizations1.map((o) => o.id)).toEqual([
+      organizationEntity1.id,
+      organizationEntity2.id,
+    ]);
+
+    const organizations2 =
+      await organizationEntityRepo.findOrganizationsWithInvitation(email2);
+    expect(organizations2.map((o) => o.id)).toEqual([
+      organizationEntity1.id,
+      organizationEntity3.id,
+    ]);
+  });
+
   it('saves and finds all balance sheet entities of organization', async () => {
     const { organizationEntity } = await new OrganizationBuilder()
       .addMember()

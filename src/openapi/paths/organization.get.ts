@@ -6,7 +6,6 @@ import {
   Tags,
 } from './paths';
 import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
-import { OpenApiSchemas } from '../schemas';
 import { OpenApiParams } from '../params';
 import { OrganizationPaths } from '../../controllers/organization.controller';
 import {
@@ -18,7 +17,6 @@ import { BalanceSheetItemsResponseSchema } from '@ecogood/e-calculator-schemas/d
 
 export function registerOrganizationGet(
   registry: OpenAPIRegistry,
-  schemas: OpenApiSchemas,
   params: OpenApiParams
 ) {
   registry.registerPath({

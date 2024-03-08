@@ -1,7 +1,6 @@
 import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 import { OpenApiParams } from '../params';
-import { OpenApiSchemas } from '../schemas';
 
 import { registerBalanceSheetDelete } from './balancesheet.delete';
 import { registerBalanceSheetGet } from './balancesheet.get';
@@ -10,9 +9,12 @@ import { registerOrganizationGet } from './organization.get';
 import { registerOrganizationPost } from './organization.post';
 import { registerOrganizationPut } from './organization.put';
 import { registerWorkbookGet } from './workbook.get';
+import { registerUserGet } from './user.get';
+
 export const Tags = {
   balanceSheets: 'balancesheets',
   organization: 'organization',
+  user: 'user',
   workbook: 'workbook',
 };
 export const Methods: {
@@ -36,14 +38,14 @@ export function replaceExpressIdByOpenApiId(expressPath: string) {
 export const applicationJson = 'application/json';
 export function registerPaths(
   registry: OpenAPIRegistry,
-  schemas: OpenApiSchemas,
   params: OpenApiParams
 ) {
-  registerBalanceSheetGet(registry, schemas, params);
-  registerBalanceSheetPatch(registry, schemas, params);
-  registerBalanceSheetDelete(registry, schemas, params);
-  registerOrganizationPost(registry, schemas, params);
-  registerOrganizationPut(registry, schemas, params);
-  registerWorkbookGet(registry, schemas, params);
-  registerOrganizationGet(registry, schemas, params);
+  registerBalanceSheetGet(registry, params);
+  registerBalanceSheetPatch(registry, params);
+  registerBalanceSheetDelete(registry, params);
+  registerOrganizationPost(registry, params);
+  registerOrganizationPut(registry, params);
+  registerUserGet(registry, params);
+  registerWorkbookGet(registry, params);
+  registerOrganizationGet(registry, params);
 }

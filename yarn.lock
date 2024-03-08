@@ -327,10 +327,10 @@
     enabled "2.0.x"
     kuler "^2.0.0"
 
-"@ecogood/e-calculator-schemas@^1.5.5":
-  version "1.5.5"
-  resolved "https://registry.yarnpkg.com/@ecogood/e-calculator-schemas/-/e-calculator-schemas-1.5.5.tgz#0eea28f19c43231aed9a4a9617d1b47b932eee64"
-  integrity sha512-2e5RBZMyk72TGw0gPw4Ln7xRMFDkZBx5pe5EmScUOUJJd+dWu+3NvbTrMzvf01hzKbHPvnOHwUVvYwTVUnefpg==
+"@ecogood/e-calculator-schemas@^1.6.0":
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/@ecogood/e-calculator-schemas/-/e-calculator-schemas-1.6.0.tgz#3d6788ee71881feb028a4088abfadaecfa194a10"
+  integrity sha512-C+C+oeuAXzo95dud8QQr6TksPSo1K/KM3ItQXBqjpl7scSpUrU6R3BhIg2yTNffXAf6gUEtaZzb4h7au/lHASw==
   dependencies:
     eslint-plugin-n "^15.6.1"
     zod "^3.20.6"

@@ -9,12 +9,10 @@ import {
   Tags,
 } from './paths';
 import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
-import { OpenApiSchemas } from '../schemas';
 import { OpenApiParams } from '../params';
 
 export function registerBalanceSheetDelete(
   registry: OpenAPIRegistry,
-  schemas: OpenApiSchemas,
   params: OpenApiParams
 ) {
   registry.registerPath({

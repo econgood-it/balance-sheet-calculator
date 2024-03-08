@@ -7,6 +7,9 @@ export interface IOrganizationEntityRepo {
     loadBalanceSheetEntities?: boolean
   ): Promise<OrganizationEntity>;
   findOrganizationsOfUser(userEmail: string): Promise<OrganizationEntity[]>;
+  findOrganizationsWithInvitation(
+    invitationEmail: string
+  ): Promise<OrganizationEntity[]>;
   save(organizationEntity: OrganizationEntity): Promise<OrganizationEntity>;
   remove(organizationEntity: OrganizationEntity): Promise<OrganizationEntity>;
 }
@@ -22,6 +25,17 @@ export class OrganizationEntityRepository implements IOrganizationEntityRepo {
       .createQueryBuilder('entity')
       .where('entity.members @> :criteria', {
         criteria: JSON.stringify([{ id: userId }]),
+      })
+      .getMany();
+  }
+
+  findOrganizationsWithInvitation(
+    invitationEmail: string
+  ): Promise<OrganizationEntity[]> {
+    return this.repo
+      .createQueryBuilder('entity')
+      .where('entity.organization @> :criteria', {
+        criteria: JSON.stringify({ invitations: [invitationEmail] }),
       })
       .getMany();
   }

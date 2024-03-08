@@ -10,17 +10,18 @@ import {
   Tags,
 } from './paths';
 import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
-import { OpenApiSchemas } from '../schemas';
 import { OpenApiParams } from '../params';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
-import { BalanceSheetResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
+import {
+  BalanceSheetPatchRequestBodySchema,
+  BalanceSheetResponseBodySchema,
+} from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
 
 export function registerBalanceSheetPatch(
   registry: OpenAPIRegistry,
-  schemas: OpenApiSchemas,
   params: OpenApiParams
 ) {
   registry.registerPath({
@@ -40,7 +41,7 @@ export function registerBalanceSheetPatch(
       body: {
         content: {
           [applicationJson]: {
-            schema: schemas.BalanceSheetPatchRequestApiSchema,
+            schema: BalanceSheetPatchRequestBodySchema,
             examples: {
               default: {
                 value: balanceSheetJsonFactory.emptyFullV508(),

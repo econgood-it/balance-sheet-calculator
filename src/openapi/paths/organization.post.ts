@@ -8,16 +8,20 @@ import {
   Tags,
 } from './paths';
 import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
-import { OpenApiSchemas } from '../schemas';
 import { OpenApiParams } from '../params';
 import { OrganizationPaths } from '../../controllers/organization.controller';
-import { OrganizationResponseSchema } from '@ecogood/e-calculator-schemas/dist/organization.dto';
-import { BalanceSheetResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
+import {
+  OrganizationRequestSchema,
+  OrganizationResponseSchema,
+} from '@ecogood/e-calculator-schemas/dist/organization.dto';
+import {
+  BalanceSheetCreateRequestBodySchema,
+  BalanceSheetResponseBodySchema,
+} from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
 import { z } from 'zod';
 
 export function registerOrganizationPost(
   registry: OpenAPIRegistry,
-  schemas: OpenApiSchemas,
   params: OpenApiParams
 ) {
   registry.registerPath({
@@ -32,7 +36,7 @@ export function registerOrganizationPost(
       body: {
         content: {
           [applicationJson]: {
-            schema: schemas.OrganizationCreateRequestApiSchema,
+            schema: OrganizationRequestSchema,
             examples: {
               default: {
                 value: organizationFactory.default(),
@@ -67,7 +71,7 @@ export function registerOrganizationPost(
       body: {
         content: {
           [applicationJson]: {
-            schema: schemas.BalanceSheetCreateRequestApiSchema,
+            schema: BalanceSheetCreateRequestBodySchema,
             examples: {
               'Full 5.08': {
                 value: balanceSheetJsonFactory.emptyFullV508(),

@@ -26,11 +26,14 @@ import { IndustryService } from './services/industry.service';
 import { OrganizationService } from './services/organization.service';
 import { RegionService } from './services/region.service';
 import { WorkbookService } from './services/workbook.service';
+import { UserController } from './controllers/user.controller';
+import { UserService } from './services/user.service';
 
 class App {
   public readonly app: Application;
   // declaring our controllers
   private balanceSheetController: BalanceSheetController;
+  private userController: UserController;
   private regionController: RegionController;
   private industryController: IndustryController;
   private healthCheckController: HealthCheckController;
@@ -62,6 +65,9 @@ class App {
       this.app,
       balanceSheetService
     );
+    const userService = new UserService(dataSource, repoProvider);
+    this.userController = new UserController(this.app, userService);
+
     const regionService = new RegionService();
     this.regionController = new RegionController(this.app, regionService);
     this.industryController = new IndustryController(

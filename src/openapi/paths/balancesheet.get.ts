@@ -5,7 +5,6 @@ import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { BalanceSheetResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
 import { MatrixBodySchema } from '@ecogood/e-calculator-schemas/dist/matrix.dto';
 import { OpenApiParams } from '../params';
-import { OpenApiSchemas } from '../schemas';
 import {
   applicationJson,
   HttpCodes,
@@ -16,7 +15,6 @@ import {
 
 export function registerBalanceSheetGet(
   registry: OpenAPIRegistry,
-  schemas: OpenApiSchemas,
   params: OpenApiParams
 ) {
   registry.registerPath({
