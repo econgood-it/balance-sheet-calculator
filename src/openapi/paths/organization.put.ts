@@ -4,7 +4,7 @@ import {
   applicationJson,
   HttpCodes,
   Methods,
-  replaceExpressIdByOpenApiId,
+  replaceExpressParamsByOpenApiParams,
   Tags,
 } from './paths';
 import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
@@ -22,7 +22,7 @@ export function registerOrganizationPut(
 ) {
   registry.registerPath({
     method: Methods.put,
-    path: replaceExpressIdByOpenApiId(OrganizationPaths.put),
+    path: replaceExpressParamsByOpenApiParams(OrganizationPaths.put),
     tags: [Tags.organization],
     description: 'Update a new organization',
     summary: 'Put organization',

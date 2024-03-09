@@ -7,6 +7,8 @@ import {
 import { BalanceSheetEntity } from '../../src/entities/balance.sheet.entity';
 import { UserBuilder } from '../UserBuilder';
 import { v4 as uuid4 } from 'uuid';
+import { NoAccessError } from '../../src/exceptions/no.access.error';
+import { ConflictError } from '../../src/exceptions/conflict.error';
 
 describe('OrganizationEntity', () => {
   it('should check has member', function () {
@@ -97,12 +99,49 @@ describe('OrganizationEntity', () => {
     organizationEntity.invite(email);
     const email2 = `${uuid4()}@example.com`;
     organizationEntity.invite(email2);
-
     organizationEntity.invite(email);
 
     expect(organizationEntity.organization.invitations).toEqual([
       email,
       email2,
     ]);
+  });
+
+  it('user can join organization', async () => {
+    const user = new UserBuilder().build();
+    const members = [{ id: uuid4() }];
+    const anotherEmail = `${uuid4()}@example.com`;
+    const organizationEntity = new OrganizationEntity(
+      undefined,
+      {
+        ...organizationFactory.default(),
+        invitations: [user.email, anotherEmail],
+      },
+      [...members]
+    );
+    organizationEntity.join(user);
+    const expectedMembers = [...members, { id: user.id }];
+    expect(organizationEntity.members).toEqual(expectedMembers);
+    expect(organizationEntity.organization.invitations).toEqual([anotherEmail]);
+  });
+
+  it('throw conflict if user is already member', async () => {
+    const user = new UserBuilder().build();
+    const organizationEntity = new OrganizationEntity(
+      undefined,
+      { ...organizationFactory.default(), invitations: [user.email] },
+      [{ id: user.id }]
+    );
+    expect(() => organizationEntity.join(user)).toThrow(ConflictError);
+  });
+
+  it('user without invitation cannot join', async () => {
+    const organizationEntity = new OrganizationEntity(
+      undefined,
+      organizationFactory.default(),
+      []
+    );
+    const user = new UserBuilder().build();
+    expect(() => organizationEntity.join(user)).toThrow(NoAccessError);
   });
 });

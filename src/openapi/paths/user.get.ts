@@ -1,7 +1,7 @@
 import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { OpenApiParams } from '../params';
 import { UserPaths } from '../../controllers/user.controller';
-import { Tags } from './paths';
+import { Methods, Tags } from './paths';
 import { UserInvitationResponseSchema } from '@ecogood/e-calculator-schemas/dist/user.schema';
 
 export function registerUserGet(
@@ -9,7 +9,7 @@ export function registerUserGet(
   params: OpenApiParams
 ) {
   registry.registerPath({
-    method: 'get',
+    method: Methods.get,
     path: UserPaths.getInvitation,
     tags: [Tags.user],
     description: 'Get invitations of current user',

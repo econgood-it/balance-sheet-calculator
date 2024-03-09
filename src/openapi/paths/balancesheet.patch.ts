@@ -6,7 +6,7 @@ import {
   applicationJson,
   HttpCodes,
   Methods,
-  replaceExpressIdByOpenApiId,
+  replaceExpressParamsByOpenApiParams,
   Tags,
 } from './paths';
 import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
@@ -26,7 +26,7 @@ export function registerBalanceSheetPatch(
 ) {
   registry.registerPath({
     method: Methods.patch,
-    path: replaceExpressIdByOpenApiId(BalanceSheetPaths.patch),
+    path: replaceExpressParamsByOpenApiParams(BalanceSheetPaths.patch),
     tags: [Tags.balanceSheets],
     description: 'Update a new balance sheet',
     summary: 'Patch balance sheet',

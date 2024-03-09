@@ -8,6 +8,8 @@ import {
 } from '@ecogood/e-calculator-schemas/dist/organization.dto';
 import { BalanceSheetEntity } from './balance.sheet.entity';
 import { ConflictError } from '../exceptions/conflict.error';
+import { User } from '../models/user';
+import { NoAccessError } from '../exceptions/no.access.error';
 
 type Member = {
   id: string;
@@ -59,6 +61,19 @@ export class OrganizationEntity {
     if (!this.organization.invitations.find((i) => i === email)) {
       this.organization.invitations = [...this.organization.invitations, email];
     }
+  }
+
+  public join(user: User) {
+    if (!this.organization.invitations.find((i) => i === user.email)) {
+      throw new NoAccessError();
+    }
+    if (this.members.find((m) => m.id === user.id)) {
+      throw new ConflictError('User is already member');
+    }
+    this.members.push({ id: user.id });
+    this.organization.invitations = this.organization.invitations.filter(
+      (i) => i !== user.email
+    );
   }
 
   public mergeWithRequest(

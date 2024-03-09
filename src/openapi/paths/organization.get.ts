@@ -2,7 +2,7 @@ import {
   applicationJson,
   HttpCodes,
   Methods,
-  replaceExpressIdByOpenApiId,
+  replaceExpressParamsByOpenApiParams,
   Tags,
 } from './paths';
 import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
@@ -43,7 +43,7 @@ export function registerOrganizationGet(
 
   registry.registerPath({
     method: Methods.get,
-    path: replaceExpressIdByOpenApiId(OrganizationPaths.get),
+    path: replaceExpressParamsByOpenApiParams(OrganizationPaths.get),
     tags: [Tags.organization],
     description: 'Get organization by id',
     summary: 'Get organization',
@@ -69,7 +69,9 @@ export function registerOrganizationGet(
 
   registry.registerPath({
     method: Methods.get,
-    path: replaceExpressIdByOpenApiId(OrganizationPaths.orgaBalanceSheet),
+    path: replaceExpressParamsByOpenApiParams(
+      OrganizationPaths.orgaBalanceSheet
+    ),
     tags: [Tags.organization],
     description: 'Get all balance sheets of organization',
     summary: 'Get all balance sheets of organization',

@@ -33,4 +33,28 @@ export class UserService {
         handle(error, next);
       });
   }
+
+  public async joinOrganization(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    this.dataSource.manager
+      .transaction(async (entityManager) => {
+        if (!req.authenticatedUser) {
+          throw new NoAccessError();
+        }
+        const orgaRepo =
+          this.repoProvider.getOrganizationEntityRepo(entityManager);
+        const organizationEntity = await orgaRepo.findByIdOrFail(
+          Number(req.params.id)
+        );
+        organizationEntity.join(req.authenticatedUser);
+        await orgaRepo.save(organizationEntity);
+        res.json(organizationEntity.toJson());
+      })
+      .catch((error) => {
+        handle(error, next);
+      });
+  }
 }

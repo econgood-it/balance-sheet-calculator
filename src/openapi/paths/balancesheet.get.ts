@@ -9,7 +9,7 @@ import {
   applicationJson,
   HttpCodes,
   Methods,
-  replaceExpressIdByOpenApiId,
+  replaceExpressParamsByOpenApiParams,
   Tags,
 } from './paths';
 
@@ -19,7 +19,7 @@ export function registerBalanceSheetGet(
 ) {
   registry.registerPath({
     method: Methods.get,
-    path: replaceExpressIdByOpenApiId(BalanceSheetPaths.get),
+    path: replaceExpressParamsByOpenApiParams(BalanceSheetPaths.get),
     tags: [Tags.balanceSheets],
     description: 'Get balance sheet by id',
     summary: 'Get balance sheet',
@@ -44,7 +44,7 @@ export function registerBalanceSheetGet(
   });
   registry.registerPath({
     method: Methods.get,
-    path: replaceExpressIdByOpenApiId(BalanceSheetPaths.matrix),
+    path: replaceExpressParamsByOpenApiParams(BalanceSheetPaths.matrix),
     tags: [Tags.balanceSheets],
     description: 'Get matrix representation of balance sheet',
     summary: 'Get matrix representation of balance sheet',

@@ -35,7 +35,7 @@ export function buildSwaggerDoc(configuration: Configuration): OpenAPIObject {
 
   const generator = new OpenAPIGenerator(registry.definitions, '3.0.0');
 
-  const version = '3.6.0';
+  const version = '3.7.0';
 
   const devServer = {
     url: 'http://localhost:4000',
@@ -60,7 +60,7 @@ export function buildSwaggerDoc(configuration: Configuration): OpenAPIObject {
   return generator.generateDocument({
     info: {
       title: `ECG Balance Calculator ${version}`,
-      version: '3.4.6',
+      version,
       description:
         'In the moment the ECG ratings for a company are calculated by a Excel file. The idea of this API is to replace the Excel file in the future.',
     },

@@ -10,6 +10,7 @@ import { registerOrganizationPost } from './organization.post';
 import { registerOrganizationPut } from './organization.put';
 import { registerWorkbookGet } from './workbook.get';
 import { registerUserGet } from './user.get';
+import { registerUserPatch } from './user.patch';
 
 export const Tags = {
   balanceSheets: 'balancesheets',
@@ -31,7 +32,7 @@ export const HttpCodes = {
   okey: 200,
 };
 
-export function replaceExpressIdByOpenApiId(expressPath: string) {
+export function replaceExpressParamsByOpenApiParams(expressPath: string) {
   return expressPath.replace(':id', '{id}').replace(':email', '{email}');
 }
 
@@ -46,6 +47,7 @@ export function registerPaths(
   registerOrganizationPost(registry, params);
   registerOrganizationPut(registry, params);
   registerUserGet(registry, params);
+  registerUserPatch(registry, params);
   registerWorkbookGet(registry, params);
   registerOrganizationGet(registry, params);
 }

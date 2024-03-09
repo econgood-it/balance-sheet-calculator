@@ -8,6 +8,8 @@ import ForbiddenException from './forbidden.exception';
 import UnauthorizedException from './unauthorized.exception';
 import { ZodError } from 'zod';
 import { DatabaseValidationError } from './databaseValidationError';
+import { ConflictError } from './conflict.error';
+import { ConflictException } from './conflict.exception';
 
 export const handle = (error: Error, next: NextFunction) => {
   if (error instanceof ZodError) {
@@ -18,6 +20,9 @@ export const handle = (error: Error, next: NextFunction) => {
   }
   if (error instanceof NoAccessError) {
     return next(new ForbiddenException(error.message));
+  }
+  if (error instanceof ConflictError) {
+    return next(new ConflictException(error.message));
   }
   if (error instanceof DatabaseValidationError) {
     return next(new InternalServerException(JSON.parse(error.message)));

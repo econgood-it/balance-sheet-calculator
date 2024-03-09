@@ -5,7 +5,7 @@ import {
   applicationJson,
   HttpCodes,
   Methods,
-  replaceExpressIdByOpenApiId,
+  replaceExpressParamsByOpenApiParams,
   Tags,
 } from './paths';
 import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
@@ -17,7 +17,7 @@ export function registerBalanceSheetDelete(
 ) {
   registry.registerPath({
     method: Methods.delete,
-    path: replaceExpressIdByOpenApiId(BalanceSheetPaths.get),
+    path: replaceExpressParamsByOpenApiParams(BalanceSheetPaths.get),
     tags: [Tags.balanceSheets],
     description: 'Delete balance sheet by id',
     summary: 'Delete balance sheet',

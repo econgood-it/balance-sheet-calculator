@@ -5,6 +5,7 @@ import { allowUserOnly } from './role.access';
 const resourceUrl = '/v1/user';
 export const UserPaths = {
   getInvitation: `${resourceUrl}/me/invitation`,
+  joinOrganization: `${resourceUrl}/me/invitation/:id`,
 };
 
 export class UserController {
@@ -17,6 +18,11 @@ export class UserController {
       UserPaths.getInvitation,
       allowUserOnly,
       this.userService.getInvitations.bind(this.userService)
+    );
+    this.app.patch(
+      UserPaths.joinOrganization,
+      allowUserOnly,
+      this.userService.joinOrganization.bind(this.userService)
     );
   }
 }

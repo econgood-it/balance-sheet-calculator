@@ -4,7 +4,7 @@ import {
   applicationJson,
   HttpCodes,
   Methods,
-  replaceExpressIdByOpenApiId,
+  replaceExpressParamsByOpenApiParams,
   Tags,
 } from './paths';
 import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
@@ -60,7 +60,9 @@ export function registerOrganizationPost(
 
   registry.registerPath({
     method: Methods.post,
-    path: replaceExpressIdByOpenApiId(OrganizationPaths.orgaBalanceSheet),
+    path: replaceExpressParamsByOpenApiParams(
+      OrganizationPaths.orgaBalanceSheet
+    ),
     tags: [Tags.organization],
     description: 'Create balance sheet for organization',
     summary: 'Create balance sheet for organization',
@@ -94,7 +96,7 @@ export function registerOrganizationPost(
   });
   registry.registerPath({
     method: Methods.post,
-    path: replaceExpressIdByOpenApiId(OrganizationPaths.orgaInvitation),
+    path: replaceExpressParamsByOpenApiParams(OrganizationPaths.orgaInvitation),
     tags: [Tags.organization],
     description: 'Invite user to organization',
     summary: 'Invite user to organization',
