@@ -1,5 +1,5 @@
 import { SocialEnvironmentCalc } from '../../src/calculations/social.environment.calc';
-import { CompanyFacts } from '../../src/models/company.facts';
+import { OldCompanyFacts } from '../../src/models/oldCompanyFacts';
 import { companyFactsFactory } from '../../src/openapi/examples';
 
 describe('Social Environment Calculator', () => {
@@ -33,7 +33,7 @@ describe('Social Environment Calculator', () => {
   });
 
   it('should return that company is active in mining', async () => {
-    const companyFacts: CompanyFacts = {
+    const companyFacts: OldCompanyFacts = {
       ...companyFactsFactory.empty(),
       industrySectors: [
         {
@@ -51,7 +51,7 @@ describe('Social Environment Calculator', () => {
   });
 
   it('should return that company is active in construction industry', async () => {
-    const companyFacts: CompanyFacts = {
+    const companyFacts: OldCompanyFacts = {
       ...companyFactsFactory.empty(),
       industrySectors: [
         {
@@ -69,7 +69,7 @@ describe('Social Environment Calculator', () => {
   });
 
   it('should return that company is not active in mining or construction industry', async () => {
-    const companyFacts: CompanyFacts = {
+    const companyFacts: OldCompanyFacts = {
       ...companyFactsFactory.empty(),
       industrySectors: [
         {

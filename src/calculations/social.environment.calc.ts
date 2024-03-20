@@ -1,9 +1,9 @@
 import { none, Option, some } from './option';
 import {
-  CompanyFacts,
+  OldCompanyFacts,
   INDUSTRY_CODE_FOR_CONSTRUCTION_INDUSTRY,
   INDUSTRY_CODE_FOR_MINING,
-} from '../models/company.facts';
+} from '../models/oldCompanyFacts';
 
 export interface SocialEnvironmentCalcResults {
   profitInPercentOfTurnover: Option<number>;
@@ -11,7 +11,9 @@ export interface SocialEnvironmentCalcResults {
 }
 
 export class SocialEnvironmentCalc {
-  public calculate(companyFacts: CompanyFacts): SocialEnvironmentCalcResults {
+  public calculate(
+    companyFacts: OldCompanyFacts
+  ): SocialEnvironmentCalcResults {
     return {
       profitInPercentOfTurnover:
         this.calcProfitInPercentOfTotalSales(companyFacts),
@@ -26,7 +28,7 @@ export class SocialEnvironmentCalc {
    * @private
    */
   private calcProfitInPercentOfTotalSales(
-    companyFacts: CompanyFacts
+    companyFacts: OldCompanyFacts
   ): Option<number> {
     return companyFacts.turnover === 0
       ? none()
@@ -39,7 +41,7 @@ export class SocialEnvironmentCalc {
    * @private
    */
   private checkCompanysActivityInMiningOrConstructionIndustry(
-    companyFacts: CompanyFacts
+    companyFacts: OldCompanyFacts
   ): boolean {
     return companyFacts.industrySectors.some(
       (is) =>

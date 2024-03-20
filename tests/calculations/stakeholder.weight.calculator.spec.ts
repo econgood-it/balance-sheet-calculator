@@ -3,12 +3,12 @@ import { StakeholderWeightCalculator } from '../../src/calculations/stakeholder.
 import { CalcResults, Calculator } from '../../src/calculations/calculator';
 import { RegionProvider } from '../../src/providers/region.provider';
 import { IndustryProvider } from '../../src/providers/industry.provider';
-import { CompanyFacts } from '../../src/models/company.facts';
+import { OldCompanyFacts } from '../../src/models/oldCompanyFacts';
 import { companyFactsFactory } from '../../src/openapi/examples';
 import { BalanceSheetVersion } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 
 describe('Stakeholder Weight Calculator', () => {
-  let companyFacts: CompanyFacts;
+  let companyFacts: OldCompanyFacts;
   let regionProvider: RegionProvider;
   let industryProvider: IndustryProvider;
 

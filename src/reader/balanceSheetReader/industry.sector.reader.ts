@@ -1,7 +1,7 @@
 import { Row } from 'exceljs';
 
 import { CellReader } from './cell.reader';
-import { IndustrySector } from '../../models/company.facts';
+import { IndustrySector } from '../../models/oldCompanyFacts';
 
 export class IndustrySectorReader {
   public read(row: Row): IndustrySector | undefined {

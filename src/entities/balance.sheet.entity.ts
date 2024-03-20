@@ -20,7 +20,7 @@ import { DatabaseValidationError } from '../exceptions/databaseValidationError';
 import { Translations, translateBalanceSheet } from '../language/translations';
 import { EntityWithDtoMerger } from '../merge/entity.with.dto.merger';
 import { BalanceSheet, BalanceSheetSchema } from '../models/balance.sheet';
-import { companyFactsToResponse } from '../models/company.facts';
+import { companyFactsToResponse } from '../models/oldCompanyFacts';
 import { isTopic, sortRatings } from '../models/rating';
 import { IndustryProvider } from '../providers/industry.provider';
 import Provider from '../providers/provider';

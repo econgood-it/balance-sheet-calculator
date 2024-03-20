@@ -1,8 +1,8 @@
 import { none, Option, some } from './option';
 import {
-  CompanyFacts,
+  OldCompanyFacts,
   INDUSTRY_CODE_FOR_FINANCIAL_SERVICES,
-} from '../models/company.facts';
+} from '../models/oldCompanyFacts';
 
 export interface FinanceCalcResults {
   sumOfFinancialAspects: number;
@@ -15,7 +15,7 @@ export class FinanceCalc {
   public static readonly DEFAULT_SUPPLY_ECONOMIC_RATIO = 0.3;
   public static readonly DEFAULT_SUPPLY_ECONOMIC_RATIO_E22 = 0.2;
 
-  public calculate(companyFacts: CompanyFacts): FinanceCalcResults {
+  public calculate(companyFacts: OldCompanyFacts): FinanceCalcResults {
     const sumOfFinancialAspects = this.getSumOfFinancialAspects(companyFacts);
     const economicRatio = this.calculateEconomicRatio(companyFacts).getOrElse(
       FinanceCalc.DEFAULT_SUPPLY_ECONOMIC_RATIO
@@ -33,7 +33,7 @@ export class FinanceCalc {
   }
 
   private checkCompanysActivityInFinancialServices(
-    companyFacts: CompanyFacts
+    companyFacts: OldCompanyFacts
   ): boolean {
     return companyFacts.industrySectors.some(
       (is) => is.industryCode === INDUSTRY_CODE_FOR_FINANCIAL_SERVICES
@@ -45,7 +45,7 @@ export class FinanceCalc {
    * @param companyFacts
    * @private
    */
-  private getSumOfFinancialAspects(companyFacts: CompanyFacts): number {
+  private getSumOfFinancialAspects(companyFacts: OldCompanyFacts): number {
     return (
       companyFacts.profit +
       companyFacts.financialCosts +
@@ -59,7 +59,9 @@ export class FinanceCalc {
    * @param companyFacts
    * @private
    */
-  private calculateEconomicRatio(companyFacts: CompanyFacts): Option<number> {
+  private calculateEconomicRatio(
+    companyFacts: OldCompanyFacts
+  ): Option<number> {
     return companyFacts.totalAssets === 0
       ? none()
       : some(companyFacts.turnover / companyFacts.totalAssets);
@@ -67,7 +69,7 @@ export class FinanceCalc {
 
   // In Excel Weight.E22
   private calculateEconomicRatioE22(
-    companyFacts: CompanyFacts
+    companyFacts: OldCompanyFacts
   ): Option<number> {
     return companyFacts.totalAssets === 0
       ? none()

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { CompanyFactsSchema } from './company.facts';
+import { CompanyFactsSchema } from './oldCompanyFacts';
 import { RatingSchema } from './rating';
 import {
   BalanceSheetType,

@@ -1,6 +1,6 @@
 import { Assertions } from '../../Assertions';
 import * as path from 'path';
-import { CompanyFacts } from '../../../src/models/company.facts';
+import { OldCompanyFacts } from '../../../src/models/oldCompanyFacts';
 import { Rating, RatingSchema } from '../../../src/models/rating';
 import { companyFactsFactory } from '../../../src/openapi/examples';
 import {
@@ -22,7 +22,7 @@ describe('Recalculation of ratings', () => {
   async function testCalculation(
     fileNameOfRatingInputData: string,
     fileNameOfRatingExpectedData: string,
-    companyFacts: CompanyFacts,
+    companyFacts: OldCompanyFacts,
     stakeholderWeights: StakeholderWeight[]
   ) {
     const ratings = await readRatingsFromJsonFile(fileNameOfRatingInputData);

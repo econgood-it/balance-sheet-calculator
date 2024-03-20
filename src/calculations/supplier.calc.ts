@@ -1,10 +1,10 @@
 import { RegionProvider } from '../providers/region.provider';
 import { IndustryProvider } from '../providers/industry.provider';
 import {
-  CompanyFacts,
+  OldCompanyFacts,
   MainOriginOfOtherSuppliers,
   SupplyFraction,
-} from '../models/company.facts';
+} from '../models/oldCompanyFacts';
 import { DEFAULT_COUNTRY_CODE } from '../models/region';
 
 export interface SupplyCalcResults {
@@ -25,7 +25,7 @@ export class SupplierCalc {
     private readonly industryProvider: IndustryProvider
   ) {}
 
-  public calculate(companyFacts: CompanyFacts): SupplyCalcResults {
+  public calculate(companyFacts: OldCompanyFacts): SupplyCalcResults {
     const supplyRiskSum = this.supplyRiskSum(companyFacts);
     const supplyChainWeight = this.supplyChainWeight(
       companyFacts,
@@ -47,7 +47,7 @@ export class SupplierCalc {
    * In excel this is equal to the cell $'11.Region'.G3
    * @param companyFacts
    */
-  public supplyRiskSum(companyFacts: CompanyFacts): number {
+  public supplyRiskSum(companyFacts: OldCompanyFacts): number {
     let result = 0;
     for (const supplyFraction of companyFacts.supplyFractions) {
       const pppIndex = supplyFraction.countryCode
@@ -71,7 +71,7 @@ export class SupplierCalc {
    * @param supplyRiskSum
    */
   public supplyChainWeight(
-    companyFacts: CompanyFacts,
+    companyFacts: OldCompanyFacts,
     supplyRiskSum: number
   ): number {
     // TODO: EXCEL Limitation
@@ -101,7 +101,7 @@ export class SupplierCalc {
    * @param supplyRiskSum
    */
   public itucAverage(
-    companyFacts: CompanyFacts,
+    companyFacts: OldCompanyFacts,
     supplyRiskSum: number
   ): number {
     let result: number = 0;

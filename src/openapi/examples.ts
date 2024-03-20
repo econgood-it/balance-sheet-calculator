@@ -1,6 +1,6 @@
 import { BalanceSheet } from '../models/balance.sheet';
 import { RatingsFactory } from '../factories/ratings.factory';
-import { CompanyFacts } from '../models/company.facts';
+import { OldCompanyFacts } from '../models/oldCompanyFacts';
 import { DEFAULT_COUNTRY_CODE } from '../models/region';
 import {
   BalanceSheetType,
@@ -43,7 +43,7 @@ export const balanceSheetJsonFactory = {
   }),
 };
 export const companyFactsFactory = {
-  empty: (): CompanyFacts => ({
+  empty: (): OldCompanyFacts => ({
     totalPurchaseFromSuppliers: 0,
     totalStaffCosts: 0,
     profit: 0,
@@ -62,7 +62,7 @@ export const companyFactsFactory = {
     industrySectors: [],
     mainOriginOfOtherSuppliers: { countryCode: DEFAULT_COUNTRY_CODE, costs: 0 },
   }),
-  emptyWithoutOptionalValues: (): CompanyFacts => ({
+  emptyWithoutOptionalValues: (): OldCompanyFacts => ({
     totalPurchaseFromSuppliers: 0,
     totalStaffCosts: 0,
     profit: 0,
@@ -80,7 +80,7 @@ export const companyFactsFactory = {
     industrySectors: [],
     mainOriginOfOtherSuppliers: { costs: 0 },
   }),
-  nonEmpty: (): CompanyFacts => ({
+  nonEmpty: (): OldCompanyFacts => ({
     totalPurchaseFromSuppliers: 10_000,
     totalStaffCosts: 900,
     profit: 500,
@@ -116,7 +116,7 @@ export const companyFactsFactory = {
       costs: 8_900,
     },
   }),
-  nonEmpty2: (): CompanyFacts => ({
+  nonEmpty2: (): OldCompanyFacts => ({
     totalPurchaseFromSuppliers: 330,
     totalStaffCosts: 2345,
     profit: 238,

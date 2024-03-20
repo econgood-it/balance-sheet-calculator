@@ -1,6 +1,6 @@
 import { Row } from 'exceljs';
 import { CellReader } from './cell.reader';
-import { EmployeesFraction } from '../../models/company.facts';
+import { EmployeesFraction } from '../../models/oldCompanyFacts';
 
 export class EmployeesFractionReader {
   public read(row: Row): EmployeesFraction | undefined {

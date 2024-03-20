@@ -1,4 +1,4 @@
-import { CompanyFacts } from '../../models/company.facts';
+import { OldCompanyFacts } from '../../models/oldCompanyFacts';
 import { filterUndef, range } from './reader.utils';
 import { SupplyFractionReader } from './supply.fraction.reader';
 import { EmployeesFractionReader } from './employees.fraction.reader';
@@ -13,7 +13,7 @@ export class CompanyFactsSheet {
   private cr = new CellReader();
   private valueColumn = 'C';
   constructor(private sheet: Worksheet) {}
-  public toCompanyFacts(): CompanyFacts {
+  public toCompanyFacts(): OldCompanyFacts {
     return {
       totalPurchaseFromSuppliers: this.cr.read(this.sheet, 7, this.valueColumn)
         .number,

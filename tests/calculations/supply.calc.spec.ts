@@ -6,20 +6,20 @@ import { RegionProvider } from '../../src/providers/region.provider';
 import { IndustryProvider } from '../../src/providers/industry.provider';
 
 import {
-  CompanyFacts,
+  OldCompanyFacts,
   computeCostsOfMainOriginOfOtherSuppliers,
   SupplyFraction,
-} from '../../src/models/company.facts';
+} from '../../src/models/oldCompanyFacts';
 import { companyFactsFactory } from '../../src/openapi/examples';
 import { BalanceSheetVersion } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 
 describe('Supply Calculator', () => {
   const defaultPPPIndex = 1.00304566871495;
-  let companyFactsWithSupplyFractions: CompanyFacts;
+  let companyFactsWithSupplyFractions: OldCompanyFacts;
   let regionProvider: RegionProvider;
   let industryProvider: IndustryProvider;
   const useNonDefaultMainOriginOfOtherSuppliers = (
-    companyFacts: CompanyFacts
+    companyFacts: OldCompanyFacts
   ) => {
     const totalPurchaseFromSuppliers = 2000;
     return {
@@ -125,7 +125,7 @@ describe('Supply Calculator', () => {
     ];
     const totalPurchaseFromSuppliers = 89;
     // country code of main origin not provided
-    const companyFacts: CompanyFacts = {
+    const companyFacts: OldCompanyFacts = {
       ...companyFactsFactory.empty(),
       supplyFractions,
       totalPurchaseFromSuppliers,
@@ -192,7 +192,7 @@ describe('Supply Calculator', () => {
     ];
     const totalPurchaseFromSuppliers = 89;
     // country code of main origin not provided
-    const companyFacts: CompanyFacts = {
+    const companyFacts: OldCompanyFacts = {
       ...companyFactsFactory.empty(),
       supplyFractions,
       totalPurchaseFromSuppliers,

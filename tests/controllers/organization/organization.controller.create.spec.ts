@@ -11,7 +11,7 @@ import { OrganizationPaths } from '../../../src/controllers/organization.control
 import { DatabaseSourceCreator } from '../../../src/databaseSourceCreator';
 import { BalanceSheetEntity } from '../../../src/entities/balance.sheet.entity';
 import { RatingsFactory } from '../../../src/factories/ratings.factory';
-import { INDUSTRY_CODE_FOR_FINANCIAL_SERVICES } from '../../../src/models/company.facts';
+import { INDUSTRY_CODE_FOR_FINANCIAL_SERVICES } from '../../../src/models/oldCompanyFacts';
 import { Rating, RatingResponseBody } from '../../../src/models/rating';
 import {
   balanceSheetJsonFactory,

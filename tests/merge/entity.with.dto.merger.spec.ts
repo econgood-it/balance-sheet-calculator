@@ -4,7 +4,7 @@ import {
   companyFactsFactory,
   StakeholderWeightsFactory,
 } from '../../src/openapi/examples';
-import { CompanyFacts } from '../../src/models/company.facts';
+import { OldCompanyFacts } from '../../src/models/oldCompanyFacts';
 import { CompanyFactsPatchRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/company.facts.dto';
 
 describe('EntityWithDtoMerger', () => {
@@ -59,7 +59,7 @@ describe('EntityWithDtoMerger', () => {
   });
 
   describe('merge company facts', () => {
-    let companyFacts: CompanyFacts;
+    let companyFacts: OldCompanyFacts;
     const entityWithDtoMerger = new EntityWithDtoMerger();
 
     beforeEach(() => {

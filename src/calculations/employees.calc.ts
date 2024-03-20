@@ -1,5 +1,5 @@
 import { RegionProvider } from '../providers/region.provider';
-import { CompanyFacts } from '../models/company.facts';
+import { OldCompanyFacts } from '../models/oldCompanyFacts';
 import { AVERAGE_REGION_NAME_TO_COUNTRY_CODE } from '../models/region';
 
 export enum CompanySize {
@@ -21,7 +21,7 @@ export class EmployeesCalc {
 
   constructor(private readonly regionProvider: RegionProvider) {}
 
-  public calculate(companyFacts: CompanyFacts): EmployeesCalcResults {
+  public calculate(companyFacts: OldCompanyFacts): EmployeesCalcResults {
     const normedEmployeesRisk = this.calculateNormedEmployeesRisk(companyFacts);
     const companySize = this.calculateCompanySize(companyFacts);
     const itucAverage = this.calculateItucAverage(companyFacts);
@@ -37,7 +37,7 @@ export class EmployeesCalc {
    * @param companyFacts
    * @private
    */
-  private employeesRisks(companyFacts: CompanyFacts): number {
+  private employeesRisks(companyFacts: OldCompanyFacts): number {
     let result: number = 0;
     for (const employeesFraction of companyFacts.employeesFractions) {
       const pppIndex = employeesFraction.countryCode
@@ -54,7 +54,7 @@ export class EmployeesCalc {
    * @param companyFacts
    * @private
    */
-  private employeesRisksNormalizer(companyFacts: CompanyFacts): number {
+  private employeesRisksNormalizer(companyFacts: OldCompanyFacts): number {
     const sumEmployeesPercentage: number =
       companyFacts.employeesFractions.reduce(
         (sum: number, ef) => sum + ef.percentage,
@@ -73,7 +73,7 @@ export class EmployeesCalc {
    * @param companyFacts
    * @private
    */
-  private calculateNormedEmployeesRisk(companyFacts: CompanyFacts): number {
+  private calculateNormedEmployeesRisk(companyFacts: OldCompanyFacts): number {
     const employeesRisk = this.employeesRisks(companyFacts);
 
     return employeesRisk + this.employeesRisksNormalizer(companyFacts);
@@ -84,7 +84,7 @@ export class EmployeesCalc {
    * @param companyFacts
    * @private
    */
-  private calculateItucAverage(companyFacts: CompanyFacts): number {
+  private calculateItucAverage(companyFacts: OldCompanyFacts): number {
     let result = 0;
     for (const employeesFraction of companyFacts.employeesFractions) {
       if (!employeesFraction.countryCode) {
@@ -107,7 +107,7 @@ export class EmployeesCalc {
     return result;
   }
 
-  private calculateCompanySize(companyFacts: CompanyFacts): CompanySize {
+  private calculateCompanySize(companyFacts: OldCompanyFacts): CompanySize {
     const mio = 1000000;
     const mio2 = 2 * mio;
     const mio10 = 10 * mio;

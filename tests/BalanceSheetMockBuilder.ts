@@ -4,7 +4,7 @@ import {
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import { Rating } from '../src/models/rating';
-import { CompanyFacts } from '../src/models/company.facts';
+import { OldCompanyFacts } from '../src/models/oldCompanyFacts';
 import { companyFactsFactory } from '../src/openapi/examples';
 import { BalanceSheetCreateRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
 import { z } from 'zod';
@@ -34,7 +34,7 @@ export class RatingsMockBuilder {
 }
 
 export class CompanyFactsMockBuilder {
-  private companyFacts: CompanyFacts = companyFactsFactory.empty();
+  private companyFacts: OldCompanyFacts = companyFactsFactory.empty();
 
   public buildRequestBody() {
     return {
@@ -44,11 +44,11 @@ export class CompanyFactsMockBuilder {
     };
   }
 
-  public buildResponseBody(): CompanyFacts {
+  public buildResponseBody(): OldCompanyFacts {
     return this.companyFacts;
   }
 
-  public build(): CompanyFacts {
+  public build(): OldCompanyFacts {
     return this.companyFacts;
   }
 }

@@ -2,7 +2,7 @@ import { IndustryProvider } from '../../src/providers/industry.provider';
 
 import { CustomerCalc } from '../../src/calculations/customer.calc';
 
-import { CompanyFacts } from '../../src/models/company.facts';
+import { OldCompanyFacts } from '../../src/models/oldCompanyFacts';
 import { companyFactsFactory } from '../../src/openapi/examples';
 import { BalanceSheetVersion } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 
@@ -23,7 +23,7 @@ describe('Customer Calculator', () => {
   });
 
   it('should calculate when industry sectors non empty', async () => {
-    const companyFacts: CompanyFacts = {
+    const companyFacts: OldCompanyFacts = {
       ...companyFactsFactory.empty(),
       industrySectors: [
         { industryCode: 'F', amountOfTotalTurnover: 0.2, description: '' },

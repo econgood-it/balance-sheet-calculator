@@ -1,10 +1,10 @@
 import { mergeRatingsWithRequestBodies } from './ratingsWithDtoMerger';
 import { BalanceSheet, BalanceSheetSchema } from '../models/balance.sheet';
 import {
-  CompanyFacts,
+  OldCompanyFacts,
   CompanyFactsCreateRequestBodyTransformedSchema,
   companyFactsToResponse,
-} from '../models/company.facts';
+} from '../models/oldCompanyFacts';
 
 import * as _ from 'lodash';
 import { BalanceSheetPatchRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
@@ -45,11 +45,11 @@ export class EntityWithDtoMerger {
   }
 
   public mergeCompanyFacts(
-    companyFacts: CompanyFacts,
+    companyFacts: OldCompanyFacts,
     companyFactsPatchRequestBody: z.infer<
       typeof CompanyFactsPatchRequestBodySchema
     >
-  ): CompanyFacts {
+  ): OldCompanyFacts {
     return CompanyFactsCreateRequestBodyTransformedSchema.parse(
       _.mergeWith(
         {

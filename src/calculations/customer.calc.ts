@@ -1,5 +1,5 @@
 import { IndustryProvider } from '../providers/industry.provider';
-import { CompanyFacts } from '../models/company.facts';
+import { OldCompanyFacts } from '../models/oldCompanyFacts';
 
 export interface CustomerCalcResults {
   sumOfEcologicalDesignOfProductsAndService: number;
@@ -9,7 +9,7 @@ export class CustomerCalc {
   private static readonly DEFAULT_ECOLOGICAL_DESIGN_OF_PRODUCTS: number = 1;
   constructor(private readonly industryProvider: IndustryProvider) {}
 
-  public calculate(companyFacts: CompanyFacts): CustomerCalcResults {
+  public calculate(companyFacts: OldCompanyFacts): CustomerCalcResults {
     const sumOfEcologicalDesignOfProductsAndService =
       this.calcSumOfEcologicalDesignOfProductsAndService(companyFacts);
     return {
@@ -23,7 +23,7 @@ export class CustomerCalc {
    * @private
    */
   private calcSumOfEcologicalDesignOfProductsAndService(
-    companyFacts: CompanyFacts
+    companyFacts: OldCompanyFacts
   ) {
     let result = 0;
     let sumAmountOfTotalTurnover = 0;

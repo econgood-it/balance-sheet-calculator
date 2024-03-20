@@ -1,161 +1,113 @@
-import { z } from 'zod';
-import { CompanyFactsCreateRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/company.facts.dto';
-import {
-  isCountryCode,
-  isIndustryCode,
-} from '@ecogood/e-calculator-schemas/dist/shared.schemas';
+import deepFreeze from 'deep-freeze';
+import { DEFAULT_COUNTRY_CODE } from './region';
 
-const isPercentage = z.number().min(0).max(1);
-
-const SupplyFractionSchema = z.object({
-  countryCode: isCountryCode.optional(),
-  industryCode: isIndustryCode.optional(),
-  costs: z.number(),
-});
-export type SupplyFraction = z.infer<typeof SupplyFractionSchema>;
-const EmployeesFractionSchema = z.object({
-  countryCode: isCountryCode.optional(),
-  percentage: isPercentage,
-});
-export type EmployeesFraction = z.infer<typeof EmployeesFractionSchema>;
-const IndustrySectorSchema = z.object({
-  industryCode: isIndustryCode.optional(),
-  amountOfTotalTurnover: isPercentage,
-  description: z.string(),
-});
-export type IndustrySector = z.infer<typeof IndustrySectorSchema>;
-const MainOriginOfOtherSuppliersSchema = z.object({
-  countryCode: isCountryCode.optional(),
-  costs: z.number(),
-});
-export type MainOriginOfOtherSuppliers = z.infer<
-  typeof MainOriginOfOtherSuppliersSchema
->;
-export const CompanyFactsSchema = z.object({
-  totalPurchaseFromSuppliers: z.number(),
-  totalStaffCosts: z.number(),
-  profit: z.number(),
-  financialCosts: z.number(),
-  incomeFromFinancialInvestments: z.number(),
-  additionsToFixedAssets: z.number(),
-  turnover: z.number(),
-  totalAssets: z.number(),
-  financialAssetsAndCashBalance: z.number(),
-  numberOfEmployees: z.number(),
-  hasCanteen: z.boolean().optional(),
-  isB2B: z.boolean(),
-  averageJourneyToWorkForStaffInKm: z.number(),
-  mainOriginOfOtherSuppliers: MainOriginOfOtherSuppliersSchema,
-  supplyFractions: SupplyFractionSchema.array(),
-  employeesFractions: EmployeesFractionSchema.array(),
-  industrySectors: IndustrySectorSchema.array(),
-});
-export type CompanyFacts = z.infer<typeof CompanyFactsSchema>;
-export const computeCostsOfMainOriginOfOtherSuppliers = (
-  totalPurchaseFromSuppliers: number,
-  supplyFractions: SupplyFraction[]
-): number => {
-  const costs = supplyFractions.map((sf) => sf.costs);
-  return (
-    totalPurchaseFromSuppliers -
-    costs.reduce(
-      (sum: number, currentValue: number) => (sum += currentValue),
-      0
-    )
-  );
-};
-export const computeCostsAndCreateMainOriginOfOtherSuppliers = (
-  countryCode: string | undefined,
-  totalPurchaseFromSuppliers: number,
-  supplyFractions: SupplyFraction[]
-): MainOriginOfOtherSuppliers => {
-  return {
-    countryCode,
-    costs: computeCostsOfMainOriginOfOtherSuppliers(
-      totalPurchaseFromSuppliers,
-      supplyFractions
-    ),
-  };
+export type SupplyFraction = {
+  countryCode: string | undefined;
+  industryCode: string | undefined;
+  costs: number;
 };
 
-/**
- * =IF(AND($'2. Company Facts'.C7=0,$'2. Company Facts'.F10=0,$'2.
- * Company Facts'.F11=0,$'2. Company Facts'.F12=0,$'2.
- * Company Facts'.F13=0,$'2. Company Facts'.F14=0,$'2.
- * Company Facts'.C18=0,$'2. Company Facts'.C19=0,$'2.
- * Company Facts'.C20=0,$'2. Company Facts'.C21=0,$'2.
- * Company Facts'.C22=0,$'2. Company Facts'.C23=0,$'2.
- * Company Facts'.C26=0,$'2. Company Facts'.C27=0,$'2.
- * Company Facts'.D30=0,$'2. Company Facts'.D31=0,$'2.
- * Company Facts'.D32=0,$'2. Company Facts'.C33=0,$'2.
- * Company Facts'.C34=0,$'2. Company Facts'.C37=0,$'2.
- * Company Facts'.C38=0,$'2. Company Facts'.D41=0,$'2.
- * Company Facts'.D42=0,$'2. Company Facts'.D43=0),"empty","data")
- */
-export function allValuesAreZero(companyFacts: CompanyFacts): boolean {
-  if (
-    [
-      companyFacts.totalPurchaseFromSuppliers,
-      ...companyFacts.supplyFractions.map((sf) => sf.costs),
-      companyFacts.profit,
-      companyFacts.financialCosts,
-      companyFacts.incomeFromFinancialInvestments,
-      companyFacts.totalAssets,
-      companyFacts.additionsToFixedAssets,
-      companyFacts.financialAssetsAndCashBalance,
-      companyFacts.numberOfEmployees,
-      companyFacts.totalStaffCosts,
-      ...companyFacts.employeesFractions.map((ef) => ef.percentage),
-      companyFacts.averageJourneyToWorkForStaffInKm,
-      companyFacts.turnover,
-      ...companyFacts.industrySectors.map((is) => is.amountOfTotalTurnover),
-    ].every(
-      (value) =>
-        value === 0 &&
-        [companyFacts.isB2B, companyFacts.hasCanteen].every(
-          (value) => value === false || value === undefined
-        )
-    )
-  ) {
-    return true;
-  }
-  return false;
+export function makeSupplyFraction(opts: SupplyFraction): SupplyFraction {
+  return deepFreeze(opts);
 }
 
-const percentageToDecimal = (percentage: number) => percentage / 100;
-const decimalToPercentage = (decimal: number) => decimal * 100;
+export type EmployeesFraction = {
+  countryCode: string | undefined;
+  percentage: number;
+};
 
-export const INDUSTRY_CODE_FOR_FINANCIAL_SERVICES = 'K';
-export const INDUSTRY_CODE_FOR_MINING = 'B';
-export const INDUSTRY_CODE_FOR_CONSTRUCTION_INDUSTRY = 'F';
-export const CompanyFactsCreateRequestBodyTransformedSchema =
-  CompanyFactsCreateRequestBodySchema.transform((cf) => ({
-    ...cf,
-    employeesFractions: cf.employeesFractions.map((e) => ({
-      ...e,
-      percentage: percentageToDecimal(e.percentage),
-    })),
-    industrySectors: cf.industrySectors.map((i) => ({
-      ...i,
-      amountOfTotalTurnover: percentageToDecimal(i.amountOfTotalTurnover),
-    })),
-    mainOriginOfOtherSuppliers: computeCostsAndCreateMainOriginOfOtherSuppliers(
-      cf.mainOriginOfOtherSuppliers,
-      cf.totalPurchaseFromSuppliers,
-      cf.supplyFractions
-    ),
-  }));
+export function makeEmployeesFraction(
+  opts: EmployeesFraction
+): EmployeesFraction {
+  return deepFreeze({
+    ...opts,
+  });
+}
 
-export function companyFactsToResponse(companyFacts: CompanyFacts) {
-  return {
-    ...companyFacts,
-    employeesFractions: companyFacts.employeesFractions.map((e) => ({
-      ...e,
-      percentage: decimalToPercentage(e.percentage),
-    })),
-    industrySectors: companyFacts.industrySectors.map((i) => ({
-      ...i,
-      amountOfTotalTurnover: decimalToPercentage(i.amountOfTotalTurnover),
-    })),
-  };
+export type IndustrySector = {
+  industryCode: string | undefined;
+  amountOfTotalTurnover: number;
+  description: string;
+};
+
+export function makeIndustrySector(opts: IndustrySector): IndustrySector {
+  return deepFreeze({
+    ...opts,
+  });
+}
+
+export type MainOriginOfOtherSuppliers = {
+  countryCode: string | undefined;
+  costs: number;
+};
+
+export function makeMainOriginOfOtherSuppliers(
+  opts?: MainOriginOfOtherSuppliers
+): MainOriginOfOtherSuppliers {
+  const { countryCode = DEFAULT_COUNTRY_CODE, costs = 0 } = opts || {};
+  return deepFreeze({
+    countryCode,
+    costs,
+  });
+}
+
+export type CompanyFacts = {
+  totalPurchaseFromSuppliers: number;
+  totalStaffCosts: number;
+  profit: number;
+  financialCosts: number;
+  incomeFromFinancialInvestments: number;
+  additionsToFixedAssets: number;
+  turnover: number;
+  totalAssets: number;
+  financialAssetsAndCashBalance: number;
+  numberOfEmployees: number;
+  hasCanteen?: boolean;
+  isB2B: boolean;
+  averageJourneyToWorkForStaffInKm: number;
+  mainOriginOfOtherSuppliers: MainOriginOfOtherSuppliers;
+  supplyFractions: readonly SupplyFraction[];
+  employeesFractions: readonly EmployeesFraction[];
+  industrySectors: readonly IndustrySector[];
+};
+
+export function makeCompanyFacts(opts?: CompanyFacts): CompanyFacts {
+  const {
+    totalPurchaseFromSuppliers = 0,
+    totalStaffCosts = 0,
+    profit = 0,
+    financialCosts = 0,
+    incomeFromFinancialInvestments = 0,
+    additionsToFixedAssets = 0,
+    turnover = 0,
+    totalAssets = 0,
+    financialAssetsAndCashBalance = 0,
+    numberOfEmployees = 0,
+    isB2B = false,
+    hasCanteen = false,
+    averageJourneyToWorkForStaffInKm = 0,
+    mainOriginOfOtherSuppliers = makeMainOriginOfOtherSuppliers(),
+    supplyFractions = [],
+    employeesFractions = [],
+    industrySectors = [],
+  } = opts || {};
+  return deepFreeze({
+    totalPurchaseFromSuppliers,
+    totalStaffCosts,
+    profit,
+    financialCosts,
+    incomeFromFinancialInvestments,
+    additionsToFixedAssets,
+    turnover,
+    totalAssets,
+    financialAssetsAndCashBalance,
+    numberOfEmployees,
+    hasCanteen,
+    isB2B,
+    averageJourneyToWorkForStaffInKm,
+    mainOriginOfOtherSuppliers,
+    supplyFractions,
+    employeesFractions,
+    industrySectors,
+  });
 }

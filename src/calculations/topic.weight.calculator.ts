@@ -1,12 +1,12 @@
 import { CalcResults } from './calculator';
 import { CompanySize } from './employees.calc';
 import Provider from '../providers/provider';
-import { allValuesAreZero, CompanyFacts } from '../models/company.facts';
+import { allValuesAreZero, OldCompanyFacts } from '../models/oldCompanyFacts';
 
 export class TopicWeightCalculator {
   public calcTopicWeights(
     calcResults: CalcResults,
-    companyFacts: CompanyFacts
+    companyFacts: OldCompanyFacts
   ): Provider<string, number> {
     const topicWeights = new Provider<string, number>([
       ['A1', this.constantWeight()],
@@ -123,7 +123,7 @@ export class TopicWeightCalculator {
     }
   }
 
-  public calculateTopicWeightOfC3(companyFacts: CompanyFacts): number {
+  public calculateTopicWeightOfC3(companyFacts: OldCompanyFacts): number {
     if (
       companyFacts.averageJourneyToWorkForStaffInKm < 10 &&
       companyFacts.hasCanteen !== undefined &&
@@ -139,7 +139,7 @@ export class TopicWeightCalculator {
 
   public calculateTopicWeightOfC4(
     calcResults: CalcResults,
-    companyFacts: CompanyFacts
+    companyFacts: OldCompanyFacts
   ): number {
     if (companyFacts.numberOfEmployees === 1) {
       return 0;
@@ -179,7 +179,7 @@ export class TopicWeightCalculator {
     }
   }
 
-  public calculateTopicWeightOfD4(companyFacts: CompanyFacts): number {
+  public calculateTopicWeightOfD4(companyFacts: OldCompanyFacts): number {
     return companyFacts.isB2B ? 1.5 : 1;
   }
 

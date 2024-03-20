@@ -8,7 +8,7 @@ import {
   SocialEnvironmentCalc,
   SocialEnvironmentCalcResults,
 } from './social.environment.calc';
-import { CompanyFacts } from '../models/company.facts';
+import { OldCompanyFacts } from '../models/oldCompanyFacts';
 import { isTopic, Rating } from '../models/rating';
 
 export interface CalcResults {
@@ -37,7 +37,7 @@ export class Calculator {
     this.socialEnvironmentCalc = new SocialEnvironmentCalc();
   }
 
-  public async calculate(companyFacts: CompanyFacts): Promise<CalcResults> {
+  public async calculate(companyFacts: OldCompanyFacts): Promise<CalcResults> {
     return {
       supplyCalcResults: this.supplierCalc.calculate(companyFacts),
       financeCalcResults: this.financeCalc.calculate(companyFacts),

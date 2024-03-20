@@ -13,7 +13,7 @@ import { RatingsFactory } from '../factories/ratings.factory';
 import { roundWithPrecision } from '../math';
 import { mergeRatingsWithRequestBodies } from '../merge/ratingsWithDtoMerger';
 import { BalanceSheet, BalanceSheetSchema } from '../models/balance.sheet';
-import { CompanyFactsCreateRequestBodyTransformedSchema } from '../models/company.facts';
+import { CompanyFactsCreateRequestBodyTransformedSchema } from '../models/oldCompanyFacts';
 import { Rating, filterTopics, sortRatings } from '../models/rating';
 
 export class BalanceSheetCreateRequest {

@@ -6,7 +6,7 @@ import {
   EmployeesCalcResults,
 } from '../../src/calculations/employees.calc';
 
-import { CompanyFacts } from '../../src/models/company.facts';
+import { OldCompanyFacts } from '../../src/models/oldCompanyFacts';
 import { companyFactsFactory } from '../../src/openapi/examples';
 import { BalanceSheetVersion } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 
@@ -15,7 +15,7 @@ describe('Employees Calculator', () => {
     let regionProvider: RegionProvider;
 
     const calc = async (
-      companyFacts: CompanyFacts
+      companyFacts: OldCompanyFacts
     ): Promise<EmployeesCalcResults> => {
       regionProvider = await RegionProvider.fromVersion(
         BalanceSheetVersion.v5_0_8
@@ -30,7 +30,7 @@ describe('Employees Calculator', () => {
     });
 
     it('when employeesFractions array has size 1', async () => {
-      const companyFacts: CompanyFacts = {
+      const companyFacts: OldCompanyFacts = {
         ...companyFactsFactory.empty(),
         employeesFractions: [{ countryCode: 'CRI', percentage: 0.7 }],
       };
@@ -39,7 +39,7 @@ describe('Employees Calculator', () => {
     });
 
     it('when employeesFractions contains item without country code', async () => {
-      const companyFacts: CompanyFacts = {
+      const companyFacts: OldCompanyFacts = {
         ...companyFactsFactory.empty(),
         employeesFractions: [{ percentage: 1 }],
       };
@@ -49,7 +49,7 @@ describe('Employees Calculator', () => {
 
     it('when employeesFractions contains item with average country code like AAF', async () => {
       // TODO: EXCEL Limitation (see issue https://git.ecogood.org/services/balance-sheet-calculator/issues/138)
-      const companyFacts: CompanyFacts = {
+      const companyFacts: OldCompanyFacts = {
         ...companyFactsFactory.empty(),
         employeesFractions: [{ countryCode: 'AAF', percentage: 1 }],
       };
@@ -59,7 +59,7 @@ describe('Employees Calculator', () => {
 
     it('when employeesFractions contains item with country code > LKA', async () => {
       // TODO: EXCEL Limitation (see issue https://git.ecogood.org/services/balance-sheet-calculator/issues/138)
-      const companyFacts: CompanyFacts = {
+      const companyFacts: OldCompanyFacts = {
         ...companyFactsFactory.empty(),
         employeesFractions: [{ countryCode: 'LSO', percentage: 1 }],
       };
@@ -68,7 +68,7 @@ describe('Employees Calculator', () => {
     });
 
     it('when employeesFractions array has size > 1', async () => {
-      const companyFacts: CompanyFacts = {
+      const companyFacts: OldCompanyFacts = {
         ...companyFactsFactory.empty(),
         employeesFractions: [
           { countryCode: 'CRI', percentage: 0.7 },
@@ -85,7 +85,7 @@ describe('Employees Calculator', () => {
     const mio = 1000000;
     const companySizeIs = (
       companySize: CompanySize,
-      companyFacts: CompanyFacts
+      companyFacts: OldCompanyFacts
     ) => {
       const employeesCalc: EmployeesCalcResults = new EmployeesCalc(
         regionProvider
@@ -274,7 +274,7 @@ describe('Employees Calculator', () => {
     let regionProvider: RegionProvider;
 
     const calc = async (
-      companyFacts: CompanyFacts
+      companyFacts: OldCompanyFacts
     ): Promise<EmployeesCalcResults> => {
       regionProvider = await RegionProvider.fromVersion(
         BalanceSheetVersion.v5_0_8
@@ -283,7 +283,7 @@ describe('Employees Calculator', () => {
     };
 
     it('when employeesFractions array empty', async () => {
-      const companyFacts: CompanyFacts = {
+      const companyFacts: OldCompanyFacts = {
         ...companyFactsFactory.empty(),
         totalStaffCosts: 8_999,
         employeesFractions: [
@@ -301,7 +301,7 @@ describe('Employees Calculator', () => {
       );
     });
     it('when employeesFractions contains item without country code', async () => {
-      const companyFacts: CompanyFacts = {
+      const companyFacts: OldCompanyFacts = {
         ...companyFactsFactory.empty(),
         totalStaffCosts: 8_999,
         employeesFractions: [
@@ -320,7 +320,7 @@ describe('Employees Calculator', () => {
     });
 
     it('when employeesFractions contains item with average country code like AEU', async () => {
-      const companyFacts: CompanyFacts = {
+      const companyFacts: OldCompanyFacts = {
         ...companyFactsFactory.empty(),
         totalStaffCosts: 8_999,
         employeesFractions: [
