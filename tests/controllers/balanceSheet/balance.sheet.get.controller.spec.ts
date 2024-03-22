@@ -6,7 +6,7 @@ import { DataSource } from 'typeorm';
 import { Application } from 'express';
 import { AuthBuilder } from '../../AuthBuilder';
 import { CORRELATION_HEADER_NAME } from '../../../src/middleware/correlation.id.middleware';
-import { Rating, RatingResponseBody } from '../../../src/models/rating';
+import { OldRating, RatingResponseBody } from '../../../src/models/oldRating';
 import { RepoProvider } from '../../../src/repositories/repo.provider';
 import { OrganizationBuilder } from '../../OrganizationBuilder';
 import { InMemoryAuthentication } from '../in.memory.authentication';
@@ -63,7 +63,7 @@ describe('Balance Sheet Controller', () => {
     expect(
       response.body.ratings
         .filter((r: RatingResponseBody) => r.shortName.length === 2)
-        .reduce((sum: number, current: Rating) => sum + current.maxPoints, 0)
+        .reduce((sum: number, current: OldRating) => sum + current.maxPoints, 0)
     ).toBeCloseTo(999.9999999999998);
   });
 

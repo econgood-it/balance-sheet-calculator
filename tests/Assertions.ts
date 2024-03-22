@@ -1,9 +1,9 @@
-import { Rating } from '../src/models/rating';
+import { OldRating } from '../src/models/oldRating';
 
 export class Assertions {
   public static assertRatings(
-    received: Rating[],
-    expected: Rating[],
+    received: OldRating[],
+    expected: OldRating[],
     numDigits: number = 5
   ) {
     for (let i = 0; i < received.length; i++) {
@@ -30,8 +30,8 @@ export class Assertions {
 
   private static errorMsg(
     e: Error,
-    received: Rating,
-    expected: Rating
+    received: OldRating,
+    expected: OldRating
   ): string {
     return (
       `At ${received.shortName} error occured with message \n ${e.message} \n\n` +

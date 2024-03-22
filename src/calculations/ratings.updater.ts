@@ -1,14 +1,18 @@
 import { CalcResults } from './calculator';
 import Provider from '../providers/provider';
-import { filterAspectsOfTopic, filterTopics, Rating } from '../models/rating';
+import {
+  filterAspectsOfTopic,
+  filterTopics,
+  OldRating,
+} from '../models/oldRating';
 
 export class RatingsUpdater {
   public async update(
-    ratings: Rating[],
+    ratings: OldRating[],
     calcResults: CalcResults,
     stakeholderWeights: Provider<string, number>,
     topicWeights: Provider<string, number>
-  ): Promise<Rating[]> {
+  ): Promise<OldRating[]> {
     // Compute sum of topic weights
     const topics = filterTopics(ratings);
     const topicsWithUpdatedWeight = topics.map((t) =>
@@ -30,7 +34,7 @@ export class RatingsUpdater {
       0
     );
 
-    const updatedRatings: Rating[] = [];
+    const updatedRatings: OldRating[] = [];
 
     for (const t of topicsWithUpdatedWeight) {
       const stakeholderName = t.shortName.substring(0, 1);
@@ -63,8 +67,8 @@ export class RatingsUpdater {
 
   private updatedPositiveAspects(
     topicMaxPoints: number,
-    aspects: Rating[]
-  ): Rating[] {
+    aspects: OldRating[]
+  ): OldRating[] {
     const positiveAspects = aspects.filter((t) => t.isPositive === true);
     const sumOfAspectWeights = positiveAspects.reduce(
       (acc, curr) => acc + curr.weight,
@@ -85,8 +89,8 @@ export class RatingsUpdater {
 
   private updatedNegativeAspects(
     topicMaxPoints: number,
-    aspects: Rating[]
-  ): Rating[] {
+    aspects: OldRating[]
+  ): OldRating[] {
     return aspects
       .filter((r) => r.isPositive === false)
       .map((a) => ({

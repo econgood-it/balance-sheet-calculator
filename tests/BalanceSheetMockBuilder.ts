@@ -3,12 +3,12 @@ import {
   BalanceSheetType,
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
-import { Rating } from '../src/models/rating';
+import { OldRating } from '../src/models/oldRating';
 import { OldCompanyFacts } from '../src/models/oldCompanyFacts';
 import { companyFactsFactory } from '../src/openapi/examples';
 import { BalanceSheetCreateRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
 import { z } from 'zod';
-import { BalanceSheet } from '../src/models/balance.sheet';
+import { OldBalanceSheet } from '../src/models/oldBalanceSheet';
 
 export class RatingsMockBuilder {
   private ratings = RatingsFactory.createDefaultRatings(
@@ -24,11 +24,11 @@ export class RatingsMockBuilder {
     }));
   }
 
-  public buildResponseBody(): Rating[] {
+  public buildResponseBody(): OldRating[] {
     return this.build();
   }
 
-  public build(): Rating[] {
+  public build(): OldRating[] {
     return this.ratings;
   }
 }
@@ -72,7 +72,7 @@ export class BalanceSheetMockBuilder {
     };
   }
 
-  public build(): BalanceSheet {
+  public build(): OldBalanceSheet {
     return {
       ...this.balanceSheet,
       companyFacts: this.balanceSheet.companyFacts.build(),

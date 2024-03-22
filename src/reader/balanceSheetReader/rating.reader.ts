@@ -1,9 +1,9 @@
 import { Row } from 'exceljs';
 import { CellReader } from './cell.reader';
-import { isTopicShortName, Rating } from '../../models/rating';
+import { isTopicShortName, OldRating } from '../../models/oldRating';
 
 export class RatingReader {
-  public read(row: Row): Rating | undefined {
+  public read(row: Row): OldRating | undefined {
     const cr = new CellReader();
     const shortName = cr.readWithRow(row, 'B').text;
     const nameValue = cr.readWithRow(row, 'C');

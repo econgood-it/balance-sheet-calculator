@@ -1,53 +1,59 @@
 import { z } from 'zod';
-import { RatingResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/rating.dto';
+import deepFreeze from 'deep-freeze';
 
-export const RatingSchema = z.object({
-  shortName: z.string(),
-  name: z.string(),
-  estimations: z.number(),
-  points: z.number(),
-  maxPoints: z.number(),
-  weight: z.number(),
-  isWeightSelectedByUser: z.boolean(),
-  isPositive: z.boolean(),
-});
+type RatingOpts = {
+  shortName: string;
+  name: string;
+  estimations: number;
+  points: number;
+  maxPoints: number;
+  weight: number;
+  isWeightSelectedByUser: boolean;
+  isPositive: boolean;
+};
 
-export type Rating = z.infer<typeof RatingSchema>;
+type Rating = RatingOpts & {
+  isTopic: () => boolean;
+  isAspect: () => boolean;
+  isAspectOfTopic: (shortNameTopic: string) => boolean;
+  withFields: (fields: Partial<RatingOpts>) => Rating;
+};
 
-export function isTopicShortName(shortName: string): boolean {
-  return shortName.length === 2;
+export function makeRating(opts?: RatingOpts): Rating {
+  const data = opts || {
+    shortName: 'A1',
+    name: 'Human dignity in the supply chain',
+    estimations: 0,
+    points: 0,
+    maxPoints: 0,
+    weight: 0,
+    isWeightSelectedByUser: false,
+    isPositive: true,
+  };
+  function withFields(fields: Partial<RatingOpts>): Rating {
+    return makeRating({ ...data, ...fields });
+  }
+  function isTopic(): boolean {
+    return isTopicShortName();
+  }
+
+  function isAspect(): boolean {
+    return !isTopicShortName();
+  }
+
+  function isAspectOfTopic(shortNameTopic: string): boolean {
+    return isAspect() && data.shortName.startsWith(shortNameTopic);
+  }
+
+  function isTopicShortName(): boolean {
+    return data.shortName.length === 2;
+  }
+
+  return deepFreeze({
+    ...data,
+    withFields,
+    isTopic,
+    isAspect,
+    isAspectOfTopic,
+  });
 }
-
-export function isTopic(rating: Rating): boolean {
-  return isTopicShortName(rating.shortName);
-}
-
-export function isAspectOfTopic(
-  rating: Rating,
-  shortNameTopic: string
-): boolean {
-  return isAspect(rating) && rating.shortName.startsWith(shortNameTopic);
-}
-
-export function isAspect(rating: Rating): boolean {
-  return rating.shortName.length > 2;
-}
-
-export function filterTopics(ratings: Rating[]): Rating[] {
-  return ratings.filter((rating) => isTopic(rating));
-}
-
-export function filterAspectsOfTopic(
-  ratings: Rating[],
-  shortNameTopic: string
-): Rating[] {
-  return ratings.filter((rating) => isAspectOfTopic(rating, shortNameTopic));
-}
-
-export function sortRatings(ratings: Rating[]): Rating[] {
-  return [...ratings].sort((r1, r2) =>
-    r1.shortName.localeCompare(r2.shortName)
-  );
-}
-
-export type RatingResponseBody = z.infer<typeof RatingResponseBodySchema>;

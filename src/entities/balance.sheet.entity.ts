@@ -19,9 +19,9 @@ import { MatrixFormat } from '../dto/balance.sheet.dto';
 import { DatabaseValidationError } from '../exceptions/databaseValidationError';
 import { Translations, translateBalanceSheet } from '../language/translations';
 import { EntityWithDtoMerger } from '../merge/entity.with.dto.merger';
-import { BalanceSheet, BalanceSheetSchema } from '../models/balance.sheet';
+import { OldBalanceSheet, BalanceSheetSchema } from '../models/oldBalanceSheet';
 import { companyFactsToResponse } from '../models/oldCompanyFacts';
-import { isTopic, sortRatings } from '../models/rating';
+import { isTopic, sortRatings } from '../models/oldRating';
 import { IndustryProvider } from '../providers/industry.provider';
 import Provider from '../providers/provider';
 import { RegionProvider } from '../providers/region.provider';
@@ -43,7 +43,7 @@ export class BalanceSheetEntity {
   @Column({
     type: 'jsonb',
   })
-  public balanceSheet: BalanceSheet;
+  public balanceSheet: OldBalanceSheet;
 
   @ManyToOne(
     () => OrganizationEntity,
@@ -51,7 +51,7 @@ export class BalanceSheetEntity {
   )
   public readonly organizationEntity: OrganizationEntity | undefined;
 
-  public constructor(id: number | undefined, balanceSheet: BalanceSheet) {
+  public constructor(id: number | undefined, balanceSheet: OldBalanceSheet) {
     this.id = id;
     this.balanceSheet = balanceSheet;
   }
@@ -177,7 +177,7 @@ export class BalanceSheetEntity {
     }
   }
 
-  public toBalanceSheet(): BalanceSheet {
+  public toBalanceSheet(): OldBalanceSheet {
     return this.balanceSheet;
   }
 }

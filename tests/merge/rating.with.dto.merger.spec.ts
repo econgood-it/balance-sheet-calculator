@@ -1,9 +1,9 @@
 import { mergeRatingsWithRequestBodies } from '../../src/merge/ratingsWithDtoMerger';
-import { Rating } from '../../src/models/rating';
+import { OldRating } from '../../src/models/oldRating';
 
 describe('mergeRatingsWithRequestBodies', () => {
   it('should merge ratings with ratings from the request body', () => {
-    const ratings: Rating[] = [
+    const ratings: OldRating[] = [
       {
         shortName: 'A1',
         name: 'A1 name',
@@ -60,7 +60,7 @@ describe('mergeRatingsWithRequestBodies', () => {
     ]);
   });
   it('should merge ratings with ratings where weight is not selected by user', () => {
-    const ratings: Rating[] = [
+    const ratings: OldRating[] = [
       {
         shortName: 'A1',
         name: 'A1 name',

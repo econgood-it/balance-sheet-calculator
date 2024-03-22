@@ -12,7 +12,7 @@ import { DatabaseSourceCreator } from '../../../src/databaseSourceCreator';
 import { BalanceSheetEntity } from '../../../src/entities/balance.sheet.entity';
 import { RatingsFactory } from '../../../src/factories/ratings.factory';
 import { INDUSTRY_CODE_FOR_FINANCIAL_SERVICES } from '../../../src/models/oldCompanyFacts';
-import { Rating, RatingResponseBody } from '../../../src/models/rating';
+import { OldRating, RatingResponseBody } from '../../../src/models/oldRating';
 import {
   balanceSheetJsonFactory,
   companyFactsFactory,
@@ -338,7 +338,7 @@ describe('Organization Balance Sheet Controller', () => {
     expect(
       response.body.ratings
         .filter((r: RatingResponseBody) => r.shortName.length === 2)
-        .reduce((sum: number, current: Rating) => sum + current.maxPoints, 0)
+        .reduce((sum: number, current: OldRating) => sum + current.maxPoints, 0)
     ).toBeCloseTo(999.9999999999998);
     const foundBalanceSheet = await balaneSheetEntityRepo.findByIdOrFail(
       response.body.id

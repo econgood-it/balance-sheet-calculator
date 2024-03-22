@@ -1,4 +1,4 @@
-import { BalanceSheet } from '../models/balance.sheet';
+import { OldBalanceSheet } from '../models/oldBalanceSheet';
 import { RatingsFactory } from '../factories/ratings.factory';
 import { OldCompanyFacts } from '../models/oldCompanyFacts';
 import { DEFAULT_COUNTRY_CODE } from '../models/region';
@@ -17,7 +17,7 @@ const afghanistanCode = 'AFG';
 const agricultureCode = 'A';
 const pharmaceuticCode = 'Ce';
 export const balanceSheetJsonFactory = {
-  emptyFullV508: (): BalanceSheet => ({
+  emptyFullV508: (): OldBalanceSheet => ({
     type: BalanceSheetType.Full,
     version: BalanceSheetVersion.v5_0_8,
     companyFacts: companyFactsJsonFactory.emptyRequest(),
@@ -27,7 +27,7 @@ export const balanceSheetJsonFactory = {
     ),
     stakeholderWeights: [],
   }),
-  emptyCompactV506: (): BalanceSheet => ({
+  emptyCompactV506: (): OldBalanceSheet => ({
     type: BalanceSheetType.Compact,
     version: BalanceSheetVersion.v5_0_6,
     companyFacts: companyFactsJsonFactory.emptyRequest(),
@@ -240,7 +240,7 @@ export const StakeholderWeightsFactory = {
 };
 
 export const balanceSheetFactory = {
-  emptyFullV508: (): BalanceSheet => ({
+  emptyFullV508: (): OldBalanceSheet => ({
     type: BalanceSheetType.Full,
     version: BalanceSheetVersion.v5_0_8,
     companyFacts: companyFactsFactory.empty(),

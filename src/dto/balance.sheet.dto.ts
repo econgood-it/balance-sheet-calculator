@@ -12,9 +12,9 @@ import { BalanceSheetEntity } from '../entities/balance.sheet.entity';
 import { RatingsFactory } from '../factories/ratings.factory';
 import { roundWithPrecision } from '../math';
 import { mergeRatingsWithRequestBodies } from '../merge/ratingsWithDtoMerger';
-import { BalanceSheet, BalanceSheetSchema } from '../models/balance.sheet';
+import { OldBalanceSheet, BalanceSheetSchema } from '../models/oldBalanceSheet';
 import { CompanyFactsCreateRequestBodyTransformedSchema } from '../models/oldCompanyFacts';
-import { Rating, filterTopics, sortRatings } from '../models/rating';
+import { OldRating, filterTopics, sortRatings } from '../models/oldRating';
 
 export class BalanceSheetCreateRequest {
   constructor(
@@ -38,7 +38,7 @@ export class BalanceSheetCreateRequest {
     ratingRequestBodies: z.infer<typeof RatingRequestBodySchema>[],
     type: BalanceSheetType,
     version: BalanceSheetVersion
-  ): Rating[] {
+  ): OldRating[] {
     const defaultRatings = RatingsFactory.createDefaultRatings(type, version);
     return mergeRatingsWithRequestBodies(defaultRatings, ratingRequestBodies);
   }
@@ -47,7 +47,7 @@ export class BalanceSheetCreateRequest {
 type MatrixBody = z.infer<typeof MatrixBodySchema>;
 
 export class MatrixFormat {
-  constructor(private balanceSheet: BalanceSheet) {}
+  constructor(private balanceSheet: OldBalanceSheet) {}
 
   public apply(): MatrixBody {
     return MatrixBodySchema.parse({
@@ -60,7 +60,7 @@ export class MatrixFormat {
 }
 
 export class MatrixRatingFormat {
-  constructor(private rating: Rating) {}
+  constructor(private rating: OldRating) {}
 
   public apply() {
     const percentage = this.calcPercentage(

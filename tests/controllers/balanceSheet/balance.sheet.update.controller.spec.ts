@@ -7,7 +7,7 @@ import { ConfigurationReader } from '../../../src/reader/configuration.reader';
 
 import { AuthBuilder } from '../../AuthBuilder';
 import { CORRELATION_HEADER_NAME } from '../../../src/middleware/correlation.id.middleware';
-import { Rating } from '../../../src/models/rating';
+import { OldRating } from '../../../src/models/oldRating';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
@@ -165,7 +165,7 @@ describe('Update endpoint of Balance Sheet Controller', () => {
     });
   }
 
-  function findAspect(shortName: string, response: any): Rating | undefined {
+  function findAspect(shortName: string, response: any): OldRating | undefined {
     return response.body.ratings.find(
       (r: { shortName: string }) => r.shortName === shortName
     );

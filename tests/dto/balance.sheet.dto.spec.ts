@@ -12,8 +12,8 @@ import {
   MatrixFormat,
   MatrixRatingFormat,
 } from '../../src/dto/balance.sheet.dto';
-import { BalanceSheet } from '../../src/models/balance.sheet';
-import { isTopic, Rating } from '../../src/models/rating';
+import { OldBalanceSheet } from '../../src/models/oldBalanceSheet';
+import { isTopic, OldRating } from '../../src/models/oldRating';
 import { calculateTotalPoints } from '../../src/calculations/calculator';
 
 describe('Transform', () => {
@@ -115,7 +115,7 @@ describe('Transform', () => {
 });
 
 describe('MatrixRepresentation', () => {
-  let balanceSheet: BalanceSheet;
+  let balanceSheet: OldBalanceSheet;
 
   beforeEach(() => {
     balanceSheet = balanceSheetFactory.emptyFullV508();
@@ -165,7 +165,7 @@ describe('MatrixRepresentation', () => {
 });
 
 describe('Matrix Rating DTO', () => {
-  let topicWithZeroValues: Rating;
+  let topicWithZeroValues: OldRating;
 
   beforeEach(() => {
     topicWithZeroValues = {

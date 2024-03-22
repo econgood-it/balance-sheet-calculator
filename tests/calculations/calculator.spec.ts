@@ -2,7 +2,7 @@ import {
   filterAspectsOfTopic,
   filterTopics,
   isTopic,
-} from '../../src/models/rating';
+} from '../../src/models/oldRating';
 import { RatingsFactory } from '../../src/factories/ratings.factory';
 import {
   BalanceSheetType,

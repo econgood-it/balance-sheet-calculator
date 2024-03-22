@@ -1,7 +1,10 @@
-import { makeCompanyFacts } from '../../src/models/company.facts';
+import {
+  makeCompanyFacts,
+  makeSupplyFraction,
+} from '../../src/models/company.facts';
 
 describe('Company Facts', () => {
-  it('creates empty company facts', () => {
+  it('is created with default values', () => {
     const companyFacts = makeCompanyFacts();
     expect(companyFacts).toMatchObject({
       totalPurchaseFromSuppliers: 0,
@@ -22,5 +25,49 @@ describe('Company Facts', () => {
       industrySectors: [],
       mainOriginOfOtherSuppliers: { countryCode: 'AWO', costs: 0 },
     });
+  });
+  it('should evaluate if all values are zero', () => {
+    const companyFacts = makeCompanyFacts();
+    expect(companyFacts.areAllValuesZero()).toBeTruthy();
+    expect(
+      companyFacts
+        .withFields({ totalPurchaseFromSuppliers: 1 })
+        .areAllValuesZero()
+    ).toBeFalsy();
+    expect(
+      companyFacts
+        .withFields({
+          supplyFractions: [
+            makeSupplyFraction({
+              countryCode: 'DEU',
+              costs: 1,
+              industryCode: 'A',
+            }),
+          ],
+        })
+        .areAllValuesZero()
+    ).toBeFalsy();
+  });
+
+  it('should override fields', () => {
+    const companyFacts = makeCompanyFacts();
+    const newCompanyFacts = companyFacts.withFields({
+      totalPurchaseFromSuppliers: 1000,
+      supplyFractions: [
+        makeSupplyFraction({
+          countryCode: 'DEU',
+          costs: 100,
+          industryCode: 'A',
+        }),
+      ],
+    });
+    expect(newCompanyFacts.totalPurchaseFromSuppliers).toBe(1000);
+    expect(newCompanyFacts.supplyFractions).toMatchObject([
+      {
+        countryCode: 'DEU',
+        costs: 100,
+        industryCode: 'A',
+      },
+    ]);
   });
 });

@@ -1,5 +1,5 @@
 import { mergeRatingsWithRequestBodies } from './ratingsWithDtoMerger';
-import { BalanceSheet, BalanceSheetSchema } from '../models/balance.sheet';
+import { OldBalanceSheet, BalanceSheetSchema } from '../models/oldBalanceSheet';
 import {
   OldCompanyFacts,
   CompanyFactsCreateRequestBodyTransformedSchema,
@@ -19,11 +19,11 @@ function overrideArray(objValue: any, srcValue: any): any {
 
 export class EntityWithDtoMerger {
   public mergeBalanceSheet(
-    balanceSheet: BalanceSheet,
+    balanceSheet: OldBalanceSheet,
     balanceSheetPatchRequestBody: z.infer<
       typeof BalanceSheetPatchRequestBodySchema
     >
-  ): BalanceSheet {
+  ): OldBalanceSheet {
     return BalanceSheetSchema.parse({
       ...balanceSheet,
       ...(balanceSheetPatchRequestBody.companyFacts && {

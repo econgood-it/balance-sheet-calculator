@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 
 import { handle } from '../exceptions/error.handler';
 import { IndustryProvider } from '../providers/industry.provider';
-import { BalanceSheetVersionSchema } from '../models/balance.sheet';
+import { BalanceSheetVersionSchema } from '../models/oldBalanceSheet';
 import { industryToResponse } from '../models/industry';
 import { BalanceSheetVersion } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 

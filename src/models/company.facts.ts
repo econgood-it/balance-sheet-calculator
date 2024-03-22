@@ -1,5 +1,6 @@
 import deepFreeze from 'deep-freeze';
 import { DEFAULT_COUNTRY_CODE } from './region';
+import _ from 'lodash';
 
 export type SupplyFraction = {
   countryCode: string | undefined;
@@ -51,7 +52,7 @@ export function makeMainOriginOfOtherSuppliers(
   });
 }
 
-export type CompanyFacts = {
+type CompanyFactsOpts = {
   totalPurchaseFromSuppliers: number;
   totalStaffCosts: number;
   profit: number;
@@ -71,43 +72,63 @@ export type CompanyFacts = {
   industrySectors: readonly IndustrySector[];
 };
 
-export function makeCompanyFacts(opts?: CompanyFacts): CompanyFacts {
-  const {
-    totalPurchaseFromSuppliers = 0,
-    totalStaffCosts = 0,
-    profit = 0,
-    financialCosts = 0,
-    incomeFromFinancialInvestments = 0,
-    additionsToFixedAssets = 0,
-    turnover = 0,
-    totalAssets = 0,
-    financialAssetsAndCashBalance = 0,
-    numberOfEmployees = 0,
-    isB2B = false,
-    hasCanteen = false,
-    averageJourneyToWorkForStaffInKm = 0,
-    mainOriginOfOtherSuppliers = makeMainOriginOfOtherSuppliers(),
-    supplyFractions = [],
-    employeesFractions = [],
-    industrySectors = [],
-  } = opts || {};
-  return deepFreeze({
-    totalPurchaseFromSuppliers,
-    totalStaffCosts,
-    profit,
-    financialCosts,
-    incomeFromFinancialInvestments,
-    additionsToFixedAssets,
-    turnover,
-    totalAssets,
-    financialAssetsAndCashBalance,
-    numberOfEmployees,
-    hasCanteen,
-    isB2B,
-    averageJourneyToWorkForStaffInKm,
-    mainOriginOfOtherSuppliers,
-    supplyFractions,
-    employeesFractions,
-    industrySectors,
-  });
+export type CompanyFacts = CompanyFactsOpts & {
+  areAllValuesZero: () => boolean;
+  withFields: (fields: Partial<CompanyFactsOpts>) => CompanyFacts;
+};
+
+export function makeCompanyFacts(opts?: CompanyFactsOpts): CompanyFacts {
+  const data = opts || {
+    totalPurchaseFromSuppliers: 0,
+    totalStaffCosts: 0,
+    profit: 0,
+    financialCosts: 0,
+    incomeFromFinancialInvestments: 0,
+    additionsToFixedAssets: 0,
+    turnover: 0,
+    totalAssets: 0,
+    financialAssetsAndCashBalance: 0,
+    numberOfEmployees: 0,
+    isB2B: false,
+    hasCanteen: false,
+    averageJourneyToWorkForStaffInKm: 0,
+    mainOriginOfOtherSuppliers: makeMainOriginOfOtherSuppliers(),
+    supplyFractions: [],
+    employeesFractions: [],
+    industrySectors: [],
+  };
+
+  /**
+   * =IF(AND($'2. Company Facts'.C7=0,$'2. Company Facts'.F10=0,$'2.
+   * Company Facts'.F11=0,$'2. Company Facts'.F12=0,$'2.
+   * Company Facts'.F13=0,$'2. Company Facts'.F14=0,$'2.
+   * Company Facts'.C18=0,$'2. Company Facts'.C19=0,$'2.
+   * Company Facts'.C20=0,$'2. Company Facts'.C21=0,$'2.
+   * Company Facts'.C22=0,$'2. Company Facts'.C23=0,$'2.
+   * Company Facts'.C26=0,$'2. Company Facts'.C27=0,$'2.
+   * Company Facts'.D30=0,$'2. Company Facts'.D31=0,$'2.
+   * Company Facts'.D32=0,$'2. Company Facts'.C33=0,$'2.
+   * Company Facts'.C34=0,$'2. Company Facts'.C37=0,$'2.
+   * Company Facts'.C38=0,$'2. Company Facts'.D41=0,$'2.
+   * Company Facts'.D42=0,$'2. Company Facts'.D43=0),"empty","data")
+   */
+  function areAllValuesZero(obj: Record<string, any> = data): boolean {
+    return _.every(obj, (value) => {
+      if (_.isString(value)) {
+        return true;
+      } else if (_.isArray(value)) {
+        return _.every(value, areAllValuesZero);
+      } else if (_.isObject(value)) {
+        return areAllValuesZero(value);
+      } else {
+        return value === 0 || value === false || value === undefined;
+      }
+    });
+  }
+
+  function withFields(fields: Partial<CompanyFactsOpts>): CompanyFacts {
+    return makeCompanyFacts({ ...data, ...fields });
+  }
+
+  return deepFreeze({ ...data, areAllValuesZero, withFields });
 }

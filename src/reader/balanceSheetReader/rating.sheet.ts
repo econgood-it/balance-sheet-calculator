@@ -1,6 +1,6 @@
 import { Worksheet } from 'exceljs';
 import { RatingReader } from './rating.reader';
-import { Rating } from '../../models/rating';
+import { OldRating } from '../../models/oldRating';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
@@ -12,7 +12,7 @@ export class RatingSheet {
   private ratingReader = new RatingReader();
   private readonly balanceSheetType: BalanceSheetType;
   private maxRows = 93;
-  private defaultRatings: Rating[];
+  private defaultRatings: OldRating[];
   constructor(
     private sheet: Worksheet,
     private balanceSheetVersion: BalanceSheetVersion
@@ -29,13 +29,13 @@ export class RatingSheet {
     );
   }
 
-  public toRatings(): Rating[] {
+  public toRatings(): OldRating[] {
     const ratings = filterUndef(
       range(9, this.maxRows).map((row) =>
         this.ratingReader.read(this.sheet.getRow(row))
       )
     );
-    const foundShortNames = new Map<string, Rating>();
+    const foundShortNames = new Map<string, OldRating>();
     return this.defaultRatings.map((defaultRating) => {
       const foundRating = ratings.find(
         (r) =>

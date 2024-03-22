@@ -1,7 +1,7 @@
 import { Assertions } from '../../Assertions';
 import * as path from 'path';
 import { OldCompanyFacts } from '../../../src/models/oldCompanyFacts';
-import { Rating, RatingSchema } from '../../../src/models/rating';
+import { OldRating, RatingSchema } from '../../../src/models/oldRating';
 import { companyFactsFactory } from '../../../src/openapi/examples';
 import {
   BalanceSheetType,
@@ -12,7 +12,9 @@ import { BalanceSheetEntity } from '../../../src/entities/balance.sheet.entity';
 import { StakeholderWeight } from '../../../src/models/stakeholder.weight';
 
 describe('Recalculation of ratings', () => {
-  async function readRatingsFromJsonFile(fileName: string): Promise<Rating[]> {
+  async function readRatingsFromJsonFile(
+    fileName: string
+  ): Promise<OldRating[]> {
     const pathToFile = path.join(path.resolve(__dirname), fileName);
     const fileText = fs.readFileSync(pathToFile);
     const jsonParsed = JSON.parse(fileText.toString());
@@ -45,7 +47,7 @@ describe('Recalculation of ratings', () => {
 
   it('with weights selected by user', async () => {
     const companyFacts = companyFactsFactory.nonEmpty();
-    const ratings: Rating[] = [
+    const ratings: OldRating[] = [
       {
         shortName: 'A1',
         name: 'A1 name',
