@@ -1,9 +1,9 @@
 import Provider from './provider';
-import { StakeholderWeight } from '../models/stakeholder.weight';
+import { OldStakeholderWeight } from '../models/oldStakeholderWeight';
 
 export class StakeholderWeightsProvider extends Provider<string, number> {
   public merge(
-    stakeholderWeights: StakeholderWeight[]
+    stakeholderWeights: OldStakeholderWeight[]
   ): StakeholderWeightsProvider {
     const stakeholderWeightsProvider = stakeholderWeights.reduce(
       (prevValue, current) => {

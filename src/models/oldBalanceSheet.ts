@@ -5,7 +5,7 @@ import {
   BalanceSheetType,
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
-import { StakeholderWeightSchema } from './stakeholder.weight';
+import { StakeholderWeightSchema } from './oldStakeholderWeight';
 
 export const BalanceSheetVersionSchema = z.nativeEnum(BalanceSheetVersion);
 export const BalanceSheetSchema = z.object({

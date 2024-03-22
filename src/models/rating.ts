@@ -12,7 +12,7 @@ type RatingOpts = {
   isPositive: boolean;
 };
 
-type Rating = RatingOpts & {
+export type Rating = RatingOpts & {
   isTopic: () => boolean;
   isAspect: () => boolean;
   isAspectOfTopic: (shortNameTopic: string) => boolean;

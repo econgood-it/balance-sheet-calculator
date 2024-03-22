@@ -1,9 +1,14 @@
-import { z } from 'zod';
-import { isWeight } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
+import deepFreeze from 'deep-freeze';
 
-export const StakeholderWeightSchema = z.object({
-  shortName: z.string(),
-  weight: isWeight,
-});
+export type StakeholderWeight = {
+  shortName: string;
+  weight: number;
+};
 
-export type StakeholderWeight = z.infer<typeof StakeholderWeightSchema>;
+export function makeStakeholderWeight(
+  opts: StakeholderWeight
+): StakeholderWeight {
+  return deepFreeze({
+    ...opts,
+  });
+}

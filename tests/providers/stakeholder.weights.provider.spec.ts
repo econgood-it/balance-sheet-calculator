@@ -1,9 +1,9 @@
 import { StakeholderWeightsProvider } from '../../src/providers/stakeholder.weights.provider';
-import { StakeholderWeight } from '../../src/models/stakeholder.weight';
+import { OldStakeholderWeight } from '../../src/models/oldStakeholderWeight';
 
 describe('StakeholderWeightsProvider', () => {
   it('should merge with empty stakeholder weights', () => {
-    const stakeholderWeights: StakeholderWeight[] = [];
+    const stakeholderWeights: OldStakeholderWeight[] = [];
     const stakeholderWeightsProvider = new StakeholderWeightsProvider([
       ['A', 1],
       ['B', 0.5],

@@ -1,9 +1,14 @@
-import { StakeholderWeightSchema } from '../../src/models/stakeholder.weight';
+import { makeStakeholderWeight } from '../../src/models/stakeholder.weight';
 
 describe('StakeholderWeight', () => {
-  it('should be parsed from object', () => {
-    const jsObject = { shortName: 'A', weight: 0.5 };
-    const stakeholderWeight = StakeholderWeightSchema.parse(jsObject);
-    expect(stakeholderWeight).toEqual(jsObject);
+  it('should be created', () => {
+    const stakeholderWeight = makeStakeholderWeight({
+      shortName: 'A',
+      weight: 0.5,
+    });
+    expect(stakeholderWeight).toMatchObject({
+      shortName: 'A',
+      weight: 0.5,
+    });
   });
 });

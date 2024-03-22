@@ -1,17 +1,17 @@
 import { Workbook } from 'exceljs';
 import { CellReader } from './cell.reader';
 import Provider from '../../providers/provider';
-import { StakeholderWeight } from '../../models/stakeholder.weight';
+import { OldStakeholderWeight } from '../../models/oldStakeholderWeight';
 
 export class StakeholderWeightsReader {
   public readFromWorkbook(wb: Workbook): Provider<string, number> | undefined {
     return this.read(wb, 'R');
   }
 
-  public readUserSelectedFromWorkbook(wb: Workbook): StakeholderWeight[] {
+  public readUserSelectedFromWorkbook(wb: Workbook): OldStakeholderWeight[] {
     const mergedWeights = this.readFromWorkbook(wb);
     const calculatedWeights = this.read(wb, 'K');
-    const customWeights: StakeholderWeight[] = [];
+    const customWeights: OldStakeholderWeight[] = [];
     for (const [shortName, weight] of mergedWeights!.entries()) {
       if (calculatedWeights!.get(shortName) !== weight) {
         customWeights.push({ shortName, weight });

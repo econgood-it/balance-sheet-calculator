@@ -7,7 +7,7 @@ import {
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import { Organization } from '../models/organization';
-import { StakeholderWeight } from '../models/stakeholder.weight';
+import { OldStakeholderWeight } from '../models/oldStakeholderWeight';
 import { WorkbookSection } from '../entities/workbook.entity';
 import { z } from 'zod';
 import { CompanyFactsResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/company.facts.dto';
@@ -233,7 +233,7 @@ export const WorkbookSectionsJsonFactory = {
 };
 
 export const StakeholderWeightsFactory = {
-  default: (): StakeholderWeight[] => [
+  default: (): OldStakeholderWeight[] => [
     { shortName: 'A', weight: 0.5 },
     { shortName: 'C', weight: 1.5 },
   ],

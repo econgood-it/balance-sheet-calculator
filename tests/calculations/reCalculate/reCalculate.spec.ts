@@ -9,7 +9,7 @@ import {
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import fs from 'fs';
 import { BalanceSheetEntity } from '../../../src/entities/balance.sheet.entity';
-import { StakeholderWeight } from '../../../src/models/stakeholder.weight';
+import { OldStakeholderWeight } from '../../../src/models/oldStakeholderWeight';
 
 describe('Recalculation of ratings', () => {
   async function readRatingsFromJsonFile(
@@ -25,7 +25,7 @@ describe('Recalculation of ratings', () => {
     fileNameOfRatingInputData: string,
     fileNameOfRatingExpectedData: string,
     companyFacts: OldCompanyFacts,
-    stakeholderWeights: StakeholderWeight[]
+    stakeholderWeights: OldStakeholderWeight[]
   ) {
     const ratings = await readRatingsFromJsonFile(fileNameOfRatingInputData);
 
