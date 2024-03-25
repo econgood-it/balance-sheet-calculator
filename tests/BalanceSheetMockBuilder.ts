@@ -1,4 +1,4 @@
-import { RatingsFactory } from '../src/factories/ratings.factory';
+import { OldRatingsFactory } from '../src/factories/oldRatingsFactory';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
@@ -11,7 +11,7 @@ import { z } from 'zod';
 import { OldBalanceSheet } from '../src/models/oldBalanceSheet';
 
 export class RatingsMockBuilder {
-  private ratings = RatingsFactory.createDefaultRatings(
+  private ratings = OldRatingsFactory.createDefaultRatings(
     BalanceSheetType.Full,
     BalanceSheetVersion.v5_0_8
   );

@@ -2,7 +2,7 @@ import {
   BalanceSheetType,
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
-import { RatingsFactory } from '../../src/factories/ratings.factory';
+import { OldRatingsFactory } from '../../src/factories/oldRatingsFactory';
 import {
   balanceSheetFactory,
   companyFactsJsonFactory,
@@ -30,7 +30,7 @@ describe('Transform', () => {
     };
     const result = new BalanceSheetCreateRequest(json).toBalanceEntity();
 
-    const defaultRatings = RatingsFactory.createDefaultRatings(
+    const defaultRatings = OldRatingsFactory.createDefaultRatings(
       json.type,
       json.version
     );
@@ -78,7 +78,7 @@ describe('Transform', () => {
     };
     const result = new BalanceSheetCreateRequest(json).toBalanceEntity();
 
-    const expectedRatings = RatingsFactory.createDefaultRatings(
+    const expectedRatings = OldRatingsFactory.createDefaultRatings(
       json.type,
       json.version
     );
@@ -127,7 +127,7 @@ describe('MatrixRepresentation', () => {
   });
 
   it('has totalPoints of 1000', async () => {
-    const defaultRatings = RatingsFactory.createDefaultRatings(
+    const defaultRatings = OldRatingsFactory.createDefaultRatings(
       BalanceSheetType.Full,
       BalanceSheetVersion.v5_0_8
     );

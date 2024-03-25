@@ -20,7 +20,7 @@ import {
 import { IRepoProvider } from '../../src/repositories/repo.provider';
 
 jest.mock('axios');
-const mockedAxios = jest.mocked(axios, true);
+const mockedAxios = jest.mocked(axios);
 
 export class InMemoryRepoProvider implements IRepoProvider {
   constructor(private inMemoryWorkbookEntityRepo: InMemoryWorkbookEntityRepo) {}

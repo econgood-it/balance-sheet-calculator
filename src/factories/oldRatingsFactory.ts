@@ -7,7 +7,7 @@ import {
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 
-export class RatingsFactory {
+export class OldRatingsFactory {
   public static createDefaultRatings(
     balanceSheetType: BalanceSheetType,
     balanceSheetVersion: BalanceSheetVersion
@@ -19,7 +19,7 @@ export class RatingsFactory {
       path.resolve(__dirname, '../files/factories/'),
       fileName
     );
-    return RatingsFactory.fromFile(pathToRatings);
+    return OldRatingsFactory.fromFile(pathToRatings);
   }
 
   private static fromFile(path: string): OldRating[] {

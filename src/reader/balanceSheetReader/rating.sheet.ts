@@ -5,7 +5,7 @@ import {
   BalanceSheetType,
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
-import { RatingsFactory } from '../../factories/ratings.factory';
+import { OldRatingsFactory } from '../../factories/oldRatingsFactory';
 import { filterUndef, range } from './reader.utils';
 
 export class RatingSheet {
@@ -23,7 +23,7 @@ export class RatingSheet {
     if (this.balanceSheetType === BalanceSheetType.Compact) {
       this.maxRows = 72;
     }
-    this.defaultRatings = RatingsFactory.createDefaultRatings(
+    this.defaultRatings = OldRatingsFactory.createDefaultRatings(
       this.balanceSheetType,
       balanceSheetVersion
     );

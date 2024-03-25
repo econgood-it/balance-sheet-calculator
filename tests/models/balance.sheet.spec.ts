@@ -1,16 +1,23 @@
+import { makeCompanyFacts } from '../../src/models/company.facts';
+import { makeBalanceSheet } from '../../src/models/balance.sheet';
+import { makeRatingFactory } from '../../src/factories/rating.factory';
 import {
-  balanceSheetFactory,
-  StakeholderWeightsFactory,
-} from '../../src/openapi/examples';
-import { BalanceSheetSchema } from '../../src/models/balance.sheet';
+  BalanceSheetType,
+  BalanceSheetVersion,
+} from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 
 describe('BalanceSheet', () => {
-  it('should be parsed  where stakeholder weights defined', () => {
-    const jsObject = {
-      ...balanceSheetFactory.emptyFullV508(),
-      stakeholderWeights: StakeholderWeightsFactory.default(),
-    };
-    const balanceSheet = BalanceSheetSchema.parse(jsObject);
-    expect(balanceSheet).toEqual(jsObject);
+  it('is created with default values', () => {
+    const balanceSheet = makeBalanceSheet();
+    expect(balanceSheet).toMatchObject({
+      version: BalanceSheetVersion.v5_0_8,
+      type: BalanceSheetType.Full,
+      companyFacts: makeCompanyFacts(),
+      ratings: makeRatingFactory().createDefaultRatings(
+        BalanceSheetType.Full,
+        BalanceSheetVersion.v5_0_8
+      ),
+      stakeholderWeights: [],
+    });
   });
 });

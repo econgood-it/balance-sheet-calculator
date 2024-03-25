@@ -1,12 +1,12 @@
+import { OldRatingsFactory } from '../../src/factories/oldRatingsFactory';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
-import { makeRatingFactory } from '../../src/factories/rating.factory';
 
 describe('Ratings factory', () => {
-  it('should create default ratings for a full balance sheet', () => {
-    const ratings = makeRatingFactory().createDefaultRatings(
+  it('should create a default rating for a full balance sheet', () => {
+    const ratings = OldRatingsFactory.createDefaultRatings(
       BalanceSheetType.Full,
       BalanceSheetVersion.v5_0_8
     );
@@ -35,8 +35,8 @@ describe('Ratings factory', () => {
     });
   });
 
-  it('should create a default ratings for a compact balance sheet', () => {
-    const ratings = makeRatingFactory().createDefaultRatings(
+  it('should create a default rating for a compact balance sheet', () => {
+    const ratings = OldRatingsFactory.createDefaultRatings(
       BalanceSheetType.Compact,
       BalanceSheetVersion.v5_0_6
     );

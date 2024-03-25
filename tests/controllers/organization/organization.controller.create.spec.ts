@@ -10,7 +10,7 @@ import App from '../../../src/app';
 import { OrganizationPaths } from '../../../src/controllers/organization.controller';
 import { DatabaseSourceCreator } from '../../../src/databaseSourceCreator';
 import { BalanceSheetEntity } from '../../../src/entities/balance.sheet.entity';
-import { RatingsFactory } from '../../../src/factories/ratings.factory';
+import { OldRatingsFactory } from '../../../src/factories/oldRatingsFactory';
 import { INDUSTRY_CODE_FOR_FINANCIAL_SERVICES } from '../../../src/models/oldCompanyFacts';
 import { OldRating, RatingResponseBody } from '../../../src/models/oldRating';
 import {
@@ -171,7 +171,7 @@ describe('Organization Balance Sheet Controller', () => {
     const expectedType = balanceSheetJsonFactory.minimalCompactV506().type;
     const expectedVersion =
       balanceSheetJsonFactory.minimalCompactV506().version;
-    const expectedRatings = RatingsFactory.createDefaultRatings(
+    const expectedRatings = OldRatingsFactory.createDefaultRatings(
       expectedType,
       expectedVersion
     );

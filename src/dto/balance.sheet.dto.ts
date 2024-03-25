@@ -9,7 +9,7 @@ import { z } from 'zod';
 import { calculateTotalPoints } from '../calculations/calculator';
 import { Option, none, some } from '../calculations/option';
 import { BalanceSheetEntity } from '../entities/balance.sheet.entity';
-import { RatingsFactory } from '../factories/ratings.factory';
+import { OldRatingsFactory } from '../factories/oldRatingsFactory';
 import { roundWithPrecision } from '../math';
 import { mergeRatingsWithRequestBodies } from '../merge/ratingsWithDtoMerger';
 import { OldBalanceSheet, BalanceSheetSchema } from '../models/oldBalanceSheet';
@@ -39,7 +39,10 @@ export class BalanceSheetCreateRequest {
     type: BalanceSheetType,
     version: BalanceSheetVersion
   ): OldRating[] {
-    const defaultRatings = RatingsFactory.createDefaultRatings(type, version);
+    const defaultRatings = OldRatingsFactory.createDefaultRatings(
+      type,
+      version
+    );
     return mergeRatingsWithRequestBodies(defaultRatings, ratingRequestBodies);
   }
 }

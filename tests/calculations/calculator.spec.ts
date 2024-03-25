@@ -3,7 +3,7 @@ import {
   filterTopics,
   isTopic,
 } from '../../src/models/oldRating';
-import { RatingsFactory } from '../../src/factories/ratings.factory';
+import { OldRatingsFactory } from '../../src/factories/oldRatingsFactory';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
@@ -12,7 +12,7 @@ import { calculateTotalPoints } from '../../src/calculations/calculator';
 
 describe('calculateTotalPoints', () => {
   it('should return 1000 if all topics are 50', async () => {
-    const defaultRatings = RatingsFactory.createDefaultRatings(
+    const defaultRatings = OldRatingsFactory.createDefaultRatings(
       BalanceSheetType.Full,
       BalanceSheetVersion.v5_0_8
     );
@@ -23,7 +23,7 @@ describe('calculateTotalPoints', () => {
     expect(totalPoints).toBe(1000);
   });
   it('should return 0 if all topics are 0', async () => {
-    const ratings = RatingsFactory.createDefaultRatings(
+    const ratings = OldRatingsFactory.createDefaultRatings(
       BalanceSheetType.Full,
       BalanceSheetVersion.v5_0_8
     );
@@ -34,7 +34,7 @@ describe('calculateTotalPoints', () => {
   function getRatingsWhereAllTopicsWithNegativeAspectHaveSameValue(
     points: number
   ) {
-    const defaultRatings = RatingsFactory.createDefaultRatings(
+    const defaultRatings = OldRatingsFactory.createDefaultRatings(
       BalanceSheetType.Full,
       BalanceSheetVersion.v5_0_8
     );

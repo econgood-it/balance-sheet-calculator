@@ -3,4 +3,5 @@ module.exports = {
   testEnvironment: 'node',
   roots: ['src/', 'tests/'],
   coverageReporters: ['html'],
+  setupFilesAfterEnv: ['./tests/setup-tests.ts'],
 };

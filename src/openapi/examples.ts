@@ -1,5 +1,5 @@
 import { OldBalanceSheet } from '../models/oldBalanceSheet';
-import { RatingsFactory } from '../factories/ratings.factory';
+import { OldRatingsFactory } from '../factories/oldRatingsFactory';
 import { OldCompanyFacts } from '../models/oldCompanyFacts';
 import { DEFAULT_COUNTRY_CODE } from '../models/region';
 import {
@@ -21,7 +21,7 @@ export const balanceSheetJsonFactory = {
     type: BalanceSheetType.Full,
     version: BalanceSheetVersion.v5_0_8,
     companyFacts: companyFactsJsonFactory.emptyRequest(),
-    ratings: RatingsFactory.createDefaultRatings(
+    ratings: OldRatingsFactory.createDefaultRatings(
       BalanceSheetType.Full,
       BalanceSheetVersion.v5_0_8
     ),
@@ -31,7 +31,7 @@ export const balanceSheetJsonFactory = {
     type: BalanceSheetType.Compact,
     version: BalanceSheetVersion.v5_0_6,
     companyFacts: companyFactsJsonFactory.emptyRequest(),
-    ratings: RatingsFactory.createDefaultRatings(
+    ratings: OldRatingsFactory.createDefaultRatings(
       BalanceSheetType.Compact,
       BalanceSheetVersion.v5_0_6
     ),
@@ -244,7 +244,7 @@ export const balanceSheetFactory = {
     type: BalanceSheetType.Full,
     version: BalanceSheetVersion.v5_0_8,
     companyFacts: companyFactsFactory.empty(),
-    ratings: RatingsFactory.createDefaultRatings(
+    ratings: OldRatingsFactory.createDefaultRatings(
       BalanceSheetType.Full,
       BalanceSheetVersion.v5_0_8
     ),
