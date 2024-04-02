@@ -70,4 +70,30 @@ describe('Company Facts', () => {
       },
     ]);
   });
+
+  it('should update the costs of the main origin of other suppliers', () => {
+    const companyFacts = makeCompanyFacts();
+    const newCompanyFacts = companyFacts.withFields({
+      totalPurchaseFromSuppliers: 1000,
+      supplyFractions: [
+        makeSupplyFraction({
+          countryCode: 'DEU',
+          costs: 100,
+          industryCode: 'A',
+        }),
+        makeSupplyFraction({
+          countryCode: 'BEL',
+          costs: 200,
+          industryCode: 'B',
+        }),
+      ],
+      mainOriginOfOtherSuppliers: {
+        countryCode: 'AGO',
+      },
+    });
+    expect(newCompanyFacts.mainOriginOfOtherSuppliers).toMatchObject({
+      countryCode: 'AGO',
+      costs: 1000 - 100 - 200,
+    });
+  });
 });

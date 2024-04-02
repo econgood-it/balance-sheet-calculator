@@ -37,18 +37,37 @@ export function makeIndustrySector(opts: IndustrySector): IndustrySector {
   });
 }
 
+type MainOriginOfOtherSuppliersOpts = {
+  totalPurchaseFromSuppliers: number;
+  countryCode: string;
+  supplyFractions: readonly SupplyFraction[];
+};
+
 export type MainOriginOfOtherSuppliers = {
-  countryCode: string | undefined;
+  countryCode: string;
   costs: number;
 };
 
 export function makeMainOriginOfOtherSuppliers(
-  opts?: MainOriginOfOtherSuppliers
+  opts: MainOriginOfOtherSuppliersOpts
 ): MainOriginOfOtherSuppliers {
-  const { countryCode = DEFAULT_COUNTRY_CODE, costs = 0 } = opts || {};
+  function computeCosts(
+    totalPurchaseFromSuppliers: number,
+    supplyFractions: readonly SupplyFraction[]
+  ): number {
+    const costs = supplyFractions.map((sf) => sf.costs);
+    return (
+      totalPurchaseFromSuppliers -
+      costs.reduce(
+        (sum: number, currentValue: number) => (sum += currentValue),
+        0
+      )
+    );
+  }
+
   return deepFreeze({
-    countryCode,
-    costs,
+    ...opts,
+    costs: computeCosts(opts.totalPurchaseFromSuppliers, opts.supplyFractions),
   });
 }
 
@@ -66,7 +85,7 @@ type CompanyFactsOpts = {
   hasCanteen?: boolean;
   isB2B: boolean;
   averageJourneyToWorkForStaffInKm: number;
-  mainOriginOfOtherSuppliers: MainOriginOfOtherSuppliers;
+  mainOriginOfOtherSuppliers: { countryCode: string };
   supplyFractions: readonly SupplyFraction[];
   employeesFractions: readonly EmployeesFraction[];
   industrySectors: readonly IndustrySector[];
@@ -75,6 +94,7 @@ type CompanyFactsOpts = {
 export type CompanyFacts = CompanyFactsOpts & {
   areAllValuesZero: () => boolean;
   withFields: (fields: Partial<CompanyFactsOpts>) => CompanyFacts;
+  mainOriginOfOtherSuppliers: MainOriginOfOtherSuppliers;
 };
 
 export function makeCompanyFacts(opts?: CompanyFactsOpts): CompanyFacts {
@@ -92,7 +112,11 @@ export function makeCompanyFacts(opts?: CompanyFactsOpts): CompanyFacts {
     isB2B: false,
     hasCanteen: false,
     averageJourneyToWorkForStaffInKm: 0,
-    mainOriginOfOtherSuppliers: makeMainOriginOfOtherSuppliers(),
+    mainOriginOfOtherSuppliers: makeMainOriginOfOtherSuppliers({
+      totalPurchaseFromSuppliers: 0,
+      countryCode: DEFAULT_COUNTRY_CODE,
+      supplyFractions: [],
+    }),
     supplyFractions: [],
     employeesFractions: [],
     industrySectors: [],
@@ -130,5 +154,14 @@ export function makeCompanyFacts(opts?: CompanyFactsOpts): CompanyFacts {
     return makeCompanyFacts({ ...data, ...fields });
   }
 
-  return deepFreeze({ ...data, areAllValuesZero, withFields });
+  return deepFreeze({
+    ...data,
+    mainOriginOfOtherSuppliers: makeMainOriginOfOtherSuppliers({
+      totalPurchaseFromSuppliers: data.totalPurchaseFromSuppliers,
+      countryCode: data.mainOriginOfOtherSuppliers.countryCode,
+      supplyFractions: data.supplyFractions,
+    }),
+    areAllValuesZero,
+    withFields,
+  });
 }
