@@ -4,7 +4,7 @@
     "name": "Human dignity in the supply chain",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 50,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -14,7 +14,7 @@
     "name": "Working conditions and social impact in the supply chain",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 50,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -24,7 +24,7 @@
     "name": "Negative aspect: violation of human dignity in the supply chain",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": -200,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": false
@@ -34,7 +34,7 @@
     "name": "Solidarity and social justice in the supply chain",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 50,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -44,7 +44,7 @@
     "name": "Fair business practices towards direct suppliers",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 25,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -54,7 +54,7 @@
     "name": "Exercising a positive influence on solidarity and social justice in the supply chain",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 25,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -64,7 +64,7 @@
     "name": "Negative aspect: abuse of market power against suppliers",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": -200,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": false
@@ -74,7 +74,7 @@
     "name": "Environmental sustainability in the supply chain",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 50,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -84,7 +84,7 @@
     "name": "Environmental impact throughout the supply chain",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 50,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -94,7 +94,7 @@
     "name": "Negative aspect: disproportionate environmental impact throughout the supply chain",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": -200,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": false
@@ -104,7 +104,7 @@
     "name": "Transparency & co-determination in the supply chain",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 50,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -114,7 +114,7 @@
     "name": "Transparency towards suppliers and their right to co-determination",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 25,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -124,7 +124,7 @@
     "name": "Positive influence on transparency and co-determination throughout the supply chain",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 25,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -134,7 +134,7 @@
     "name": "Ethical position in relation to financial resources",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 50,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -144,7 +144,7 @@
     "name": "Financial independence through equity financing",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 17,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -154,7 +154,7 @@
     "name": "Common Good-orientated borrowing",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 17,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -164,7 +164,7 @@
     "name": "Ethical position of external financial partners",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 17,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -174,7 +174,7 @@
     "name": "Social position in relation to financial resources",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 50,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -184,7 +184,7 @@
     "name": "Solidarity and Common Good-orientated use of funds",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 50,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -194,7 +194,7 @@
     "name": "Negative aspect: unfair distribution of funds",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": -200,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": false
@@ -204,7 +204,7 @@
     "name": "Use of funds in relation to social and environmental impacts",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 50,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -214,7 +214,7 @@
     "name": "Environmental quality of investments",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 25,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -224,7 +224,7 @@
     "name": "Common Good-orientated investment",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 25,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -234,7 +234,7 @@
     "name": "Negative aspect: reliance on environmentally unsafe resources",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": -200,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": false
@@ -244,7 +244,7 @@
     "name": "Ownership and co-determination",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 50,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -254,7 +254,7 @@
     "name": "Common Good-orientated ownership structure",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 50,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -264,7 +264,7 @@
     "name": "Negative aspect: hostile takeover",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": -200,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": false
@@ -274,7 +274,7 @@
     "name": "Human dignity in the workplace and working environment",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 50,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -284,7 +284,7 @@
     "name": "Employee-focused organisational culture",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 17,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -294,7 +294,7 @@
     "name": "Health promotion and occupational health and safety",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 17,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -304,7 +304,7 @@
     "name": "Diversity and equal opportunities",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 17,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -314,7 +314,7 @@
     "name": "Negative aspect: unfit working conditions",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": -200,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": false
@@ -324,7 +324,7 @@
     "name": "Self-determined working arrangements",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 50,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -334,7 +334,7 @@
     "name": "Pay structure",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 17,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -344,7 +344,7 @@
     "name": "Structuring working time",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 17,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -354,7 +354,7 @@
     "name": "Employment structure and work-life balance",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 17,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -364,7 +364,7 @@
     "name": "Negative aspect: unfair employment contracts",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": -200,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": false
@@ -374,7 +374,7 @@
     "name": "Environmentally-friendly behaviour of staff",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 50,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -384,7 +384,7 @@
     "name": "Food during working hours",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 17,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -394,7 +394,7 @@
     "name": "Travel to work",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 17,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -404,7 +404,7 @@
     "name": "Organisational culture, cultivating awareness for an environmentally-friendly approach",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 17,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -414,7 +414,7 @@
     "name": "Negative aspect: guidance on waste/ environmentally damaging practices",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": -200,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": false
@@ -424,7 +424,7 @@
     "name": "Co-determination and transparency within the organisation",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 50,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -434,7 +434,7 @@
     "name": "Transparency within the organisation",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 17,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -444,7 +444,7 @@
     "name": "Legitimation of the management",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 17,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -454,7 +454,7 @@
     "name": "Employee co-determination",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 17,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -464,7 +464,7 @@
     "name": "Negative aspect: obstruction of works councils",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": -200,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": false
@@ -474,7 +474,7 @@
     "name": "Ethical customer relations",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 50,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -484,7 +484,7 @@
     "name": "Respect for human dignity in communication with customers",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 25,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -494,7 +494,7 @@
     "name": "Barrier-free access",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 25,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -504,7 +504,7 @@
     "name": "Negative aspect: unethical advertising",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": -200,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": false
@@ -514,7 +514,7 @@
     "name": "Cooperation and solidarity with other companies",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 50,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -524,7 +524,7 @@
     "name": "Cooperation with other companies",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 25,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -534,7 +534,7 @@
     "name": "Solidarity with other companies",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 25,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -544,7 +544,7 @@
     "name": "Negative aspect: abuse of market power to the detriment of other companies",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": -200,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": false
@@ -554,7 +554,7 @@
     "name": "Impact on the environment of the use and disposal of products and service",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 50,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -564,7 +564,7 @@
     "name": "Environmental cost-benefit ration of products and services (efficiency and consistency)",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 25,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -574,7 +574,7 @@
     "name": "Moderate use of products and services (sufficiency)",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 25,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -584,7 +584,7 @@
     "name": "Negative aspect: wilful disregard of disproportionate environmental impacts",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": -200,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": false
@@ -594,7 +594,7 @@
     "name": "Customer participation and product transparency",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 50,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -604,7 +604,7 @@
     "name": "Customer participation, joint product development and market research",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 25,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -614,7 +614,7 @@
     "name": "Product transparency",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 25,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -624,7 +624,7 @@
     "name": "Negative aspect: non-disclosure of hazardous substances",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": -200,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": false
@@ -634,7 +634,7 @@
     "name": "Purpose of products and services and their effects on society",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 50,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -644,7 +644,7 @@
     "name": "Products and services should cover basic needs and contribute to a good life",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 25,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -654,7 +654,7 @@
     "name": "Social impact of products and services",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 25,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -664,7 +664,7 @@
     "name": "Negative aspect: unethical and unfit products and services",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": -200,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": false
@@ -674,7 +674,7 @@
     "name": "Contribution to the community",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 50,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -684,7 +684,7 @@
     "name": "Taxes and social security contributions",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 25,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -694,7 +694,7 @@
     "name": "Voluntary contributions that strengthen society",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 25,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -704,7 +704,7 @@
     "name": "Negative aspect: inappropriate non-payment of tax",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": -200,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": false
@@ -714,7 +714,7 @@
     "name": "Negative aspect: no anti-corruption policy",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": -200,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": false
@@ -724,7 +724,7 @@
     "name": "Reduction of environmental impact",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 50,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -734,7 +734,7 @@
     "name": "Absolute impact and management strategy",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 25,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -744,7 +744,7 @@
     "name": "Relative impact",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 25,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -754,7 +754,7 @@
     "name": "Negative aspect: infringement of environmental regulations and disproportionate environmental pollution",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": -200,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": false
@@ -764,7 +764,7 @@
     "name": "Social co-determination and transparency",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 50,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -774,7 +774,7 @@
     "name": "Transparency",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 25,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -784,7 +784,7 @@
     "name": "Social participation",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": 25,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": true
@@ -794,7 +794,7 @@
     "name": "Negative aspect: lack of transparency and wilful misinformation",
     "estimations": 0,
     "points": 0,
-    "maxPoints": 0,
+    "maxPoints": -200,
     "weight": 1,
     "isWeightSelectedByUser": false,
     "isPositive": false

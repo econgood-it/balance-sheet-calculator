@@ -18,7 +18,10 @@ type BalanceSheetOpts = {
   organizationId: number | undefined;
 };
 //
-export type BalanceSheet = BalanceSheetOpts;
+export type BalanceSheet = BalanceSheetOpts & {
+  getTopics: () => Rating[];
+  getAspectsOfTopic: (shortNameTopic: string) => Rating[];
+};
 
 export function makeBalanceSheet(opts?: BalanceSheetOpts): BalanceSheet {
   const data = opts || {
@@ -34,7 +37,19 @@ export function makeBalanceSheet(opts?: BalanceSheetOpts): BalanceSheet {
     organizationId: undefined,
   };
 
+  function getTopics(): Rating[] {
+    return data.ratings.filter((rating) => rating.isTopic());
+  }
+
+  function getAspectsOfTopic(shortNameTopic: string): Rating[] {
+    return data.ratings.filter((rating) =>
+      rating.isAspectOfTopic(shortNameTopic)
+    );
+  }
+
   return deepFreeze({
     ...data,
+    getTopics,
+    getAspectsOfTopic,
   });
 }

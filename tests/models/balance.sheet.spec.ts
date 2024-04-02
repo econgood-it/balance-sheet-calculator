@@ -5,6 +5,7 @@ import {
   BalanceSheetType,
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
+import { makeRating } from '../../src/models/rating';
 
 describe('BalanceSheet', () => {
   it('is created with default values', () => {
@@ -19,5 +20,41 @@ describe('BalanceSheet', () => {
       ),
       stakeholderWeights: [],
     });
+  });
+  it('returns topics', () => {
+    const balanceSheet = makeBalanceSheet();
+    expect(balanceSheet.getTopics().length).toBe(20);
+    balanceSheet.getTopics().forEach((topic) => {
+      expect(topic.isTopic()).toBeTruthy();
+    });
+  });
+
+  it('returns aspects of topic', () => {
+    const balanceSheet = makeBalanceSheet();
+    const topics = balanceSheet.getTopics();
+    const firstTopic = topics[0];
+    const aspects = balanceSheet.getAspectsOfTopic(firstTopic.shortName);
+    expect(aspects).toEqual([
+      makeRating({
+        shortName: 'A1.1',
+        name: 'Working conditions and social impact in the supply chain',
+        estimations: 0,
+        points: 0,
+        maxPoints: 50,
+        weight: 1,
+        isWeightSelectedByUser: false,
+        isPositive: true,
+      }),
+      makeRating({
+        shortName: 'A1.2',
+        name: 'Negative aspect: violation of human dignity in the supply chain',
+        estimations: 0,
+        points: 0,
+        maxPoints: -200,
+        weight: 1,
+        isWeightSelectedByUser: false,
+        isPositive: false,
+      }),
+    ]);
   });
 });
