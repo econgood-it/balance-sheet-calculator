@@ -1,7 +1,7 @@
 import { DataSource } from 'typeorm';
 import { BalanceSheetEntity } from '../src/entities/balance.sheet.entity';
 import { OrganizationEntity } from '../src/entities/organization.entity';
-import { Organization } from '../src/models/organization';
+import { OldOrganization } from '../src/models/oldOrganization';
 import { User } from '../src/models/user';
 import {
   balanceSheetFactory,
@@ -16,7 +16,7 @@ export type OrganizationBuilderResult = {
 };
 
 export class OrganizationBuilder {
-  private organization: Organization = organizationFactory.default();
+  private organization: OldOrganization = organizationFactory.default();
   private members: { id: string }[] = [];
   private balanceSheetEntities: BalanceSheetEntity[] = [];
 

@@ -6,7 +6,7 @@ import {
   BalanceSheetType,
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
-import { Organization } from '../models/organization';
+import { OldOrganization } from '../models/oldOrganization';
 import { OldStakeholderWeight } from '../models/oldStakeholderWeight';
 import { WorkbookSection } from '../entities/workbook.entity';
 import { z } from 'zod';
@@ -253,7 +253,7 @@ export const balanceSheetFactory = {
 };
 
 export const organizationFactory = {
-  default: (): Organization => ({
+  default: (): OldOrganization => ({
     name: 'My organization',
     address: {
       street: 'Example street',

@@ -1,5 +1,5 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { Organization } from '../models/organization';
+import { OldOrganization } from '../models/oldOrganization';
 
 import { z } from 'zod';
 import {
@@ -21,7 +21,7 @@ export class OrganizationEntity {
   public readonly id: number | undefined;
 
   @Column('jsonb')
-  public organization: Organization;
+  public organization: OldOrganization;
 
   @Column('jsonb')
   public readonly members: Member[];
@@ -34,7 +34,7 @@ export class OrganizationEntity {
 
   public constructor(
     id: number | undefined,
-    organization: Organization,
+    organization: OldOrganization,
     members: Member[]
   ) {
     this.id = id;
