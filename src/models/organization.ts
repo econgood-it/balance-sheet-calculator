@@ -4,7 +4,7 @@ import { NoAccessError } from '../exceptions/no.access.error';
 import { ConflictError } from '../exceptions/conflict.error';
 
 type OrganizationOpts = {
-  id: string | undefined;
+  id: number | undefined;
   name: string;
   address: {
     city: string;
@@ -18,7 +18,7 @@ type OrganizationOpts = {
   }[];
 };
 
-type Organization = OrganizationOpts & {
+export type Organization = OrganizationOpts & {
   withFields: (fields: Partial<OrganizationOpts>) => Organization;
   invite: (email: string) => Organization;
   join: (user: User) => Organization;

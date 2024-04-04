@@ -7,6 +7,7 @@ import { Rating } from './rating';
 import { StakeholderWeight } from './stakeholder.weight';
 import deepFreeze from 'deep-freeze';
 import { makeRatingFactory } from '../factories/rating.factory';
+import { Organization } from './organization';
 
 type BalanceSheetOpts = {
   id: number | undefined;
@@ -21,6 +22,7 @@ type BalanceSheetOpts = {
 export type BalanceSheet = BalanceSheetOpts & {
   getTopics: () => Rating[];
   getAspectsOfTopic: (shortNameTopic: string) => Rating[];
+  assignOrganization: (organization: Organization) => BalanceSheet;
 };
 
 export function makeBalanceSheet(opts?: BalanceSheetOpts): BalanceSheet {
@@ -47,9 +49,14 @@ export function makeBalanceSheet(opts?: BalanceSheetOpts): BalanceSheet {
     );
   }
 
+  function assignOrganization(organization: Organization): BalanceSheet {
+    return makeBalanceSheet({ ...data, organizationId: organization.id });
+  }
+
   return deepFreeze({
     ...data,
     getTopics,
     getAspectsOfTopic,
+    assignOrganization,
   });
 }

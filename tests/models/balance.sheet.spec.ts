@@ -6,6 +6,7 @@ import {
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import { makeRating } from '../../src/models/rating';
+import { makeOrganization } from '../../src/models/organization';
 
 describe('BalanceSheet', () => {
   it('is created with default values', () => {
@@ -56,5 +57,12 @@ describe('BalanceSheet', () => {
         isPositive: false,
       }),
     ]);
+  });
+
+  it('assigns an organization', () => {
+    const organization = makeOrganization().withFields({ id: 1 });
+    const balanceSheet = makeBalanceSheet();
+    const newBalanceSheet = balanceSheet.assignOrganization(organization);
+    expect(newBalanceSheet.organizationId).toBe(1);
   });
 });
