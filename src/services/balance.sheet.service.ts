@@ -12,13 +12,13 @@ import { TopicWeightsReader } from '../reader/balanceSheetReader/topic.weights.r
 import { BalanceSheetExcelDiffResponseBody } from '@ecogood/e-calculator-schemas/dist/balance.sheet.diff';
 import { BalanceSheetPatchRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
 import { parseLanguageParameter } from '../language/translations';
-import { IRepoProvider } from '../repositories/repo.provider';
+import { IOldRepoProvider } from '../repositories/oldRepoProvider';
 import { Authorization } from '../security/authorization';
 
 export class BalanceSheetService {
   constructor(
     private dataSource: DataSource,
-    private repoProvider: IRepoProvider
+    private repoProvider: IOldRepoProvider
   ) {}
 
   public async getBalanceSheet(

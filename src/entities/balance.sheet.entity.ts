@@ -17,9 +17,9 @@ import { StakeholderWeightCalculator } from '../calculations/stakeholder.weight.
 import { TopicWeightCalculator } from '../calculations/topic.weight.calculator';
 import { MatrixFormat } from '../dto/balance.sheet.dto';
 import { DatabaseValidationError } from '../exceptions/databaseValidationError';
-import { Translations, translateBalanceSheet } from '../language/translations';
+import { translateBalanceSheet, Translations } from '../language/translations';
 import { EntityWithDtoMerger } from '../merge/entity.with.dto.merger';
-import { OldBalanceSheet, BalanceSheetSchema } from '../models/oldBalanceSheet';
+import { BalanceSheetSchema, OldBalanceSheet } from '../models/oldBalanceSheet';
 import { companyFactsToResponse } from '../models/oldCompanyFacts';
 import { isTopic, sortRatings } from '../models/oldRating';
 import { IndustryProvider } from '../providers/industry.provider';
@@ -50,6 +50,13 @@ export class BalanceSheetEntity {
     (organizationEntity) => organizationEntity.balanceSheetEntities
   )
   public readonly organizationEntity: OrganizationEntity | undefined;
+
+  // @ManyToOne(() => OrganizationEntity)
+  // @JoinColumn({ name: 'organizationEntityId' })
+  // public readonly organizationEntity: OrganizationEntity | undefined;
+
+  @Column()
+  public organizationEntityId: number | undefined;
 
   public constructor(id: number | undefined, balanceSheet: OldBalanceSheet) {
     this.id = id;
@@ -177,7 +184,7 @@ export class BalanceSheetEntity {
     }
   }
 
-  public toBalanceSheet(): OldBalanceSheet {
+  public toOldBalanceSheet(): OldBalanceSheet {
     return this.balanceSheet;
   }
 }

@@ -39,12 +39,12 @@ export function makeIndustrySector(opts: IndustrySector): IndustrySector {
 
 type MainOriginOfOtherSuppliersOpts = {
   totalPurchaseFromSuppliers: number;
-  countryCode: string;
+  countryCode: string | undefined;
   supplyFractions: readonly SupplyFraction[];
 };
 
 export type MainOriginOfOtherSuppliers = {
-  countryCode: string;
+  countryCode: string | undefined;
   costs: number;
 };
 
@@ -85,7 +85,7 @@ type CompanyFactsOpts = {
   hasCanteen?: boolean;
   isB2B: boolean;
   averageJourneyToWorkForStaffInKm: number;
-  mainOriginOfOtherSuppliers: { countryCode: string };
+  mainOriginOfOtherSuppliers: { countryCode: string | undefined };
   supplyFractions: readonly SupplyFraction[];
   employeesFractions: readonly EmployeesFraction[];
   industrySectors: readonly IndustrySector[];

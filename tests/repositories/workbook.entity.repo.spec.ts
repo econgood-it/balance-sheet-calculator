@@ -9,26 +9,26 @@ import { workbookEntityFromFile } from '../workbook';
 import { WorkbookEntity } from '../../src/entities/workbook.entity';
 import { EntityManager } from 'typeorm';
 import {
-  IOrganizationEntityRepo,
-  OrganizationEntityRepository,
-} from '../../src/repositories/organization.entity.repo';
+  IOldOrganizationEntityRepo,
+  OldOrganizationEntityRepository,
+} from '../../src/repositories/oldOrganization.entity.repo';
 import {
   BalanceSheetEntityRepository,
   IBalanceSheetEntityRepo,
-} from '../../src/repositories/balance.sheet.entity.repo';
+} from '../../src/repositories/old.balance.sheet.entity.repo';
 
-import { IRepoProvider } from '../../src/repositories/repo.provider';
+import { IOldRepoProvider } from '../../src/repositories/oldRepoProvider';
 
 jest.mock('axios');
 const mockedAxios = jest.mocked(axios);
 
-export class InMemoryRepoProvider implements IRepoProvider {
+export class InMemoryRepoProvider implements IOldRepoProvider {
   constructor(private inMemoryWorkbookEntityRepo: InMemoryWorkbookEntityRepo) {}
 
   getOrganizationEntityRepo(
     entityManager: EntityManager
-  ): IOrganizationEntityRepo {
-    return new OrganizationEntityRepository(entityManager);
+  ): IOldOrganizationEntityRepo {
+    return new OldOrganizationEntityRepository(entityManager);
   }
 
   getBalanceSheetEntityRepo(

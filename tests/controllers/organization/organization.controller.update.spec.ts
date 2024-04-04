@@ -7,8 +7,8 @@ import { OrganizationPaths } from '../../../src/controllers/organization.control
 import { DatabaseSourceCreator } from '../../../src/databaseSourceCreator';
 import { organizationFactory } from '../../../src/openapi/examples';
 import { ConfigurationReader } from '../../../src/reader/configuration.reader';
-import { IOrganizationEntityRepo } from '../../../src/repositories/organization.entity.repo';
-import { RepoProvider } from '../../../src/repositories/repo.provider';
+import { IOldOrganizationEntityRepo } from '../../../src/repositories/oldOrganization.entity.repo';
+import { OldRepoProvider } from '../../../src/repositories/oldRepoProvider';
 import { AuthBuilder } from '../../AuthBuilder';
 import { OrganizationBuilder } from '../../OrganizationBuilder';
 import { InMemoryAuthentication } from '../in.memory.authentication';
@@ -17,7 +17,7 @@ describe('Organization Controller', () => {
   let dataSource: DataSource;
   let app: Application;
   const configuration = ConfigurationReader.read();
-  let organizationRepo: IOrganizationEntityRepo;
+  let organizationRepo: IOldOrganizationEntityRepo;
   const authBuilder = new AuthBuilder();
   const auth = authBuilder.addUser();
   const authWithoutOrgaPermissions = authBuilder.addUser();
@@ -26,7 +26,7 @@ describe('Organization Controller', () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
       configuration
     );
-    const repoProvider = new RepoProvider(configuration);
+    const repoProvider = new OldRepoProvider(configuration);
     organizationRepo = repoProvider.getOrganizationEntityRepo(
       dataSource.manager
     );

@@ -12,7 +12,7 @@ import {
   BalanceSheetType,
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
-import { RepoProvider } from '../../../src/repositories/repo.provider';
+import { OldRepoProvider } from '../../../src/repositories/oldRepoProvider';
 import { OrganizationBuilder } from '../../OrganizationBuilder';
 import { InMemoryAuthentication } from '../in.memory.authentication';
 
@@ -21,7 +21,7 @@ describe('Update endpoint of Balance Sheet Controller', () => {
   let app: Application;
   const configuration = ConfigurationReader.read();
   const endpointPath = '/v1/balancesheets';
-  let repoProvider: RepoProvider;
+  let repoProvider: OldRepoProvider;
   const authBuilder = new AuthBuilder();
   const auth = authBuilder.addUser();
   const authWithoutOrgaPermissions = authBuilder.addUser();
@@ -31,7 +31,7 @@ describe('Update endpoint of Balance Sheet Controller', () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
       configuration
     );
-    repoProvider = new RepoProvider(configuration);
+    repoProvider = new OldRepoProvider(configuration);
     app = new App(
       dataSource,
       configuration,

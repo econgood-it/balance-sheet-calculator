@@ -6,7 +6,7 @@ import { LoggingService } from './logging';
 import { ConfigurationReader } from './reader/configuration.reader';
 import { User as AuthUser } from './models/user';
 import App from './app';
-import { RepoProvider } from './repositories/repo.provider';
+import { OldRepoProvider } from './repositories/oldRepoProvider';
 import { ZitadelAuthentication } from './security/authentication';
 
 declare global {
@@ -26,7 +26,7 @@ DatabaseSourceCreator.createDataSourceAndRunMigrations(configuration)
     const app = new App(
       dataSource,
       configuration,
-      new RepoProvider(configuration),
+      new OldRepoProvider(configuration),
       new ZitadelAuthentication(
         configuration.zitadelKeyId,
         configuration.zitadelKey,

@@ -1,4 +1,3 @@
-import { z } from 'zod';
 import { makeRating } from '../../src/models/rating';
 
 describe('Rating', () => {

@@ -5,15 +5,15 @@ import { ConfigurationReader } from '../../src/reader/configuration.reader';
 
 import { v4 as uuid4 } from 'uuid';
 import {
-  IOrganizationEntityRepo,
-  OrganizationEntityRepository,
-} from '../../src/repositories/organization.entity.repo';
+  IOldOrganizationEntityRepo,
+  OldOrganizationEntityRepository,
+} from '../../src/repositories/oldOrganization.entity.repo';
 
 import { Role } from '../../src/models/user';
 import { OrganizationBuilder } from '../OrganizationBuilder';
 
 describe('OrganizationEntityRepo', () => {
-  let organizationEntityRepo: IOrganizationEntityRepo;
+  let organizationEntityRepo: IOldOrganizationEntityRepo;
   let dataSource: DataSource;
   const organization = {
     name: 'My organization',
@@ -30,7 +30,7 @@ describe('OrganizationEntityRepo', () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
       ConfigurationReader.read()
     );
-    organizationEntityRepo = new OrganizationEntityRepository(
+    organizationEntityRepo = new OldOrganizationEntityRepository(
       dataSource.manager
     );
   });

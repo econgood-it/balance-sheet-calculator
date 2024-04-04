@@ -5,7 +5,7 @@ import { DatabaseSourceCreator } from '../../src/databaseSourceCreator';
 import App from '../../src/app';
 import { AuthBuilder } from '../AuthBuilder';
 import supertest from 'supertest';
-import { RepoProvider } from '../../src/repositories/repo.provider';
+import { OldRepoProvider } from '../../src/repositories/oldRepoProvider';
 import { InMemoryAuthentication } from './in.memory.authentication';
 
 describe('Region Controller', () => {
@@ -22,7 +22,7 @@ describe('Region Controller', () => {
     app = new App(
       dataSource,
       configuration,
-      new RepoProvider(configuration),
+      new OldRepoProvider(configuration),
       new InMemoryAuthentication(authBuilder.getTokenMap())
     ).app;
   });

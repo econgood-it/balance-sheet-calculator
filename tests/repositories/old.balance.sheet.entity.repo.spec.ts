@@ -11,9 +11,9 @@ import { v4 as uuid4 } from 'uuid';
 import {
   BalanceSheetEntityRepository,
   IBalanceSheetEntityRepo,
-} from '../../src/repositories/balance.sheet.entity.repo';
+} from '../../src/repositories/old.balance.sheet.entity.repo';
 import { OrganizationEntity } from '../../src/entities/organization.entity';
-import { OrganizationEntityRepository } from '../../src/repositories/organization.entity.repo';
+import { OldOrganizationEntityRepository } from '../../src/repositories/oldOrganization.entity.repo';
 
 describe('BalanceSheetRepo', () => {
   let balanceSheetEntityRepository: IBalanceSheetEntityRepo;
@@ -35,7 +35,7 @@ describe('BalanceSheetRepo', () => {
   it('loads organization relation', async () => {
     const email = `${uuid4()}@example.com`;
     const user = { id: email };
-    const organizationRepo = new OrganizationEntityRepository(
+    const organizationRepo = new OldOrganizationEntityRepository(
       dataSource.manager
     );
     const organizationEntity = await organizationRepo.save(
@@ -63,7 +63,7 @@ describe('BalanceSheetRepo', () => {
       new BalanceSheetEntity(undefined, balanceSheetFactory.emptyFullV508())
     );
     const balanceSheetJson = {
-      ...balanceSheetEntity.toBalanceSheet(),
+      ...balanceSheetEntity.toOldBalanceSheet(),
       invalid_field: 'This is invalid',
     };
     await dataSource.query(
@@ -81,7 +81,7 @@ describe('BalanceSheetRepo', () => {
     );
     await dataSource.query(
       `UPDATE balance_sheet_entity SET "balanceSheet" = '${JSON.stringify(
-        balanceSheetEntity.toBalanceSheet()
+        balanceSheetEntity.toOldBalanceSheet()
       )}'::jsonb WHERE id = ${balanceSheetEntity.id};`
     );
   });

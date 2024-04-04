@@ -3,13 +3,13 @@ import { Application } from 'express';
 import { ConfigurationReader } from '../../src/reader/configuration.reader';
 import { AuthBuilder } from '../AuthBuilder';
 import { DatabaseSourceCreator } from '../../src/databaseSourceCreator';
-import { RepoProvider } from '../../src/repositories/repo.provider';
+import { OldRepoProvider } from '../../src/repositories/oldRepoProvider';
 import App from '../../src/app';
 import { InMemoryAuthentication } from './in.memory.authentication';
 import supertest from 'supertest';
 import { OrganizationBuilder } from '../OrganizationBuilder';
 import { UserPaths } from '../../src/controllers/user.controller';
-import { IOrganizationEntityRepo } from '../../src/repositories/organization.entity.repo';
+import { IOldOrganizationEntityRepo } from '../../src/repositories/oldOrganization.entity.repo';
 
 describe('User Controller', () => {
   let dataSource: DataSource;
@@ -18,13 +18,13 @@ describe('User Controller', () => {
   const authBuilder = new AuthBuilder();
   const auth = authBuilder.addUser();
   const authOtherUser = authBuilder.addUser();
-  let orgaRepo: IOrganizationEntityRepo;
+  let orgaRepo: IOldOrganizationEntityRepo;
 
   beforeAll(async () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
       configuration
     );
-    const repoProvider = new RepoProvider(configuration);
+    const repoProvider = new OldRepoProvider(configuration);
     orgaRepo = repoProvider.getOrganizationEntityRepo(dataSource.manager);
     app = new App(
       dataSource,

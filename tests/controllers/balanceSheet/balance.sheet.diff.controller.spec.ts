@@ -7,7 +7,7 @@ import { ConfigurationReader } from '../../../src/reader/configuration.reader';
 
 import { AuthBuilder } from '../../AuthBuilder';
 import path from 'path';
-import { RepoProvider } from '../../../src/repositories/repo.provider';
+import { OldRepoProvider } from '../../../src/repositories/oldRepoProvider';
 import { InMemoryAuthentication } from '../in.memory.authentication';
 import { BalanceSheetPaths } from '../../../src/controllers/balance.sheet.controller';
 
@@ -26,7 +26,7 @@ describe('Balance Sheet Controller', () => {
     app = new App(
       dataSource,
       configuration,
-      new RepoProvider(configuration),
+      new OldRepoProvider(configuration),
       new InMemoryAuthentication(authBuilder.getTokenMap())
     ).app;
   });

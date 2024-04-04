@@ -1,7 +1,7 @@
 import { EntityManager, Repository } from 'typeorm';
 import { OrganizationEntity } from '../entities/organization.entity';
 
-export interface IOrganizationEntityRepo {
+export interface IOldOrganizationEntityRepo {
   findByIdOrFail(
     id: number,
     loadBalanceSheetEntities?: boolean
@@ -14,7 +14,9 @@ export interface IOrganizationEntityRepo {
   remove(organizationEntity: OrganizationEntity): Promise<OrganizationEntity>;
 }
 
-export class OrganizationEntityRepository implements IOrganizationEntityRepo {
+export class OldOrganizationEntityRepository
+  implements IOldOrganizationEntityRepo
+{
   private repo: Repository<OrganizationEntity>;
   constructor(manager: EntityManager) {
     this.repo = manager.getRepository(OrganizationEntity);

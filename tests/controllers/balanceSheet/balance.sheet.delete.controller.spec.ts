@@ -16,7 +16,7 @@ import {
 } from '../../../src/entities/balance.sheet.entity';
 import { CORRELATION_HEADER_NAME } from '../../../src/middleware/correlation.id.middleware';
 import { companyFactsJsonFactory } from '../../../src/openapi/examples';
-import { RepoProvider } from '../../../src/repositories/repo.provider';
+import { OldRepoProvider } from '../../../src/repositories/oldRepoProvider';
 import { AuthBuilder } from '../../AuthBuilder';
 import { OrganizationBuilder } from '../../OrganizationBuilder';
 import { InMemoryAuthentication } from '../in.memory.authentication';
@@ -39,7 +39,7 @@ describe('Balance Sheet Controller', () => {
     app = new App(
       dataSource,
       configuration,
-      new RepoProvider(configuration),
+      new OldRepoProvider(configuration),
       new InMemoryAuthentication(authBuilder.getTokenMap())
     ).app;
   });

@@ -1,4 +1,3 @@
-import { z } from 'zod';
 import deepFreeze from 'deep-freeze';
 
 type RatingOpts = {

@@ -20,9 +20,9 @@ import {
   organizationFactory,
 } from '../../../src/openapi/examples';
 import { ConfigurationReader } from '../../../src/reader/configuration.reader';
-import { IBalanceSheetEntityRepo } from '../../../src/repositories/balance.sheet.entity.repo';
-import { IOrganizationEntityRepo } from '../../../src/repositories/organization.entity.repo';
-import { RepoProvider } from '../../../src/repositories/repo.provider';
+import { IBalanceSheetEntityRepo } from '../../../src/repositories/old.balance.sheet.entity.repo';
+import { IOldOrganizationEntityRepo } from '../../../src/repositories/oldOrganization.entity.repo';
+import { OldRepoProvider } from '../../../src/repositories/oldRepoProvider';
 import { AuthBuilder } from '../../AuthBuilder';
 import { OrganizationBuilder } from '../../OrganizationBuilder';
 import { InMemoryAuthentication } from '../in.memory.authentication';
@@ -44,7 +44,7 @@ describe('Organization Controller', () => {
   let dataSource: DataSource;
   let app: Application;
   const configuration = ConfigurationReader.read();
-  let organizationRepo: IOrganizationEntityRepo;
+  let organizationRepo: IOldOrganizationEntityRepo;
   const authBuilder = new AuthBuilder();
   const auth = authBuilder.addUser();
 
@@ -52,7 +52,7 @@ describe('Organization Controller', () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
       configuration
     );
-    const repoProvider = new RepoProvider(configuration);
+    const repoProvider = new OldRepoProvider(configuration);
     organizationRepo = repoProvider.getOrganizationEntityRepo(
       dataSource.manager
     );
@@ -100,7 +100,7 @@ describe('Organization Balance Sheet Controller', () => {
   let dataSource: DataSource;
   let app: Application;
   const configuration = ConfigurationReader.read();
-  let organizationRepo: IOrganizationEntityRepo;
+  let organizationRepo: IOldOrganizationEntityRepo;
   let balaneSheetEntityRepo: IBalanceSheetEntityRepo;
   const authBuilder = new AuthBuilder();
   const auth = authBuilder.addUser();
@@ -110,7 +110,7 @@ describe('Organization Balance Sheet Controller', () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
       configuration
     );
-    const repoProvider = new RepoProvider(configuration);
+    const repoProvider = new OldRepoProvider(configuration);
     organizationRepo = repoProvider.getOrganizationEntityRepo(
       dataSource.manager
     );
@@ -373,7 +373,7 @@ describe('Organization Invitation Controller', () => {
   let dataSource: DataSource;
   let app: Application;
   const configuration = ConfigurationReader.read();
-  let organizationRepo: IOrganizationEntityRepo;
+  let organizationRepo: IOldOrganizationEntityRepo;
   const authBuilder = new AuthBuilder();
   const auth = authBuilder.addUser();
 
@@ -381,7 +381,7 @@ describe('Organization Invitation Controller', () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
       configuration
     );
-    const repoProvider = new RepoProvider(configuration);
+    const repoProvider = new OldRepoProvider(configuration);
     organizationRepo = repoProvider.getOrganizationEntityRepo(
       dataSource.manager
     );

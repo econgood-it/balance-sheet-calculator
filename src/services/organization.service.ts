@@ -15,7 +15,7 @@ import { NoAccessError } from '../exceptions/no.access.error';
 import NotFoundException from '../exceptions/not.found.exception';
 import { parseLanguageParameter } from '../language/translations';
 import { BalanceSheetReader } from '../reader/balanceSheetReader/balance.sheet.reader';
-import { IRepoProvider } from '../repositories/repo.provider';
+import { IOldRepoProvider } from '../repositories/oldRepoProvider';
 import { Authorization } from '../security/authorization';
 import { parseSaveFlag } from './utils';
 import { z } from 'zod';
@@ -23,7 +23,7 @@ import { z } from 'zod';
 export class OrganizationService {
   constructor(
     private dataSource: DataSource,
-    private repoProvider: IRepoProvider
+    private repoProvider: IOldRepoProvider
   ) {}
 
   public async createOrganization(

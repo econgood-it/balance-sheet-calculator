@@ -1,5 +1,5 @@
 import { DataSource } from 'typeorm';
-import { IRepoProvider } from '../repositories/repo.provider';
+import { IOldRepoProvider } from '../repositories/oldRepoProvider';
 import { NextFunction, Request, Response } from 'express';
 import { handle } from '../exceptions/error.handler';
 import { NoAccessError } from '../exceptions/no.access.error';
@@ -7,7 +7,7 @@ import { NoAccessError } from '../exceptions/no.access.error';
 export class UserService {
   constructor(
     private dataSource: DataSource,
-    private repoProvider: IRepoProvider
+    private repoProvider: IOldRepoProvider
   ) {}
 
   public async getInvitations(req: Request, res: Response, next: NextFunction) {

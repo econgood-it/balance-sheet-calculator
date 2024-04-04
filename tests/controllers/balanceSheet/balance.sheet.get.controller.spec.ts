@@ -7,7 +7,7 @@ import { Application } from 'express';
 import { AuthBuilder } from '../../AuthBuilder';
 import { CORRELATION_HEADER_NAME } from '../../../src/middleware/correlation.id.middleware';
 import { OldRating, RatingResponseBody } from '../../../src/models/oldRating';
-import { RepoProvider } from '../../../src/repositories/repo.provider';
+import { OldRepoProvider } from '../../../src/repositories/oldRepoProvider';
 import { OrganizationBuilder } from '../../OrganizationBuilder';
 import { InMemoryAuthentication } from '../in.memory.authentication';
 import supertest = require('supertest');
@@ -29,7 +29,7 @@ describe('Balance Sheet Controller', () => {
     app = new App(
       dataSource,
       configuration,
-      new RepoProvider(configuration),
+      new OldRepoProvider(configuration),
       new InMemoryAuthentication(authBuilder.getTokenMap())
     ).app;
   });

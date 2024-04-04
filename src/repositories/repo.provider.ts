@@ -1,45 +1,23 @@
 import { EntityManager } from 'typeorm';
-import {
-  IOrganizationEntityRepo,
-  OrganizationEntityRepository,
-} from './organization.entity.repo';
-import {
-  BalanceSheetEntityRepository,
-  IBalanceSheetEntityRepo,
-} from './balance.sheet.entity.repo';
-import {
-  IWorkbookEntityRepo,
-  WorkbookEntityRepo,
-} from './workbook.entity.repo';
 import { Configuration } from '../reader/configuration.reader';
+import {
+  IBalanceSheetRepo,
+  makeBalanceSheetRepository,
+} from './balance.sheet.repo';
+import deepFreeze from 'deep-freeze';
 
 export interface IRepoProvider {
-  getOrganizationEntityRepo(
-    entityManager: EntityManager
-  ): IOrganizationEntityRepo;
-
-  getBalanceSheetEntityRepo(
-    entityManager: EntityManager
-  ): IBalanceSheetEntityRepo;
-
-  getWorkbookEntityRepo(): IWorkbookEntityRepo;
+  getBalanceSheetRepo(entityManager: EntityManager): IBalanceSheetRepo;
 }
 
-export class RepoProvider implements IRepoProvider {
-  constructor(private configuration: Configuration) {}
-  getOrganizationEntityRepo(
+export function makeRepoProvider(configuration: Configuration): IRepoProvider {
+  function getBalanceSheetRepo(
     entityManager: EntityManager
-  ): IOrganizationEntityRepo {
-    return new OrganizationEntityRepository(entityManager);
+  ): IBalanceSheetRepo {
+    return makeBalanceSheetRepository(entityManager);
   }
 
-  getBalanceSheetEntityRepo(
-    entityManager: EntityManager
-  ): IBalanceSheetEntityRepo {
-    return new BalanceSheetEntityRepository(entityManager);
-  }
-
-  getWorkbookEntityRepo(): IWorkbookEntityRepo {
-    return new WorkbookEntityRepo(this.configuration.workbookApiToken);
-  }
+  return deepFreeze({
+    getBalanceSheetRepo,
+  });
 }

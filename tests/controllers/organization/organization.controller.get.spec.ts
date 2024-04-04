@@ -5,7 +5,7 @@ import App from '../../../src/app';
 import { AuthBuilder } from '../../AuthBuilder';
 import supertest from 'supertest';
 import { OrganizationPaths } from '../../../src/controllers/organization.controller';
-import { RepoProvider } from '../../../src/repositories/repo.provider';
+import { OldRepoProvider } from '../../../src/repositories/oldRepoProvider';
 import { DatabaseSourceCreator } from '../../../src/databaseSourceCreator';
 import { OrganizationBuilder } from '../../OrganizationBuilder';
 import { InMemoryAuthentication } from '../in.memory.authentication';
@@ -22,7 +22,7 @@ describe('Organization Controller Get Endpoint', () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
       configuration
     );
-    const repoProvider = new RepoProvider(configuration);
+    const repoProvider = new OldRepoProvider(configuration);
     app = new App(
       dataSource,
       configuration,
@@ -108,7 +108,7 @@ describe('Organization Controller Get Balance Sheets Endpoint', () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
       configuration
     );
-    const repoProvider = new RepoProvider(configuration);
+    const repoProvider = new OldRepoProvider(configuration);
     app = new App(
       dataSource,
       configuration,

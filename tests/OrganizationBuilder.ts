@@ -7,8 +7,8 @@ import {
   balanceSheetFactory,
   organizationFactory,
 } from '../src/openapi/examples';
-import { BalanceSheetEntityRepository } from '../src/repositories/balance.sheet.entity.repo';
-import { OrganizationEntityRepository } from '../src/repositories/organization.entity.repo';
+import { BalanceSheetEntityRepository } from '../src/repositories/old.balance.sheet.entity.repo';
+import { OldOrganizationEntityRepository } from '../src/repositories/oldOrganization.entity.repo';
 import { UserBuilder } from './UserBuilder';
 
 export type OrganizationBuilderResult = {
@@ -72,7 +72,7 @@ export class OrganizationBuilder {
           );
         }
 
-        return new OrganizationEntityRepository(dataSource.manager).save(
+        return new OldOrganizationEntityRepository(dataSource.manager).save(
           organizationEntity
         );
       }

@@ -19,7 +19,7 @@ import { LoggingService } from './logging';
 import correlationIdMiddleware from './middleware/correlation.id.middleware';
 import morganMiddleware from './middleware/morgan.http.logging.middleware';
 import { Configuration } from './reader/configuration.reader';
-import { IRepoProvider } from './repositories/repo.provider';
+import { IOldRepoProvider } from './repositories/oldRepoProvider';
 import { BalanceSheetService } from './services/balance.sheet.service';
 import { HealthCheckService } from './services/health.check.service';
 import { IndustryService } from './services/industry.service';
@@ -45,7 +45,7 @@ class App {
   constructor(
     dataSource: DataSource,
     private configuration: Configuration,
-    repoProvider: IRepoProvider,
+    repoProvider: IOldRepoProvider,
     authProvider: IAuthenticationProvider
   ) {
     this.app = express();
