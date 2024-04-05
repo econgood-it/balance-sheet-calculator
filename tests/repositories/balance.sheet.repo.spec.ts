@@ -37,35 +37,43 @@ describe('BalanceSheetRepo', () => {
     );
     const result = await balanceSheetRepository.findByIdOrFail(savedResult.id!);
 
+    expect(savedResult.organizationId).toEqual(organization.id);
     expect(result.organizationId).toEqual(organization.id);
     expect(result.organizationId).toBeDefined();
   });
 
-  // it('fails if the value of balance sheet column is invalid', async () => {
-  //   const balanceSheetEntity = await balanceSheetRepository.save(
-  //     new BalanceSheetEntity(undefined, balanceSheetFactory.emptyFullV508())
-  //   );
-  //   const balanceSheetJson = {
-  //     ...balanceSheetEntity.toOldBalanceSheet(),
-  //     invalid_field: 'This is invalid',
-  //   };
-  //   await dataSource.query(
-  //     `UPDATE balance_sheet_entity SET "balanceSheet" = '${JSON.stringify(
-  //       balanceSheetJson
-  //     )}'::jsonb WHERE id = ${balanceSheetEntity.id};`
-  //   );
-  //   await expect(
-  //     balanceSheetRepository.findByIdOrFail(balanceSheetEntity.id!)
-  //   ).rejects.toThrow(
-  //     new RegExp(
-  //       `.*Column balanceSheet is not valid.*"idOfEntity":${balanceSheetEntity.id}.*unrecognized_keys.*invalid_field`,
-  //       'i'
-  //     )
-  //   );
-  //   await dataSource.query(
-  //     `UPDATE balance_sheet_entity SET "balanceSheet" = '${JSON.stringify(
-  //       balanceSheetEntity.toOldBalanceSheet()
-  //     )}'::jsonb WHERE id = ${balanceSheetEntity.id};`
-  //   );
-  // });
+  it('fails if the value of balance sheet column is invalid', async () => {
+    const balanceSheet = await balanceSheetRepository.save(makeBalanceSheet());
+    const balanceSheetJson = {
+      ...balanceSheet,
+      invalid_field: 'This is invalid',
+    };
+    await dataSource.query(
+      `UPDATE balance_sheet_entity SET "balanceSheet" = '${JSON.stringify(
+        balanceSheetJson
+      )}'::jsonb WHERE id = ${balanceSheet.id};`
+    );
+    await expect(
+      balanceSheetRepository.findByIdOrFail(balanceSheet.id!)
+    ).rejects.toThrow(
+      new RegExp(
+        `.*Column balanceSheet is not valid.*"idOfEntity":${balanceSheet.id}.*unrecognized_keys.*invalid_field`,
+        'i'
+      )
+    );
+    // Reset the balance sheet column to the original value
+    await dataSource.query(
+      `UPDATE balance_sheet_entity SET "balanceSheet" = '${JSON.stringify({
+        ...balanceSheet,
+      })}'::jsonb WHERE id = ${balanceSheet.id};`
+    );
+  });
+
+  it('removes balance sheet', async () => {
+    const balanceSheet = await balanceSheetRepository.save(makeBalanceSheet());
+    await balanceSheetRepository.remove(balanceSheet);
+    await expect(
+      balanceSheetRepository.findByIdOrFail(balanceSheet.id!)
+    ).rejects.toThrow();
+  });
 });

@@ -9,7 +9,10 @@ import { DataSource } from 'typeorm';
 import App from '../../../src/app';
 import { OrganizationPaths } from '../../../src/controllers/organization.controller';
 import { DatabaseSourceCreator } from '../../../src/databaseSourceCreator';
-import { BalanceSheetEntity } from '../../../src/entities/balance.sheet.entity';
+import {
+  BalanceSheetDBSchema,
+  BalanceSheetEntity,
+} from '../../../src/entities/balance.sheet.entity';
 import { OldRatingsFactory } from '../../../src/factories/oldRatingsFactory';
 import { INDUSTRY_CODE_FOR_FINANCIAL_SERVICES } from '../../../src/models/oldCompanyFacts';
 import { OldRating, RatingResponseBody } from '../../../src/models/oldRating';
@@ -141,7 +144,7 @@ describe('Organization Balance Sheet Controller', () => {
     expect(response.status).toBe(200);
     const balanceSheetEntity = new BalanceSheetEntity(
       response.body.id,
-      balanceSheetBuilder.build()
+      BalanceSheetDBSchema.parse(balanceSheetBuilder.build())
     );
     await balanceSheetEntity.reCalculate();
     expect(response.body).toMatchObject(balanceSheetEntity.toJson('en'));

@@ -19,13 +19,32 @@ import { MatrixFormat } from '../dto/balance.sheet.dto';
 import { DatabaseValidationError } from '../exceptions/databaseValidationError';
 import { translateBalanceSheet, Translations } from '../language/translations';
 import { EntityWithDtoMerger } from '../merge/entity.with.dto.merger';
-import { BalanceSheetSchema, OldBalanceSheet } from '../models/oldBalanceSheet';
-import { companyFactsToResponse } from '../models/oldCompanyFacts';
-import { isTopic, sortRatings } from '../models/oldRating';
+import { OldBalanceSheet } from '../models/oldBalanceSheet';
+import {
+  CompanyFactsSchema,
+  companyFactsToResponse,
+} from '../models/oldCompanyFacts';
+import { isTopic, RatingSchema, sortRatings } from '../models/oldRating';
 import { IndustryProvider } from '../providers/industry.provider';
 import Provider from '../providers/provider';
 import { RegionProvider } from '../providers/region.provider';
 import { OrganizationEntity } from './organization.entity';
+import {
+  BalanceSheetType,
+  BalanceSheetVersion,
+} from '@ecogood/e-calculator-schemas/dist/shared.schemas';
+import { StakeholderWeightSchema } from '../models/oldStakeholderWeight';
+
+const BalanceSheetVersionSchema = z.nativeEnum(BalanceSheetVersion);
+export const BalanceSheetDBSchema = z.object({
+  type: z.nativeEnum(BalanceSheetType),
+  version: BalanceSheetVersionSchema,
+  companyFacts: CompanyFactsSchema,
+  ratings: RatingSchema.array(),
+  stakeholderWeights: StakeholderWeightSchema.array(),
+});
+
+type BalanceSheetDB = z.infer<typeof BalanceSheetDBSchema>;
 
 export const BALANCE_SHEET_RELATIONS = ['organizationEntity'];
 
@@ -43,7 +62,7 @@ export class BalanceSheetEntity {
   @Column({
     type: 'jsonb',
   })
-  public balanceSheet: OldBalanceSheet;
+  public balanceSheet: BalanceSheetDB;
 
   @ManyToOne(
     () => OrganizationEntity,
@@ -58,7 +77,8 @@ export class BalanceSheetEntity {
   @Column()
   public organizationEntityId: number | undefined;
 
-  public constructor(id: number | undefined, balanceSheet: OldBalanceSheet) {
+  // TODO: Add zod brand for balance sheet
+  public constructor(id: number | undefined, balanceSheet: BalanceSheetDB) {
     this.id = id;
     this.balanceSheet = balanceSheet;
   }
@@ -120,9 +140,11 @@ export class BalanceSheetEntity {
     >
   ) {
     const entityWithDTOMerger = new EntityWithDtoMerger();
-    this.balanceSheet = entityWithDTOMerger.mergeBalanceSheet(
-      this.balanceSheet,
-      balanceSheetPatchRequestBody
+    this.balanceSheet = BalanceSheetDBSchema.parse(
+      entityWithDTOMerger.mergeBalanceSheet(
+        this.balanceSheet,
+        balanceSheetPatchRequestBody
+      )
     );
   }
 
@@ -174,7 +196,7 @@ export class BalanceSheetEntity {
 
   @AfterLoad()
   validateBalanceSheet() {
-    const result = BalanceSheetSchema.strict().safeParse(this.balanceSheet);
+    const result = BalanceSheetDBSchema.strict().safeParse(this.balanceSheet);
     if (!result.success) {
       throw new DatabaseValidationError(
         result.error,

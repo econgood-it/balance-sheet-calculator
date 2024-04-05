@@ -8,7 +8,10 @@ import {
 import { z } from 'zod';
 import { calculateTotalPoints } from '../calculations/calculator';
 import { Option, none, some } from '../calculations/option';
-import { BalanceSheetEntity } from '../entities/balance.sheet.entity';
+import {
+  BalanceSheetDBSchema,
+  BalanceSheetEntity,
+} from '../entities/balance.sheet.entity';
 import { OldRatingsFactory } from '../factories/oldRatingsFactory';
 import { roundWithPrecision } from '../math';
 import { mergeRatingsWithRequestBodies } from '../merge/ratingsWithDtoMerger';
@@ -31,7 +34,10 @@ export class BalanceSheetCreateRequest {
     }))
       .pipe(BalanceSheetSchema)
       .parse(this.jsonBody);
-    return new BalanceSheetEntity(undefined, balanceSheet);
+    return new BalanceSheetEntity(
+      undefined,
+      BalanceSheetDBSchema.parse(balanceSheet)
+    );
   }
 
   private mergeWithDefaultRatings(

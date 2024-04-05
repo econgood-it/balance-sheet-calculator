@@ -4,7 +4,10 @@ import {
   organizationFactory,
 } from '../../src/openapi/examples';
 
-import { BalanceSheetEntity } from '../../src/entities/balance.sheet.entity';
+import {
+  BalanceSheetDBSchema,
+  BalanceSheetEntity,
+} from '../../src/entities/balance.sheet.entity';
 import { UserBuilder } from '../UserBuilder';
 import { v4 as uuid4 } from 'uuid';
 import { NoAccessError } from '../../src/exceptions/no.access.error';
@@ -48,8 +51,14 @@ describe('OrganizationEntity', () => {
 
     expect(organizationEntity.balanceSheetEntities).toBeUndefined();
     const balanceSheetEntities = [
-      new BalanceSheetEntity(4, balanceSheetFactory.emptyFullV508()),
-      new BalanceSheetEntity(7, balanceSheetFactory.emptyFullV508()),
+      new BalanceSheetEntity(
+        4,
+        BalanceSheetDBSchema.parse(balanceSheetFactory.emptyFullV508())
+      ),
+      new BalanceSheetEntity(
+        7,
+        BalanceSheetDBSchema.parse(balanceSheetFactory.emptyFullV508())
+      ),
     ];
     balanceSheetEntities.forEach((b) =>
       organizationEntity.addBalanceSheetEntity(b)
@@ -67,7 +76,7 @@ describe('OrganizationEntity', () => {
     );
     const balanceSheetEntity = new BalanceSheetEntity(
       4,
-      balanceSheetFactory.emptyFullV508()
+      BalanceSheetDBSchema.parse(balanceSheetFactory.emptyFullV508())
     );
     organizationEntity.addBalanceSheetEntity(balanceSheetEntity);
     expect(() =>
@@ -82,7 +91,7 @@ describe('OrganizationEntity', () => {
     );
     const balanceSheetEntity = new BalanceSheetEntity(
       undefined,
-      balanceSheetFactory.emptyFullV508()
+      BalanceSheetDBSchema.parse(balanceSheetFactory.emptyFullV508())
     );
     expect(() =>
       organizationEntity.addBalanceSheetEntity(balanceSheetEntity)

@@ -1,5 +1,8 @@
 import { Workbook } from 'exceljs';
-import { BalanceSheetEntity } from '../../entities/balance.sheet.entity';
+import {
+  BalanceSheetDBSchema,
+  BalanceSheetEntity,
+} from '../../entities/balance.sheet.entity';
 import { RatingSheet } from './rating.sheet';
 import { CompanyFactsSheet } from './company.facts.sheet';
 import { IntroSheet } from './intro.sheet';

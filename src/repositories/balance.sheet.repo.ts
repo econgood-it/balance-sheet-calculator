@@ -1,5 +1,8 @@
 import { EntityManager } from 'typeorm';
-import { BalanceSheetEntity } from '../entities/balance.sheet.entity';
+import {
+  BalanceSheetDBSchema,
+  BalanceSheetEntity,
+} from '../entities/balance.sheet.entity';
 import { BalanceSheet, makeBalanceSheet } from '../models/balance.sheet';
 import {
   makeCompanyFacts,
@@ -94,39 +97,46 @@ export function makeBalanceSheetRepository(
   function convertToBalanceSheetEntity(
     balanceSheet: BalanceSheet
   ): BalanceSheetEntity {
-    const balanceSheetEntity = new BalanceSheetEntity(balanceSheet.id, {
-      version: balanceSheet.version,
-      type: balanceSheet.type,
-      companyFacts: {
-        ...balanceSheet.companyFacts,
-        hasCanteen: balanceSheet.companyFacts.hasCanteen,
-        mainOriginOfOtherSuppliers: {
-          countryCode:
-            balanceSheet.companyFacts.mainOriginOfOtherSuppliers.countryCode,
-          costs: balanceSheet.companyFacts.mainOriginOfOtherSuppliers.costs,
+    const balanceSheetEntity = new BalanceSheetEntity(
+      balanceSheet.id,
+      BalanceSheetDBSchema.parse({
+        version: balanceSheet.version,
+        type: balanceSheet.type,
+        companyFacts: {
+          ...balanceSheet.companyFacts,
+          hasCanteen: balanceSheet.companyFacts.hasCanteen,
+          mainOriginOfOtherSuppliers: {
+            countryCode:
+              balanceSheet.companyFacts.mainOriginOfOtherSuppliers.countryCode,
+            costs: balanceSheet.companyFacts.mainOriginOfOtherSuppliers.costs,
+          },
+          supplyFractions: balanceSheet.companyFacts.supplyFractions.map(
+            (s) => ({
+              countryCode: s.countryCode,
+              industryCode: s.industryCode,
+              costs: s.costs,
+            })
+          ),
+          employeesFractions: balanceSheet.companyFacts.employeesFractions.map(
+            (e) => ({
+              countryCode: e.countryCode,
+              percentage: e.percentage,
+            })
+          ),
+          industrySectors: balanceSheet.companyFacts.industrySectors.map(
+            (i) => ({
+              industryCode: i.industryCode,
+              amountOfTotalTurnover: i.amountOfTotalTurnover,
+              description: i.description,
+            })
+          ),
         },
-        supplyFractions: balanceSheet.companyFacts.supplyFractions.map((s) => ({
-          countryCode: s.countryCode,
-          industryCode: s.industryCode,
-          costs: s.costs,
+        ratings: balanceSheet.ratings.map((r) => ({ ...r })),
+        stakeholderWeights: balanceSheet.stakeholderWeights.map((s) => ({
+          ...s,
         })),
-        employeesFractions: balanceSheet.companyFacts.employeesFractions.map(
-          (e) => ({
-            countryCode: e.countryCode,
-            percentage: e.percentage,
-          })
-        ),
-        industrySectors: balanceSheet.companyFacts.industrySectors.map((i) => ({
-          industryCode: i.industryCode,
-          amountOfTotalTurnover: i.amountOfTotalTurnover,
-          description: i.description,
-        })),
-      },
-      ratings: balanceSheet.ratings.map((r) => ({ ...r })),
-      stakeholderWeights: balanceSheet.stakeholderWeights.map((s) => ({
-        ...s,
-      })),
-    });
+      })
+    );
     balanceSheetEntity.organizationEntityId = balanceSheet.organizationId;
     return balanceSheetEntity;
   }

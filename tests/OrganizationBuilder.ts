@@ -1,5 +1,8 @@
 import { DataSource } from 'typeorm';
-import { BalanceSheetEntity } from '../src/entities/balance.sheet.entity';
+import {
+  BalanceSheetDBSchema,
+  BalanceSheetEntity,
+} from '../src/entities/balance.sheet.entity';
 import { OrganizationEntity } from '../src/entities/organization.entity';
 import { OldOrganization } from '../src/models/oldOrganization';
 import { User } from '../src/models/user';
@@ -46,7 +49,7 @@ export class OrganizationBuilder {
           ...this.balanceSheetEntities,
           new BalanceSheetEntity(
             undefined,
-            balanceSheetFactory.emptyFullV508()
+            BalanceSheetDBSchema.parse(balanceSheetFactory.emptyFullV508())
           ),
         ];
     return this;
