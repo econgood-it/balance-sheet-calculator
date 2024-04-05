@@ -20,31 +20,16 @@ import { DatabaseValidationError } from '../exceptions/databaseValidationError';
 import { translateBalanceSheet, Translations } from '../language/translations';
 import { EntityWithDtoMerger } from '../merge/entity.with.dto.merger';
 import { OldBalanceSheet } from '../models/oldBalanceSheet';
-import {
-  CompanyFactsSchema,
-  companyFactsToResponse,
-} from '../models/oldCompanyFacts';
-import { isTopic, RatingSchema, sortRatings } from '../models/oldRating';
+import { companyFactsToResponse } from '../models/oldCompanyFacts';
+import { isTopic, sortRatings } from '../models/oldRating';
 import { IndustryProvider } from '../providers/industry.provider';
 import Provider from '../providers/provider';
 import { RegionProvider } from '../providers/region.provider';
 import { OrganizationEntity } from './organization.entity';
 import {
-  BalanceSheetType,
-  BalanceSheetVersion,
-} from '@ecogood/e-calculator-schemas/dist/shared.schemas';
-import { StakeholderWeightSchema } from '../models/oldStakeholderWeight';
-
-const BalanceSheetVersionSchema = z.nativeEnum(BalanceSheetVersion);
-export const BalanceSheetDBSchema = z.object({
-  type: z.nativeEnum(BalanceSheetType),
-  version: BalanceSheetVersionSchema,
-  companyFacts: CompanyFactsSchema,
-  ratings: RatingSchema.array(),
-  stakeholderWeights: StakeholderWeightSchema.array(),
-});
-
-type BalanceSheetDB = z.infer<typeof BalanceSheetDBSchema>;
+  BalanceSheetDB,
+  BalanceSheetDBSchema,
+} from './schemas/balance.sheet.schema';
 
 export const BALANCE_SHEET_RELATIONS = ['organizationEntity'];
 

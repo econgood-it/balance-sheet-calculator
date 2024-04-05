@@ -1,20 +1,16 @@
-import {
-  OrganizationDBSchema,
-  OrganizationEntity,
-} from '../../src/entities/organization.entity';
+import { OrganizationEntity } from '../../src/entities/organization.entity';
 import {
   balanceSheetFactory,
   organizationFactory,
 } from '../../src/openapi/examples';
 
-import {
-  BalanceSheetDBSchema,
-  BalanceSheetEntity,
-} from '../../src/entities/balance.sheet.entity';
+import { BalanceSheetEntity } from '../../src/entities/balance.sheet.entity';
 import { UserBuilder } from '../UserBuilder';
 import { v4 as uuid4 } from 'uuid';
 import { NoAccessError } from '../../src/exceptions/no.access.error';
 import { ConflictError } from '../../src/exceptions/conflict.error';
+import { BalanceSheetDBSchema } from '../../src/entities/schemas/balance.sheet.schema';
+import { OrganizationDBSchema } from '../../src/entities/schemas/organization.schema';
 
 describe('OrganizationEntity', () => {
   it('should check has member', function () {

@@ -9,10 +9,7 @@ import { Workbook } from 'exceljs';
 import { DataSource } from 'typeorm';
 import { BalanceSheetCreateRequest } from '../dto/balance.sheet.dto';
 import { BalanceSheetEntity } from '../entities/balance.sheet.entity';
-import {
-  OrganizationDBSchema,
-  OrganizationEntity,
-} from '../entities/organization.entity';
+import { OrganizationEntity } from '../entities/organization.entity';
 import { handle } from '../exceptions/error.handler';
 import { NoAccessError } from '../exceptions/no.access.error';
 import NotFoundException from '../exceptions/not.found.exception';
@@ -22,6 +19,7 @@ import { IOldRepoProvider } from '../repositories/oldRepoProvider';
 import { Authorization } from '../security/authorization';
 import { parseSaveFlag } from './utils';
 import { z } from 'zod';
+import { OrganizationDBSchema } from '../entities/schemas/organization.schema';
 
 export class OrganizationService {
   constructor(

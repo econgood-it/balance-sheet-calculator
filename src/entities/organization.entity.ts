@@ -16,30 +16,14 @@ import { ConflictError } from '../exceptions/conflict.error';
 import { User } from '../models/user';
 import { NoAccessError } from '../exceptions/no.access.error';
 import { DatabaseValidationError } from '../exceptions/databaseValidationError';
+import {
+  OrganizationDB,
+  OrganizationDBSchema,
+} from './schemas/organization.schema';
 
 type Member = {
   id: string;
 };
-
-const errorMsg = 'Must not be blank';
-const isNonEmptyString = z
-  .string({ required_error: errorMsg })
-  .min(1, { message: errorMsg });
-
-export const OrganizationDBSchema = z
-  .object({
-    name: isNonEmptyString,
-    address: z.object({
-      city: isNonEmptyString,
-      houseNumber: isNonEmptyString,
-      street: isNonEmptyString,
-      zip: isNonEmptyString,
-    }),
-    invitations: z.string().email().array(),
-  })
-  .brand<'OrganizationDB'>();
-
-export type OrganizationDB = z.infer<typeof OrganizationDBSchema>;
 
 @Entity()
 export class OrganizationEntity {

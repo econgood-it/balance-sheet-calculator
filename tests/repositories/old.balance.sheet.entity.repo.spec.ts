@@ -12,11 +12,9 @@ import {
   BalanceSheetEntityRepository,
   IBalanceSheetEntityRepo,
 } from '../../src/repositories/old.balance.sheet.entity.repo';
-import {
-  OrganizationDBSchema,
-  OrganizationEntity,
-} from '../../src/entities/organization.entity';
+import { OrganizationEntity } from '../../src/entities/organization.entity';
 import { OldOrganizationEntityRepository } from '../../src/repositories/oldOrganization.entity.repo';
+import { OrganizationDBSchema } from '../../src/entities/schemas/organization.schema';
 
 describe('BalanceSheetRepo', () => {
   let balanceSheetEntityRepository: IBalanceSheetEntityRepo;

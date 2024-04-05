@@ -1,8 +1,5 @@
 import { EntityManager } from 'typeorm';
-import {
-  BalanceSheetDBSchema,
-  BalanceSheetEntity,
-} from '../entities/balance.sheet.entity';
+import { BalanceSheetEntity } from '../entities/balance.sheet.entity';
 import { BalanceSheet, makeBalanceSheet } from '../models/balance.sheet';
 import {
   makeCompanyFacts,
@@ -14,6 +11,7 @@ import {
 import { makeRating } from '../models/rating';
 import deepFreeze from 'deep-freeze';
 import { Organization } from '../models/organization';
+import { BalanceSheetDBSchema } from '../entities/schemas/balance.sheet.schema';
 
 export interface IBalanceSheetRepo {
   findByIdOrFail(id: number): Promise<BalanceSheet>;

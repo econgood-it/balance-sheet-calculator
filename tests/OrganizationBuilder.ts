@@ -1,12 +1,6 @@
 import { DataSource } from 'typeorm';
-import {
-  BalanceSheetDBSchema,
-  BalanceSheetEntity,
-} from '../src/entities/balance.sheet.entity';
-import {
-  OrganizationDBSchema,
-  OrganizationEntity,
-} from '../src/entities/organization.entity';
+import { BalanceSheetEntity } from '../src/entities/balance.sheet.entity';
+import { OrganizationEntity } from '../src/entities/organization.entity';
 import { OldOrganization } from '../src/models/oldOrganization';
 import { User } from '../src/models/user';
 import {
@@ -16,6 +10,8 @@ import {
 import { BalanceSheetEntityRepository } from '../src/repositories/old.balance.sheet.entity.repo';
 import { OldOrganizationEntityRepository } from '../src/repositories/oldOrganization.entity.repo';
 import { UserBuilder } from './UserBuilder';
+import { BalanceSheetDBSchema } from '../src/entities/schemas/balance.sheet.schema';
+import { OrganizationDBSchema } from '../src/entities/schemas/organization.schema';
 
 export type OrganizationBuilderResult = {
   organizationEntity: OrganizationEntity;

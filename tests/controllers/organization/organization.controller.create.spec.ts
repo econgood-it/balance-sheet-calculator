@@ -9,10 +9,7 @@ import { DataSource } from 'typeorm';
 import App from '../../../src/app';
 import { OrganizationPaths } from '../../../src/controllers/organization.controller';
 import { DatabaseSourceCreator } from '../../../src/databaseSourceCreator';
-import {
-  BalanceSheetDBSchema,
-  BalanceSheetEntity,
-} from '../../../src/entities/balance.sheet.entity';
+import { BalanceSheetEntity } from '../../../src/entities/balance.sheet.entity';
 import { OldRatingsFactory } from '../../../src/factories/oldRatingsFactory';
 import { INDUSTRY_CODE_FOR_FINANCIAL_SERVICES } from '../../../src/models/oldCompanyFacts';
 import { OldRating, RatingResponseBody } from '../../../src/models/oldRating';
@@ -31,6 +28,7 @@ import { OrganizationBuilder } from '../../OrganizationBuilder';
 import { InMemoryAuthentication } from '../in.memory.authentication';
 import { BalanceSheetMockBuilder } from '../../BalanceSheetMockBuilder';
 import { v4 as uuid4 } from 'uuid';
+import { BalanceSheetDBSchema } from '../../../src/entities/schemas/balance.sheet.schema';
 
 const assertTopicWeight = (
   shortName: string,

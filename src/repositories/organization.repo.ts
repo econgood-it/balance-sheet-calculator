@@ -1,10 +1,8 @@
 import { EntityManager } from 'typeorm';
-import {
-  OrganizationDBSchema,
-  OrganizationEntity,
-} from '../entities/organization.entity';
+import { OrganizationEntity } from '../entities/organization.entity';
 import { makeOrganization, Organization } from '../models/organization';
 import deepFreeze from 'deep-freeze';
+import { OrganizationDBSchema } from '../entities/schemas/organization.schema';
 
 export interface IOrganizationRepo {
   save(organization: Organization): Promise<Organization>;

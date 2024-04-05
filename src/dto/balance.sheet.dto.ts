@@ -8,16 +8,14 @@ import {
 import { z } from 'zod';
 import { calculateTotalPoints } from '../calculations/calculator';
 import { Option, none, some } from '../calculations/option';
-import {
-  BalanceSheetDBSchema,
-  BalanceSheetEntity,
-} from '../entities/balance.sheet.entity';
+import { BalanceSheetEntity } from '../entities/balance.sheet.entity';
 import { OldRatingsFactory } from '../factories/oldRatingsFactory';
 import { roundWithPrecision } from '../math';
 import { mergeRatingsWithRequestBodies } from '../merge/ratingsWithDtoMerger';
 import { OldBalanceSheet, BalanceSheetSchema } from '../models/oldBalanceSheet';
 import { CompanyFactsCreateRequestBodyTransformedSchema } from '../models/oldCompanyFacts';
 import { OldRating, filterTopics, sortRatings } from '../models/oldRating';
+import { BalanceSheetDBSchema } from '../entities/schemas/balance.sheet.schema';
 
 export class BalanceSheetCreateRequest {
   constructor(

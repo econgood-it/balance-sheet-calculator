@@ -1,9 +1,6 @@
 import { DataSource } from 'typeorm';
 import { DatabaseSourceCreator } from '../../src/databaseSourceCreator';
-import {
-  OrganizationDBSchema,
-  OrganizationEntity,
-} from '../../src/entities/organization.entity';
+import { OrganizationEntity } from '../../src/entities/organization.entity';
 import { ConfigurationReader } from '../../src/reader/configuration.reader';
 
 import { v4 as uuid4 } from 'uuid';
@@ -14,6 +11,7 @@ import {
 
 import { Role } from '../../src/models/user';
 import { OrganizationBuilder } from '../OrganizationBuilder';
+import { OrganizationDBSchema } from '../../src/entities/schemas/organization.schema';
 
 describe('OrganizationEntityRepo', () => {
   let organizationEntityRepo: IOldOrganizationEntityRepo;
