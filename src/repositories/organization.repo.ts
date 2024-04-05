@@ -5,6 +5,9 @@ import deepFreeze from 'deep-freeze';
 
 export interface IOrganizationRepo {
   save(organization: Organization): Promise<Organization>;
+  findByIdOrFail(id: number): Promise<Organization>;
+  findOrganizationsOfUser(userId: string): Promise<Organization[]>;
+  findOrganizationsWithInvitation(email: string): Promise<Organization[]>;
 }
 
 export function makeOrganizationRepository(
@@ -15,6 +18,38 @@ export function makeOrganizationRepository(
   async function save(organization: Organization): Promise<Organization> {
     const organizationEntity = convertToOrganizationEntity(organization);
     return convertToOrganization(await repo.save(organizationEntity));
+  }
+
+  async function findByIdOrFail(id: number): Promise<Organization> {
+    const organizationEntity = await repo.findOneOrFail({
+      where: { id },
+      loadRelationIds: true,
+    });
+    return convertToOrganization(organizationEntity);
+  }
+
+  async function findOrganizationsOfUser(
+    userId: string
+  ): Promise<Organization[]> {
+    const organizationEntities = await repo
+      .createQueryBuilder('entity')
+      .where('entity.members @> :criteria', {
+        criteria: JSON.stringify([{ id: userId }]),
+      })
+      .getMany();
+    return organizationEntities.map(convertToOrganization);
+  }
+
+  async function findOrganizationsWithInvitation(
+    email: string
+  ): Promise<Organization[]> {
+    const organizationEntities = await repo
+      .createQueryBuilder('entity')
+      .where('entity.organization @> :criteria', {
+        criteria: JSON.stringify({ invitations: [email] }),
+      })
+      .getMany();
+    return organizationEntities.map(convertToOrganization);
   }
 
   function convertToOrganization(
@@ -45,5 +80,8 @@ export function makeOrganizationRepository(
 
   return deepFreeze({
     save,
+    findByIdOrFail,
+    findOrganizationsOfUser,
+    findOrganizationsWithInvitation,
   });
 }
