@@ -31,6 +31,11 @@ export function registerOrganizationRoutes(
     allowUserOnly,
     organizationService.inviteUser
   );
+  app.get(
+    OrganizationPaths.getAll,
+    allowUserOnly,
+    organizationService.getOrganizationsOfCurrentUser
+  );
 }
 
 export class OrganizationController {
@@ -46,13 +51,6 @@ export class OrganizationController {
       OrganizationPaths.put,
       allowUserOnly,
       this.oldOrganizationService.updateOrganization.bind(
-        this.oldOrganizationService
-      )
-    );
-    this.app.get(
-      OrganizationPaths.getAll,
-      allowUserOnly,
-      this.oldOrganizationService.getOrganizationsOfCurrentUser.bind(
         this.oldOrganizationService
       )
     );

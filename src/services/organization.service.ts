@@ -33,6 +33,11 @@ export interface IOrganizationService {
     next: NextFunction
   ): Promise<void>;
   inviteUser(req: Request, res: Response, next: NextFunction): Promise<void>;
+  getOrganizationsOfCurrentUser(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void>;
 }
 
 export function makeOrganizationService(
@@ -82,7 +87,39 @@ export function makeOrganizationService(
       });
   }
 
-  return deepFreeze({ createOrganization, inviteUser });
+  async function getOrganizationsOfCurrentUser(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    dataSource.manager
+      .transaction(async (entityManager) => {
+        if (!req.authenticatedUser) {
+          throw new NoAccessError();
+        }
+        const orgaRepo = repoProvider.getOrganizationRepo(entityManager);
+        const organizationEntities = await orgaRepo.findOrganizationsOfUser(
+          req.authenticatedUser.id
+        );
+        res.json(
+          OrganizationItemsResponseSchema.parse(
+            organizationEntities.map((o) => ({
+              id: o.id,
+              name: o.name,
+            }))
+          )
+        );
+      })
+      .catch((error) => {
+        handle(error, next);
+      });
+  }
+
+  return deepFreeze({
+    createOrganization,
+    inviteUser,
+    getOrganizationsOfCurrentUser,
+  });
 }
 
 export class OldOrganizationService {
@@ -112,35 +149,6 @@ export class OldOrganizationService {
           await organizationEntityRepository.save(organizationEntity);
 
         res.json(updatedOrganizationEntity.toJson());
-      })
-      .catch((error) => {
-        handle(error, next);
-      });
-  }
-
-  public async getOrganizationsOfCurrentUser(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
-    this.dataSource.manager
-      .transaction(async (entityManager) => {
-        if (!req.authenticatedUser) {
-          throw new NoAccessError();
-        }
-        const orgaRepo =
-          this.oldRepoProvider.getOrganizationEntityRepo(entityManager);
-        const organizationEntities = await orgaRepo.findOrganizationsOfUser(
-          req.authenticatedUser.id
-        );
-        res.json(
-          OrganizationItemsResponseSchema.parse(
-            organizationEntities.map((o) => ({
-              id: o.id,
-              name: o.organization.name,
-            }))
-          )
-        );
       })
       .catch((error) => {
         handle(error, next);

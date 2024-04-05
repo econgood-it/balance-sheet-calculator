@@ -10,6 +10,8 @@ import { DatabaseSourceCreator } from '../../../src/databaseSourceCreator';
 import { OrganizationBuilder } from '../../OrganizationBuilder';
 import { InMemoryAuthentication } from '../in.memory.authentication';
 import { makeRepoProvider } from '../../../src/repositories/repo.provider';
+import { IOrganizationRepo } from '../../../src/repositories/organization.repo';
+import { makeOrganization } from '../../../src/models/organization';
 
 describe('Organization Controller Get Endpoint', () => {
   let dataSource: DataSource;
@@ -18,17 +20,20 @@ describe('Organization Controller Get Endpoint', () => {
   const authBuilder = new AuthBuilder();
   const auth = authBuilder.addUser();
   const authWithoutOrgaPermissions = authBuilder.addUser();
+  let organizationRepo: IOrganizationRepo;
 
   beforeAll(async () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
       configuration
     );
-    const repoProvider = new OldRepoProvider(configuration);
+    const repoProvider = makeRepoProvider(configuration);
+    organizationRepo = repoProvider.getOrganizationRepo(dataSource.manager);
+    const oldRepoProvider = new OldRepoProvider(configuration);
     app = new App(
       dataSource,
       configuration,
-      makeRepoProvider(configuration),
       repoProvider,
+      oldRepoProvider,
       new InMemoryAuthentication(authBuilder.getTokenMap())
     ).app;
   });
@@ -39,20 +44,26 @@ describe('Organization Controller Get Endpoint', () => {
 
   it('should return organizations of current user', async () => {
     const testApp = supertest(app);
-    const { organizationEntity: orgaEntity1 } = await new OrganizationBuilder()
-      .addMember(auth.user)
-      .build(dataSource);
-    const { organizationEntity: orgaEntity2 } = await new OrganizationBuilder()
-      .addMember(auth.user)
-      .build(dataSource);
+    const member = { id: auth.user.id };
+    const organization1 = await organizationRepo.save(
+      makeOrganization().withFields({
+        members: [member],
+      })
+    );
+    const organization2 = await organizationRepo.save(
+      makeOrganization().withFields({
+        name: 'Test organization 2',
+        members: [member],
+      })
+    );
 
     const response = await testApp
       .get(OrganizationPaths.getAll)
       .set(auth.toHeaderPair().key, auth.toHeaderPair().value);
     expect(response.status).toBe(200);
     expect(response.body).toEqual([
-      { id: orgaEntity1.id, name: orgaEntity1.organization.name },
-      { id: orgaEntity2.id, name: orgaEntity2.organization.name },
+      { id: organization1.id, name: organization1.name },
+      { id: organization2.id, name: organization2.name },
     ]);
   });
   it('should return organization by id', async () => {
