@@ -11,6 +11,7 @@ import { OldStakeholderWeight } from '../models/oldStakeholderWeight';
 import { WorkbookSection } from '../entities/workbook.entity';
 import { z } from 'zod';
 import { CompanyFactsResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/company.facts.dto';
+import deepFreeze from 'deep-freeze';
 
 const arabEmiratesCode = 'ARE';
 const afghanistanCode = 'AFG';
@@ -252,7 +253,7 @@ export const balanceSheetFactory = {
   }),
 };
 
-export const organizationFactory = {
+export const oldOrganizationFactory = {
   default: (): OldOrganization => ({
     name: 'My organization',
     address: {
@@ -264,3 +265,17 @@ export const organizationFactory = {
     invitations: [],
   }),
 };
+
+export function makeOrganizationCreateRequest() {
+  const data = {
+    name: 'My organization',
+    address: {
+      street: 'Example street',
+      houseNumber: '28a',
+      zip: '999999',
+      city: 'Example city',
+    },
+    invitations: [],
+  };
+  return deepFreeze({ ...data });
+}

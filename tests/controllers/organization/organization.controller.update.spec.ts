@@ -5,13 +5,14 @@ import { DataSource } from 'typeorm';
 import App from '../../../src/app';
 import { OrganizationPaths } from '../../../src/controllers/organization.controller';
 import { DatabaseSourceCreator } from '../../../src/databaseSourceCreator';
-import { organizationFactory } from '../../../src/openapi/examples';
+import { oldOrganizationFactory } from '../../../src/openapi/examples';
 import { ConfigurationReader } from '../../../src/reader/configuration.reader';
 import { IOldOrganizationEntityRepo } from '../../../src/repositories/oldOrganization.entity.repo';
 import { OldRepoProvider } from '../../../src/repositories/oldRepoProvider';
 import { AuthBuilder } from '../../AuthBuilder';
 import { OrganizationBuilder } from '../../OrganizationBuilder';
 import { InMemoryAuthentication } from '../in.memory.authentication';
+import { makeRepoProvider } from '../../../src/repositories/repo.provider';
 
 describe('Organization Controller', () => {
   let dataSource: DataSource;
@@ -33,6 +34,7 @@ describe('Organization Controller', () => {
     app = new App(
       dataSource,
       configuration,
+      makeRepoProvider(configuration),
       repoProvider,
       new InMemoryAuthentication(authBuilder.getTokenMap())
     ).app;
@@ -69,7 +71,7 @@ describe('Organization Controller', () => {
   });
 
   it('should fail to update organization if user is unauthenticated', async () => {
-    const orgaJson = organizationFactory.default();
+    const orgaJson = oldOrganizationFactory.default();
     const testApp = supertest(app);
     const response = await testApp
       .put(`${OrganizationPaths.post}/9`)

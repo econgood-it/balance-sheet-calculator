@@ -12,7 +12,10 @@ import { DataSource } from 'typeorm';
 import { DocsController } from './controllers/docs.controller';
 import { HealthCheckController } from './controllers/health.check.controller';
 import { IndustryController } from './controllers/industry.controller';
-import { OrganizationController } from './controllers/organization.controller';
+import {
+  OrganizationController,
+  registerOrganizationRoutes,
+} from './controllers/organization.controller';
 import { RegionController } from './controllers/region.controller';
 import { WorkbookController } from './controllers/workbook.controller';
 import { LoggingService } from './logging';
@@ -23,11 +26,15 @@ import { IOldRepoProvider } from './repositories/oldRepoProvider';
 import { BalanceSheetService } from './services/balance.sheet.service';
 import { HealthCheckService } from './services/health.check.service';
 import { IndustryService } from './services/industry.service';
-import { OrganizationService } from './services/organization.service';
+import {
+  makeOrganizationService,
+  OldOrganizationService,
+} from './services/organization.service';
 import { RegionService } from './services/region.service';
 import { WorkbookService } from './services/workbook.service';
 import { UserController } from './controllers/user.controller';
 import { UserService } from './services/user.service';
+import { IRepoProvider } from './repositories/repo.provider';
 
 class App {
   public readonly app: Application;
@@ -45,7 +52,8 @@ class App {
   constructor(
     dataSource: DataSource,
     private configuration: Configuration,
-    repoProvider: IOldRepoProvider,
+    repoProvider: IRepoProvider,
+    repoProviderOld: IOldRepoProvider,
     authProvider: IAuthenticationProvider
   ) {
     this.app = express();
@@ -59,13 +67,13 @@ class App {
     // Creating controllers
     const balanceSheetService = new BalanceSheetService(
       dataSource,
-      repoProvider
+      repoProviderOld
     );
     this.balanceSheetController = new BalanceSheetController(
       this.app,
       balanceSheetService
     );
-    const userService = new UserService(dataSource, repoProvider);
+    const userService = new UserService(dataSource, repoProviderOld);
     this.userController = new UserController(this.app, userService);
 
     const regionService = new RegionService();
@@ -76,7 +84,7 @@ class App {
     );
     this.workbookController = new WorkbookController(
       this.app,
-      new WorkbookService(repoProvider)
+      new WorkbookService(repoProviderOld)
     );
     this.healthCheckController = new HealthCheckController(
       this.app,
@@ -84,7 +92,11 @@ class App {
     );
     this.organizationController = new OrganizationController(
       this.app,
-      new OrganizationService(dataSource, repoProvider)
+      new OldOrganizationService(dataSource, repoProviderOld)
+    );
+    registerOrganizationRoutes(
+      this.app,
+      makeOrganizationService(dataSource, repoProvider)
     );
     this.docsController = new DocsController(this.app, configuration);
     this.app.use(errorMiddleware);

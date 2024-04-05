@@ -8,6 +8,7 @@ import { User as AuthUser } from './models/user';
 import App from './app';
 import { OldRepoProvider } from './repositories/oldRepoProvider';
 import { ZitadelAuthentication } from './security/authentication';
+import { makeRepoProvider } from './repositories/repo.provider';
 
 declare global {
   namespace Express {
@@ -26,6 +27,7 @@ DatabaseSourceCreator.createDataSourceAndRunMigrations(configuration)
     const app = new App(
       dataSource,
       configuration,
+      makeRepoProvider(configuration),
       new OldRepoProvider(configuration),
       new ZitadelAuthentication(
         configuration.zitadelKeyId,

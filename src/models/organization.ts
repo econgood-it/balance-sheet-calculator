@@ -4,7 +4,7 @@ import { NoAccessError } from '../exceptions/no.access.error';
 import { ConflictError } from '../exceptions/conflict.error';
 
 type OrganizationOpts = {
-  id: number | undefined;
+  id?: number;
   name: string;
   address: {
     city: string;

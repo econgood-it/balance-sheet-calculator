@@ -1,4 +1,4 @@
-import { organizationFactory } from '../examples';
+import { oldOrganizationFactory } from '../examples';
 
 import {
   applicationJson,
@@ -36,7 +36,7 @@ export function registerOrganizationPut(
             schema: OrganizationRequestSchema,
             examples: {
               default: {
-                value: organizationFactory.default(),
+                value: oldOrganizationFactory.default(),
               },
             },
           },

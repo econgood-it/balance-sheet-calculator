@@ -1,7 +1,7 @@
 import { OrganizationEntity } from '../../src/entities/organization.entity';
 import {
   balanceSheetFactory,
-  organizationFactory,
+  oldOrganizationFactory,
 } from '../../src/openapi/examples';
 
 import { BalanceSheetEntity } from '../../src/entities/balance.sheet.entity';
@@ -18,7 +18,7 @@ describe('OrganizationEntity', () => {
     const member1 = userBuilder.build();
     const organizationEntity = new OrganizationEntity(
       undefined,
-      OrganizationDBSchema.parse(organizationFactory.default()),
+      OrganizationDBSchema.parse(oldOrganizationFactory.default()),
       [{ id: member1.email }, { id: userBuilder.build().email }]
     );
     expect(organizationEntity.hasMember({ id: member1.email })).toBeTruthy();
@@ -32,19 +32,19 @@ describe('OrganizationEntity', () => {
     const id = 7;
     const organizationEntity = new OrganizationEntity(
       id,
-      OrganizationDBSchema.parse(organizationFactory.default()),
+      OrganizationDBSchema.parse(oldOrganizationFactory.default()),
       [{ id: userBuilder.build().email }, { id: userBuilder.build().email }]
     );
     expect(organizationEntity.toJson()).toEqual({
       id,
-      ...organizationFactory.default(),
+      ...oldOrganizationFactory.default(),
     });
   });
 
   it('should add balanceSheetEntities', function () {
     const organizationEntity = new OrganizationEntity(
       undefined,
-      OrganizationDBSchema.parse(organizationFactory.default()),
+      OrganizationDBSchema.parse(oldOrganizationFactory.default()),
       []
     );
 
@@ -70,7 +70,7 @@ describe('OrganizationEntity', () => {
   it('should fail with conflict if balanceSheetEntity is added twice', function () {
     const organizationEntity = new OrganizationEntity(
       undefined,
-      OrganizationDBSchema.parse(organizationFactory.default()),
+      OrganizationDBSchema.parse(oldOrganizationFactory.default()),
       []
     );
     const balanceSheetEntity = new BalanceSheetEntity(
@@ -85,7 +85,7 @@ describe('OrganizationEntity', () => {
   it('should fail with if balanceSheetEntity without id is added', function () {
     const organizationEntity = new OrganizationEntity(
       undefined,
-      OrganizationDBSchema.parse(organizationFactory.default()),
+      OrganizationDBSchema.parse(oldOrganizationFactory.default()),
       []
     );
     const balanceSheetEntity = new BalanceSheetEntity(
@@ -100,7 +100,7 @@ describe('OrganizationEntity', () => {
   it('should invite user via email', function () {
     const organizationEntity = new OrganizationEntity(
       undefined,
-      OrganizationDBSchema.parse(organizationFactory.default()),
+      OrganizationDBSchema.parse(oldOrganizationFactory.default()),
       []
     );
     const email = `${uuid4()}@example.com`;
@@ -122,7 +122,7 @@ describe('OrganizationEntity', () => {
     const organizationEntity = new OrganizationEntity(
       undefined,
       OrganizationDBSchema.parse({
-        ...organizationFactory.default(),
+        ...oldOrganizationFactory.default(),
         invitations: [user.email, anotherEmail],
       }),
       [...members]
@@ -138,7 +138,7 @@ describe('OrganizationEntity', () => {
     const organizationEntity = new OrganizationEntity(
       undefined,
       OrganizationDBSchema.parse({
-        ...organizationFactory.default(),
+        ...oldOrganizationFactory.default(),
         invitations: [user.email],
       }),
       [{ id: user.id }]
@@ -149,7 +149,7 @@ describe('OrganizationEntity', () => {
   it('user without invitation cannot join', async () => {
     const organizationEntity = new OrganizationEntity(
       undefined,
-      OrganizationDBSchema.parse(organizationFactory.default()),
+      OrganizationDBSchema.parse(oldOrganizationFactory.default()),
       []
     );
     const user = new UserBuilder().build();

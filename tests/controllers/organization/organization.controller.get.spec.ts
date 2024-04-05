@@ -9,6 +9,7 @@ import { OldRepoProvider } from '../../../src/repositories/oldRepoProvider';
 import { DatabaseSourceCreator } from '../../../src/databaseSourceCreator';
 import { OrganizationBuilder } from '../../OrganizationBuilder';
 import { InMemoryAuthentication } from '../in.memory.authentication';
+import { makeRepoProvider } from '../../../src/repositories/repo.provider';
 
 describe('Organization Controller Get Endpoint', () => {
   let dataSource: DataSource;
@@ -26,6 +27,7 @@ describe('Organization Controller Get Endpoint', () => {
     app = new App(
       dataSource,
       configuration,
+      makeRepoProvider(configuration),
       repoProvider,
       new InMemoryAuthentication(authBuilder.getTokenMap())
     ).app;
@@ -112,6 +114,7 @@ describe('Organization Controller Get Balance Sheets Endpoint', () => {
     app = new App(
       dataSource,
       configuration,
+      makeRepoProvider(configuration),
       repoProvider,
       new InMemoryAuthentication(authBuilder.getTokenMap())
     ).app;

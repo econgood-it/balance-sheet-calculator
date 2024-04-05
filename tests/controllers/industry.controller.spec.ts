@@ -7,6 +7,7 @@ import { AuthBuilder } from '../AuthBuilder';
 import supertest from 'supertest';
 import { OldRepoProvider } from '../../src/repositories/oldRepoProvider';
 import { InMemoryAuthentication } from './in.memory.authentication';
+import { makeRepoProvider } from '../../src/repositories/repo.provider';
 
 describe('Industry Controller', () => {
   let dataSource: DataSource;
@@ -22,6 +23,7 @@ describe('Industry Controller', () => {
     app = new App(
       dataSource,
       configuration,
+      makeRepoProvider(configuration),
       new OldRepoProvider(configuration),
       new InMemoryAuthentication(authBuilder.getTokenMap())
     ).app;

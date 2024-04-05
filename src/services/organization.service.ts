@@ -4,12 +4,12 @@ import { BalanceSheetItemsResponseSchema } from '@ecogood/e-calculator-schemas/d
 import {
   OrganizationItemsResponseSchema,
   OrganizationRequestSchema,
+  OrganizationResponseSchema,
 } from '@ecogood/e-calculator-schemas/dist/organization.dto';
 import { Workbook } from 'exceljs';
 import { DataSource } from 'typeorm';
 import { BalanceSheetCreateRequest } from '../dto/balance.sheet.dto';
 import { BalanceSheetEntity } from '../entities/balance.sheet.entity';
-import { OrganizationEntity } from '../entities/organization.entity';
 import { handle } from '../exceptions/error.handler';
 import { NoAccessError } from '../exceptions/no.access.error';
 import NotFoundException from '../exceptions/not.found.exception';
@@ -19,40 +19,54 @@ import { IOldRepoProvider } from '../repositories/oldRepoProvider';
 import { Authorization } from '../security/authorization';
 import { parseSaveFlag } from './utils';
 import { z } from 'zod';
-import { OrganizationDBSchema } from '../entities/schemas/organization.schema';
+import { IRepoProvider } from '../repositories/repo.provider';
+import { makeOrganization } from '../models/organization';
+import deepFreeze from 'deep-freeze';
 
-export class OrganizationService {
-  constructor(
-    private dataSource: DataSource,
-    private repoProvider: IOldRepoProvider
-  ) {}
+export interface IOrganizationService {
+  createOrganization(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void>;
+}
 
-  public async createOrganization(
+export function makeOrganizationService(
+  dataSource: DataSource,
+  repoProvider: IRepoProvider
+): IOrganizationService {
+  async function createOrganization(
     req: Request,
     res: Response,
     next: NextFunction
   ) {
-    this.dataSource.manager
+    dataSource.manager
       .transaction(async (entityManager) => {
         if (!req.authenticatedUser) {
           throw new NoAccessError();
         }
-        const orgaRepo =
-          this.repoProvider.getOrganizationEntityRepo(entityManager);
-        const organization = OrganizationRequestSchema.parse(req.body);
-        const organizationEntity = await orgaRepo.save(
-          new OrganizationEntity(
-            undefined,
-            OrganizationDBSchema.parse({ ...organization, invitations: [] }),
-            [{ id: req.authenticatedUser.id }]
-          )
+        const orgaRepo = repoProvider.getOrganizationRepo(entityManager);
+        const organization = await orgaRepo.save(
+          makeOrganization({
+            ...OrganizationRequestSchema.parse(req.body),
+            invitations: [],
+            members: [{ id: req.authenticatedUser.id }],
+          })
         );
-        res.json(organizationEntity.toJson());
+        res.json(OrganizationResponseSchema.parse(organization));
       })
       .catch((error) => {
         handle(error, next);
       });
   }
+  return deepFreeze({ createOrganization });
+}
+
+export class OldOrganizationService {
+  constructor(
+    private dataSource: DataSource,
+    private oldRepoProvider: IOldRepoProvider
+  ) {}
 
   public async updateOrganization(
     req: Request,
@@ -62,7 +76,7 @@ export class OrganizationService {
     this.dataSource.manager
       .transaction(async (entityManager) => {
         const organizationEntityRepository =
-          this.repoProvider.getOrganizationEntityRepo(entityManager);
+          this.oldRepoProvider.getOrganizationEntityRepo(entityManager);
         const organizationIdParam: number = Number(req.params.id);
         const organization = OrganizationRequestSchema.parse(req.body);
         const organizationEntity =
@@ -92,7 +106,7 @@ export class OrganizationService {
           throw new NoAccessError();
         }
         const orgaRepo =
-          this.repoProvider.getOrganizationEntityRepo(entityManager);
+          this.oldRepoProvider.getOrganizationEntityRepo(entityManager);
         const organizationEntities = await orgaRepo.findOrganizationsOfUser(
           req.authenticatedUser.id
         );
@@ -118,7 +132,7 @@ export class OrganizationService {
     this.dataSource.manager
       .transaction(async (entityManager) => {
         const orgaRepo =
-          this.repoProvider.getOrganizationEntityRepo(entityManager);
+          this.oldRepoProvider.getOrganizationEntityRepo(entityManager);
         const foundOrganizationEntity = await orgaRepo.findByIdOrFail(
           Number(req.params.id)
         );
@@ -182,7 +196,7 @@ export class OrganizationService {
     this.dataSource.manager
       .transaction(async (entityManager) => {
         const organizationEntityRepo =
-          this.repoProvider.getOrganizationEntityRepo(entityManager);
+          this.oldRepoProvider.getOrganizationEntityRepo(entityManager);
         const organizationEntity = await organizationEntityRepo.findByIdOrFail(
           Number(req.params.id),
           true
@@ -207,7 +221,7 @@ export class OrganizationService {
     this.dataSource.manager
       .transaction(async (entityManager) => {
         const orgaRepo =
-          this.repoProvider.getOrganizationEntityRepo(entityManager);
+          this.oldRepoProvider.getOrganizationEntityRepo(entityManager);
         const organizationEntity = await orgaRepo.findByIdOrFail(
           Number(req.params.id),
           false
@@ -235,9 +249,9 @@ export class OrganizationService {
     this.dataSource.manager
       .transaction(async (entityManager) => {
         const balanceSheetRepo =
-          this.repoProvider.getBalanceSheetEntityRepo(entityManager);
+          this.oldRepoProvider.getBalanceSheetEntityRepo(entityManager);
         const orgaRepo =
-          this.repoProvider.getOrganizationEntityRepo(entityManager);
+          this.oldRepoProvider.getOrganizationEntityRepo(entityManager);
 
         const organizationEntity = await orgaRepo.findByIdOrFail(
           Number(req.params.id),

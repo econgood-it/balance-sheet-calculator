@@ -17,7 +17,8 @@ import {
   balanceSheetJsonFactory,
   companyFactsFactory,
   companyFactsJsonFactory,
-  organizationFactory,
+  makeOrganizationCreateRequest,
+  oldOrganizationFactory,
 } from '../../../src/openapi/examples';
 import { ConfigurationReader } from '../../../src/reader/configuration.reader';
 import { IBalanceSheetEntityRepo } from '../../../src/repositories/old.balance.sheet.entity.repo';
@@ -29,6 +30,8 @@ import { InMemoryAuthentication } from '../in.memory.authentication';
 import { BalanceSheetMockBuilder } from '../../BalanceSheetMockBuilder';
 import { v4 as uuid4 } from 'uuid';
 import { BalanceSheetDBSchema } from '../../../src/entities/schemas/balance.sheet.schema';
+import { IOrganizationRepo } from '../../../src/repositories/organization.repo';
+import { makeRepoProvider } from '../../../src/repositories/repo.provider';
 
 const assertTopicWeight = (
   shortName: string,
@@ -45,7 +48,8 @@ describe('Organization Controller', () => {
   let dataSource: DataSource;
   let app: Application;
   const configuration = ConfigurationReader.read();
-  let organizationRepo: IOldOrganizationEntityRepo;
+  let oldOrganizationRepo: IOldOrganizationEntityRepo;
+  let organizationRepo: IOrganizationRepo;
   const authBuilder = new AuthBuilder();
   const auth = authBuilder.addUser();
 
@@ -53,14 +57,17 @@ describe('Organization Controller', () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
       configuration
     );
-    const repoProvider = new OldRepoProvider(configuration);
-    organizationRepo = repoProvider.getOrganizationEntityRepo(
+    const repoProvider = makeRepoProvider(configuration);
+    organizationRepo = repoProvider.getOrganizationRepo(dataSource.manager);
+    const oldRepoProvider = new OldRepoProvider(configuration);
+    oldOrganizationRepo = oldRepoProvider.getOrganizationEntityRepo(
       dataSource.manager
     );
     app = new App(
       dataSource,
       configuration,
       repoProvider,
+      oldRepoProvider,
       new InMemoryAuthentication(authBuilder.getTokenMap())
     ).app;
   });
@@ -70,7 +77,7 @@ describe('Organization Controller', () => {
   });
 
   it('should create organization on post request', async () => {
-    const orgaJson = organizationFactory.default();
+    const orgaJson = makeOrganizationCreateRequest();
     const testApp = supertest(app);
     const response = await testApp
       .post(OrganizationPaths.post)
@@ -78,16 +85,16 @@ describe('Organization Controller', () => {
       .send(orgaJson);
     expect(response.status).toBe(200);
     expect(response.body).toMatchObject(orgaJson);
-    const organizationEntity = await organizationRepo.findByIdOrFail(
+    const foundOrganization = await organizationRepo.findByIdOrFail(
       response.body.id
     );
-    expect(organizationEntity.organization).toMatchObject(orgaJson);
-    expect(organizationEntity.members).toHaveLength(1);
-    expect(organizationEntity.members[0].id).toBe(auth.user.id);
+    expect(foundOrganization).toMatchObject(orgaJson);
+    expect(foundOrganization.members).toHaveLength(1);
+    expect(foundOrganization.members[0].id).toBe(auth.user.id);
   });
 
   it('should fail to create organization if user is unauthenticated', async () => {
-    const orgaJson = organizationFactory.default();
+    const orgaJson = makeOrganizationCreateRequest();
     const testApp = supertest(app);
     const response = await testApp
       .post(OrganizationPaths.post)
@@ -121,6 +128,7 @@ describe('Organization Balance Sheet Controller', () => {
     app = new App(
       dataSource,
       configuration,
+      makeRepoProvider(configuration),
       repoProvider,
       new InMemoryAuthentication(authBuilder.getTokenMap())
     ).app;
@@ -389,6 +397,7 @@ describe('Organization Invitation Controller', () => {
     app = new App(
       dataSource,
       configuration,
+      makeRepoProvider(configuration),
       repoProvider,
       new InMemoryAuthentication(authBuilder.getTokenMap())
     ).app;

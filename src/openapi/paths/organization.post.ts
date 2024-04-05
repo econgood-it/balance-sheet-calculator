@@ -1,4 +1,4 @@
-import { balanceSheetJsonFactory, organizationFactory } from '../examples';
+import { balanceSheetJsonFactory, oldOrganizationFactory } from '../examples';
 
 import {
   applicationJson,
@@ -39,7 +39,7 @@ export function registerOrganizationPost(
             schema: OrganizationRequestSchema,
             examples: {
               default: {
-                value: organizationFactory.default(),
+                value: oldOrganizationFactory.default(),
               },
             },
           },

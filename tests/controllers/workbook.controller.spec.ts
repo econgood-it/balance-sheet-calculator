@@ -6,7 +6,7 @@ import App from '../../src/app';
 import { AuthBuilder } from '../AuthBuilder';
 import supertest from 'supertest';
 
-import { organizationFactory } from '../../src/openapi/examples';
+import { oldOrganizationFactory } from '../../src/openapi/examples';
 import { WorkbookPaths } from '../../src/controllers/workbook.controller';
 import { workbookEntityFromFile } from '../workbook';
 import {
@@ -14,6 +14,7 @@ import {
   InMemoryWorkbookEntityRepo,
 } from '../repositories/workbook.entity.repo.spec';
 import { InMemoryAuthentication } from './in.memory.authentication';
+import { makeRepoProvider } from '../../src/repositories/repo.provider';
 
 describe('Workbook Controller', () => {
   let dataSource: DataSource;
@@ -29,6 +30,7 @@ describe('Workbook Controller', () => {
     app = new App(
       dataSource,
       configuration,
+      makeRepoProvider(configuration),
       new InMemoryRepoProvider(new InMemoryWorkbookEntityRepo()),
       new InMemoryAuthentication(authBuilder.getTokenMap())
     ).app;
@@ -49,7 +51,7 @@ describe('Workbook Controller', () => {
   });
 
   it('should fail return workbook if user is unauthenticated', async () => {
-    const orgaJson = organizationFactory.default();
+    const orgaJson = oldOrganizationFactory.default();
     const testApp = supertest(app);
     const response = await testApp
       .get(WorkbookPaths.get)

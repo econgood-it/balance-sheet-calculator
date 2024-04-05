@@ -15,6 +15,7 @@ import {
 import { OldRepoProvider } from '../../../src/repositories/oldRepoProvider';
 import { OrganizationBuilder } from '../../OrganizationBuilder';
 import { InMemoryAuthentication } from '../in.memory.authentication';
+import { makeRepoProvider } from '../../../src/repositories/repo.provider';
 
 describe('Update endpoint of Balance Sheet Controller', () => {
   let dataSource: DataSource;
@@ -35,6 +36,7 @@ describe('Update endpoint of Balance Sheet Controller', () => {
     app = new App(
       dataSource,
       configuration,
+      makeRepoProvider(configuration),
       repoProvider,
       new InMemoryAuthentication(authBuilder.getTokenMap())
     ).app;

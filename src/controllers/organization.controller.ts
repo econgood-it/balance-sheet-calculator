@@ -1,7 +1,11 @@
 import { Application } from 'express';
-import { OrganizationService } from '../services/organization.service';
+import {
+  IOrganizationService,
+  OldOrganizationService,
+} from '../services/organization.service';
 import { allowUserOnly } from './role.access';
 import { upload } from './utils';
+import deepFreeze from 'deep-freeze';
 
 const resourceUrl = '/v1/organization';
 export const OrganizationPaths = {
@@ -14,59 +18,75 @@ export const OrganizationPaths = {
   orgaBalanceSheetUpload: `${resourceUrl}/:id/balancesheet/upload`,
 };
 
+export function registerOrganizationRoutes(
+  app: Application,
+  organizationService: IOrganizationService
+) {
+  app.post(
+    OrganizationPaths.post,
+    allowUserOnly,
+    organizationService.createOrganization
+  );
+}
+
 export class OrganizationController {
   constructor(
     private app: Application,
-    public organizationService: OrganizationService
+    public oldOrganizationService: OldOrganizationService
   ) {
     this.routes();
   }
 
   public routes() {
-    this.app.post(
-      OrganizationPaths.post,
-      allowUserOnly,
-      this.organizationService.createOrganization.bind(this.organizationService)
-    );
     this.app.put(
       OrganizationPaths.put,
       allowUserOnly,
-      this.organizationService.updateOrganization.bind(this.organizationService)
+      this.oldOrganizationService.updateOrganization.bind(
+        this.oldOrganizationService
+      )
     );
     this.app.get(
       OrganizationPaths.getAll,
       allowUserOnly,
-      this.organizationService.getOrganizationsOfCurrentUser.bind(
-        this.organizationService
+      this.oldOrganizationService.getOrganizationsOfCurrentUser.bind(
+        this.oldOrganizationService
       )
     );
     this.app.get(
       OrganizationPaths.get,
       allowUserOnly,
-      this.organizationService.getOrganization.bind(this.organizationService)
+      this.oldOrganizationService.getOrganization.bind(
+        this.oldOrganizationService
+      )
     );
     this.app.post(
       OrganizationPaths.orgaBalanceSheet,
       allowUserOnly,
-      this.organizationService.createBalanceSheet.bind(this.organizationService)
+      this.oldOrganizationService.createBalanceSheet.bind(
+        this.oldOrganizationService
+      )
     );
 
     this.app.post(
       OrganizationPaths.orgaBalanceSheetUpload,
       allowUserOnly,
       upload.single('balanceSheet'),
-      this.organizationService.uploadBalanceSheet.bind(this.organizationService)
+      this.oldOrganizationService.uploadBalanceSheet.bind(
+        this.oldOrganizationService
+      )
     );
 
     this.app.get(
       OrganizationPaths.orgaBalanceSheet,
       allowUserOnly,
-      this.organizationService.getBalanceSheets.bind(this.organizationService)
+      this.oldOrganizationService.getBalanceSheets.bind(
+        this.oldOrganizationService
+      )
     );
     this.app.post(
       OrganizationPaths.orgaInvitation,
       allowUserOnly,
-      this.organizationService.inviteUser.bind(this.organizationService)
+      this.oldOrganizationService.inviteUser.bind(this.oldOrganizationService)
     );
   }
 }

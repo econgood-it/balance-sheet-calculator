@@ -5,7 +5,7 @@ import { OldOrganization } from '../src/models/oldOrganization';
 import { User } from '../src/models/user';
 import {
   balanceSheetFactory,
-  organizationFactory,
+  oldOrganizationFactory,
 } from '../src/openapi/examples';
 import { BalanceSheetEntityRepository } from '../src/repositories/old.balance.sheet.entity.repo';
 import { OldOrganizationEntityRepository } from '../src/repositories/oldOrganization.entity.repo';
@@ -18,7 +18,7 @@ export type OrganizationBuilderResult = {
 };
 
 export class OrganizationBuilder {
-  private organization: OldOrganization = organizationFactory.default();
+  private organization: OldOrganization = oldOrganizationFactory.default();
   private members: { id: string }[] = [];
   private balanceSheetEntities: BalanceSheetEntity[] = [];
 

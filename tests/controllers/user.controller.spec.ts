@@ -10,6 +10,7 @@ import supertest from 'supertest';
 import { OrganizationBuilder } from '../OrganizationBuilder';
 import { UserPaths } from '../../src/controllers/user.controller';
 import { IOldOrganizationEntityRepo } from '../../src/repositories/oldOrganization.entity.repo';
+import { makeRepoProvider } from '../../src/repositories/repo.provider';
 
 describe('User Controller', () => {
   let dataSource: DataSource;
@@ -29,6 +30,7 @@ describe('User Controller', () => {
     app = new App(
       dataSource,
       configuration,
+      makeRepoProvider(configuration),
       repoProvider,
       new InMemoryAuthentication(authBuilder.getTokenMap())
     ).app;

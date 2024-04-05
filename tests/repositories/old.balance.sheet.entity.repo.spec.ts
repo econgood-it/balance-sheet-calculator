@@ -5,7 +5,7 @@ import { BalanceSheetEntity } from '../../src/entities/balance.sheet.entity';
 
 import {
   balanceSheetFactory,
-  organizationFactory,
+  oldOrganizationFactory,
 } from '../../src/openapi/examples';
 import { v4 as uuid4 } from 'uuid';
 import {
@@ -42,7 +42,7 @@ describe('BalanceSheetRepo', () => {
     const organizationEntity = await organizationRepo.save(
       new OrganizationEntity(
         undefined,
-        OrganizationDBSchema.parse(organizationFactory.default()),
+        OrganizationDBSchema.parse(oldOrganizationFactory.default()),
         [user]
       )
     );

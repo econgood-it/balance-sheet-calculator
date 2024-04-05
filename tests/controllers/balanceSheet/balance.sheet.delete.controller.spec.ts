@@ -20,6 +20,7 @@ import { OldRepoProvider } from '../../../src/repositories/oldRepoProvider';
 import { AuthBuilder } from '../../AuthBuilder';
 import { OrganizationBuilder } from '../../OrganizationBuilder';
 import { InMemoryAuthentication } from '../in.memory.authentication';
+import { makeRepoProvider } from '../../../src/repositories/repo.provider';
 
 describe('Balance Sheet Controller', () => {
   let dataSource: DataSource;
@@ -39,6 +40,7 @@ describe('Balance Sheet Controller', () => {
     app = new App(
       dataSource,
       configuration,
+      makeRepoProvider(configuration),
       new OldRepoProvider(configuration),
       new InMemoryAuthentication(authBuilder.getTokenMap())
     ).app;
