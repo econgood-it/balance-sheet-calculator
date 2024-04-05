@@ -5,7 +5,6 @@ import {
 } from '../services/organization.service';
 import { allowUserOnly } from './role.access';
 import { upload } from './utils';
-import deepFreeze from 'deep-freeze';
 
 const resourceUrl = '/v1/organization';
 export const OrganizationPaths = {
@@ -26,6 +25,11 @@ export function registerOrganizationRoutes(
     OrganizationPaths.post,
     allowUserOnly,
     organizationService.createOrganization
+  );
+  app.post(
+    OrganizationPaths.orgaInvitation,
+    allowUserOnly,
+    organizationService.inviteUser
   );
 }
 
@@ -82,11 +86,6 @@ export class OrganizationController {
       this.oldOrganizationService.getBalanceSheets.bind(
         this.oldOrganizationService
       )
-    );
-    this.app.post(
-      OrganizationPaths.orgaInvitation,
-      allowUserOnly,
-      this.oldOrganizationService.inviteUser.bind(this.oldOrganizationService)
     );
   }
 }

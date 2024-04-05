@@ -2,6 +2,7 @@ import { Request } from 'express';
 import { BalanceSheetEntity } from '../entities/balance.sheet.entity';
 import { OrganizationEntity } from '../entities/organization.entity';
 import { NoAccessError } from '../exceptions/no.access.error';
+import { Organization } from '../models/organization';
 
 export namespace Authorization {
   export function checkIfCurrentUserHasEditorPermissions(
@@ -29,5 +30,19 @@ export namespace Authorization {
     ) {
       throw new NoAccessError();
     }
+  }
+}
+
+export function checkIfCurrentUserIsMember(
+  request: Request,
+  organization: Organization
+) {
+  if (
+    !(
+      request.authenticatedUser &&
+      organization.hasMember(request.authenticatedUser)
+    )
+  ) {
+    throw new NoAccessError();
   }
 }

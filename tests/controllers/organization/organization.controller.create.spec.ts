@@ -18,7 +18,6 @@ import {
   companyFactsFactory,
   companyFactsJsonFactory,
   makeOrganizationCreateRequest,
-  oldOrganizationFactory,
 } from '../../../src/openapi/examples';
 import { ConfigurationReader } from '../../../src/reader/configuration.reader';
 import { IBalanceSheetEntityRepo } from '../../../src/repositories/old.balance.sheet.entity.repo';
@@ -32,6 +31,7 @@ import { v4 as uuid4 } from 'uuid';
 import { BalanceSheetDBSchema } from '../../../src/entities/schemas/balance.sheet.schema';
 import { IOrganizationRepo } from '../../../src/repositories/organization.repo';
 import { makeRepoProvider } from '../../../src/repositories/repo.provider';
+import { makeOrganization } from '../../../src/models/organization';
 
 const assertTopicWeight = (
   shortName: string,
@@ -48,7 +48,6 @@ describe('Organization Controller', () => {
   let dataSource: DataSource;
   let app: Application;
   const configuration = ConfigurationReader.read();
-  let oldOrganizationRepo: IOldOrganizationEntityRepo;
   let organizationRepo: IOrganizationRepo;
   const authBuilder = new AuthBuilder();
   const auth = authBuilder.addUser();
@@ -60,9 +59,6 @@ describe('Organization Controller', () => {
     const repoProvider = makeRepoProvider(configuration);
     organizationRepo = repoProvider.getOrganizationRepo(dataSource.manager);
     const oldRepoProvider = new OldRepoProvider(configuration);
-    oldOrganizationRepo = oldRepoProvider.getOrganizationEntityRepo(
-      dataSource.manager
-    );
     app = new App(
       dataSource,
       configuration,
@@ -382,7 +378,7 @@ describe('Organization Invitation Controller', () => {
   let dataSource: DataSource;
   let app: Application;
   const configuration = ConfigurationReader.read();
-  let organizationRepo: IOldOrganizationEntityRepo;
+  let organizationRepo: IOrganizationRepo;
   const authBuilder = new AuthBuilder();
   const auth = authBuilder.addUser();
 
@@ -390,15 +386,14 @@ describe('Organization Invitation Controller', () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
       configuration
     );
-    const repoProvider = new OldRepoProvider(configuration);
-    organizationRepo = repoProvider.getOrganizationEntityRepo(
-      dataSource.manager
-    );
+    const repoProvider = makeRepoProvider(configuration);
+    organizationRepo = repoProvider.getOrganizationRepo(dataSource.manager);
+    const oldRepoProvider = new OldRepoProvider(configuration);
     app = new App(
       dataSource,
       configuration,
-      makeRepoProvider(configuration),
       repoProvider,
+      oldRepoProvider,
       new InMemoryAuthentication(authBuilder.getTokenMap())
     ).app;
   });
@@ -408,20 +403,19 @@ describe('Organization Invitation Controller', () => {
   });
   it('should invite user to organization', async () => {
     const testApp = supertest(app);
-    const { organizationEntity } = await new OrganizationBuilder()
-      .addMember(auth.user)
-      .build(dataSource);
+    const organization = await organizationRepo.save(
+      makeOrganization().withFields({ members: [{ id: auth.user.id }] })
+    );
     const email = `${uuid4()}@example.com`;
     const response = await testApp
       .post(
-        `${OrganizationPaths.getAll}/${organizationEntity.id}/invitation/${email}`
+        `${OrganizationPaths.getAll}/${organization.id}/invitation/${email}`
       )
       .set(auth.toHeaderPair().key, auth.toHeaderPair().value);
     expect(response.status).toBe(201);
-    const foundOrganizationEntity = await organizationRepo.findByIdOrFail(
-      organizationEntity.id!,
-      false
+    const foundOrganization = await organizationRepo.findByIdOrFail(
+      organization.id!
     );
-    expect(foundOrganizationEntity.organization.invitations).toEqual([email]);
+    expect(foundOrganization.invitations).toEqual([email]);
   });
 });

@@ -16,7 +16,10 @@ import NotFoundException from '../exceptions/not.found.exception';
 import { parseLanguageParameter } from '../language/translations';
 import { BalanceSheetReader } from '../reader/balanceSheetReader/balance.sheet.reader';
 import { IOldRepoProvider } from '../repositories/oldRepoProvider';
-import { Authorization } from '../security/authorization';
+import {
+  Authorization,
+  checkIfCurrentUserIsMember,
+} from '../security/authorization';
 import { parseSaveFlag } from './utils';
 import { z } from 'zod';
 import { IRepoProvider } from '../repositories/repo.provider';
@@ -29,6 +32,7 @@ export interface IOrganizationService {
     res: Response,
     next: NextFunction
   ): Promise<void>;
+  inviteUser(req: Request, res: Response, next: NextFunction): Promise<void>;
 }
 
 export function makeOrganizationService(
@@ -59,7 +63,26 @@ export function makeOrganizationService(
         handle(error, next);
       });
   }
-  return deepFreeze({ createOrganization });
+
+  async function inviteUser(req: Request, res: Response, next: NextFunction) {
+    dataSource.manager
+      .transaction(async (entityManager) => {
+        const orgaRepo = repoProvider.getOrganizationRepo(entityManager);
+        const organization = await orgaRepo.findByIdOrFail(
+          Number(req.params.id)
+        );
+        checkIfCurrentUserIsMember(req, organization);
+        const email = z.string().email().parse(req.params.email);
+        await orgaRepo.save(organization.invite(email));
+        res.status(201);
+        res.send();
+      })
+      .catch((error) => {
+        handle(error, next);
+      });
+  }
+
+  return deepFreeze({ createOrganization, inviteUser });
 }
 
 export class OldOrganizationService {
@@ -211,27 +234,6 @@ export class OldOrganizationService {
               : []
           )
         );
-      })
-      .catch((error) => {
-        handle(error, next);
-      });
-  }
-
-  public inviteUser(req: Request, res: Response, next: NextFunction) {
-    this.dataSource.manager
-      .transaction(async (entityManager) => {
-        const orgaRepo =
-          this.oldRepoProvider.getOrganizationEntityRepo(entityManager);
-        const organizationEntity = await orgaRepo.findByIdOrFail(
-          Number(req.params.id),
-          false
-        );
-        Authorization.checkIfCurrentUserIsMember(req, organizationEntity);
-        const email = z.string().email().parse(req.params.email);
-        organizationEntity.invite(email);
-        await orgaRepo.save(organizationEntity);
-        res.status(201);
-        res.send();
       })
       .catch((error) => {
         handle(error, next);

@@ -22,6 +22,7 @@ export type Organization = OrganizationOpts & {
   withFields: (fields: Partial<OrganizationOpts>) => Organization;
   invite: (email: string) => Organization;
   join: (user: User) => Organization;
+  hasMember: (user: User) => boolean;
 };
 
 export function makeOrganization(opts?: OrganizationOpts): Organization {
@@ -69,10 +70,15 @@ export function makeOrganization(opts?: OrganizationOpts): Organization {
     });
   }
 
+  function hasMember(user: User): boolean {
+    return data.members.some((m) => m.id === user.id);
+  }
+
   return deepFreeze({
     ...data,
     withFields,
     invite,
     join,
+    hasMember,
   });
 }

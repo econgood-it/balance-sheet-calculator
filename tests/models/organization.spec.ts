@@ -77,4 +77,13 @@ describe('Organization', () => {
       ConflictError
     );
   });
+
+  it('should return if user is member of organization', () => {
+    const organization = makeOrganization().withFields({
+      members: [{ id: '1' }],
+    });
+    const user = { id: '1', email: 'test@example.com', role: Role.User };
+    expect(organization.hasMember(user)).toBe(true);
+    expect(organization.hasMember({ ...user, id: '2' })).toBe(false);
+  });
 });
