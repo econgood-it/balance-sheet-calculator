@@ -1,5 +1,10 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { OldOrganization } from '../models/oldOrganization';
+import {
+  AfterLoad,
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 import { z } from 'zod';
 import {
@@ -10,10 +15,31 @@ import { BalanceSheetEntity } from './balance.sheet.entity';
 import { ConflictError } from '../exceptions/conflict.error';
 import { User } from '../models/user';
 import { NoAccessError } from '../exceptions/no.access.error';
+import { DatabaseValidationError } from '../exceptions/databaseValidationError';
 
 type Member = {
   id: string;
 };
+
+const errorMsg = 'Must not be blank';
+const isNonEmptyString = z
+  .string({ required_error: errorMsg })
+  .min(1, { message: errorMsg });
+
+export const OrganizationDBSchema = z
+  .object({
+    name: isNonEmptyString,
+    address: z.object({
+      city: isNonEmptyString,
+      houseNumber: isNonEmptyString,
+      street: isNonEmptyString,
+      zip: isNonEmptyString,
+    }),
+    invitations: z.string().email().array(),
+  })
+  .brand<'OrganizationDB'>();
+
+export type OrganizationDB = z.infer<typeof OrganizationDBSchema>;
 
 @Entity()
 export class OrganizationEntity {
@@ -21,7 +47,7 @@ export class OrganizationEntity {
   public readonly id: number | undefined;
 
   @Column('jsonb')
-  public organization: OldOrganization;
+  public organization: OrganizationDB;
 
   @Column('jsonb')
   public readonly members: Member[];
@@ -34,12 +60,24 @@ export class OrganizationEntity {
 
   public constructor(
     id: number | undefined,
-    organization: OldOrganization,
+    organization: OrganizationDB,
     members: Member[]
   ) {
     this.id = id;
     this.organization = organization;
     this.members = members;
+  }
+
+  @AfterLoad()
+  validateOrganization() {
+    const result = OrganizationDBSchema.safeParse(this.organization);
+    if (!result.success) {
+      throw new DatabaseValidationError(
+        result.error,
+        'Column organization is not valid',
+        this.id
+      );
+    }
   }
 
   public addBalanceSheetEntity(balanceSheetEntity: BalanceSheetEntity) {
@@ -79,10 +117,10 @@ export class OrganizationEntity {
   public mergeWithRequest(
     organizationRequest: z.infer<typeof OrganizationRequestSchema>
   ) {
-    this.organization = {
+    this.organization = OrganizationDBSchema.parse({
       ...organizationRequest,
       invitations: this.organization.invitations,
-    };
+    });
   }
 
   public hasMember(member: Member) {

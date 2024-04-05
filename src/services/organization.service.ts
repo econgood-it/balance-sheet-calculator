@@ -9,7 +9,10 @@ import { Workbook } from 'exceljs';
 import { DataSource } from 'typeorm';
 import { BalanceSheetCreateRequest } from '../dto/balance.sheet.dto';
 import { BalanceSheetEntity } from '../entities/balance.sheet.entity';
-import { OrganizationEntity } from '../entities/organization.entity';
+import {
+  OrganizationDBSchema,
+  OrganizationEntity,
+} from '../entities/organization.entity';
 import { handle } from '../exceptions/error.handler';
 import { NoAccessError } from '../exceptions/no.access.error';
 import NotFoundException from '../exceptions/not.found.exception';
@@ -42,7 +45,7 @@ export class OrganizationService {
         const organizationEntity = await orgaRepo.save(
           new OrganizationEntity(
             undefined,
-            { ...organization, invitations: [] },
+            OrganizationDBSchema.parse({ ...organization, invitations: [] }),
             [{ id: req.authenticatedUser.id }]
           )
         );

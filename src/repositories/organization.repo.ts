@@ -1,5 +1,8 @@
 import { EntityManager } from 'typeorm';
-import { OrganizationEntity } from '../entities/organization.entity';
+import {
+  OrganizationDBSchema,
+  OrganizationEntity,
+} from '../entities/organization.entity';
 import { makeOrganization, Organization } from '../models/organization';
 import deepFreeze from 'deep-freeze';
 
@@ -69,11 +72,11 @@ export function makeOrganizationRepository(
   ): OrganizationEntity {
     return new OrganizationEntity(
       organization.id,
-      {
+      OrganizationDBSchema.parse({
         name: organization.name,
         address: organization.address,
         invitations: [...organization.invitations],
-      },
+      }),
       [...organization.members]
     );
   }

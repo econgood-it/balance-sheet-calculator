@@ -1,6 +1,9 @@
 import { DataSource } from 'typeorm';
 import { DatabaseSourceCreator } from '../../src/databaseSourceCreator';
-import { OrganizationEntity } from '../../src/entities/organization.entity';
+import {
+  OrganizationDBSchema,
+  OrganizationEntity,
+} from '../../src/entities/organization.entity';
 import { ConfigurationReader } from '../../src/reader/configuration.reader';
 
 import { v4 as uuid4 } from 'uuid';
@@ -45,7 +48,7 @@ describe('OrganizationEntityRepo', () => {
 
     const organizationEntity = new OrganizationEntity(
       undefined,
-      organization,
+      OrganizationDBSchema.parse(organization),
       members
     );
     const id = (await organizationEntityRepo.save(organizationEntity)).id;

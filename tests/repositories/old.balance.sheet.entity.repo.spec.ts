@@ -12,7 +12,10 @@ import {
   BalanceSheetEntityRepository,
   IBalanceSheetEntityRepo,
 } from '../../src/repositories/old.balance.sheet.entity.repo';
-import { OrganizationEntity } from '../../src/entities/organization.entity';
+import {
+  OrganizationDBSchema,
+  OrganizationEntity,
+} from '../../src/entities/organization.entity';
 import { OldOrganizationEntityRepository } from '../../src/repositories/oldOrganization.entity.repo';
 
 describe('BalanceSheetRepo', () => {
@@ -39,7 +42,11 @@ describe('BalanceSheetRepo', () => {
       dataSource.manager
     );
     const organizationEntity = await organizationRepo.save(
-      new OrganizationEntity(undefined, organizationFactory.default(), [user])
+      new OrganizationEntity(
+        undefined,
+        OrganizationDBSchema.parse(organizationFactory.default()),
+        [user]
+      )
     );
     const balanceSheetEntity = new BalanceSheetEntity(
       undefined,

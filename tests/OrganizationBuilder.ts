@@ -3,7 +3,10 @@ import {
   BalanceSheetDBSchema,
   BalanceSheetEntity,
 } from '../src/entities/balance.sheet.entity';
-import { OrganizationEntity } from '../src/entities/organization.entity';
+import {
+  OrganizationDBSchema,
+  OrganizationEntity,
+} from '../src/entities/organization.entity';
 import { OldOrganization } from '../src/models/oldOrganization';
 import { User } from '../src/models/user';
 import {
@@ -65,7 +68,7 @@ export class OrganizationBuilder {
         );
         const organizationEntity = new OrganizationEntity(
           undefined,
-          this.organization,
+          OrganizationDBSchema.parse(this.organization),
           this.members
         );
         for (const balanceSheetEntity of this.balanceSheetEntities) {

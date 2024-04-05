@@ -33,7 +33,7 @@ describe('OrganizationRepo', () => {
     const id = (await organizationRepo.save(organization)).id;
 
     const organizationFound = await organizationRepo.findByIdOrFail(id!);
-    expect(organizationFound).toStrictEqual({ ...organization, id: id });
+    expect(organizationFound).toStrictEqual({ ...organization, id });
   });
 
   it('finds all organizations of user', async () => {
