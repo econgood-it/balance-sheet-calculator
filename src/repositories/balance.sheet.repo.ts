@@ -13,9 +13,11 @@ import {
 } from '../models/company.facts';
 import { makeRating } from '../models/rating';
 import deepFreeze from 'deep-freeze';
+import { Organization } from '../models/organization';
 
 export interface IBalanceSheetRepo {
   findByIdOrFail(id: number): Promise<BalanceSheet>;
+  findByOrganization(organization: Organization): Promise<BalanceSheet[]>;
   save(balanceSheet: BalanceSheet): Promise<BalanceSheet>;
   remove(balanceSheet: BalanceSheet): Promise<BalanceSheet>;
 }
@@ -31,6 +33,16 @@ export function makeBalanceSheetRepository(
       loadRelationIds: true,
     });
     return convertToBalanceSheet(balanceSheetEntity);
+  }
+
+  async function findByOrganization(
+    organization: Organization
+  ): Promise<BalanceSheet[]> {
+    const balanceSheetEntities = await repo.find({
+      where: { organizationEntityId: organization.id },
+      loadRelationIds: true,
+    });
+    return balanceSheetEntities.map(convertToBalanceSheet);
   }
 
   async function save(balanceSheet: BalanceSheet): Promise<BalanceSheet> {
@@ -143,6 +155,7 @@ export function makeBalanceSheetRepository(
 
   return deepFreeze({
     findByIdOrFail,
+    findByOrganization,
     save,
     remove,
   });

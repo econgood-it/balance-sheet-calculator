@@ -76,4 +76,31 @@ describe('BalanceSheetRepo', () => {
       balanceSheetRepository.findByIdOrFail(balanceSheet.id!)
     ).rejects.toThrow();
   });
+
+  it('saves and finds all balance sheet entities of organization', async () => {
+    const organization = await organizationRepository.save(makeOrganization());
+    const otherOrganization = await organizationRepository.save(
+      makeOrganization()
+    );
+    const balanceSheet1 = await balanceSheetRepository.save(
+      makeBalanceSheet().assignOrganization(organization)
+    );
+    const balanceSheet2 = await balanceSheetRepository.save(
+      makeBalanceSheet().assignOrganization(organization)
+    );
+    await balanceSheetRepository.save(
+      makeBalanceSheet().assignOrganization(otherOrganization)
+    );
+
+    const foundBalanceSheets = await balanceSheetRepository.findByOrganization(
+      organization
+    );
+    foundBalanceSheets.forEach((b) =>
+      expect(b.organizationId).toEqual(organization.id)
+    );
+    expect(foundBalanceSheets.map((b) => b.id)).toEqual([
+      balanceSheet1.id,
+      balanceSheet2.id,
+    ]);
+  });
 });

@@ -88,24 +88,4 @@ describe('OrganizationRepo', () => {
       organization3.id,
     ]);
   });
-
-  // it('saves and finds all balance sheet entities of organization', async () => {
-  //   const { organizationEntity } = await new OrganizationBuilder()
-  //     .addMember()
-  //     .addBalanceSheetEntity()
-  //     .addBalanceSheetEntity()
-  //     .build(dataSource);
-  //
-  //   const foundOrganizationEntity = await organizationRepo.findByIdOrFail(
-  //     organizationEntity.id!,
-  //     true
-  //   );
-  //   expect(organizationEntity.balanceSheetEntities).toBeDefined();
-  //   organizationEntity.balanceSheetEntities?.forEach((b) =>
-  //     expect(b.id).toBeDefined()
-  //   );
-  //   expect(
-  //     foundOrganizationEntity.balanceSheetEntities?.map((b) => b.id)
-  //   ).toEqual(organizationEntity.balanceSheetEntities?.map((b) => b.id));
-  // });
 });
