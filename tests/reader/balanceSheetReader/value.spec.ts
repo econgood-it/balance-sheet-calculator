@@ -1,5 +1,5 @@
 import { Value } from '../../../src/reader/balanceSheetReader/value';
-import { CompanySize } from '../../../src/calculations/employees.calc';
+import { CompanySize } from '../../../src/calculations/old.employees.calc';
 import { BalanceSheetVersion } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 
 describe('Value', () => {

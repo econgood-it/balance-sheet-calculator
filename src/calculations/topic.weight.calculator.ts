@@ -1,5 +1,5 @@
 import { CalcResults } from './calculator';
-import { CompanySize } from './employees.calc';
+import { CompanySize } from './old.employees.calc';
 import Provider from '../providers/provider';
 import { allValuesAreZero, OldCompanyFacts } from '../models/oldCompanyFacts';
 

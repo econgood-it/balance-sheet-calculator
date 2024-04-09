@@ -1,7 +1,7 @@
 import { TopicWeightCalculator } from '../../src/calculations/topic.weight.calculator';
 import { CalcResults } from '../../src/calculations/calculator';
 
-import { CompanySize } from '../../src/calculations/employees.calc';
+import { CompanySize } from '../../src/calculations/old.employees.calc';
 import { none, some } from '../../src/calculations/option';
 import { OldCompanyFacts } from '../../src/models/oldCompanyFacts';
 import { companyFactsFactory } from '../../src/openapi/examples';

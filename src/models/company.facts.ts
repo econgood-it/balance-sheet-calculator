@@ -13,7 +13,7 @@ export function makeSupplyFraction(opts: SupplyFraction): SupplyFraction {
 }
 
 export type EmployeesFraction = {
-  countryCode: string | undefined;
+  countryCode?: string;
   percentage: number;
 };
 

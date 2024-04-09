@@ -1,7 +1,6 @@
 import { RegionProvider } from '../providers/region.provider';
+import { OldCompanyFacts } from '../models/oldCompanyFacts';
 import { AVERAGE_REGION_NAME_TO_COUNTRY_CODE } from '../models/region';
-import { CompanyFacts } from '../models/company.facts';
-import deepFreeze from 'deep-freeze';
 
 export enum CompanySize {
   micro = 'micro',
@@ -16,14 +15,16 @@ export interface EmployeesCalcResults {
   itucAverage: number;
 }
 
-export function makeEmployeesCalc(regionProvider: RegionProvider) {
-  const DEFAULT_PPP_INDEX = 1.00304566871495;
-  const DEFAULT_ITUC_AVERAGE = 0;
+export class OldEmployeesCalc {
+  private static readonly DEFAULT_PPP_INDEX = 1.00304566871495;
+  private static readonly DEFAULT_ITUC_AVERAGE = 0;
 
-  function calculate(companyFacts: CompanyFacts): EmployeesCalcResults {
-    const normedEmployeesRisk = calculateNormedEmployeesRisk(companyFacts);
-    const companySize = calculateCompanySize(companyFacts);
-    const itucAverage = calculateItucAverage(companyFacts);
+  constructor(private readonly regionProvider: RegionProvider) {}
+
+  public calculate(companyFacts: OldCompanyFacts): EmployeesCalcResults {
+    const normedEmployeesRisk = this.calculateNormedEmployeesRisk(companyFacts);
+    const companySize = this.calculateCompanySize(companyFacts);
+    const itucAverage = this.calculateItucAverage(companyFacts);
     return {
       normedEmployeesRisk,
       companySize,
@@ -36,12 +37,12 @@ export function makeEmployeesCalc(regionProvider: RegionProvider) {
    * @param companyFacts
    * @private
    */
-  function employeesRisks(companyFacts: CompanyFacts): number {
+  private employeesRisks(companyFacts: OldCompanyFacts): number {
     let result: number = 0;
     for (const employeesFraction of companyFacts.employeesFractions) {
       const pppIndex = employeesFraction.countryCode
-        ? regionProvider.getOrFail(employeesFraction.countryCode).pppIndex
-        : DEFAULT_PPP_INDEX;
+        ? this.regionProvider.getOrFail(employeesFraction.countryCode).pppIndex
+        : OldEmployeesCalc.DEFAULT_PPP_INDEX;
       result +=
         companyFacts.totalStaffCosts * employeesFraction.percentage * pppIndex;
     }
@@ -53,7 +54,7 @@ export function makeEmployeesCalc(regionProvider: RegionProvider) {
    * @param companyFacts
    * @private
    */
-  function employeesRisksNormalizer(companyFacts: CompanyFacts): number {
+  private employeesRisksNormalizer(companyFacts: OldCompanyFacts): number {
     const sumEmployeesPercentage: number =
       companyFacts.employeesFractions.reduce(
         (sum: number, ef) => sum + ef.percentage,
@@ -62,7 +63,7 @@ export function makeEmployeesCalc(regionProvider: RegionProvider) {
 
     return (
       (1 - sumEmployeesPercentage) *
-      DEFAULT_PPP_INDEX *
+      OldEmployeesCalc.DEFAULT_PPP_INDEX *
       companyFacts.totalStaffCosts
     );
   }
@@ -72,10 +73,10 @@ export function makeEmployeesCalc(regionProvider: RegionProvider) {
    * @param companyFacts
    * @private
    */
-  function calculateNormedEmployeesRisk(companyFacts: CompanyFacts): number {
-    const employeesRisk = employeesRisks(companyFacts);
+  private calculateNormedEmployeesRisk(companyFacts: OldCompanyFacts): number {
+    const employeesRisk = this.employeesRisks(companyFacts);
 
-    return employeesRisk + employeesRisksNormalizer(companyFacts);
+    return employeesRisk + this.employeesRisksNormalizer(companyFacts);
   }
 
   /**
@@ -83,30 +84,30 @@ export function makeEmployeesCalc(regionProvider: RegionProvider) {
    * @param companyFacts
    * @private
    */
-  function calculateItucAverage(companyFacts: CompanyFacts): number {
+  private calculateItucAverage(companyFacts: OldCompanyFacts): number {
     let result = 0;
     for (const employeesFraction of companyFacts.employeesFractions) {
       if (!employeesFraction.countryCode) {
-        result += DEFAULT_ITUC_AVERAGE;
+        result += OldEmployeesCalc.DEFAULT_ITUC_AVERAGE;
       } else if (employeesFraction.countryCode.localeCompare('LKA') === 1) {
         // TODO: EXCEL Limitation (see issue https://git.ecogood.org/services/balance-sheet-calculator/issues/138)
-        result += DEFAULT_ITUC_AVERAGE;
+        result += OldEmployeesCalc.DEFAULT_ITUC_AVERAGE;
       } else if (
         [...AVERAGE_REGION_NAME_TO_COUNTRY_CODE.values()].includes(
           employeesFraction.countryCode
         ) // TODO: EXCEL Limitation (see issue https://git.ecogood.org/services/balance-sheet-calculator/issues/138)
       ) {
-        result += DEFAULT_ITUC_AVERAGE;
+        result += OldEmployeesCalc.DEFAULT_ITUC_AVERAGE;
       } else {
         result +=
           employeesFraction.percentage *
-          regionProvider.getOrFail(employeesFraction.countryCode).ituc;
+          this.regionProvider.getOrFail(employeesFraction.countryCode).ituc;
       }
     }
     return result;
   }
 
-  function calculateCompanySize(companyFacts: CompanyFacts): CompanySize {
+  private calculateCompanySize(companyFacts: OldCompanyFacts): CompanySize {
     const mio = 1000000;
     const mio2 = 2 * mio;
     const mio10 = 10 * mio;
@@ -130,6 +131,4 @@ export function makeEmployeesCalc(regionProvider: RegionProvider) {
       return CompanySize.large;
     }
   }
-
-  return deepFreeze({ calculate });
 }

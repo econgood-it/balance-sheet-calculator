@@ -2,7 +2,7 @@ import * as path from 'path';
 
 import { Workbook } from 'exceljs';
 import { CalcResultsReader } from '../../../src/reader/balanceSheetReader/calc.results.reader';
-import { CompanySize } from '../../../src/calculations/employees.calc';
+import { CompanySize } from '../../../src/calculations/old.employees.calc';
 
 describe('CalcResults', () => {
   it('should read calc results from excel', async () => {

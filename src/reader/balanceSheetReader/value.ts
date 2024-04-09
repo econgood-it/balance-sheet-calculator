@@ -1,4 +1,4 @@
-import { CompanySize } from '../../calculations/employees.calc';
+import { CompanySize } from '../../calculations/old.employees.calc';
 import { none, Option, some } from '../../calculations/option';
 
 import { AVERAGE_REGION_NAME_TO_COUNTRY_CODE } from '../../models/region';

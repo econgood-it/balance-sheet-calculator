@@ -1,5 +1,5 @@
 import { SupplierCalc, SupplyCalcResults } from './supplier.calc';
-import { EmployeesCalc, EmployeesCalcResults } from './employees.calc';
+import { OldEmployeesCalc, EmployeesCalcResults } from './old.employees.calc';
 import { FinanceCalc, FinanceCalcResults } from './finance.calc';
 import { RegionProvider } from '../providers/region.provider';
 import { IndustryProvider } from '../providers/industry.provider';
@@ -21,7 +21,7 @@ export interface CalcResults {
 
 export class Calculator {
   public readonly supplierCalc: SupplierCalc;
-  public readonly employeesCalc: EmployeesCalc;
+  public readonly employeesCalc: OldEmployeesCalc;
   public readonly financeCalc: FinanceCalc;
   public readonly customerCalc: OldCustomerCalc;
   public readonly socialEnvironmentCalc: SocialEnvironmentCalc;
@@ -31,7 +31,7 @@ export class Calculator {
     industryProvider: IndustryProvider
   ) {
     this.supplierCalc = new SupplierCalc(regionProvider, industryProvider);
-    this.employeesCalc = new EmployeesCalc(regionProvider);
+    this.employeesCalc = new OldEmployeesCalc(regionProvider);
     this.financeCalc = new FinanceCalc();
     this.customerCalc = new OldCustomerCalc(industryProvider);
     this.socialEnvironmentCalc = new SocialEnvironmentCalc();

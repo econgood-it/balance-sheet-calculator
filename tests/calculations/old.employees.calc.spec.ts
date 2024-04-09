@@ -1,106 +1,116 @@
 import { RegionProvider } from '../../src/providers/region.provider';
 
-import { CompanySize } from '../../src/calculations/old.employees.calc';
-import { BalanceSheetVersion } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import {
-  CompanyFacts,
-  makeCompanyFacts,
-  makeEmployeesFraction,
-} from '../../src/models/company.facts';
-import { makeEmployeesCalc } from '../../src/calculations/employees.calc';
+  CompanySize,
+  OldEmployeesCalc,
+  EmployeesCalcResults,
+} from '../../src/calculations/old.employees.calc';
+
+import { OldCompanyFacts } from '../../src/models/oldCompanyFacts';
+import { companyFactsFactory } from '../../src/openapi/examples';
+import { BalanceSheetVersion } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 
 describe('Employees Calculator', () => {
   describe('should calculate the itucAverage ', () => {
-    async function calc(companyFacts: CompanyFacts) {
-      return makeEmployeesCalc(
-        await RegionProvider.fromVersion(BalanceSheetVersion.v5_0_8)
-      ).calculate(companyFacts);
-    }
+    let regionProvider: RegionProvider;
+
+    const calc = async (
+      companyFacts: OldCompanyFacts
+    ): Promise<EmployeesCalcResults> => {
+      regionProvider = await RegionProvider.fromVersion(
+        BalanceSheetVersion.v5_0_8
+      );
+      return new OldEmployeesCalc(regionProvider).calculate(companyFacts);
+    };
 
     it('when employeesFractions array empty', async () => {
-      const companyFacts = makeCompanyFacts();
+      const companyFacts = companyFactsFactory.empty();
       const employeesCalcResults = await calc(companyFacts);
       expect(employeesCalcResults.itucAverage).toBeCloseTo(0);
     });
 
     it('when employeesFractions array has size 1', async () => {
-      const companyFacts = makeCompanyFacts().withFields({
-        employeesFractions: [
-          makeEmployeesFraction({ countryCode: 'CRI', percentage: 0.7 }),
-        ],
-      });
+      const companyFacts: OldCompanyFacts = {
+        ...companyFactsFactory.empty(),
+        employeesFractions: [{ countryCode: 'CRI', percentage: 0.7 }],
+      };
       const employeesCalcResults = await calc(companyFacts);
       expect(employeesCalcResults.itucAverage).toBeCloseTo(1.4);
     });
 
     it('when employeesFractions contains item without country code', async () => {
-      const companyFacts = makeCompanyFacts().withFields({
-        employeesFractions: [makeEmployeesFraction({ percentage: 1 })],
-      });
+      const companyFacts: OldCompanyFacts = {
+        ...companyFactsFactory.empty(),
+        employeesFractions: [{ percentage: 1 }],
+      };
       const employeesCalcResults = await calc(companyFacts);
       expect(employeesCalcResults.itucAverage).toBeCloseTo(0);
     });
 
     it('when employeesFractions contains item with average country code like AAF', async () => {
       // TODO: EXCEL Limitation (see issue https://git.ecogood.org/services/balance-sheet-calculator/issues/138)
-      const companyFacts = makeCompanyFacts().withFields({
-        employeesFractions: [
-          makeEmployeesFraction({ countryCode: 'AAF', percentage: 1 }),
-        ],
-      });
+      const companyFacts: OldCompanyFacts = {
+        ...companyFactsFactory.empty(),
+        employeesFractions: [{ countryCode: 'AAF', percentage: 1 }],
+      };
       const employeesCalcResults = await calc(companyFacts);
       expect(employeesCalcResults.itucAverage).toBeCloseTo(0);
     });
 
     it('when employeesFractions contains item with country code > LKA', async () => {
       // TODO: EXCEL Limitation (see issue https://git.ecogood.org/services/balance-sheet-calculator/issues/138)
-      const companyFacts = makeCompanyFacts().withFields({
-        employeesFractions: [
-          makeEmployeesFraction({ countryCode: 'LSO', percentage: 1 }),
-        ],
-      });
+      const companyFacts: OldCompanyFacts = {
+        ...companyFactsFactory.empty(),
+        employeesFractions: [{ countryCode: 'LSO', percentage: 1 }],
+      };
       const employeesCalcResults = await calc(companyFacts);
       expect(employeesCalcResults.itucAverage).toBeCloseTo(0);
     });
 
     it('when employeesFractions array has size > 1', async () => {
-      const companyFacts = makeCompanyFacts().withFields({
+      const companyFacts: OldCompanyFacts = {
+        ...companyFactsFactory.empty(),
         employeesFractions: [
-          makeEmployeesFraction({ countryCode: 'CRI', percentage: 0.7 }),
-          makeEmployeesFraction({ countryCode: 'CHN', percentage: 0.2 }),
+          { countryCode: 'CRI', percentage: 0.7 },
+          { countryCode: 'CHN', percentage: 0.2 },
         ],
-      });
+      };
       const employeesCalcResults = await calc(companyFacts);
       expect(employeesCalcResults.itucAverage).toBeCloseTo(2.4);
     });
   });
 
   describe('should calculate the company size ', () => {
+    let regionProvider: RegionProvider;
     const mio = 1000000;
-    async function companySizeIs(
+    const companySizeIs = (
       companySize: CompanySize,
-      companyFacts: CompanyFacts
-    ) {
-      const employeesCalc = makeEmployeesCalc(
-        await RegionProvider.fromVersion(BalanceSheetVersion.v5_0_8)
+      companyFacts: OldCompanyFacts
+    ) => {
+      const employeesCalc: EmployeesCalcResults = new OldEmployeesCalc(
+        regionProvider
+      ).calculate(companyFacts);
+      expect(employeesCalc.companySize).toBe(companySize);
+    };
+    beforeEach(async () => {
+      regionProvider = await RegionProvider.fromVersion(
+        BalanceSheetVersion.v5_0_8
       );
-      expect(employeesCalc.calculate(companyFacts).companySize).toBe(
-        companySize
-      );
-    }
+    });
 
     describe('when turnover and totalAssets are 2mio ', () => {
-      const companyFactsWithMioValues = makeCompanyFacts().withFields({
+      const companyFactsWithMioValues = {
+        ...companyFactsFactory.empty(),
         turnover: 2 * mio,
         totalAssets: 2 * mio,
-      });
+      };
 
       it('and FTE < 10 -> micro', async () => {
         const companyFacts = {
           ...companyFactsWithMioValues,
           numberOfEmployees: 9,
         };
-        await companySizeIs(CompanySize.micro, companyFacts);
+        companySizeIs(CompanySize.micro, companyFacts);
       });
 
       it('and FTE = 10 -> small', async () => {
@@ -109,7 +119,7 @@ describe('Employees Calculator', () => {
           numberOfEmployees: 10,
         };
         companyFacts.numberOfEmployees = 10;
-        await companySizeIs(CompanySize.small, companyFacts);
+        companySizeIs(CompanySize.small, companyFacts);
       });
 
       it('and FTE = 50 -> middle', async () => {
@@ -117,7 +127,7 @@ describe('Employees Calculator', () => {
           ...companyFactsWithMioValues,
           numberOfEmployees: 50,
         };
-        await companySizeIs(CompanySize.middle, companyFacts);
+        companySizeIs(CompanySize.middle, companyFacts);
       });
 
       it('and FTE = 250 -> large', async () => {
@@ -125,22 +135,23 @@ describe('Employees Calculator', () => {
           ...companyFactsWithMioValues,
           numberOfEmployees: 250,
         };
-        await companySizeIs(CompanySize.large, companyFacts);
+        companySizeIs(CompanySize.large, companyFacts);
       });
     });
 
     describe('when FTE = 9 and totalAssets = 2 Mio', () => {
-      const companyFactsWithMioValues = makeCompanyFacts().withFields({
+      const companyFactsWithMioValues = {
+        ...companyFactsFactory.empty(),
         numberOfEmployees: 9,
         totalAssets: 2 * mio,
-      });
+      };
 
       it('and turnover = 2 Mio -> micro', async () => {
         const companyFacts = {
           ...companyFactsWithMioValues,
           turnover: 2 * mio,
         };
-        await companySizeIs(CompanySize.micro, companyFacts);
+        companySizeIs(CompanySize.micro, companyFacts);
       });
 
       it('and turnover = 10 Mio -> micro', async () => {
@@ -149,7 +160,7 @@ describe('Employees Calculator', () => {
           turnover: 10 * mio,
         };
 
-        await companySizeIs(CompanySize.micro, companyFacts);
+        companySizeIs(CompanySize.micro, companyFacts);
       });
 
       it('and turnover = 50 Mio -> micro', async () => {
@@ -157,7 +168,7 @@ describe('Employees Calculator', () => {
           ...companyFactsWithMioValues,
           turnover: 50 * mio,
         };
-        await companySizeIs(CompanySize.micro, companyFacts);
+        companySizeIs(CompanySize.micro, companyFacts);
       });
 
       it('and turnover = 51 Mio -> micro', async () => {
@@ -165,22 +176,23 @@ describe('Employees Calculator', () => {
           ...companyFactsWithMioValues,
           turnover: 51 * mio,
         };
-        await companySizeIs(CompanySize.micro, companyFacts);
+        companySizeIs(CompanySize.micro, companyFacts);
       });
     });
 
     describe('when FTE = 9 and turnover = 2 Mio', () => {
-      const companyFactsWithMioValues = makeCompanyFacts().withFields({
+      const companyFactsWithMioValues = {
+        ...companyFactsFactory.empty(),
         numberOfEmployees: 9,
         turnover: 2 * mio,
-      });
+      };
 
       it('and totalAssets = 2 Mio -> micro', async () => {
         const companyFacts = {
           ...companyFactsWithMioValues,
           totalAssets: 2 * mio,
         };
-        await companySizeIs(CompanySize.micro, companyFacts);
+        companySizeIs(CompanySize.micro, companyFacts);
       });
 
       it('and totalAssets = 10 Mio -> micro', async () => {
@@ -188,7 +200,7 @@ describe('Employees Calculator', () => {
           ...companyFactsWithMioValues,
           totalAssets: 10 * mio,
         };
-        await companySizeIs(CompanySize.micro, companyFacts);
+        companySizeIs(CompanySize.micro, companyFacts);
       });
 
       it('and totalAssets = 43 Mio -> micro', async () => {
@@ -197,7 +209,7 @@ describe('Employees Calculator', () => {
           totalAssets: 43 * mio,
         };
 
-        await companySizeIs(CompanySize.micro, companyFacts);
+        companySizeIs(CompanySize.micro, companyFacts);
       });
 
       it('and totalAssets = 44 Mio -> micro', async () => {
@@ -205,14 +217,15 @@ describe('Employees Calculator', () => {
           ...companyFactsWithMioValues,
           totalAssets: 44 * mio,
         };
-        await companySizeIs(CompanySize.micro, companyFacts);
+        companySizeIs(CompanySize.micro, companyFacts);
       });
     });
 
     describe('when FTE = 9', () => {
-      const companyFactsWith9Employees = makeCompanyFacts().withFields({
+      const companyFactsWith9Employees = {
+        ...companyFactsFactory.empty(),
         numberOfEmployees: 9,
-      });
+      };
 
       it('and both totalAssets and turnover are 2 Mio -> micro', async () => {
         const companyFacts = {
@@ -221,7 +234,7 @@ describe('Employees Calculator', () => {
           turnover: 2 * mio,
         };
 
-        await companySizeIs(CompanySize.micro, companyFacts);
+        companySizeIs(CompanySize.micro, companyFacts);
       });
 
       it('and both totalAssets and turnover are 10 Mio -> small', async () => {
@@ -231,7 +244,7 @@ describe('Employees Calculator', () => {
           turnover: 10 * mio,
         };
 
-        await companySizeIs(CompanySize.small, companyFacts);
+        companySizeIs(CompanySize.small, companyFacts);
       });
 
       it('and both totalAssets and turnover >= 43 Mio -> middle', async () => {
@@ -242,7 +255,7 @@ describe('Employees Calculator', () => {
         };
         companyFacts.totalAssets = 43 * mio;
         companyFacts.turnover = 50 * mio;
-        await companySizeIs(CompanySize.middle, companyFacts);
+        companySizeIs(CompanySize.middle, companyFacts);
       });
 
       it('and both totalAssets and turnover > 50 Mio -> large', async () => {
@@ -252,28 +265,34 @@ describe('Employees Calculator', () => {
           turnover: 51 * mio,
         };
 
-        await companySizeIs(CompanySize.large, companyFacts);
+        companySizeIs(CompanySize.large, companyFacts);
       });
     });
   });
 
   describe('should calculate the normedEmployeesRisk ', () => {
-    async function calc(companyFacts: CompanyFacts) {
-      return makeEmployeesCalc(
-        await RegionProvider.fromVersion(BalanceSheetVersion.v5_0_8)
-      ).calculate(companyFacts);
-    }
+    let regionProvider: RegionProvider;
+
+    const calc = async (
+      companyFacts: OldCompanyFacts
+    ): Promise<EmployeesCalcResults> => {
+      regionProvider = await RegionProvider.fromVersion(
+        BalanceSheetVersion.v5_0_8
+      );
+      return new OldEmployeesCalc(regionProvider).calculate(companyFacts);
+    };
 
     it('when employeesFractions array empty', async () => {
-      const companyFacts = makeCompanyFacts().withFields({
+      const companyFacts: OldCompanyFacts = {
+        ...companyFactsFactory.empty(),
         totalStaffCosts: 8_999,
         employeesFractions: [
-          makeEmployeesFraction({
+          {
             countryCode: 'AGO',
             percentage: 0.8,
-          }),
+          },
         ],
-      });
+      };
 
       const employeesCalcResults = await calc(companyFacts);
       expect(employeesCalcResults.normedEmployeesRisk).toBeCloseTo(
@@ -282,16 +301,17 @@ describe('Employees Calculator', () => {
       );
     });
     it('when employeesFractions contains item without country code', async () => {
-      const companyFacts = makeCompanyFacts().withFields({
+      const companyFacts: OldCompanyFacts = {
+        ...companyFactsFactory.empty(),
         totalStaffCosts: 8_999,
         employeesFractions: [
-          makeEmployeesFraction({
+          {
             countryCode: 'ALB',
             percentage: 0.8,
-          }),
-          makeEmployeesFraction({ percentage: 0.1 }),
+          },
+          { percentage: 0.1 },
         ],
-      });
+      };
       const employeesCalcResults = await calc(companyFacts);
       expect(employeesCalcResults.normedEmployeesRisk).toBeCloseTo(
         20_746.732616115143,
@@ -300,16 +320,17 @@ describe('Employees Calculator', () => {
     });
 
     it('when employeesFractions contains item with average country code like AEU', async () => {
-      const companyFacts = makeCompanyFacts().withFields({
+      const companyFacts: OldCompanyFacts = {
+        ...companyFactsFactory.empty(),
         totalStaffCosts: 8_999,
         employeesFractions: [
-          makeEmployeesFraction({
+          {
             countryCode: 'ALB',
             percentage: 0.8,
-          }),
-          makeEmployeesFraction({ countryCode: 'AAF', percentage: 0.1 }),
+          },
+          { countryCode: 'AAF', percentage: 0.1 },
         ],
-      });
+      };
       const employeesCalcResults = await calc(companyFacts);
       expect(employeesCalcResults.normedEmployeesRisk).toBeCloseTo(
         22_106.9357191006,
