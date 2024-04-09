@@ -41,6 +41,11 @@ export function registerOrganizationRoutes(
     allowUserOnly,
     organizationService.getOrganization
   );
+  app.put(
+    OrganizationPaths.put,
+    allowUserOnly,
+    organizationService.updateOrganization
+  );
 }
 
 export class OrganizationController {
@@ -52,14 +57,6 @@ export class OrganizationController {
   }
 
   public routes() {
-    this.app.put(
-      OrganizationPaths.put,
-      allowUserOnly,
-      this.oldOrganizationService.updateOrganization.bind(
-        this.oldOrganizationService
-      )
-    );
-
     this.app.post(
       OrganizationPaths.orgaBalanceSheet,
       allowUserOnly,

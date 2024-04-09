@@ -86,4 +86,26 @@ describe('Organization', () => {
     expect(organization.hasMember(user)).toBe(true);
     expect(organization.hasMember({ ...user, id: '2' })).toBe(false);
   });
+
+  it('should rename organization', () => {
+    const organization = makeOrganization();
+    const newOrganization = organization.rename('New name');
+    expect(newOrganization.name).toBe('New name');
+  });
+
+  it('should update address', () => {
+    const organization = makeOrganization();
+    const newOrganization = organization.updateAddress({
+      city: 'New city',
+      houseNumber: '42 new',
+      street: 'New street',
+      zip: '999999',
+    });
+    expect(newOrganization.address).toEqual({
+      city: 'New city',
+      houseNumber: '42 new',
+      street: 'New street',
+      zip: '999999',
+    });
+  });
 });

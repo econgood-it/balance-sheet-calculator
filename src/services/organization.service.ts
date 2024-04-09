@@ -32,6 +32,11 @@ export interface IOrganizationService {
     res: Response,
     next: NextFunction
   ): Promise<void>;
+  updateOrganization(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void>;
   getOrganization(
     req: Request,
     res: Response,
@@ -139,8 +144,37 @@ export function makeOrganizationService(
       });
   }
 
+  async function updateOrganization(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    dataSource.manager
+      .transaction(async (entityManager) => {
+        const organizationRepo =
+          repoProvider.getOrganizationRepo(entityManager);
+        const organizationIdParam: number = Number(req.params.id);
+        const organizationRequest = OrganizationRequestSchema.parse(req.body);
+        const organization = await organizationRepo.findByIdOrFail(
+          organizationIdParam
+        );
+        checkIfCurrentUserIsMember(req, organization);
+        const updatedOrganization = await organizationRepo.save(
+          organization
+            .rename(organizationRequest.name)
+            .updateAddress(organizationRequest.address)
+        );
+
+        res.json(OrganizationResponseSchema.parse(updatedOrganization));
+      })
+      .catch((error) => {
+        handle(error, next);
+      });
+  }
+
   return deepFreeze({
     createOrganization,
+    updateOrganization,
     getOrganization,
     inviteUser,
     getOrganizationsOfCurrentUser,
@@ -152,33 +186,6 @@ export class OldOrganizationService {
     private dataSource: DataSource,
     private oldRepoProvider: IOldRepoProvider
   ) {}
-
-  public async updateOrganization(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
-    this.dataSource.manager
-      .transaction(async (entityManager) => {
-        const organizationEntityRepository =
-          this.oldRepoProvider.getOrganizationEntityRepo(entityManager);
-        const organizationIdParam: number = Number(req.params.id);
-        const organization = OrganizationRequestSchema.parse(req.body);
-        const organizationEntity =
-          await organizationEntityRepository.findByIdOrFail(
-            organizationIdParam
-          );
-        Authorization.checkIfCurrentUserIsMember(req, organizationEntity);
-        organizationEntity.mergeWithRequest(organization);
-        const updatedOrganizationEntity =
-          await organizationEntityRepository.save(organizationEntity);
-
-        res.json(updatedOrganizationEntity.toJson());
-      })
-      .catch((error) => {
-        handle(error, next);
-      });
-  }
 
   public async createBalanceSheet(
     req: Request,

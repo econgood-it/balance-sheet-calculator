@@ -23,6 +23,8 @@ export type Organization = OrganizationOpts & {
   invite: (email: string) => Organization;
   join: (user: User) => Organization;
   hasMember: (user: User) => boolean;
+  rename: (name: string) => Organization;
+  updateAddress: (address: OrganizationOpts['address']) => Organization;
 };
 
 export function makeOrganization(opts?: OrganizationOpts): Organization {
@@ -41,6 +43,14 @@ export function makeOrganization(opts?: OrganizationOpts): Organization {
 
   function withFields(fields: Partial<OrganizationOpts>): Organization {
     return makeOrganization({ ...data, ...fields });
+  }
+
+  function rename(name: string): Organization {
+    return makeOrganization({ ...data, name });
+  }
+
+  function updateAddress(address: OrganizationOpts['address']): Organization {
+    return makeOrganization({ ...data, address });
   }
 
   function invite(email: string): Organization {
@@ -80,5 +90,7 @@ export function makeOrganization(opts?: OrganizationOpts): Organization {
     invite,
     join,
     hasMember,
+    rename,
+    updateAddress,
   });
 }
