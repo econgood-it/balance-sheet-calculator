@@ -3,8 +3,8 @@ import { DEFAULT_COUNTRY_CODE } from './region';
 import _ from 'lodash';
 
 export type SupplyFraction = {
-  countryCode: string | undefined;
-  industryCode: string | undefined;
+  countryCode?: string;
+  industryCode?: string;
   costs: number;
 };
 
@@ -38,13 +38,13 @@ export function makeIndustrySector(opts: IndustrySector): IndustrySector {
 }
 
 type MainOriginOfOtherSuppliersOpts = {
+  countryCode?: string;
   totalPurchaseFromSuppliers: number;
-  countryCode: string | undefined;
   supplyFractions: readonly SupplyFraction[];
 };
 
 export type MainOriginOfOtherSuppliers = {
-  countryCode: string | undefined;
+  countryCode?: string;
   costs: number;
 };
 
@@ -85,7 +85,7 @@ type CompanyFactsOpts = {
   hasCanteen?: boolean;
   isB2B: boolean;
   averageJourneyToWorkForStaffInKm: number;
-  mainOriginOfOtherSuppliers: { countryCode: string | undefined };
+  mainOriginOfOtherSuppliers: { countryCode?: string };
   supplyFractions: readonly SupplyFraction[];
   employeesFractions: readonly EmployeesFraction[];
   industrySectors: readonly IndustrySector[];
