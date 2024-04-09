@@ -86,12 +86,14 @@ describe('Organization Controller Get Endpoint', () => {
 
   it('should block access to organization if user is unauthorized', async () => {
     const testApp = supertest(app);
-    const { organizationEntity } = await new OrganizationBuilder()
-      .addMember(auth.user)
-      .build(dataSource);
+    const organization = await organizationRepo.save(
+      makeOrganization().withFields({
+        members: [{ id: auth.user.id }],
+      })
+    );
 
     const response = await testApp
-      .get(`${OrganizationPaths.getAll}/${organizationEntity.id}`)
+      .get(`${OrganizationPaths.getAll}/${organization.id}`)
       .set(
         authWithoutOrgaPermissions.toHeaderPair().key,
         authWithoutOrgaPermissions.toHeaderPair().value
