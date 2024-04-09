@@ -1,7 +1,8 @@
 import { none, Option, some } from './option';
-import { INDUSTRY_CODE_FOR_FINANCIAL_SERVICES } from '../models/oldCompanyFacts';
-import { CompanyFacts } from '../models/company.facts';
-import deepFreeze from 'deep-freeze';
+import {
+  OldCompanyFacts,
+  INDUSTRY_CODE_FOR_FINANCIAL_SERVICES,
+} from '../models/oldCompanyFacts';
 
 export interface FinanceCalcResults {
   sumOfFinancialAspects: number;
@@ -10,29 +11,29 @@ export interface FinanceCalcResults {
   companyIsActiveInFinancialServices: boolean;
 }
 
-export function makeFinanceCalc() {
-  const DEFAULT_SUPPLY_ECONOMIC_RATIO = 0.3;
-  const DEFAULT_SUPPLY_ECONOMIC_RATIO_E22 = 0.2;
+export class OldFinanceCalc {
+  public static readonly DEFAULT_SUPPLY_ECONOMIC_RATIO = 0.3;
+  public static readonly DEFAULT_SUPPLY_ECONOMIC_RATIO_E22 = 0.2;
 
-  function calculate(companyFacts: CompanyFacts): FinanceCalcResults {
-    const sumOfFinancialAspects = getSumOfFinancialAspects(companyFacts);
-    const economicRatio = calculateEconomicRatio(companyFacts).getOrElse(
-      DEFAULT_SUPPLY_ECONOMIC_RATIO
+  public calculate(companyFacts: OldCompanyFacts): FinanceCalcResults {
+    const sumOfFinancialAspects = this.getSumOfFinancialAspects(companyFacts);
+    const economicRatio = this.calculateEconomicRatio(companyFacts).getOrElse(
+      OldFinanceCalc.DEFAULT_SUPPLY_ECONOMIC_RATIO
     );
-    const economicRatioE22 = calculateEconomicRatioE22(companyFacts).getOrElse(
-      DEFAULT_SUPPLY_ECONOMIC_RATIO_E22
-    );
+    const economicRatioE22 = this.calculateEconomicRatioE22(
+      companyFacts
+    ).getOrElse(OldFinanceCalc.DEFAULT_SUPPLY_ECONOMIC_RATIO_E22);
     return {
       sumOfFinancialAspects,
       economicRatio,
       companyIsActiveInFinancialServices:
-        checkCompanysActivityInFinancialServices(companyFacts),
+        this.checkCompanysActivityInFinancialServices(companyFacts),
       economicRatioE22,
     };
   }
 
-  function checkCompanysActivityInFinancialServices(
-    companyFacts: CompanyFacts
+  private checkCompanysActivityInFinancialServices(
+    companyFacts: OldCompanyFacts
   ): boolean {
     return companyFacts.industrySectors.some(
       (is) => is.industryCode === INDUSTRY_CODE_FOR_FINANCIAL_SERVICES
@@ -44,7 +45,7 @@ export function makeFinanceCalc() {
    * @param companyFacts
    * @private
    */
-  function getSumOfFinancialAspects(companyFacts: CompanyFacts): number {
+  private getSumOfFinancialAspects(companyFacts: OldCompanyFacts): number {
     return (
       companyFacts.profit +
       companyFacts.financialCosts +
@@ -58,15 +59,17 @@ export function makeFinanceCalc() {
    * @param companyFacts
    * @private
    */
-  function calculateEconomicRatio(companyFacts: CompanyFacts): Option<number> {
+  private calculateEconomicRatio(
+    companyFacts: OldCompanyFacts
+  ): Option<number> {
     return companyFacts.totalAssets === 0
       ? none()
       : some(companyFacts.turnover / companyFacts.totalAssets);
   }
 
   // In Excel Weight.E22
-  function calculateEconomicRatioE22(
-    companyFacts: CompanyFacts
+  private calculateEconomicRatioE22(
+    companyFacts: OldCompanyFacts
   ): Option<number> {
     return companyFacts.totalAssets === 0
       ? none()
@@ -76,8 +79,4 @@ export function makeFinanceCalc() {
             companyFacts.totalAssets
         );
   }
-
-  return deepFreeze({
-    calculate,
-  });
 }
