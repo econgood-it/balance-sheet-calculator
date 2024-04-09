@@ -32,6 +32,11 @@ export interface IOrganizationService {
     res: Response,
     next: NextFunction
   ): Promise<void>;
+  getOrganization(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void>;
   inviteUser(req: Request, res: Response, next: NextFunction): Promise<void>;
   getOrganizationsOfCurrentUser(
     req: Request,
@@ -63,6 +68,25 @@ export function makeOrganizationService(
           })
         );
         res.json(OrganizationResponseSchema.parse(organization));
+      })
+      .catch((error) => {
+        handle(error, next);
+      });
+  }
+
+  async function getOrganization(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    dataSource.manager
+      .transaction(async (entityManager) => {
+        const orgaRepo = repoProvider.getOrganizationRepo(entityManager);
+        const foundOrganization = await orgaRepo.findByIdOrFail(
+          Number(req.params.id)
+        );
+        checkIfCurrentUserIsMember(req, foundOrganization);
+        res.json(OrganizationResponseSchema.parse(foundOrganization));
       })
       .catch((error) => {
         handle(error, next);
@@ -117,6 +141,7 @@ export function makeOrganizationService(
 
   return deepFreeze({
     createOrganization,
+    getOrganization,
     inviteUser,
     getOrganizationsOfCurrentUser,
   });
@@ -149,26 +174,6 @@ export class OldOrganizationService {
           await organizationEntityRepository.save(organizationEntity);
 
         res.json(updatedOrganizationEntity.toJson());
-      })
-      .catch((error) => {
-        handle(error, next);
-      });
-  }
-
-  public async getOrganization(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
-    this.dataSource.manager
-      .transaction(async (entityManager) => {
-        const orgaRepo =
-          this.oldRepoProvider.getOrganizationEntityRepo(entityManager);
-        const foundOrganizationEntity = await orgaRepo.findByIdOrFail(
-          Number(req.params.id)
-        );
-        Authorization.checkIfCurrentUserIsMember(req, foundOrganizationEntity);
-        res.json(foundOrganizationEntity.toJson());
       })
       .catch((error) => {
         handle(error, next);

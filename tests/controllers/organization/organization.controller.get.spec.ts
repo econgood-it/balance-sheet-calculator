@@ -12,6 +12,7 @@ import { InMemoryAuthentication } from '../in.memory.authentication';
 import { makeRepoProvider } from '../../../src/repositories/repo.provider';
 import { IOrganizationRepo } from '../../../src/repositories/organization.repo';
 import { makeOrganization } from '../../../src/models/organization';
+import { OrganizationResponseSchema } from '@ecogood/e-calculator-schemas/dist/organization.dto';
 
 describe('Organization Controller Get Endpoint', () => {
   let dataSource: DataSource;
@@ -68,15 +69,19 @@ describe('Organization Controller Get Endpoint', () => {
   });
   it('should return organization by id', async () => {
     const testApp = supertest(app);
-    const { organizationEntity } = await new OrganizationBuilder()
-      .addMember(auth.user)
-      .build(dataSource);
+    const organization = await organizationRepo.save(
+      makeOrganization().withFields({
+        members: [{ id: auth.user.id }],
+      })
+    );
     const response = await testApp
-      .get(`${OrganizationPaths.getAll}/${organizationEntity.id}`)
+      .get(`${OrganizationPaths.getAll}/${organization.id}`)
       .set(auth.toHeaderPair().key, auth.toHeaderPair().value)
       .send();
     expect(response.status).toBe(200);
-    expect(response.body).toEqual(organizationEntity.toJson());
+    expect(response.body).toEqual(
+      OrganizationResponseSchema.parse(organization)
+    );
   });
 
   it('should block access to organization if user is unauthorized', async () => {
