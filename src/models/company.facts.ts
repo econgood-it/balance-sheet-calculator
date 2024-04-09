@@ -26,7 +26,7 @@ export function makeEmployeesFraction(
 }
 
 export type IndustrySector = {
-  industryCode: string | undefined;
+  industryCode?: string;
   amountOfTotalTurnover: number;
   description: string;
 };

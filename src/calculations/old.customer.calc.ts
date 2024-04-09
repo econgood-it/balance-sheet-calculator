@@ -1,17 +1,17 @@
 import { IndustryProvider } from '../providers/industry.provider';
-import { CompanyFacts } from '../models/company.facts';
-import deepFreeze from 'deep-freeze';
+import { OldCompanyFacts } from '../models/oldCompanyFacts';
 
 export interface CustomerCalcResults {
   sumOfEcologicalDesignOfProductsAndService: number;
 }
 
-export function makeCustomerCalc(industryProvider: IndustryProvider) {
-  const DEFAULT_ECOLOGICAL_DESIGN_OF_PRODUCTS: number = 1;
+export class OldCustomerCalc {
+  private static readonly DEFAULT_ECOLOGICAL_DESIGN_OF_PRODUCTS: number = 1;
+  constructor(private readonly industryProvider: IndustryProvider) {}
 
-  function calculate(companyFacts: CompanyFacts): CustomerCalcResults {
+  public calculate(companyFacts: OldCompanyFacts): CustomerCalcResults {
     const sumOfEcologicalDesignOfProductsAndService =
-      calcSumOfEcologicalDesignOfProductsAndService(companyFacts);
+      this.calcSumOfEcologicalDesignOfProductsAndService(companyFacts);
     return {
       sumOfEcologicalDesignOfProductsAndService,
     };
@@ -22,16 +22,16 @@ export function makeCustomerCalc(industryProvider: IndustryProvider) {
    * @param companyFacts
    * @private
    */
-  function calcSumOfEcologicalDesignOfProductsAndService(
-    companyFacts: CompanyFacts
+  private calcSumOfEcologicalDesignOfProductsAndService(
+    companyFacts: OldCompanyFacts
   ) {
     let result = 0;
     let sumAmountOfTotalTurnover = 0;
     for (const industrySector of companyFacts.industrySectors) {
       const ecologicalDesignOfProductsAndServices = industrySector.industryCode
-        ? industryProvider.getOrFail(industrySector.industryCode)
+        ? this.industryProvider.getOrFail(industrySector.industryCode)
             .ecologicalDesignOfProductsAndServices
-        : DEFAULT_ECOLOGICAL_DESIGN_OF_PRODUCTS;
+        : OldCustomerCalc.DEFAULT_ECOLOGICAL_DESIGN_OF_PRODUCTS;
       result +=
         ecologicalDesignOfProductsAndServices *
         industrySector.amountOfTotalTurnover;
@@ -39,6 +39,4 @@ export function makeCustomerCalc(industryProvider: IndustryProvider) {
     }
     return result + (1 - sumAmountOfTotalTurnover);
   }
-
-  return deepFreeze({ calculate });
 }

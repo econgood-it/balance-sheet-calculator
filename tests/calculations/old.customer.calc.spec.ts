@@ -1,0 +1,62 @@
+import { IndustryProvider } from '../../src/providers/industry.provider';
+
+import { OldCustomerCalc } from '../../src/calculations/old.customer.calc';
+
+import { OldCompanyFacts } from '../../src/models/oldCompanyFacts';
+import { companyFactsFactory } from '../../src/openapi/examples';
+import { BalanceSheetVersion } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
+
+describe('Customer Calculator', () => {
+  let industryProvider: IndustryProvider;
+
+  it('should calculate when industry sectors empty', async () => {
+    const companyFacts = companyFactsFactory.empty();
+    industryProvider = await IndustryProvider.fromVersion(
+      BalanceSheetVersion.v5_0_8
+    );
+    const customerCalcResults = await new OldCustomerCalc(
+      industryProvider
+    ).calculate(companyFacts);
+    expect(
+      customerCalcResults.sumOfEcologicalDesignOfProductsAndService
+    ).toBeCloseTo(1, 1);
+  });
+
+  it('should calculate when industry sectors non empty', async () => {
+    const companyFacts: OldCompanyFacts = {
+      ...companyFactsFactory.empty(),
+      industrySectors: [
+        { industryCode: 'F', amountOfTotalTurnover: 0.2, description: '' },
+        { industryCode: 'A', amountOfTotalTurnover: 0.4, description: '' },
+      ],
+    };
+    industryProvider = await IndustryProvider.fromVersion(
+      BalanceSheetVersion.v5_0_8
+    );
+    const customerCalcResults = await new OldCustomerCalc(
+      industryProvider
+    ).calculate(companyFacts);
+    expect(
+      customerCalcResults.sumOfEcologicalDesignOfProductsAndService
+    ).toBeCloseTo(1.2, 1);
+  });
+
+  it('should calculate when industry codes of some industry sectors are missing', async () => {
+    const companyFacts = {
+      ...companyFactsFactory.empty(),
+      industrySectors: [
+        { industryCode: 'L', amountOfTotalTurnover: 0.8, description: '' },
+        { amountOfTotalTurnover: 0.2, description: '' },
+      ],
+    };
+    industryProvider = await IndustryProvider.fromVersion(
+      BalanceSheetVersion.v5_0_8
+    );
+    const customerCalcResults = await new OldCustomerCalc(
+      industryProvider
+    ).calculate(companyFacts);
+    expect(
+      customerCalcResults.sumOfEcologicalDesignOfProductsAndService
+    ).toBeCloseTo(1.8, 2);
+  });
+});
