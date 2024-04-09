@@ -5,9 +5,9 @@ import { RegionProvider } from '../providers/region.provider';
 import { IndustryProvider } from '../providers/industry.provider';
 import { OldCustomerCalc, CustomerCalcResults } from './old.customer.calc';
 import {
-  SocialEnvironmentCalc,
+  OldSocialEnvironmentCalc,
   SocialEnvironmentCalcResults,
-} from './social.environment.calc';
+} from './old.social.environment.calc';
 import { OldCompanyFacts } from '../models/oldCompanyFacts';
 import { isTopic, OldRating } from '../models/oldRating';
 
@@ -24,7 +24,7 @@ export class Calculator {
   public readonly employeesCalc: OldEmployeesCalc;
   public readonly financeCalc: OldFinanceCalc;
   public readonly customerCalc: OldCustomerCalc;
-  public readonly socialEnvironmentCalc: SocialEnvironmentCalc;
+  public readonly socialEnvironmentCalc: OldSocialEnvironmentCalc;
 
   constructor(
     regionProvider: RegionProvider,
@@ -34,7 +34,7 @@ export class Calculator {
     this.employeesCalc = new OldEmployeesCalc(regionProvider);
     this.financeCalc = new OldFinanceCalc();
     this.customerCalc = new OldCustomerCalc(industryProvider);
-    this.socialEnvironmentCalc = new SocialEnvironmentCalc();
+    this.socialEnvironmentCalc = new OldSocialEnvironmentCalc();
   }
 
   public async calculate(companyFacts: OldCompanyFacts): Promise<CalcResults> {

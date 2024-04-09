@@ -1,22 +1,24 @@
 import { none, Option, some } from './option';
 import {
+  OldCompanyFacts,
   INDUSTRY_CODE_FOR_CONSTRUCTION_INDUSTRY,
   INDUSTRY_CODE_FOR_MINING,
 } from '../models/oldCompanyFacts';
-import { CompanyFacts } from '../models/company.facts';
-import deepFreeze from 'deep-freeze';
 
 export interface SocialEnvironmentCalcResults {
   profitInPercentOfTurnover: Option<number>;
   companyIsActiveInMiningOrConstructionIndustry: boolean;
 }
 
-export function makeSocialEnvironmentCalc() {
-  function calculate(companyFacts: CompanyFacts): SocialEnvironmentCalcResults {
+export class OldSocialEnvironmentCalc {
+  public calculate(
+    companyFacts: OldCompanyFacts
+  ): SocialEnvironmentCalcResults {
     return {
-      profitInPercentOfTurnover: calcProfitInPercentOfTotalSales(companyFacts),
+      profitInPercentOfTurnover:
+        this.calcProfitInPercentOfTotalSales(companyFacts),
       companyIsActiveInMiningOrConstructionIndustry:
-        checkCompanysActivityInMiningOrConstructionIndustry(companyFacts),
+        this.checkCompanysActivityInMiningOrConstructionIndustry(companyFacts),
     };
   }
 
@@ -25,8 +27,8 @@ export function makeSocialEnvironmentCalc() {
    * @param companyFacts
    * @private
    */
-  function calcProfitInPercentOfTotalSales(
-    companyFacts: CompanyFacts
+  private calcProfitInPercentOfTotalSales(
+    companyFacts: OldCompanyFacts
   ): Option<number> {
     return companyFacts.turnover === 0
       ? none()
@@ -38,8 +40,8 @@ export function makeSocialEnvironmentCalc() {
    * @param companyFacts
    * @private
    */
-  function checkCompanysActivityInMiningOrConstructionIndustry(
-    companyFacts: CompanyFacts
+  private checkCompanysActivityInMiningOrConstructionIndustry(
+    companyFacts: OldCompanyFacts
   ): boolean {
     return companyFacts.industrySectors.some(
       (is) =>
@@ -47,8 +49,4 @@ export function makeSocialEnvironmentCalc() {
         is.industryCode === INDUSTRY_CODE_FOR_CONSTRUCTION_INDUSTRY
     );
   }
-
-  return deepFreeze({
-    calculate,
-  });
 }
