@@ -4,7 +4,7 @@ import shutil
 import logging
 import os
 import git
-from dotenv import dotenv_values
+from dotenv import dotenv_values, load_dotenv
 
 yarn = 'yarn'
 run = 'run'
@@ -68,26 +68,16 @@ def run_tests():
     subprocess.run([yarn, run, 'test:ci'], check=True)
 
 
-def build_and_deploy_remotely(server_domain: str):
-    permission_env_file = "--env-file .env-docker/.env-user-permissions"
-    commands = [
-        'cd balance-sheet-calculator',
-        'git pull',
-        f"{docker} {compose} {permission_env_file} down",
-        f"{docker} {compose} {permission_env_file} build",
-        f"{docker} {compose} {permission_env_file} up -d"
-    ]
-    full_command = " && ".join(commands)
-    subprocess.run(['ssh', server_domain, full_command], check=True)
-
-
 def build_docker_image(latest_commit_hash: str):
     subprocess.run([docker, build, "-t", f"econgood/balance-sheet-api:{latest_commit_hash}", '.'], check=True)
 
 
-def push_docker_image(latest_commit_hash: str):
-    token = dotenv_values(".docker_hub")["TOKEN"]
-    subprocess.run([docker, 'login', '-u', 'econgood', '-p', token], check=True)
+def login_command_to_docker_hub(token: str):
+    return f"docker login -u econgood -p {token}"
+
+
+def push_docker_image(hub_token: str, latest_commit_hash: str):
+    subprocess.run(login_command_to_docker_hub(hub_token), check=True, shell=True)
     subprocess.run([docker, 'tag', f"econgood/balance-sheet-api:{latest_commit_hash}", 'econgood/balance-sheet-api:latest'], check=True)
     # Push the image with the latest commit message
     subprocess.run([docker, 'push', f"econgood/balance-sheet-api:{latest_commit_hash}"], check=True)
@@ -95,9 +85,10 @@ def push_docker_image(latest_commit_hash: str):
     subprocess.run([docker, 'push', 'econgood/balance-sheet-api:latest'], check=True)
 
 
-def deploy_to_server(server_domain: str):
+def deploy_to_server(hub_token: str, server_domain: str):
     permission_env_file = "--env-file .env-docker/.env-user-permissions"
     commands = [
+        login_command_to_docker_hub(hub_token),
         'cd balance-sheet-calculator',
         'git pull',
         f"{docker} {compose} {permission_env_file} down",
@@ -106,46 +97,50 @@ def deploy_to_server(server_domain: str):
     full_command = " && ".join(commands)
     subprocess.run(['ssh', server_domain, full_command], check=True)
 
+
 def rm_folder(folder: str):
     if os.path.exists(folder) and os.path.isdir(folder):
         shutil.rmtree(folder)
 
+
 def main(args):
-    # logging.info(f"Start build and deployment process for the environment {args.environment}")
-    # check_for_uncommitted_files()
-    # logging.info(f"Install dependencies")
-    # rm_folder('node_modules')
-    # install_dependencies(production=False)
-    # logging.info(f"Check linting")
-    # check_linting()
-    # logging.info(f"Run tests")
-    # shutdown_test_database()
-    # startup_test_database()
-    # run_tests()
-    # shutdown_test_database()
-    server_domain = 'ecg@prod.econgood.org' if args.environment == 'prod' else 'ecg@dev.econgood.org'
-    # logging.info(f"Build and deploy docker image to {server_domain}")
-    # build_and_deploy_remotely(server_domain=server_domain)
+    logging.info(f"Start build and deployment process for the environment {args.environment}")
+    check_for_uncommitted_files()
+    logging.info(f"Install dependencies")
+    rm_folder('node_modules')
+    install_dependencies(production=False)
+    logging.info(f"Check linting")
+    check_linting()
+    logging.info(f"Run tests")
+    shutdown_test_database()
+    startup_test_database()
+    run_tests()
+    shutdown_test_database()
+    server_domain = 'root@services.econgood.org' if args.environment == 'prod' else 'ecg@dev.econgood.org'
     repo = git.Repo('.')
     latest_commit_hash = repo.head.commit.hexsha
     logging.info(f"Build docker image")
-    # build_docker_image(
-    #     latest_commit_hash=latest_commit_hash
-    # )
+    build_docker_image(
+        latest_commit_hash=latest_commit_hash
+    )
     logging.info(f"Push docker image")
-    # push_docker_image(
-    #     latest_commit_hash=latest_commit_hash
-    # )
+    push_docker_image(
+        hub_token=args.docker_hub_token,
+        latest_commit_hash=latest_commit_hash
+    )
     logging.info(f"Deploy to server")
-    deploy_to_server(server_domain=server_domain)
+    deploy_to_server(hub_token=args.docker_hub_token, server_domain=server_domain)
     logging.info(f"Deployment successful")
 
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
+    load_dotenv(".docker_hub")
     parser = argparse.ArgumentParser(description='Deploy balance sheet calculator')
     parser.add_argument('environment',
                         choices=['test', 'prod'],
                         help='Deploy it either to the test or production environment')
+    parser.add_argument( '-dt', '--docker-hub-token', dest='docker_hub_token',
+                         default=os.environ.get('DOCKER_HUB_TOKEN'))
     args = parser.parse_args()
     main(args)
