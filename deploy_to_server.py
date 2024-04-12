@@ -69,7 +69,7 @@ def run_tests():
 
 
 def build_docker_image(image_name: str, latest_commit_hash: str):
-    subprocess.run([docker, build, "--no-cache", "-t", f"{image_name}:{latest_commit_hash}", "-t", f"{image_name}:latest", '.'],
+    subprocess.run([docker, build, "-t", f"{image_name}:{latest_commit_hash}", "-t", f"{image_name}:latest", '.'],
                    check=True)
 
 
@@ -88,6 +88,7 @@ def deploy_to_server(hub_token: str, server_domain: str):
         login_command_to_docker_hub(hub_token),
         'cd balance-sheet-calculator',
         'git pull',
+        'docker compose pull',
         f"{docker} {compose} {permission_env_file} down",
         f"{docker} {compose} {permission_env_file} up -d"
     ]
