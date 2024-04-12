@@ -7,8 +7,6 @@ import {
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import { makeRating } from '../../src/models/rating';
 import { makeOrganization } from '../../src/models/organization';
-import { isTopic } from '../../src/models/oldRating';
-import { calculateTotalPoints } from '../../src/calculations/calculator';
 import { LookupError } from '../../src/exceptions/lookup.error';
 
 describe('BalanceSheet', () => {

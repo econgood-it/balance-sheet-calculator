@@ -58,7 +58,7 @@ export function makeRating(opts?: RatingOpts): Rating {
         'Estimations cannot be positive for negative ratings'
       );
     }
-    return makeRating({ ...data, estimations: estimations });
+    return makeRating({ ...data, estimations });
   }
 
   return deepFreeze({
