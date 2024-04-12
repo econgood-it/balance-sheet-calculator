@@ -2,7 +2,7 @@ version: '3.4'
 
 services:
   calculator:
-    image: econgood/balance-sheet-api
+    image: econgood/balance-sheet-api:latest
     depends_on:
       - db
     ports:
