@@ -69,7 +69,7 @@ def run_tests():
 
 
 def build_docker_image(image_name: str, latest_commit_hash: str):
-    subprocess.run([docker, build, "-t", f"{image_name}:{latest_commit_hash}", "-t", f"{image_name}:latest", '.'],
+    subprocess.run([docker, build, "--no-cache", "-t", f"{image_name}:{latest_commit_hash}", "-t", f"{image_name}:latest", '.'],
                    check=True)
 
 
