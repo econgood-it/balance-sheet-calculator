@@ -68,21 +68,20 @@ def run_tests():
     subprocess.run([yarn, run, 'test:ci'], check=True)
 
 
-def build_docker_image(latest_commit_hash: str):
-    subprocess.run([docker, build, "-t", f"econgood/balance-sheet-api:{latest_commit_hash}", '.'], check=True)
+def build_docker_image(image_name: str, latest_commit_hash: str):
+    subprocess.run([docker, build, "-t", f"{image_name}:{latest_commit_hash}", "-t", f"{image_name}:latest", '.'],
+                   check=True)
 
 
 def login_command_to_docker_hub(token: str):
     return f"docker login -u econgood -p {token}"
 
 
-def push_docker_image(hub_token: str, latest_commit_hash: str):
+def push_docker_image(hub_token: str, image_name):
     subprocess.run(login_command_to_docker_hub(hub_token), check=True, shell=True)
-    subprocess.run([docker, 'tag', f"econgood/balance-sheet-api:{latest_commit_hash}", 'econgood/balance-sheet-api:latest'], check=True)
-    # Push the image with the latest commit message
-    subprocess.run([docker, 'push', f"econgood/balance-sheet-api:{latest_commit_hash}"], check=True)
+    image_name = 'econgood/balance-sheet-api'
     # Push the image with the 'latest' tag
-    subprocess.run([docker, 'push', 'econgood/balance-sheet-api:latest'], check=True)
+    subprocess.run([docker, 'push', 'econgood/balance-sheet-api:latest', '--all-tags'], check=True)
 
 
 def deploy_to_server(hub_token: str, server_domain: str):
@@ -119,6 +118,7 @@ def main(args):
     server_domain = 'root@services.econgood.org' if args.environment == 'prod' else 'ecg@dev.econgood.org'
     repo = git.Repo('.')
     latest_commit_hash = repo.head.commit.hexsha
+    image_name = 'econgood/balance-sheet-api'
     logging.info(f"Build docker image")
     build_docker_image(
         latest_commit_hash=latest_commit_hash
