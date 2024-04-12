@@ -121,10 +121,12 @@ def main(args):
     image_name = 'econgood/balance-sheet-api'
     logging.info(f"Build docker image")
     build_docker_image(
+        image_name=image_name,
         latest_commit_hash=latest_commit_hash
     )
     logging.info(f"Push docker image")
     push_docker_image(
+        image_name=image_name,
         hub_token=args.docker_hub_token,
         latest_commit_hash=latest_commit_hash
     )
