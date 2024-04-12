@@ -128,7 +128,6 @@ def main(args):
     push_docker_image(
         image_name=image_name,
         hub_token=args.docker_hub_token,
-        latest_commit_hash=latest_commit_hash
     )
     logging.info(f"Deploy to server")
     deploy_to_server(hub_token=args.docker_hub_token, server_domain=server_domain)
