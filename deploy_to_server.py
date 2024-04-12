@@ -79,9 +79,7 @@ def login_command_to_docker_hub(token: str):
 
 def push_docker_image(hub_token: str, image_name):
     subprocess.run(login_command_to_docker_hub(hub_token), check=True, shell=True)
-    image_name = 'econgood/balance-sheet-api'
-    # Push the image with the 'latest' tag
-    subprocess.run([docker, 'push', 'econgood/balance-sheet-api:latest', '--all-tags'], check=True)
+    subprocess.run([docker, 'push', image_name, '--all-tags'], check=True)
 
 
 def deploy_to_server(hub_token: str, server_domain: str):
