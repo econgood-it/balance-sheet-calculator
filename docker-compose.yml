@@ -2,11 +2,9 @@ version: '3.4'
 
 services:
   calculator:
+    image: econgood/balance-sheet-api
     depends_on:
       - db
-    build:
-      context: ./
-      dockerfile: Dockerfile
     ports:
       - "1020:4000"
     env_file:

@@ -1,4 +1,5 @@
 import deepFreeze from 'deep-freeze';
+import { ValueError } from '../exceptions/value.error';
 
 type RatingOpts = {
   shortName: string;
@@ -15,7 +16,7 @@ export type Rating = RatingOpts & {
   isTopic: () => boolean;
   isAspect: () => boolean;
   isAspectOfTopic: (shortNameTopic: string) => boolean;
-  withFields: (fields: Partial<RatingOpts>) => Rating;
+  submitEstimations: (estimation: number) => Rating;
 };
 
 export function makeRating(opts?: RatingOpts): Rating {
@@ -29,9 +30,7 @@ export function makeRating(opts?: RatingOpts): Rating {
     isWeightSelectedByUser: false,
     isPositive: true,
   };
-  function withFields(fields: Partial<RatingOpts>): Rating {
-    return makeRating({ ...data, ...fields });
-  }
+
   function isTopic(): boolean {
     return isTopicShortName();
   }
@@ -48,11 +47,25 @@ export function makeRating(opts?: RatingOpts): Rating {
     return data.shortName.length === 2;
   }
 
+  function submitEstimations(estimations: number): Rating {
+    if (estimations < 0 && data.isPositive) {
+      throw new ValueError(
+        'Estimations cannot be negative for positive ratings'
+      );
+    }
+    if (estimations > 0 && !data.isPositive) {
+      throw new ValueError(
+        'Estimations cannot be positive for negative ratings'
+      );
+    }
+    return makeRating({ ...data, estimations: estimations });
+  }
+
   return deepFreeze({
     ...data,
-    withFields,
     isTopic,
     isAspect,
     isAspectOfTopic,
+    submitEstimations,
   });
 }

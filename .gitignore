@@ -14,3 +14,4 @@ documentation
 .env-docker
 logs
 volumes
+.docker_hub

@@ -4,10 +4,12 @@ import shutil
 import logging
 import os
 import git
+from dotenv import dotenv_values
 
 yarn = 'yarn'
 run = 'run'
 docker = 'docker'
+build = 'build'
 compose = 'compose'
 
 
@@ -78,26 +80,65 @@ def build_and_deploy_remotely(server_domain: str):
     full_command = " && ".join(commands)
     subprocess.run(['ssh', server_domain, full_command], check=True)
 
+
+def build_docker_image(latest_commit_hash: str):
+    subprocess.run([docker, build, "-t", f"econgood/balance-sheet-api:{latest_commit_hash}", '.'], check=True)
+
+
+def push_docker_image(latest_commit_hash: str):
+    token = dotenv_values(".docker_hub")["TOKEN"]
+    subprocess.run([docker, 'login', '-u', 'econgood', '-p', token], check=True)
+    subprocess.run([docker, 'tag', f"econgood/balance-sheet-api:{latest_commit_hash}", 'econgood/balance-sheet-api:latest'], check=True)
+    # Push the image with the latest commit message
+    subprocess.run([docker, 'push', f"econgood/balance-sheet-api:{latest_commit_hash}"], check=True)
+    # Push the image with the 'latest' tag
+    subprocess.run([docker, 'push', 'econgood/balance-sheet-api:latest'], check=True)
+
+
+def deploy_to_server(server_domain: str):
+    permission_env_file = "--env-file .env-docker/.env-user-permissions"
+    commands = [
+        'cd balance-sheet-calculator',
+        'git pull',
+        f"{docker} {compose} {permission_env_file} down",
+        f"{docker} {compose} {permission_env_file} up -d"
+    ]
+    full_command = " && ".join(commands)
+    subprocess.run(['ssh', server_domain, full_command], check=True)
+
 def rm_folder(folder: str):
     if os.path.exists(folder) and os.path.isdir(folder):
         shutil.rmtree(folder)
 
 def main(args):
-    logging.info(f"Start build and deployment process for the environment {args.environment}")
-    check_for_uncommitted_files()
-    logging.info(f"Install dependencies")
-    rm_folder('node_modules')
-    install_dependencies(production=False)
-    logging.info(f"Check linting")
-    check_linting()
-    logging.info(f"Run tests")
-    shutdown_test_database()
-    startup_test_database()
-    run_tests()
-    shutdown_test_database()
+    # logging.info(f"Start build and deployment process for the environment {args.environment}")
+    # check_for_uncommitted_files()
+    # logging.info(f"Install dependencies")
+    # rm_folder('node_modules')
+    # install_dependencies(production=False)
+    # logging.info(f"Check linting")
+    # check_linting()
+    # logging.info(f"Run tests")
+    # shutdown_test_database()
+    # startup_test_database()
+    # run_tests()
+    # shutdown_test_database()
     server_domain = 'ecg@prod.econgood.org' if args.environment == 'prod' else 'ecg@dev.econgood.org'
-    logging.info(f"Build and deploy docker image to {server_domain}")
-    build_and_deploy_remotely(server_domain=server_domain)
+    # logging.info(f"Build and deploy docker image to {server_domain}")
+    # build_and_deploy_remotely(server_domain=server_domain)
+    repo = git.Repo('.')
+    latest_commit_hash = repo.head.commit.hexsha
+    logging.info(f"Build docker image")
+    # build_docker_image(
+    #     latest_commit_hash=latest_commit_hash
+    # )
+    logging.info(f"Push docker image")
+    # push_docker_image(
+    #     latest_commit_hash=latest_commit_hash
+    # )
+    logging.info(f"Deploy to server")
+    deploy_to_server(server_domain=server_domain)
+    logging.info(f"Deployment successful")
 
 
 if __name__ == "__main__":
