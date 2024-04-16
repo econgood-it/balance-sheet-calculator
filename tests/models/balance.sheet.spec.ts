@@ -9,6 +9,8 @@ import { makeRating } from '../../src/models/rating';
 import { makeOrganization } from '../../src/models/organization';
 import { LookupError } from '../../src/exceptions/lookup.error';
 
+import { ValueError } from '../../src/exceptions/value.error';
+
 describe('BalanceSheet', () => {
   it('is created with default values', () => {
     const balanceSheet = makeBalanceSheet();
@@ -74,14 +76,25 @@ describe('BalanceSheet', () => {
   it('submits estimations for ratings', () => {
     const balanceSheet = makeBalanceSheet();
     const newBalanceSheet = balanceSheet.submitEstimations([
-      { shortName: 'B1.1', estimations: 5 },
+      { shortName: 'B3.1', estimations: 5 },
       {
-        shortName: 'B1.2',
+        shortName: 'B3.2',
         estimations: 7,
       },
+      { shortName: 'B3.3', estimations: -3 },
     ]);
-    expect(newBalanceSheet.getRating('B1.1').estimations).toBe(5);
-    expect(newBalanceSheet.getRating('B1.2').estimations).toBe(7);
+    expect(newBalanceSheet.getRating('B3.1').estimations).toBe(5);
+    expect(newBalanceSheet.getRating('B3.2').estimations).toBe(7);
+    expect(newBalanceSheet.getRating('B3.3').estimations).toBe(-3);
+    expect(newBalanceSheet.getRating('B3').points).toBe(27);
+    expect(newBalanceSheet.getRating('B3').estimations).toBe(27 / 50);
+  });
+
+  it('should fail if submitEstimations is called for a topic', () => {
+    const balanceSheet = makeBalanceSheet();
+    expect(() =>
+      balanceSheet.submitEstimations([{ shortName: 'B3', estimations: 5 }])
+    ).toThrow(ValueError);
   });
 
   it('assigns an organization', () => {
@@ -91,23 +104,61 @@ describe('BalanceSheet', () => {
     expect(newBalanceSheet.organizationId).toBe(1);
   });
 
+  it('should return all positive aspects', () => {
+    const balanceSheet = makeBalanceSheet();
+    const aspects = balanceSheet.getPositiveAspects();
+    expect(aspects.length).toBe(41);
+    aspects.forEach((aspect) => {
+      expect(aspect.isPositive).toBeTruthy();
+      expect(aspect.isAspect()).toBeTruthy();
+    });
+  });
+
+  it('should return all negative aspects', () => {
+    const balanceSheet = makeBalanceSheet();
+    const aspects = balanceSheet.getNegativeAspects();
+    expect(aspects.length).toBe(19);
+    aspects.forEach((aspect) => {
+      expect(aspect.isPositive).toBeFalsy();
+      expect(aspect.isAspect()).toBeTruthy();
+    });
+  });
+
+  it('should return topic of aspect', () => {
+    const balanceSheet = makeBalanceSheet();
+    expect(balanceSheet.getTopicOfAspect('B1.1')).toEqual(
+      makeRating({
+        shortName: 'B1',
+        name: 'Ethical position in relation to financial resources',
+        estimations: 0,
+        points: 0,
+        maxPoints: 50,
+        weight: 1,
+        isWeightSelectedByUser: false,
+        isPositive: true,
+      })
+    );
+  });
+
+  it('should fail if topic of aspect could not be found', () => {
+    const balanceSheet = makeBalanceSheet();
+    expect(() => balanceSheet.getTopicOfAspect('B9.1')).toThrow(LookupError);
+  });
+
   describe('calculateTotalPoints', () => {
-    // it('should return 1000 if all topics are 50', async () => {
-    //   const balanceSheet = makeBalanceSheet();
-    //   balanceSheet.ratings.forEach((rating) => {
-    //     balanceSheet.submitEstimations(rating.shortName, 10);
-    //   });
-    //   const totalPoints = calculateTotalPoints(ratings);
-    //   expect(totalPoints).toBe(1000);
-    // });
-    //   it('should return 0 if all topics are 0', async () => {
-    //     const ratings = makeRatingFactory().createDefaultRatings(
-    //       BalanceSheetType.Full,
-    //       BalanceSheetVersion.v5_0_8
-    //     );
-    //     const totalPoints = calculateTotalPoints(ratings);
-    //     expect(totalPoints).toBe(0);
-    //   });
+    it('should return 1000 if all topics are 50', async () => {
+      const balanceSheet = makeBalanceSheet();
+      const estimations = balanceSheet.getPositiveAspects().map((rating) => ({
+        shortName: rating.shortName,
+        estimations: 10,
+      }));
+      const newBalanceSheet = balanceSheet.submitEstimations(estimations);
+      expect(newBalanceSheet.totalPoints()).toBeCloseTo(1000, 11);
+    });
+    it('should return 0 if all topics are 0', async () => {
+      const balanceSheet = makeBalanceSheet();
+      expect(balanceSheet.totalPoints()).toBe(0);
+    });
     //
     //   function getRatingsWhereAllTopicsWithNegativeAspectHaveSameValue(
     //     points: number
@@ -129,12 +180,20 @@ describe('BalanceSheet', () => {
     //       return topicFound || r;
     //     });
     //   }
-    // it('should return -3600 if all topics with negative aspects are -200', async () => {
-    //   const ratings =
-    //     getRatingsWhereAllTopicsWithNegativeAspectHaveSameValue(-200);
-    //   const totalPoints = calculateTotalPoints(ratings);
-    //   expect(totalPoints).toBe(-3600);
-    // });
+    it('should return -3600 if all topics with negative aspects are -200', async () => {
+      const balanceSheet = makeBalanceSheet();
+      const estimations = balanceSheet.getNegativeAspects().map((rating) => ({
+        shortName: rating.shortName,
+        estimations: -200,
+      }));
+      const newBalanceSheet = balanceSheet.submitEstimations(estimations);
+      expect(newBalanceSheet.totalPoints()).toBe(-3600);
+
+      // const ratings =
+      //   getRatingsWhereAllTopicsWithNegativeAspectHaveSameValue(-200);
+      // const totalPoints = calculateTotalPoints(ratings);
+      // expect(totalPoints).toBe(-3600);
+    });
     //
     // it('should return -3600 if due to different stakeholder weights the sum of all topics is less than -3600', async () => {
     //   const ratings =

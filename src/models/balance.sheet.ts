@@ -3,12 +3,14 @@ import {
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import { CompanyFacts, makeCompanyFacts } from './company.facts';
-import { Rating } from './rating';
+import { makeRating, Rating } from './rating';
 import { StakeholderWeight } from './stakeholder.weight';
 import deepFreeze from 'deep-freeze';
 import { makeRatingFactory } from '../factories/rating.factory';
 import { Organization } from './organization';
 import { LookupError } from '../exceptions/lookup.error';
+import { isTopic } from './oldRating';
+import { ValueError } from '../exceptions/value.error';
 
 type BalanceSheetOpts = {
   id: number | undefined;
@@ -28,6 +30,10 @@ export type BalanceSheet = BalanceSheetOpts & {
   submitEstimations: (
     submissions: { shortName: string; estimations: number }[]
   ) => BalanceSheet;
+  totalPoints: () => number;
+  getPositiveAspects: () => Rating[];
+  getNegativeAspects: () => Rating[];
+  getTopicOfAspect: (shortNameAspect: string) => Rating;
 };
 
 export function makeBalanceSheet(opts?: BalanceSheetOpts): BalanceSheet {
@@ -58,10 +64,32 @@ export function makeBalanceSheet(opts?: BalanceSheetOpts): BalanceSheet {
     return data.ratings.filter((rating) => rating.isTopic());
   }
 
+  function getPositiveAspects(): Rating[] {
+    return data.ratings.filter(
+      (rating) => rating.isAspect() && rating.isPositive
+    );
+  }
+
+  function getNegativeAspects(): Rating[] {
+    return data.ratings.filter(
+      (rating) => rating.isAspect() && !rating.isPositive
+    );
+  }
+
   function getAspectsOfTopic(shortNameTopic: string): Rating[] {
     return data.ratings.filter((rating) =>
       rating.isAspectOfTopic(shortNameTopic)
     );
+  }
+
+  function getTopicOfAspect(shortNameAspect: string) {
+    const topic = data.ratings.find(
+      (r) => r.shortName === shortNameAspect.substring(0, 2)
+    );
+    if (!topic) {
+      throw new LookupError(`Topic for aspect ${shortNameAspect} not found.`);
+    }
+    return topic;
   }
 
   function assignOrganization(organization: Organization): BalanceSheet {
@@ -81,12 +109,41 @@ export function makeBalanceSheet(opts?: BalanceSheetOpts): BalanceSheet {
   function submitEstimations(
     submissions: { shortName: string; estimations: number }[]
   ): BalanceSheet {
-    const newRatings = submissions.map(({ shortName, estimations }) => {
+    // Update aspects
+    const newAspects = submissions.map(({ shortName, estimations }) => {
       const rating = getRating(shortName);
-      return rating.submitEstimations(estimations);
+      if (rating.isTopic()) {
+        throw new ValueError('You cannot submit estimations for a topic');
+      }
+      return rating.isPositive
+        ? rating.submitPositiveEstimations(estimations)
+        : rating.submitNegativeEstimations(
+            estimations,
+            getTopicOfAspect(shortName).maxPoints
+          );
     });
+    const newRatings = replaceRatings(newAspects);
+    // Update topics
+    const topics = newRatings.getTopics().map((topic) => {
+      const aspects = newRatings.getAspectsOfTopic(topic.shortName);
+      const points = aspects.reduce(
+        (sumAcc, currentRating) => sumAcc + currentRating.points,
+        0
+      );
+      const estimations = topic.maxPoints > 0 ? points / topic.maxPoints : 0;
 
-    return replaceRatings(newRatings);
+      return makeRating({ ...topic, points, estimations });
+    });
+    return replaceRatings([...topics, ...newAspects]);
+  }
+
+  const MAX_NEGATIVE_POINTS = -3600;
+
+  function totalPoints(): number {
+    const sum = data.ratings
+      .filter((r) => isTopic(r))
+      .reduce((sumAcc, currentRating) => sumAcc + currentRating.points, 0);
+    return sum < MAX_NEGATIVE_POINTS ? MAX_NEGATIVE_POINTS : sum;
   }
 
   return deepFreeze({
@@ -96,5 +153,9 @@ export function makeBalanceSheet(opts?: BalanceSheetOpts): BalanceSheet {
     assignOrganization,
     getRating,
     submitEstimations,
+    totalPoints,
+    getPositiveAspects,
+    getNegativeAspects,
+    getTopicOfAspect,
   });
 }

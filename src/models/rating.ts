@@ -1,5 +1,6 @@
 import deepFreeze from 'deep-freeze';
 import { ValueError } from '../exceptions/value.error';
+import { z } from 'zod';
 
 type RatingOpts = {
   shortName: string;
@@ -16,7 +17,11 @@ export type Rating = RatingOpts & {
   isTopic: () => boolean;
   isAspect: () => boolean;
   isAspectOfTopic: (shortNameTopic: string) => boolean;
-  submitEstimations: (estimation: number) => Rating;
+  submitPositiveEstimations: (estimations: number) => Rating;
+  submitNegativeEstimations: (
+    estimations: number,
+    topicMaxPoints: number
+  ) => Rating;
 };
 
 export function makeRating(opts?: RatingOpts): Rating {
@@ -30,6 +35,25 @@ export function makeRating(opts?: RatingOpts): Rating {
     isWeightSelectedByUser: false,
     isPositive: true,
   };
+
+  if (
+    isAspect() &&
+    data.isPositive &&
+    !z.number().min(0).max(10).safeParse(data.estimations).success
+  ) {
+    throw new ValueError(
+      'Estimations have to be withing [0, 10] for positive ratings'
+    );
+  }
+  if (
+    isAspect() &&
+    !data.isPositive &&
+    !z.number().min(-200).max(0).safeParse(data.estimations).success
+  ) {
+    throw new ValueError(
+      'Estimations have to be within [-200, 0] for negative ratings'
+    );
+  }
 
   function isTopic(): boolean {
     return isTopicShortName();
@@ -47,18 +71,27 @@ export function makeRating(opts?: RatingOpts): Rating {
     return data.shortName.length === 2;
   }
 
-  function submitEstimations(estimations: number): Rating {
-    if (estimations < 0 && data.isPositive) {
+  function submitPositiveEstimations(estimations: number): Rating {
+    if (!data.isPositive) {
       throw new ValueError(
-        'Estimations cannot be negative for positive ratings'
+        'You cannot submit positive estimations for a negative rating'
       );
     }
-    if (estimations > 0 && !data.isPositive) {
+    const points = (data.maxPoints * estimations) / 10.0;
+    return makeRating({ ...data, estimations, points });
+  }
+
+  function submitNegativeEstimations(
+    estimations: number,
+    topicMaxPoints: number
+  ): Rating {
+    if (data.isPositive) {
       throw new ValueError(
-        'Estimations cannot be positive for negative ratings'
+        'You cannot submit negative estimations for a positive rating'
       );
     }
-    return makeRating({ ...data, estimations });
+    const points = (estimations * topicMaxPoints) / 50.0;
+    return makeRating({ ...data, estimations, points });
   }
 
   return deepFreeze({
@@ -66,6 +99,7 @@ export function makeRating(opts?: RatingOpts): Rating {
     isTopic,
     isAspect,
     isAspectOfTopic,
-    submitEstimations,
+    submitPositiveEstimations,
+    submitNegativeEstimations,
   });
 }
