@@ -4,7 +4,7 @@ import shutil
 import logging
 import os
 import git
-from dotenv import dotenv_values, load_dotenv
+from dotenv import load_dotenv
 
 yarn = 'yarn'
 run = 'run'
@@ -140,7 +140,7 @@ if __name__ == "__main__":
     parser.add_argument('environment',
                         choices=['test', 'prod'],
                         help='Deploy it either to the test or production environment')
-    parser.add_argument( '-dt', '--docker-hub-token', dest='docker_hub_token',
-                         default=os.environ.get('DOCKER_HUB_TOKEN'))
+    parser.add_argument('-dt', '--docker-hub-token', dest='docker_hub_token',
+                        default=os.environ.get('DOCKER_HUB_TOKEN'))
     args = parser.parse_args()
     main(args)
