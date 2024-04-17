@@ -11,9 +11,9 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { z } from 'zod';
-import { CalcResults, Calculator } from '../calculations/calculator';
+import { OldCalcResults, OldCalculator } from '../calculations/oldCalculator';
 import { RatingsUpdater } from '../calculations/ratings.updater';
-import { StakeholderWeightCalculator } from '../calculations/stakeholder.weight.calculator';
+import { OldStakeholderWeightCalculator } from '../calculations/old.stakeholder.weight.calculator';
 import { TopicWeightCalculator } from '../calculations/topic.weight.calculator';
 import { MatrixFormat } from '../dto/balance.sheet.dto';
 import { DatabaseValidationError } from '../exceptions/databaseValidationError';
@@ -34,7 +34,7 @@ import {
 export const BALANCE_SHEET_RELATIONS = ['organizationEntity'];
 
 type CalculationResult = {
-  calcResults: CalcResults;
+  calcResults: OldCalcResults;
   stakeholderWeights: Provider<string, number>;
   topicWeights: Provider<string, number>;
 };
@@ -91,12 +91,12 @@ export class BalanceSheetEntity {
   public async reCalculate(): Promise<CalculationResult> {
     const regionProvider = await RegionProvider.fromVersion(this.version);
     const industryProvider = await IndustryProvider.fromVersion(this.version);
-    const calcResults: CalcResults = await new Calculator(
+    const calcResults: OldCalcResults = await new OldCalculator(
       regionProvider,
       industryProvider
     ).calculate(this.companyFacts);
     const ratingsUpdater: RatingsUpdater = new RatingsUpdater();
-    const stakeholderWeightCalculator = new StakeholderWeightCalculator();
+    const stakeholderWeightCalculator = new OldStakeholderWeightCalculator();
     const topicWeightCalculator = new TopicWeightCalculator();
     const stakeholderWeights = (
       await stakeholderWeightCalculator.calcStakeholderWeights(calcResults)

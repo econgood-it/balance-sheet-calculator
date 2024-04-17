@@ -6,7 +6,7 @@ import {
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import { z } from 'zod';
-import { calculateTotalPoints } from '../calculations/calculator';
+import { calculateTotalPoints } from '../calculations/oldCalculator';
 import { Option, none, some } from '../calculations/option';
 import { BalanceSheetEntity } from '../entities/balance.sheet.entity';
 import { OldRatingsFactory } from '../factories/oldRatingsFactory';

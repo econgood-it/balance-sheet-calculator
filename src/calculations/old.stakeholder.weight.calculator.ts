@@ -1,51 +1,59 @@
+import { OldCalcResults } from './oldCalculator';
 import { StakeholderWeightsProvider } from '../providers/stakeholder.weights.provider';
-import { CalcResults } from './calculator';
-import deepFreeze from 'deep-freeze';
 
-export function makeStakeholderWeightCalculator(calcResults: CalcResults) {
-  const defaultIfDenominatorIsZero = 100.0;
+export class OldStakeholderWeightCalculator {
+  private readonly defaultPPPIndex = 0.978035862587365;
+  private readonly defaultIfDenominatorIsZero = 100.0;
 
-  async function calculate(): Promise<StakeholderWeightsProvider> {
+  public async calcStakeholderWeights(
+    calcResults: OldCalcResults
+  ): Promise<StakeholderWeightsProvider> {
     return new StakeholderWeightsProvider([
-      ['A', await calculateSupplierWeightFromCompanyFacts()],
-      ['B', await calculateFinancialWeightFromCompanyFacts()],
-      ['C', await calculateEmployeeWeightFromCompanyFacts()],
-      ['D', await calculateCustomerWeightFromCompanyFacts()],
-      ['E', await calculateSocialEnvironmentlWeightFromCompanyFacts()],
+      ['A', await this.calculateSupplierWeightFromCompanyFacts(calcResults)],
+      ['B', await this.calculateFinancialWeightFromCompanyFacts(calcResults)],
+      ['C', await this.calculateEmployeeWeightFromCompanyFacts(calcResults)],
+      ['D', await this.calculateCustomerWeightFromCompanyFacts()],
+      ['E', await this.calculateSocialEnvironmentlWeightFromCompanyFacts()],
     ]);
   }
 
-  async function calculateSupplierWeightFromCompanyFacts(): Promise<number> {
+  public async calculateSupplierWeightFromCompanyFacts(
+    calcResults: OldCalcResults
+  ): Promise<number> {
     const supplierAndEmployeesRiskRation =
-      await calculateSupplierAndEmployeesRiskRatio();
-    return mapToWeight(
-      mapToValueBetween60And300(supplierAndEmployeesRiskRation)
+      await this.calculateSupplierAndEmployeesRiskRatio(calcResults);
+    return this.mapToWeight(
+      this.mapToValueBetween60And300(supplierAndEmployeesRiskRation)
     );
   }
 
   // B
-  async function calculateFinancialWeightFromCompanyFacts(): Promise<number> {
-    const financialRisk = await calculateFinancialRisk();
-    return mapToWeight(mapToValueBetween60And300(financialRisk));
+  public async calculateFinancialWeightFromCompanyFacts(
+    calcResults: OldCalcResults
+  ): Promise<number> {
+    const financialRisk = await this.calculateFinancialRisk(calcResults);
+    return this.mapToWeight(this.mapToValueBetween60And300(financialRisk));
   }
 
   // C
-  async function calculateEmployeeWeightFromCompanyFacts(): Promise<number> {
-    const employeesRisk = await calculateEmployeesRisk();
-    return mapToWeight(mapToValueBetween60And300(employeesRisk));
+  public async calculateEmployeeWeightFromCompanyFacts(
+    calcResults: OldCalcResults
+  ): Promise<number> {
+    const employeesRisk = await this.calculateEmployeesRisk(calcResults);
+    return this.mapToWeight(this.mapToValueBetween60And300(employeesRisk));
   }
 
   // D
-  async function calculateCustomerWeightFromCompanyFacts(): Promise<number> {
+  public async calculateCustomerWeightFromCompanyFacts(): Promise<number> {
     return 1.0;
   }
 
   // E
-  async function calculateSocialEnvironmentlWeightFromCompanyFacts(): Promise<number> {
+  public async calculateSocialEnvironmentlWeightFromCompanyFacts(): Promise<number> {
     return 1.0;
   }
 
-  function mapToWeight(normedSupplierAndEmployeesRiskRatio: number) {
+  public mapToWeight(normedSupplierAndEmployeesRiskRatio: number) {
     if (normedSupplierAndEmployeesRiskRatio === 60) {
       return 0.5;
     } else if (normedSupplierAndEmployeesRiskRatio === 300) {
@@ -57,7 +65,7 @@ export function makeStakeholderWeightCalculator(calcResults: CalcResults) {
     }
   }
 
-  function mapToValueBetween60And300(
+  public mapToValueBetween60And300(
     supplierAndEmployeesRiskRatio: number
   ): number {
     return supplierAndEmployeesRiskRatio < 60
@@ -72,7 +80,9 @@ export function makeStakeholderWeightCalculator(calcResults: CalcResults) {
    * =IFERROR((60*$'11.Region'.G3/($'11.Region'.G3+$'11.Region'.G10+(I19+I21+I22+G24))*5),100)
    * @param calcResults
    */
-  async function calculateSupplierAndEmployeesRiskRatio(): Promise<number> {
+  public async calculateSupplierAndEmployeesRiskRatio(
+    calcResults: OldCalcResults
+  ): Promise<number> {
     // (60*$'11.Region'.G3)
     const numerator = 60 * calcResults.supplyCalcResults.supplyRiskSum;
     // ($'11.Region'.G3+$'11.Region'.G10+(I19+I21+I22+G24))
@@ -83,7 +93,7 @@ export function makeStakeholderWeightCalculator(calcResults: CalcResults) {
     // (60*$'11.Region'.G3/($'11.Region'.G3+$'11.Region'.G10+(I19+I21+I22+G24))*5))
     return denominator !== 0
       ? (numerator / denominator) * 5
-      : defaultIfDenominatorIsZero;
+      : this.defaultIfDenominatorIsZero;
   }
 
   /**
@@ -91,7 +101,9 @@ export function makeStakeholderWeightCalculator(calcResults: CalcResults) {
    *  =WENNFEHLER((60*(I19+I21+I22+G24)/($'11.Region'.G3+$'11.Region'.G10+(I19+I21+I22+G24))*10);100)
    * @param calcResults
    */
-  async function calculateFinancialRisk(): Promise<number> {
+  public async calculateFinancialRisk(
+    calcResults: OldCalcResults
+  ): Promise<number> {
     const numerator = 60 * calcResults.financeCalcResults.sumOfFinancialAspects;
     const denominator: number =
       calcResults.supplyCalcResults.supplyRiskSum +
@@ -99,7 +111,7 @@ export function makeStakeholderWeightCalculator(calcResults: CalcResults) {
       calcResults.financeCalcResults.sumOfFinancialAspects;
     return denominator !== 0
       ? (numerator / denominator) * 10
-      : defaultIfDenominatorIsZero;
+      : this.defaultIfDenominatorIsZero;
   }
 
   /**
@@ -109,7 +121,9 @@ export function makeStakeholderWeightCalculator(calcResults: CalcResults) {
    * @param calcResults
    */
 
-  async function calculateEmployeesRisk(): Promise<number> {
+  public async calculateEmployeesRisk(
+    calcResults: OldCalcResults
+  ): Promise<number> {
     const numerator = 60 * calcResults.employeesCalcResults.normedEmployeesRisk;
     const denominator: number =
       calcResults.supplyCalcResults.supplyRiskSum +
@@ -117,15 +131,6 @@ export function makeStakeholderWeightCalculator(calcResults: CalcResults) {
       calcResults.financeCalcResults.sumOfFinancialAspects;
     return denominator !== 0
       ? (numerator / denominator) * 10
-      : defaultIfDenominatorIsZero;
+      : this.defaultIfDenominatorIsZero;
   }
-
-  return deepFreeze({
-    calculate,
-    calculateSupplierWeightFromCompanyFacts,
-    calculateSupplierAndEmployeesRiskRatio,
-    calculateEmployeesRisk,
-    calculateFinancialRisk,
-    mapToValueBetween60And300,
-  });
 }

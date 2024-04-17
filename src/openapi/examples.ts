@@ -12,6 +12,12 @@ import { WorkbookSection } from '../entities/workbook.entity';
 import { z } from 'zod';
 import { CompanyFactsResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/company.facts.dto';
 import deepFreeze from 'deep-freeze';
+import {
+  CompanyFacts,
+  makeCompanyFacts,
+  makeEmployeesFraction,
+  makeSupplyFraction,
+} from '../models/company.facts';
 
 const arabEmiratesCode = 'ARE';
 const afghanistanCode = 'AFG';
@@ -43,6 +49,52 @@ export const balanceSheetJsonFactory = {
     version: BalanceSheetVersion.v5_0_6,
   }),
 };
+
+export function makeCompanyFactsFactory() {
+  function nonEmpty2(): CompanyFacts {
+    return makeCompanyFacts({
+      totalPurchaseFromSuppliers: 330,
+      totalStaffCosts: 2345,
+      profit: 238,
+      financialCosts: 473,
+      incomeFromFinancialInvestments: 342,
+      additionsToFixedAssets: 234,
+      turnover: 30,
+      totalAssets: 40,
+      financialAssetsAndCashBalance: 0,
+      numberOfEmployees: 0,
+      hasCanteen: false,
+      averageJourneyToWorkForStaffInKm: 0,
+      isB2B: false,
+      supplyFractions: [
+        makeSupplyFraction({
+          industryCode: agricultureCode,
+          countryCode: arabEmiratesCode,
+          costs: 300,
+        }),
+        makeSupplyFraction({
+          industryCode: pharmaceuticCode,
+          countryCode: afghanistanCode,
+          costs: 20,
+        }),
+      ],
+      employeesFractions: [
+        makeEmployeesFraction({
+          countryCode: arabEmiratesCode,
+          percentage: 0.3,
+        }),
+        makeEmployeesFraction({
+          countryCode: afghanistanCode,
+          percentage: 0.7,
+        }),
+      ],
+      industrySectors: [],
+      mainOriginOfOtherSuppliers: { countryCode: DEFAULT_COUNTRY_CODE },
+    });
+  }
+  return deepFreeze({ nonEmpty2 });
+}
+
 export const companyFactsFactory = {
   empty: (): OldCompanyFacts => ({
     totalPurchaseFromSuppliers: 0,

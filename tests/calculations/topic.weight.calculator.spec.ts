@@ -1,5 +1,5 @@
 import { TopicWeightCalculator } from '../../src/calculations/topic.weight.calculator';
-import { CalcResults } from '../../src/calculations/calculator';
+import { OldCalcResults } from '../../src/calculations/oldCalculator';
 
 import { CompanySize } from '../../src/calculations/old.employees.calc';
 import { none, some } from '../../src/calculations/option';
@@ -7,13 +7,13 @@ import { OldCompanyFacts } from '../../src/models/oldCompanyFacts';
 import { companyFactsFactory } from '../../src/openapi/examples';
 
 describe('Topic Weight Calculator', () => {
-  let calcResults: CalcResults;
+  let calcResults: OldCalcResults;
   let companyFacts: OldCompanyFacts;
   const topicWeihgtCalculator = new TopicWeightCalculator();
   const numDigits = 2;
   const calc = async (
     topicShortName: string,
-    calcResults: CalcResults,
+    calcResults: OldCalcResults,
     companyFacts: OldCompanyFacts
   ) => {
     const topicWeights = topicWeihgtCalculator.calcTopicWeights(

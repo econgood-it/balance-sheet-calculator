@@ -8,7 +8,7 @@ import {
   BalanceSheetType,
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
-import { calculateTotalPoints } from '../../src/calculations/calculator';
+import { calculateTotalPoints } from '../../src/calculations/oldCalculator';
 
 describe('calculateTotalPoints', () => {
   it('should return 1000 if all topics are 50', async () => {

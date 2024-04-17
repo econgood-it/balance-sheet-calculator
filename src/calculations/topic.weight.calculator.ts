@@ -1,11 +1,11 @@
-import { CalcResults } from './calculator';
+import { OldCalcResults } from './oldCalculator';
 import { CompanySize } from './old.employees.calc';
 import Provider from '../providers/provider';
 import { allValuesAreZero, OldCompanyFacts } from '../models/oldCompanyFacts';
 
 export class TopicWeightCalculator {
   public calcTopicWeights(
-    calcResults: CalcResults,
+    calcResults: OldCalcResults,
     companyFacts: OldCompanyFacts
   ): Provider<string, number> {
     const topicWeights = new Provider<string, number>([
@@ -44,7 +44,7 @@ export class TopicWeightCalculator {
     return 1.0;
   }
 
-  public calculateTopicWeightOfA3(calcResults: CalcResults): number {
+  public calculateTopicWeightOfA3(calcResults: OldCalcResults): number {
     if (calcResults.supplyCalcResults.supplyChainWeight > 1.5) {
       return 2;
     } else if (calcResults.supplyCalcResults.supplyChainWeight > 1.25) {
@@ -62,7 +62,7 @@ export class TopicWeightCalculator {
    * =IF(G69="empty",1,IF($'11.Region'.I9<1.5,$'3. Calc'.C105,IF($'11.Region'.I9<3.26,$'3. Calc'.C104,IF($'11.Region'.I9<4.5,$'3. Calc'.C103,$'3. Calc'.C102))))
    * @param calcResults
    */
-  public calculateTopicWeightOfA4(calcResults: CalcResults): number {
+  public calculateTopicWeightOfA4(calcResults: OldCalcResults): number {
     if (calcResults.supplyCalcResults.itucAverage < 1.5) {
       return 0.5;
     } else if (calcResults.supplyCalcResults.itucAverage < 3.26) {
@@ -74,7 +74,7 @@ export class TopicWeightCalculator {
     }
   }
 
-  public calculateTopicWeightOfB1(calcResults: CalcResults): number {
+  public calculateTopicWeightOfB1(calcResults: OldCalcResults): number {
     if (calcResults.financeCalcResults.companyIsActiveInFinancialServices) {
       return 2;
     } else if (calcResults.financeCalcResults.economicRatio < 0.1) {
@@ -86,7 +86,7 @@ export class TopicWeightCalculator {
     }
   }
 
-  public calculateTopicWeightOfB2(calcResults: CalcResults): number {
+  public calculateTopicWeightOfB2(calcResults: OldCalcResults): number {
     if (
       calcResults.socialEnvironmentCalcResults.profitInPercentOfTurnover.isPresent()
     ) {
@@ -103,7 +103,7 @@ export class TopicWeightCalculator {
     return 1;
   }
 
-  public calculateTopicWeightOfB3(calcResults: CalcResults): number {
+  public calculateTopicWeightOfB3(calcResults: OldCalcResults): number {
     if (calcResults.financeCalcResults.companyIsActiveInFinancialServices) {
       return 2;
     } else if (calcResults.financeCalcResults.economicRatioE22 < 0.1) {
@@ -115,7 +115,7 @@ export class TopicWeightCalculator {
     }
   }
 
-  public calculateTopicWeightOfB4(calcResults: CalcResults): number {
+  public calculateTopicWeightOfB4(calcResults: OldCalcResults): number {
     if (calcResults.employeesCalcResults.companySize === CompanySize.micro) {
       return 0.5;
     } else {
@@ -138,7 +138,7 @@ export class TopicWeightCalculator {
   }
 
   public calculateTopicWeightOfC4(
-    calcResults: CalcResults,
+    calcResults: OldCalcResults,
     companyFacts: OldCompanyFacts
   ): number {
     if (companyFacts.numberOfEmployees === 1) {
@@ -158,7 +158,7 @@ export class TopicWeightCalculator {
    * In excel this is equal to the cell $'10. Industry'.J39
    * @param calcResults
    */
-  public calculateTopicWeightOfD3AndE3(calcResults: CalcResults): number {
+  public calculateTopicWeightOfD3AndE3(calcResults: OldCalcResults): number {
     if (
       calcResults.customerCalcResults
         .sumOfEcologicalDesignOfProductsAndService < 0.75
@@ -183,7 +183,7 @@ export class TopicWeightCalculator {
     return companyFacts.isB2B ? 1.5 : 1;
   }
 
-  public calculateTopicWeightOfE2(calcResults: CalcResults): number {
+  public calculateTopicWeightOfE2(calcResults: OldCalcResults): number {
     if (
       calcResults.socialEnvironmentCalcResults.profitInPercentOfTurnover.isPresent()
     ) {
@@ -201,7 +201,7 @@ export class TopicWeightCalculator {
     }
   }
 
-  public calculateTopicWeightOfE4(calcResults: CalcResults): number {
+  public calculateTopicWeightOfE4(calcResults: OldCalcResults): number {
     if (
       calcResults.socialEnvironmentCalcResults
         .companyIsActiveInMiningOrConstructionIndustry

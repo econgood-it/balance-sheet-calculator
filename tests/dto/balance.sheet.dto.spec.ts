@@ -14,7 +14,7 @@ import {
 } from '../../src/dto/balance.sheet.dto';
 import { OldBalanceSheet } from '../../src/models/oldBalanceSheet';
 import { isTopic, OldRating } from '../../src/models/oldRating';
-import { calculateTotalPoints } from '../../src/calculations/calculator';
+import { calculateTotalPoints } from '../../src/calculations/oldCalculator';
 
 describe('Transform', () => {
   it('json with a merged rating to a balance sheet entity', () => {

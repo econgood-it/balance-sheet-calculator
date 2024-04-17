@@ -1,4 +1,4 @@
-import { CalcResults } from './calculator';
+import { OldCalcResults } from './oldCalculator';
 import Provider from '../providers/provider';
 import {
   filterAspectsOfTopic,
@@ -9,7 +9,7 @@ import {
 export class RatingsUpdater {
   public async update(
     ratings: OldRating[],
-    calcResults: CalcResults,
+    calcResults: OldCalcResults,
     stakeholderWeights: Provider<string, number>,
     topicWeights: Provider<string, number>
   ): Promise<OldRating[]> {

@@ -1,15 +1,17 @@
-import { OldSupplierCalc, SupplyCalcResults } from './old.supplier.calc';
-import { OldEmployeesCalc, EmployeesCalcResults } from './old.employees.calc';
-import { OldFinanceCalc, FinanceCalcResults } from './old.finance.calc';
+import { SupplyCalcResults } from './old.supplier.calc';
+import { EmployeesCalcResults } from './old.employees.calc';
+import { FinanceCalcResults } from './old.finance.calc';
 import { RegionProvider } from '../providers/region.provider';
 import { IndustryProvider } from '../providers/industry.provider';
-import { OldCustomerCalc, CustomerCalcResults } from './old.customer.calc';
-import {
-  OldSocialEnvironmentCalc,
-  SocialEnvironmentCalcResults,
-} from './old.social.environment.calc';
-import { OldCompanyFacts } from '../models/oldCompanyFacts';
+import { CustomerCalcResults } from './old.customer.calc';
+import { SocialEnvironmentCalcResults } from './old.social.environment.calc';
 import { isTopic, OldRating } from '../models/oldRating';
+import { CompanyFacts } from '../models/company.facts';
+import { makeSupplierCalc } from './supplier.calc';
+import { makeFinanceCalc } from './finance.calc';
+import { makeEmployeesCalc } from './employees.calc';
+import { makeCustomerCalc } from './customer.calc';
+import { makeSocialEnvironmentCalc } from './social.environment.calc';
 
 export interface CalcResults {
   supplyCalcResults: SupplyCalcResults;
@@ -19,34 +21,24 @@ export interface CalcResults {
   socialEnvironmentCalcResults: SocialEnvironmentCalcResults;
 }
 
-export class Calculator {
-  public readonly supplierCalc: OldSupplierCalc;
-  public readonly employeesCalc: OldEmployeesCalc;
-  public readonly financeCalc: OldFinanceCalc;
-  public readonly customerCalc: OldCustomerCalc;
-  public readonly socialEnvironmentCalc: OldSocialEnvironmentCalc;
-
-  constructor(
-    regionProvider: RegionProvider,
-    industryProvider: IndustryProvider
-  ) {
-    this.supplierCalc = new OldSupplierCalc(regionProvider, industryProvider);
-    this.employeesCalc = new OldEmployeesCalc(regionProvider);
-    this.financeCalc = new OldFinanceCalc();
-    this.customerCalc = new OldCustomerCalc(industryProvider);
-    this.socialEnvironmentCalc = new OldSocialEnvironmentCalc();
-  }
-
-  public async calculate(companyFacts: OldCompanyFacts): Promise<CalcResults> {
-    return {
-      supplyCalcResults: this.supplierCalc.calculate(companyFacts),
-      financeCalcResults: this.financeCalc.calculate(companyFacts),
-      employeesCalcResults: this.employeesCalc.calculate(companyFacts),
-      customerCalcResults: this.customerCalc.calculate(companyFacts),
-      socialEnvironmentCalcResults:
-        this.socialEnvironmentCalc.calculate(companyFacts),
-    };
-  }
+export async function calculate(
+  regionProvider: RegionProvider,
+  industryProvider: IndustryProvider,
+  companyFacts: CompanyFacts
+): Promise<CalcResults> {
+  return {
+    supplyCalcResults: makeSupplierCalc(
+      regionProvider,
+      industryProvider
+    ).calculate(companyFacts),
+    financeCalcResults: makeFinanceCalc().calculate(companyFacts),
+    employeesCalcResults:
+      makeEmployeesCalc(regionProvider).calculate(companyFacts),
+    customerCalcResults:
+      makeCustomerCalc(industryProvider).calculate(companyFacts),
+    socialEnvironmentCalcResults:
+      makeSocialEnvironmentCalc().calculate(companyFacts),
+  };
 }
 
 const MAX_NEGATIVE_POINTS = -3600;

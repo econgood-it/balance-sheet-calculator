@@ -1,6 +1,6 @@
 import { Workbook } from 'exceljs';
 import { CellReader } from './cell.reader';
-import { CalcResults } from '../../calculations/calculator';
+import { OldCalcResults } from '../../calculations/oldCalculator';
 import {
   INDUSTRY_CODE_FOR_CONSTRUCTION_INDUSTRY,
   INDUSTRY_CODE_FOR_FINANCIAL_SERVICES,
@@ -8,7 +8,7 @@ import {
 } from '../../models/oldCompanyFacts';
 
 export class CalcResultsReader {
-  public readFromWorkbook(wb: Workbook): CalcResults | undefined {
+  public readFromWorkbook(wb: Workbook): OldCalcResults | undefined {
     const cr = new CellReader();
     const regionSheet = wb.getWorksheet('11.Region');
     const weightingSheet = wb.getWorksheet('9. Weighting');

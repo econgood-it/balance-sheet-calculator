@@ -159,27 +159,7 @@ describe('BalanceSheet', () => {
       const balanceSheet = makeBalanceSheet();
       expect(balanceSheet.totalPoints()).toBe(0);
     });
-    //
-    //   function getRatingsWhereAllTopicsWithNegativeAspectHaveSameValue(
-    //     points: number
-    //   ) {
-    //     const balanceSheet = makeBalanceSheet();
-    //
-    //     const topics = balanceSheet.getTopics();
-    //     const topicsWithNegativeAspects = topics.filter((s) =>
-    //       balanceSheet.getAspectsOfTopic(s.shortName).some((a) => !a.isPositive)
-    //     );
-    //     const topicsWith200NegativePoints = topicsWithNegativeAspects.map((t) => ({
-    //       ...t,
-    //       points,
-    //     }));
-    //     return defaultRatings.map((r) => {
-    //       const topicFound = topicsWith200NegativePoints.find(
-    //         (t) => t.shortName === r.shortName
-    //       );
-    //       return topicFound || r;
-    //     });
-    //   }
+
     it('should return -3600 if all topics with negative aspects are -200', async () => {
       const balanceSheet = makeBalanceSheet();
       const estimations = balanceSheet.getNegativeAspects().map((rating) => ({
@@ -188,11 +168,6 @@ describe('BalanceSheet', () => {
       }));
       const newBalanceSheet = balanceSheet.submitEstimations(estimations);
       expect(newBalanceSheet.totalPoints()).toBe(-3600);
-
-      // const ratings =
-      //   getRatingsWhereAllTopicsWithNegativeAspectHaveSameValue(-200);
-      // const totalPoints = calculateTotalPoints(ratings);
-      // expect(totalPoints).toBe(-3600);
     });
     //
     // it('should return -3600 if due to different stakeholder weights the sum of all topics is less than -3600', async () => {
