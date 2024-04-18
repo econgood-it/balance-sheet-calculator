@@ -86,10 +86,10 @@ describe('Stakeholder Weight Calculator', () => {
     const stakeholderWeightCalculator =
       makeStakeholderWeightCalculator(calcResults);
     const result = await stakeholderWeightCalculator.calculate();
-    expect(result.get('A')).toBeCloseTo(0.5, 3);
-    expect(result.get('B')).toBeCloseTo(1, 2);
-    expect(result.get('C')).toBeCloseTo(2, 2);
-    expect(result.get('D')).toBeCloseTo(1, 2);
-    expect(result.get('E')).toBeCloseTo(1, 2);
+    expect(result.getOrFail('A').weight).toBeCloseTo(0.5, 3);
+    expect(result.getOrFail('B').weight).toBeCloseTo(1, 2);
+    expect(result.getOrFail('C').weight).toBeCloseTo(2, 2);
+    expect(result.getOrFail('D').weight).toBeCloseTo(1, 2);
+    expect(result.getOrFail('E').weight).toBeCloseTo(1, 2);
   });
 });

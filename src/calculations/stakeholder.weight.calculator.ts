@@ -1,48 +1,70 @@
-import { StakeholderWeightsProvider } from '../providers/stakeholder.weights.provider';
 import { CalcResults } from './calculator';
 import deepFreeze from 'deep-freeze';
+import {
+  makeStakeholderWeight,
+  StakeholderWeight,
+} from '../models/stakeholder.weight';
+import {
+  makeStakeholderWeightsProvider,
+  StakeholderWeightsProvider,
+} from '../providers/stakeholder.weights.provider';
 
 export function makeStakeholderWeightCalculator(calcResults: CalcResults) {
   const defaultIfDenominatorIsZero = 100.0;
 
   async function calculate(): Promise<StakeholderWeightsProvider> {
-    return new StakeholderWeightsProvider([
-      ['A', await calculateSupplierWeightFromCompanyFacts()],
-      ['B', await calculateFinancialWeightFromCompanyFacts()],
-      ['C', await calculateEmployeeWeightFromCompanyFacts()],
-      ['D', await calculateCustomerWeightFromCompanyFacts()],
-      ['E', await calculateSocialEnvironmentlWeightFromCompanyFacts()],
+    return makeStakeholderWeightsProvider([
+      await calculateSupplierWeightFromCompanyFacts(),
+      await calculateFinancialWeightFromCompanyFacts(),
+      await calculateEmployeeWeightFromCompanyFacts(),
+      await calculateCustomerWeightFromCompanyFacts(),
+      await calculateSocialEnvironmentlWeightFromCompanyFacts(),
     ]);
   }
 
-  async function calculateSupplierWeightFromCompanyFacts(): Promise<number> {
+  async function calculateSupplierWeightFromCompanyFacts(): Promise<StakeholderWeight> {
     const supplierAndEmployeesRiskRation =
       await calculateSupplierAndEmployeesRiskRatio();
-    return mapToWeight(
-      mapToValueBetween60And300(supplierAndEmployeesRiskRation)
-    );
+    return makeStakeholderWeight({
+      shortName: 'A',
+      weight: mapToWeight(
+        mapToValueBetween60And300(supplierAndEmployeesRiskRation)
+      ),
+    });
   }
 
   // B
-  async function calculateFinancialWeightFromCompanyFacts(): Promise<number> {
+  async function calculateFinancialWeightFromCompanyFacts(): Promise<StakeholderWeight> {
     const financialRisk = await calculateFinancialRisk();
-    return mapToWeight(mapToValueBetween60And300(financialRisk));
+    return makeStakeholderWeight({
+      shortName: 'B',
+      weight: mapToWeight(mapToValueBetween60And300(financialRisk)),
+    });
   }
 
   // C
-  async function calculateEmployeeWeightFromCompanyFacts(): Promise<number> {
+  async function calculateEmployeeWeightFromCompanyFacts(): Promise<StakeholderWeight> {
     const employeesRisk = await calculateEmployeesRisk();
-    return mapToWeight(mapToValueBetween60And300(employeesRisk));
+    return makeStakeholderWeight({
+      shortName: 'C',
+      weight: mapToWeight(mapToValueBetween60And300(employeesRisk)),
+    });
   }
 
   // D
-  async function calculateCustomerWeightFromCompanyFacts(): Promise<number> {
-    return 1.0;
+  async function calculateCustomerWeightFromCompanyFacts(): Promise<StakeholderWeight> {
+    return makeStakeholderWeight({
+      shortName: 'D',
+      weight: 1.0,
+    });
   }
 
   // E
-  async function calculateSocialEnvironmentlWeightFromCompanyFacts(): Promise<number> {
-    return 1.0;
+  async function calculateSocialEnvironmentlWeightFromCompanyFacts(): Promise<StakeholderWeight> {
+    return makeStakeholderWeight({
+      shortName: 'E',
+      weight: 1.0,
+    });
   }
 
   function mapToWeight(normedSupplierAndEmployeesRiskRatio: number) {
