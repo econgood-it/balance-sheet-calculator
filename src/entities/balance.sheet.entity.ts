@@ -14,7 +14,7 @@ import { z } from 'zod';
 import { OldCalcResults, OldCalculator } from '../calculations/oldCalculator';
 import { RatingsUpdater } from '../calculations/ratings.updater';
 import { OldStakeholderWeightCalculator } from '../calculations/old.stakeholder.weight.calculator';
-import { TopicWeightCalculator } from '../calculations/topic.weight.calculator';
+import { OldTopicWeightCalculator } from '../calculations/oldTopicWeightCalculator';
 import { MatrixFormat } from '../dto/balance.sheet.dto';
 import { DatabaseValidationError } from '../exceptions/databaseValidationError';
 import { translateBalanceSheet, Translations } from '../language/translations';
@@ -97,7 +97,7 @@ export class BalanceSheetEntity {
     ).calculate(this.companyFacts);
     const ratingsUpdater: RatingsUpdater = new RatingsUpdater();
     const stakeholderWeightCalculator = new OldStakeholderWeightCalculator();
-    const topicWeightCalculator = new TopicWeightCalculator();
+    const topicWeightCalculator = new OldTopicWeightCalculator();
     const stakeholderWeights = (
       await stakeholderWeightCalculator.calcStakeholderWeights(calcResults)
     ).merge(this.stakeholderWeights);

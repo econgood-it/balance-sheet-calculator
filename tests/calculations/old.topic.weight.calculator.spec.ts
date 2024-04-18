@@ -1,22 +1,22 @@
+import { OldTopicWeightCalculator } from '../../src/calculations/oldTopicWeightCalculator';
 import { OldCalcResults } from '../../src/calculations/oldCalculator';
 
 import { CompanySize } from '../../src/calculations/old.employees.calc';
 import { none, some } from '../../src/calculations/option';
 import { OldCompanyFacts } from '../../src/models/oldCompanyFacts';
 import { companyFactsFactory } from '../../src/openapi/examples';
-import { makeTopicWeightCalculator } from '../../src/calculations/topic.weight.calculator';
 
 describe('Topic Weight Calculator', () => {
   let calcResults: OldCalcResults;
   let companyFacts: OldCompanyFacts;
-  const topicWeihgtCalculator = makeTopicWeightCalculator();
+  const topicWeihgtCalculator = new OldTopicWeightCalculator();
   const numDigits = 2;
   const calc = async (
     topicShortName: string,
     calcResults: OldCalcResults,
     companyFacts: OldCompanyFacts
   ) => {
-    const topicWeights = topicWeihgtCalculator.calculate(
+    const topicWeights = topicWeihgtCalculator.calcTopicWeights(
       calcResults,
       companyFacts
     );
@@ -358,7 +358,7 @@ describe('Topic Weight Calculator', () => {
   });
 
   it('should return for all topics a weight of 1 if company facts values are all zero', async () => {
-    const topicWeights = topicWeihgtCalculator.calculate(
+    const topicWeights = topicWeihgtCalculator.calcTopicWeights(
       calcResults,
       companyFactsFactory.empty()
     );

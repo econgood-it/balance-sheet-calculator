@@ -2,34 +2,33 @@ import { OldCalcResults } from './oldCalculator';
 import { CompanySize } from './old.employees.calc';
 import Provider from '../providers/provider';
 import { allValuesAreZero, OldCompanyFacts } from '../models/oldCompanyFacts';
-import deepFreeze from 'deep-freeze';
 
-export function makeTopicWeightCalculator() {
-  function calculate(
+export class OldTopicWeightCalculator {
+  public calcTopicWeights(
     calcResults: OldCalcResults,
     companyFacts: OldCompanyFacts
   ): Provider<string, number> {
     const topicWeights = new Provider<string, number>([
-      ['A1', constantWeight()],
-      ['A2', constantWeight()],
-      ['A3', calculateTopicWeightOfA3(calcResults)],
-      ['A4', calculateTopicWeightOfA4(calcResults)],
-      ['B1', calculateTopicWeightOfB1(calcResults)],
-      ['B2', calculateTopicWeightOfB2(calcResults)],
-      ['B3', calculateTopicWeightOfB3(calcResults)],
-      ['B4', calculateTopicWeightOfB4(calcResults)],
-      ['C1', constantWeight()],
-      ['C2', constantWeight()],
-      ['C3', calculateTopicWeightOfC3(companyFacts)],
-      ['C4', calculateTopicWeightOfC4(calcResults, companyFacts)],
-      ['D1', constantWeight()],
-      ['D2', constantWeight()],
-      ['D3', calculateTopicWeightOfD3AndE3(calcResults)],
-      ['D4', calculateTopicWeightOfD4(companyFacts)],
-      ['E1', constantWeight()],
-      ['E2', calculateTopicWeightOfE2(calcResults)],
-      ['E3', calculateTopicWeightOfD3AndE3(calcResults)],
-      ['E4', calculateTopicWeightOfE4(calcResults)],
+      ['A1', this.constantWeight()],
+      ['A2', this.constantWeight()],
+      ['A3', this.calculateTopicWeightOfA3(calcResults)],
+      ['A4', this.calculateTopicWeightOfA4(calcResults)],
+      ['B1', this.calculateTopicWeightOfB1(calcResults)],
+      ['B2', this.calculateTopicWeightOfB2(calcResults)],
+      ['B3', this.calculateTopicWeightOfB3(calcResults)],
+      ['B4', this.calculateTopicWeightOfB4(calcResults)],
+      ['C1', this.constantWeight()],
+      ['C2', this.constantWeight()],
+      ['C3', this.calculateTopicWeightOfC3(companyFacts)],
+      ['C4', this.calculateTopicWeightOfC4(calcResults, companyFacts)],
+      ['D1', this.constantWeight()],
+      ['D2', this.constantWeight()],
+      ['D3', this.calculateTopicWeightOfD3AndE3(calcResults)],
+      ['D4', this.calculateTopicWeightOfD4(companyFacts)],
+      ['E1', this.constantWeight()],
+      ['E2', this.calculateTopicWeightOfE2(calcResults)],
+      ['E3', this.calculateTopicWeightOfD3AndE3(calcResults)],
+      ['E4', this.calculateTopicWeightOfE4(calcResults)],
     ]);
     if (allValuesAreZero(companyFacts)) {
       const allTopicWeightsAreOne = new Provider<string, number>();
@@ -41,11 +40,11 @@ export function makeTopicWeightCalculator() {
     return topicWeights;
   }
 
-  function constantWeight(): number {
+  public constantWeight(): number {
     return 1.0;
   }
 
-  function calculateTopicWeightOfA3(calcResults: OldCalcResults): number {
+  public calculateTopicWeightOfA3(calcResults: OldCalcResults): number {
     if (calcResults.supplyCalcResults.supplyChainWeight > 1.5) {
       return 2;
     } else if (calcResults.supplyCalcResults.supplyChainWeight > 1.25) {
@@ -63,7 +62,7 @@ export function makeTopicWeightCalculator() {
    * =IF(G69="empty",1,IF($'11.Region'.I9<1.5,$'3. Calc'.C105,IF($'11.Region'.I9<3.26,$'3. Calc'.C104,IF($'11.Region'.I9<4.5,$'3. Calc'.C103,$'3. Calc'.C102))))
    * @param calcResults
    */
-  function calculateTopicWeightOfA4(calcResults: OldCalcResults): number {
+  public calculateTopicWeightOfA4(calcResults: OldCalcResults): number {
     if (calcResults.supplyCalcResults.itucAverage < 1.5) {
       return 0.5;
     } else if (calcResults.supplyCalcResults.itucAverage < 3.26) {
@@ -75,7 +74,7 @@ export function makeTopicWeightCalculator() {
     }
   }
 
-  function calculateTopicWeightOfB1(calcResults: OldCalcResults): number {
+  public calculateTopicWeightOfB1(calcResults: OldCalcResults): number {
     if (calcResults.financeCalcResults.companyIsActiveInFinancialServices) {
       return 2;
     } else if (calcResults.financeCalcResults.economicRatio < 0.1) {
@@ -87,7 +86,7 @@ export function makeTopicWeightCalculator() {
     }
   }
 
-  function calculateTopicWeightOfB2(calcResults: OldCalcResults): number {
+  public calculateTopicWeightOfB2(calcResults: OldCalcResults): number {
     if (
       calcResults.socialEnvironmentCalcResults.profitInPercentOfTurnover.isPresent()
     ) {
@@ -104,7 +103,7 @@ export function makeTopicWeightCalculator() {
     return 1;
   }
 
-  function calculateTopicWeightOfB3(calcResults: OldCalcResults): number {
+  public calculateTopicWeightOfB3(calcResults: OldCalcResults): number {
     if (calcResults.financeCalcResults.companyIsActiveInFinancialServices) {
       return 2;
     } else if (calcResults.financeCalcResults.economicRatioE22 < 0.1) {
@@ -116,7 +115,7 @@ export function makeTopicWeightCalculator() {
     }
   }
 
-  function calculateTopicWeightOfB4(calcResults: OldCalcResults): number {
+  public calculateTopicWeightOfB4(calcResults: OldCalcResults): number {
     if (calcResults.employeesCalcResults.companySize === CompanySize.micro) {
       return 0.5;
     } else {
@@ -124,7 +123,7 @@ export function makeTopicWeightCalculator() {
     }
   }
 
-  function calculateTopicWeightOfC3(companyFacts: OldCompanyFacts): number {
+  public calculateTopicWeightOfC3(companyFacts: OldCompanyFacts): number {
     if (
       companyFacts.averageJourneyToWorkForStaffInKm < 10 &&
       companyFacts.hasCanteen !== undefined &&
@@ -138,7 +137,7 @@ export function makeTopicWeightCalculator() {
     }
   }
 
-  function calculateTopicWeightOfC4(
+  public calculateTopicWeightOfC4(
     calcResults: OldCalcResults,
     companyFacts: OldCompanyFacts
   ): number {
@@ -159,7 +158,7 @@ export function makeTopicWeightCalculator() {
    * In excel this is equal to the cell $'10. Industry'.J39
    * @param calcResults
    */
-  function calculateTopicWeightOfD3AndE3(calcResults: OldCalcResults): number {
+  public calculateTopicWeightOfD3AndE3(calcResults: OldCalcResults): number {
     if (
       calcResults.customerCalcResults
         .sumOfEcologicalDesignOfProductsAndService < 0.75
@@ -180,11 +179,11 @@ export function makeTopicWeightCalculator() {
     }
   }
 
-  function calculateTopicWeightOfD4(companyFacts: OldCompanyFacts): number {
+  public calculateTopicWeightOfD4(companyFacts: OldCompanyFacts): number {
     return companyFacts.isB2B ? 1.5 : 1;
   }
 
-  function calculateTopicWeightOfE2(calcResults: OldCalcResults): number {
+  public calculateTopicWeightOfE2(calcResults: OldCalcResults): number {
     if (
       calcResults.socialEnvironmentCalcResults.profitInPercentOfTurnover.isPresent()
     ) {
@@ -202,7 +201,7 @@ export function makeTopicWeightCalculator() {
     }
   }
 
-  function calculateTopicWeightOfE4(calcResults: OldCalcResults): number {
+  public calculateTopicWeightOfE4(calcResults: OldCalcResults): number {
     if (
       calcResults.socialEnvironmentCalcResults
         .companyIsActiveInMiningOrConstructionIndustry
@@ -217,6 +216,4 @@ export function makeTopicWeightCalculator() {
       return 1;
     }
   }
-
-  return deepFreeze({ calculate });
 }
