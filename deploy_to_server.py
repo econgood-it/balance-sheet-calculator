@@ -82,15 +82,13 @@ def push_docker_image(hub_token: str, image_name):
     subprocess.run([docker, 'push', image_name, '--all-tags'], check=True)
 
 
-def deploy_to_server(hub_token: str, server_domain: str):
-    permission_env_file = "--env-file .env-docker/.env-user-permissions"
+def deploy_to_server(hub_token: str, server_domain: str, path_to_app_dir: str):
     commands = [
         login_command_to_docker_hub(hub_token),
-        'cd balance-sheet-calculator',
-        'git pull',
-        'docker compose pull',
-        f"{docker} {compose} {permission_env_file} down",
-        f"{docker} {compose} {permission_env_file} up -d"
+        f"cd {path_to_app_dir}",
+        f"docker compose pull",
+        f"{docker} {compose} down",
+        f"{docker} {compose} up -d"
     ]
     full_command = " && ".join(commands)
     subprocess.run(['ssh', server_domain, full_command], check=True)
@@ -104,32 +102,35 @@ def rm_folder(folder: str):
 def main(args):
     logging.info(f"Start build and deployment process for the environment {args.environment}")
     check_for_uncommitted_files()
-    logging.info(f"Install dependencies")
-    rm_folder('node_modules')
-    install_dependencies(production=False)
-    logging.info(f"Check linting")
-    check_linting()
-    logging.info(f"Run tests")
-    shutdown_test_database()
-    startup_test_database()
-    run_tests()
-    shutdown_test_database()
-    server_domain = 'root@services.econgood.org' if args.environment == 'prod' else 'ecg@dev.econgood.org'
-    repo = git.Repo('.')
-    latest_commit_hash = repo.head.commit.hexsha
-    image_name = 'econgood/balance-sheet-api'
-    logging.info(f"Build docker image")
-    build_docker_image(
-        image_name=image_name,
-        latest_commit_hash=latest_commit_hash
-    )
-    logging.info(f"Push docker image")
-    push_docker_image(
-        image_name=image_name,
-        hub_token=args.docker_hub_token,
-    )
-    logging.info(f"Deploy to server")
-    deploy_to_server(hub_token=args.docker_hub_token, server_domain=server_domain)
+    if args.environment == 'dev':
+        logging.info(f"Install dependencies")
+        rm_folder('node_modules')
+        install_dependencies(production=False)
+        logging.info(f"Check linting")
+        check_linting()
+        logging.info(f"Run tests")
+        shutdown_test_database()
+        startup_test_database()
+        run_tests()
+        shutdown_test_database()
+
+        repo = git.Repo('.')
+        latest_commit_hash = repo.head.commit.hexsha
+        image_name = 'econgood/balance-sheet-api'
+        logging.info(f"Build docker image")
+        build_docker_image(
+            image_name=image_name,
+            latest_commit_hash=latest_commit_hash
+        )
+        logging.info(f"Push docker image")
+        push_docker_image(
+            image_name=image_name,
+            hub_token=args.docker_hub_token,
+        )
+    server_domain = 'root@services.econgood.org' if args.environment == 'prod' else 'root@dev.econgood.org'
+    path_to_app_dir = '/var/docker/balance-sheet-api' if args.environment == 'prod' else '/var/docker/balance-sheet-calculator'
+    logging.info(f"Deploy to server {server_domain} and path {path_to_app_dir}")
+    deploy_to_server(hub_token=args.docker_hub_token, server_domain=server_domain, path_to_app_dir=path_to_app_dir)
     logging.info(f"Deployment successful")
 
 
