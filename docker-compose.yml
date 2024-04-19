@@ -4,7 +4,8 @@ services:
   calculator:
     image: econgood/balance-sheet-api:latest
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     ports:
       - "1020:4000"
     env_file:
@@ -17,6 +18,11 @@ services:
     image: postgres
     env_file:
       - .env-docker/.env-db
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 30s
+      timeout: 30s
+      retries: 3
     volumes:
       - ./volumes/db:/var/lib/postgresql/data
 
