@@ -102,7 +102,7 @@ def rm_folder(folder: str):
 def main(args):
     logging.info(f"Start build and deployment process for the environment {args.environment}")
     check_for_uncommitted_files()
-    if args.environment == 'dev':
+    if args.environment == 'test':
         logging.info(f"Install dependencies")
         rm_folder('node_modules')
         install_dependencies(production=False)
