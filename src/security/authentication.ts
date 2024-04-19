@@ -17,7 +17,8 @@ export class ZitadelAuthentication implements IAuthenticationProvider {
     private keyId: string,
     private key: string,
     private appId: string,
-    private clientId: string
+    private clientId: string,
+    private authority: string
   ) {}
 
   public initialize() {
@@ -27,7 +28,7 @@ export class ZitadelAuthentication implements IAuthenticationProvider {
 
   private getStrategy(): Strategy {
     return new ZitadelIntrospectionStrategy({
-      authority: 'https://zitadel.dev.econgood.org:443',
+      authority: this.authority,
       authorization: {
         type: 'jwt-profile',
         profile: {

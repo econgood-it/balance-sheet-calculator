@@ -15,6 +15,7 @@ describe('ConfigurationReader', () => {
   const docsPwd = 'crazydocspwd';
   const port = '4000';
   const workbookToken = 'crazyworkbookPwd';
+  const zitadelAuthUrl = 'https://zitadel.com';
   const zitadelKeyId = '382903810845309';
   const zitadelKey = 'fdjalrejwqpjl j---';
   const zitadelAppId = '489328014';
@@ -44,6 +45,7 @@ describe('ConfigurationReader', () => {
     process.env.ZITADEL_KEY = zitadelKey;
     process.env.ZITADEL_APP_ID = zitadelAppId;
     process.env.ZITADEL_CLIENT_ID = zitadelClientId;
+    process.env.ZITADEL_AUTHORITY_URL = zitadelAuthUrl;
   }
 
   it('should use environment variables for config', function () {
@@ -63,6 +65,7 @@ describe('ConfigurationReader', () => {
     expect(config.zitadelKey).toBe(zitadelKey);
     expect(config.zitadelAppId).toBe(zitadelAppId);
     expect(config.zitadelClientId).toBe(zitadelClientId);
+    expect(config.zitadelAuthorityUrl).toBe(zitadelAuthUrl);
   });
 
   it('should fail if dbHost is missing', function () {

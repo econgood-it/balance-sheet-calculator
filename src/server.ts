@@ -33,7 +33,8 @@ DatabaseSourceCreator.createDataSourceAndRunMigrations(configuration)
         configuration.zitadelKeyId,
         configuration.zitadelKey,
         configuration.zitadelAppId,
-        configuration.zitadelClientId
+        configuration.zitadelClientId,
+        configuration.zitadelAuthorityUrl
       )
     );
     app.start();
