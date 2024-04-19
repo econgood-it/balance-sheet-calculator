@@ -1,4 +1,5 @@
 import deepFreeze from 'deep-freeze';
+import _ from 'lodash';
 
 export type TopicWeight = {
   shortName: string;
@@ -11,6 +12,7 @@ export function makeTopicWeight(opts: TopicWeight): TopicWeight {
 
 export interface TopicWeightsProvider {
   getOrFail(shortName: string): TopicWeight;
+  merge(topicWeights: TopicWeight[]): TopicWeightsProvider;
   getAll(): TopicWeight[];
 }
 
@@ -25,12 +27,19 @@ export function makeTopicWeightsProvider(
     return topicWeight;
   }
 
+  function merge(topicWeightsToMerge: TopicWeight[]): TopicWeightsProvider {
+    return makeTopicWeightsProvider(
+      _.unionBy(topicWeightsToMerge, topicWeights, 'shortName')
+    );
+  }
+
   function getAll(): TopicWeight[] {
     return topicWeights;
   }
 
   return deepFreeze({
     getOrFail,
+    merge,
     getAll,
   });
 }

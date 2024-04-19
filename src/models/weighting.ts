@@ -1,13 +1,11 @@
 import deepFreeze from 'deep-freeze';
 
-export type StakeholderWeight = {
+export type Weighting = {
   shortName: string;
   weight: number;
 };
 
-export function makeStakeholderWeight(
-  opts: StakeholderWeight
-): StakeholderWeight {
+export function makeWeighting(opts: Weighting): Weighting {
   return deepFreeze({
     ...opts,
   });

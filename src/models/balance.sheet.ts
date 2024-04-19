@@ -4,7 +4,7 @@ import {
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import { CompanyFacts, makeCompanyFacts } from './company.facts';
 import { makeRating, Rating } from './rating';
-import { StakeholderWeight } from './stakeholder.weight';
+import { Weighting } from './weighting';
 import deepFreeze from 'deep-freeze';
 import { makeRatingFactory } from '../factories/rating.factory';
 import { Organization } from './organization';
@@ -18,7 +18,7 @@ type BalanceSheetOpts = {
   version: BalanceSheetVersion;
   companyFacts: CompanyFacts;
   ratings: readonly Rating[];
-  stakeholderWeights: readonly StakeholderWeight[];
+  stakeholderWeights: readonly Weighting[];
   organizationId: number | undefined;
 };
 //
