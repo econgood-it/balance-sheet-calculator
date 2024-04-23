@@ -248,9 +248,11 @@ export class OldOrganizationService {
         res.json(
           BalanceSheetItemsResponseSchema.parse(
             organizationEntity.balanceSheetEntities
-              ? organizationEntity.balanceSheetEntities.map((b) => ({
-                  id: b.id,
-                }))
+              ? organizationEntity.balanceSheetEntities
+                  .map((b) => ({
+                    id: b.id,
+                  }))
+                  .sort((a, b) => a.id! - b.id!)
               : []
           )
         );

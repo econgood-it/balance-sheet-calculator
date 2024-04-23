@@ -154,9 +154,11 @@ describe('Organization Controller Get Balance Sheets Endpoint', () => {
       .set(auth.toHeaderPair().key, auth.toHeaderPair().value);
     expect(response.status).toBe(200);
     expect(response.body).toEqual(
-      organizationEntity.balanceSheetEntities?.map((b) => ({
-        id: b.id,
-      }))
+      organizationEntity.balanceSheetEntities
+        ?.map((b) => ({
+          id: b.id,
+        }))
+        .sort((a, b) => a.id! - b.id!)
     );
   });
 
