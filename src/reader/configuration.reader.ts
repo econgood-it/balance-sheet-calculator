@@ -21,7 +21,8 @@ export class Configuration {
     public readonly zitadelKeyId: string,
     public readonly zitadelKey: string,
     public readonly zitadelAppId: string,
-    public readonly zitadelClientId: string
+    public readonly zitadelClientId: string,
+    public readonly zitadelAuthorityUrl: string
   ) {
     const basePath = [Environment.TEST, Environment.PROD].includes(environment)
       ? 'dist/'
@@ -52,6 +53,7 @@ export class ConfigurationReader {
     const zitadelKey = process.env.ZITADEL_KEY;
     const zitadelAppId = process.env.ZITADEL_APP_ID;
     const zitadelClientId = process.env.ZITADEL_CLIENT_ID;
+    const zitadelAuthorityUrl = process.env.ZITADEL_AUTHORITY_URL;
     ConfigurationReader.checkIfEnvironmentVariableIsSet('DB_NAME', dbName);
     ConfigurationReader.checkIfEnvironmentVariableIsSet('DB_PORT', dbPort);
     ConfigurationReader.checkIfEnvironmentVariableIsSet('DB_HOST', dbHost);
@@ -74,16 +76,23 @@ export class ConfigurationReader {
 
     ConfigurationReader.checkIfEnvironmentVariableIsSet(
       'ZITADEL_KEY_ID',
-      appPort
+      zitadelKeyId
     );
-    ConfigurationReader.checkIfEnvironmentVariableIsSet('ZITADEL_KEY', appPort);
+    ConfigurationReader.checkIfEnvironmentVariableIsSet(
+      'ZITADEL_KEY',
+      zitadelKey
+    );
     ConfigurationReader.checkIfEnvironmentVariableIsSet(
       'ZITADEL_APP_ID',
-      appPort
+      zitadelAppId
     );
     ConfigurationReader.checkIfEnvironmentVariableIsSet(
       'ZITADEL_CLIENT_ID',
-      appPort
+      zitadelClientId
+    );
+    ConfigurationReader.checkIfEnvironmentVariableIsSet(
+      'ZITADEL_AUTHORITY_URL',
+      zitadelAuthorityUrl
     );
 
     ConfigurationReader.checkIfEnvironmentVariableIsSet(
@@ -116,7 +125,8 @@ export class ConfigurationReader {
       zitadelKeyId as string,
       zitadelKey as string,
       zitadelAppId as string,
-      zitadelClientId as string
+      zitadelClientId as string,
+      zitadelAuthorityUrl as string
     );
   }
 
