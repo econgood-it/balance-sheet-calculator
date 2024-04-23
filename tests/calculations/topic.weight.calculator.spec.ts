@@ -55,16 +55,16 @@ describe('Topic Weight Calculator', () => {
       profit: 1,
     });
     let result = await calc(topicShortName, calcResults, companyFacts);
-    expect(result).toBeCloseTo(2, numDigits);
+    expect(result.weight).toBeCloseTo(2, numDigits);
     calcResults.supplyCalcResults.supplyChainWeight = 1.45;
     result = await calc(topicShortName, calcResults, companyFacts);
-    expect(result).toBeCloseTo(1.5, numDigits);
+    expect(result.weight).toBeCloseTo(1.5, numDigits);
     calcResults.supplyCalcResults.supplyChainWeight = 1.245;
     result = await calc(topicShortName, calcResults, companyFacts);
-    expect(result).toBeCloseTo(1, numDigits);
+    expect(result.weight).toBeCloseTo(1, numDigits);
     calcResults.supplyCalcResults.supplyChainWeight = 0.74;
     result = await calc(topicShortName, calcResults, companyFacts);
-    expect(result).toBeCloseTo(0.5, numDigits);
+    expect(result.weight).toBeCloseTo(0.5, numDigits);
   });
 
   it('should calculate topic weight of A4', async () => {
@@ -74,16 +74,16 @@ describe('Topic Weight Calculator', () => {
       profit: 1,
     });
     let result = await calc(topicShortName, calcResults, companyFacts);
-    expect(result).toBeCloseTo(2, numDigits);
+    expect(result.weight).toBeCloseTo(2, numDigits);
     calcResults.supplyCalcResults.itucAverage = 4.4;
     result = await calc(topicShortName, calcResults, companyFacts);
-    expect(result).toBeCloseTo(1.5, numDigits);
+    expect(result.weight).toBeCloseTo(1.5, numDigits);
     calcResults.supplyCalcResults.itucAverage = 3.255;
     result = await calc(topicShortName, calcResults, companyFacts);
-    expect(result).toBeCloseTo(1, numDigits);
+    expect(result.weight).toBeCloseTo(1, numDigits);
     calcResults.supplyCalcResults.itucAverage = 1.45;
     result = await calc(topicShortName, calcResults, companyFacts);
-    expect(result).toBeCloseTo(0.5, numDigits);
+    expect(result.weight).toBeCloseTo(0.5, numDigits);
   });
 
   it('should calculate topic weight of B1', async () => {
@@ -93,19 +93,19 @@ describe('Topic Weight Calculator', () => {
       profit: 1,
     });
     let result = await calc(topicShortName, calcResults, companyFacts);
-    expect(result).toBeCloseTo(1.5, numDigits);
+    expect(result.weight).toBeCloseTo(1.5, numDigits);
 
     calcResults.financeCalcResults.economicRatio = 0.55;
     result = await calc(topicShortName, calcResults, companyFacts);
-    expect(result).toBeCloseTo(0.5, numDigits);
+    expect(result.weight).toBeCloseTo(0.5, numDigits);
 
     calcResults.financeCalcResults.economicRatio = 0.2;
     result = await calc(topicShortName, calcResults, companyFacts);
-    expect(result).toBeCloseTo(1, numDigits);
+    expect(result.weight).toBeCloseTo(1, numDigits);
 
     calcResults.financeCalcResults.companyIsActiveInFinancialServices = true;
     result = await calc(topicShortName, calcResults, companyFacts);
-    expect(result).toBeCloseTo(2, numDigits);
+    expect(result.weight).toBeCloseTo(2, numDigits);
   });
 
   it('should calculate topic weight of B2', async () => {
@@ -116,31 +116,31 @@ describe('Topic Weight Calculator', () => {
       profit: 1,
     });
     let result = await calc(topicShortName, calcResults, companyFacts);
-    expect(result).toBeCloseTo(0, numDigits);
+    expect(result.weight).toBeCloseTo(0, numDigits);
 
     calcResults.socialEnvironmentCalcResults.profitInPercentOfTurnover =
       some(0.11);
     result = await calc(topicShortName, calcResults, companyFacts);
-    expect(result).toBeCloseTo(1.5, numDigits);
+    expect(result.weight).toBeCloseTo(1.5, numDigits);
 
     calcResults.socialEnvironmentCalcResults.profitInPercentOfTurnover =
       some(0.00099);
     result = await calc(topicShortName, calcResults, companyFacts);
-    expect(result).toBeCloseTo(0, numDigits);
+    expect(result.weight).toBeCloseTo(0, numDigits);
 
     calcResults.socialEnvironmentCalcResults.profitInPercentOfTurnover =
       some(0.0299);
     result = await calc(topicShortName, calcResults, companyFacts);
-    expect(result).toBeCloseTo(0.5, numDigits);
+    expect(result.weight).toBeCloseTo(0.5, numDigits);
 
     calcResults.socialEnvironmentCalcResults.profitInPercentOfTurnover =
       some(0.1);
     result = await calc(topicShortName, calcResults, companyFacts);
-    expect(result).toBeCloseTo(1, numDigits);
+    expect(result.weight).toBeCloseTo(1, numDigits);
 
     calcResults.socialEnvironmentCalcResults.profitInPercentOfTurnover = none();
     result = await calc(topicShortName, calcResults, companyFacts);
-    expect(result).toBeCloseTo(1, numDigits);
+    expect(result.weight).toBeCloseTo(1, numDigits);
   });
 
   it('should calculate topic weight of B3', async () => {
@@ -150,21 +150,21 @@ describe('Topic Weight Calculator', () => {
       profit: 1,
     });
     let result = await calc(topicShortName, calcResults, companyFacts);
-    expect(result).toBeCloseTo(2, numDigits);
+    expect(result.weight).toBeCloseTo(2, numDigits);
 
     calcResults.financeCalcResults.companyIsActiveInFinancialServices = false;
 
     calcResults.financeCalcResults.economicRatioE22 = 0.099;
     result = await calc(topicShortName, calcResults, companyFacts);
-    expect(result).toBeCloseTo(0.5, numDigits);
+    expect(result.weight).toBeCloseTo(0.5, numDigits);
 
     calcResults.financeCalcResults.economicRatioE22 = 0.251;
     result = await calc(topicShortName, calcResults, companyFacts);
-    expect(result).toBeCloseTo(1.5, numDigits);
+    expect(result.weight).toBeCloseTo(1.5, numDigits);
 
     calcResults.financeCalcResults.economicRatioE22 = 0.245;
     result = await calc(topicShortName, calcResults, companyFacts);
-    expect(result).toBeCloseTo(1, numDigits);
+    expect(result.weight).toBeCloseTo(1, numDigits);
   });
 
   it('should calculate topic weight of B4', async () => {
@@ -174,19 +174,19 @@ describe('Topic Weight Calculator', () => {
       profit: 1,
     });
     let result = await calc(topicShortName, calcResults, companyFacts);
-    expect(result).toBeCloseTo(0.5, numDigits);
+    expect(result.weight).toBeCloseTo(0.5, numDigits);
 
     calcResults.employeesCalcResults.companySize = CompanySize.small;
     result = await calc(topicShortName, calcResults, companyFacts);
-    expect(result).toBeCloseTo(1, numDigits);
+    expect(result.weight).toBeCloseTo(1, numDigits);
 
     calcResults.employeesCalcResults.companySize = CompanySize.middle;
     result = await calc(topicShortName, calcResults, companyFacts);
-    expect(result).toBeCloseTo(1, numDigits);
+    expect(result.weight).toBeCloseTo(1, numDigits);
 
     calcResults.employeesCalcResults.companySize = CompanySize.large;
     result = await calc(topicShortName, calcResults, companyFacts);
-    expect(result).toBeCloseTo(1, numDigits);
+    expect(result.weight).toBeCloseTo(1, numDigits);
   });
 
   it('should calculate topic weight of C1', async () => {
@@ -195,7 +195,7 @@ describe('Topic Weight Calculator', () => {
       profit: 1,
     });
     const result = await calc(topicShortName, calcResults, companyFacts);
-    expect(result).toBeCloseTo(1, numDigits);
+    expect(result.weight).toBeCloseTo(1, numDigits);
   });
 
   it('should calculate topic weight of C2', async () => {
@@ -204,7 +204,7 @@ describe('Topic Weight Calculator', () => {
       profit: 1,
     });
     const result = await calc(topicShortName, calcResults, companyFacts);
-    expect(result).toBeCloseTo(1, numDigits);
+    expect(result.weight).toBeCloseTo(1, numDigits);
   });
 
   it('should calculate topic weight of C3', async () => {
@@ -220,7 +220,7 @@ describe('Topic Weight Calculator', () => {
         averageJourneyToWorkForStaffInKm: 9,
       })
     );
-    expect(result).toBeCloseTo(0.5, numDigits);
+    expect(result.weight).toBeCloseTo(0.5, numDigits);
 
     result = await calc(
       topicShortName,
@@ -230,7 +230,7 @@ describe('Topic Weight Calculator', () => {
         averageJourneyToWorkForStaffInKm: 9,
       })
     );
-    expect(result).toBeCloseTo(1, numDigits);
+    expect(result.weight).toBeCloseTo(1, numDigits);
 
     result = await calc(
       topicShortName,
@@ -240,7 +240,7 @@ describe('Topic Weight Calculator', () => {
         averageJourneyToWorkForStaffInKm: 9,
       })
     );
-    expect(result).toBeCloseTo(1, numDigits);
+    expect(result.weight).toBeCloseTo(1, numDigits);
 
     result = await calc(
       topicShortName,
@@ -250,7 +250,7 @@ describe('Topic Weight Calculator', () => {
         averageJourneyToWorkForStaffInKm: 25.5,
       })
     );
-    expect(result).toBeCloseTo(1.5, numDigits);
+    expect(result.weight).toBeCloseTo(1.5, numDigits);
 
     result = await calc(
       topicShortName,
@@ -260,7 +260,7 @@ describe('Topic Weight Calculator', () => {
         averageJourneyToWorkForStaffInKm: 25.5,
       })
     );
-    expect(result).toBeCloseTo(1.5, numDigits);
+    expect(result.weight).toBeCloseTo(1.5, numDigits);
   });
 
   it('should calculate topic weight of C4', async () => {
@@ -276,7 +276,7 @@ describe('Topic Weight Calculator', () => {
         numberOfEmployees: 1,
       })
     );
-    expect(result).toBeCloseTo(0, numDigits);
+    expect(result.weight).toBeCloseTo(0, numDigits);
 
     calcResults.employeesCalcResults.companySize = CompanySize.micro;
     result = await calc(
@@ -286,7 +286,7 @@ describe('Topic Weight Calculator', () => {
         numberOfEmployees: 2,
       })
     );
-    expect(result).toBeCloseTo(0.5, numDigits);
+    expect(result.weight).toBeCloseTo(0.5, numDigits);
 
     calcResults.employeesCalcResults.companySize = CompanySize.small;
     calcResults.employeesCalcResults.itucAverage = 3.26;
@@ -297,7 +297,7 @@ describe('Topic Weight Calculator', () => {
         numberOfEmployees: 2,
       })
     );
-    expect(result).toBeCloseTo(1.5, numDigits);
+    expect(result.weight).toBeCloseTo(1.5, numDigits);
 
     calcResults.employeesCalcResults.companySize = CompanySize.small;
     calcResults.employeesCalcResults.itucAverage = 3.25;
@@ -309,7 +309,7 @@ describe('Topic Weight Calculator', () => {
       })
     );
 
-    expect(result).toBeCloseTo(1, numDigits);
+    expect(result.weight).toBeCloseTo(1, numDigits);
   });
 
   it('should calculate topic weight of D1', async () => {
@@ -318,7 +318,7 @@ describe('Topic Weight Calculator', () => {
       profit: 1,
     });
     const result = await calc(topicShortName, calcResults, companyFacts);
-    expect(result).toBeCloseTo(1, numDigits);
+    expect(result.weight).toBeCloseTo(1, numDigits);
   });
 
   it('should calculate topic weight of D2', async () => {
@@ -327,7 +327,7 @@ describe('Topic Weight Calculator', () => {
       profit: 1,
     });
     const result = await calc(topicShortName, calcResults, companyFacts);
-    expect(result).toBeCloseTo(1, numDigits);
+    expect(result.weight).toBeCloseTo(1, numDigits);
   });
 
   it('should calculate topic weight of D3', async () => {
@@ -337,19 +337,19 @@ describe('Topic Weight Calculator', () => {
     });
     calcResults.customerCalcResults.sumOfEcologicalDesignOfProductsAndService = 0.74;
     let result = await calc(topicShortName, calcResults, companyFacts);
-    expect(result).toBeCloseTo(0.5, numDigits);
+    expect(result.weight).toBeCloseTo(0.5, numDigits);
 
     calcResults.customerCalcResults.sumOfEcologicalDesignOfProductsAndService = 1.24;
     result = await calc(topicShortName, calcResults, companyFacts);
-    expect(result).toBeCloseTo(1, numDigits);
+    expect(result.weight).toBeCloseTo(1, numDigits);
 
     calcResults.customerCalcResults.sumOfEcologicalDesignOfProductsAndService = 1.76;
     result = await calc(topicShortName, calcResults, companyFacts);
-    expect(result).toBeCloseTo(2, numDigits);
+    expect(result.weight).toBeCloseTo(2, numDigits);
 
     calcResults.customerCalcResults.sumOfEcologicalDesignOfProductsAndService = 1.25;
     result = await calc(topicShortName, calcResults, companyFacts);
-    expect(result).toBeCloseTo(1.5, numDigits);
+    expect(result.weight).toBeCloseTo(1.5, numDigits);
   });
 
   it('should calculate topic weight of D4', async () => {
@@ -363,7 +363,7 @@ describe('Topic Weight Calculator', () => {
       calcResults,
       companyFacts.withFields({ isB2B: true })
     );
-    expect(result).toBeCloseTo(1.5, numDigits);
+    expect(result.weight).toBeCloseTo(1.5, numDigits);
 
     result = await calc(
       topicShortName,
@@ -372,7 +372,7 @@ describe('Topic Weight Calculator', () => {
         isB2B: false,
       })
     );
-    expect(result).toBeCloseTo(1, numDigits);
+    expect(result.weight).toBeCloseTo(1, numDigits);
   });
 
   it('should calculate topic weight of E1', async () => {
@@ -381,7 +381,7 @@ describe('Topic Weight Calculator', () => {
       profit: 1,
     });
     const result = await calc(topicShortName, calcResults, companyFacts);
-    expect(result).toBeCloseTo(1, numDigits);
+    expect(result.weight).toBeCloseTo(1, numDigits);
   });
 
   it('should calculate topic weight of E2', async () => {
@@ -393,21 +393,21 @@ describe('Topic Weight Calculator', () => {
     });
 
     let result = await calc(topicShortName, calcResults, companyFacts);
-    expect(result).toBeCloseTo(1.5, numDigits);
+    expect(result.weight).toBeCloseTo(1.5, numDigits);
 
     calcResults.socialEnvironmentCalcResults.profitInPercentOfTurnover = none();
     result = await calc(topicShortName, calcResults, companyFacts);
-    expect(result).toBeCloseTo(1, numDigits);
+    expect(result.weight).toBeCloseTo(1, numDigits);
 
     calcResults.socialEnvironmentCalcResults.profitInPercentOfTurnover =
       some(0.04);
     result = await calc(topicShortName, calcResults, companyFacts);
-    expect(result).toBeCloseTo(0.5, numDigits);
+    expect(result.weight).toBeCloseTo(0.5, numDigits);
 
     calcResults.socialEnvironmentCalcResults.profitInPercentOfTurnover =
       some(0.09);
     result = await calc(topicShortName, calcResults, companyFacts);
-    expect(result).toBeCloseTo(1, numDigits);
+    expect(result.weight).toBeCloseTo(1, numDigits);
   });
 
   it('should calculate topic weight of E3', async () => {
@@ -417,19 +417,19 @@ describe('Topic Weight Calculator', () => {
       profit: 1,
     });
     let result = await calc(topicShortName, calcResults, companyFacts);
-    expect(result).toBeCloseTo(0.5, numDigits);
+    expect(result.weight).toBeCloseTo(0.5, numDigits);
 
     calcResults.customerCalcResults.sumOfEcologicalDesignOfProductsAndService = 1.24;
     result = await calc(topicShortName, calcResults, companyFacts);
-    expect(result).toBeCloseTo(1, numDigits);
+    expect(result.weight).toBeCloseTo(1, numDigits);
 
     calcResults.customerCalcResults.sumOfEcologicalDesignOfProductsAndService = 1.76;
     result = await calc(topicShortName, calcResults, companyFacts);
-    expect(result).toBeCloseTo(2, numDigits);
+    expect(result.weight).toBeCloseTo(2, numDigits);
 
     calcResults.customerCalcResults.sumOfEcologicalDesignOfProductsAndService = 1.25;
     result = await calc(topicShortName, calcResults, companyFacts);
-    expect(result).toBeCloseTo(1.5, numDigits);
+    expect(result.weight).toBeCloseTo(1.5, numDigits);
   });
 
   it('should calculate topic weight of E4', async () => {
@@ -441,25 +441,25 @@ describe('Topic Weight Calculator', () => {
     });
 
     let result = await calc(topicShortName, calcResults, companyFacts);
-    expect(result).toBeCloseTo(1.5, numDigits);
+    expect(result.weight).toBeCloseTo(1.5, numDigits);
 
     calcResults.socialEnvironmentCalcResults.companyIsActiveInMiningOrConstructionIndustry =
       false;
     calcResults.employeesCalcResults.companySize = CompanySize.micro;
     result = await calc(topicShortName, calcResults, companyFacts);
-    expect(result).toBeCloseTo(0.5, numDigits);
+    expect(result.weight).toBeCloseTo(0.5, numDigits);
 
     calcResults.socialEnvironmentCalcResults.companyIsActiveInMiningOrConstructionIndustry =
       false;
     calcResults.employeesCalcResults.companySize = CompanySize.small;
     result = await calc(topicShortName, calcResults, companyFacts);
-    expect(result).toBeCloseTo(0.5, numDigits);
+    expect(result.weight).toBeCloseTo(0.5, numDigits);
 
     calcResults.socialEnvironmentCalcResults.companyIsActiveInMiningOrConstructionIndustry =
       false;
     calcResults.employeesCalcResults.companySize = CompanySize.middle;
     result = await calc(topicShortName, calcResults, companyFacts);
-    expect(result).toBeCloseTo(1, numDigits);
+    expect(result.weight).toBeCloseTo(1, numDigits);
   });
 
   it('should return for all topics a weight of 1 if company facts values are all zero', async () => {
@@ -467,9 +467,9 @@ describe('Topic Weight Calculator', () => {
       calcResults,
       makeCompanyFacts()
     ).calculate();
-    expect(topicWeights.size).toBe(20);
-    for (const [, value] of topicWeights.entries()) {
-      expect(value).toBe(1);
+    expect(topicWeights.getAll().length).toBe(20);
+    for (const weighting of topicWeights.getAll()) {
+      expect(weighting.weight).toBe(1);
     }
   });
 });
