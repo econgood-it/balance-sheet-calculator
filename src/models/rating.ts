@@ -22,6 +22,7 @@ export type Rating = RatingOpts & {
     estimations: number,
     topicMaxPoints: number
   ) => Rating;
+  getStakeholderName: () => string;
 };
 
 export function makeRating(opts?: RatingOpts): Rating {
@@ -94,6 +95,10 @@ export function makeRating(opts?: RatingOpts): Rating {
     return makeRating({ ...data, estimations, points });
   }
 
+  function getStakeholderName(): string {
+    return data.shortName.substring(0, 1);
+  }
+
   return deepFreeze({
     ...data,
     isTopic,
@@ -101,5 +106,6 @@ export function makeRating(opts?: RatingOpts): Rating {
     isAspectOfTopic,
     submitPositiveEstimations,
     submitNegativeEstimations,
+    getStakeholderName,
   });
 }

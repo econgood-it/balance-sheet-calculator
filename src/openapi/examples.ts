@@ -51,6 +51,47 @@ export const balanceSheetJsonFactory = {
 };
 
 export function makeCompanyFactsFactory() {
+  function nonEmpty(): CompanyFacts {
+    return makeCompanyFacts({
+      totalPurchaseFromSuppliers: 10_000,
+      totalStaffCosts: 900,
+      profit: 500,
+      financialCosts: 600,
+      incomeFromFinancialInvestments: 700,
+      additionsToFixedAssets: 800,
+      turnover: 0,
+      totalAssets: 30,
+      financialAssetsAndCashBalance: 40,
+      numberOfEmployees: 0,
+      hasCanteen: false,
+      averageJourneyToWorkForStaffInKm: 0,
+      isB2B: false,
+      supplyFractions: [
+        makeSupplyFraction({
+          industryCode: agricultureCode,
+          countryCode: arabEmiratesCode,
+          costs: 500,
+        }),
+        makeSupplyFraction({
+          industryCode: pharmaceuticCode,
+          countryCode: afghanistanCode,
+          costs: 600,
+        }),
+      ],
+      employeesFractions: [
+        makeEmployeesFraction({
+          countryCode: afghanistanCode,
+          percentage: 0.5,
+        }),
+        makeEmployeesFraction({
+          countryCode: arabEmiratesCode,
+          percentage: 0.5,
+        }),
+      ],
+      industrySectors: [],
+      mainOriginOfOtherSuppliers: { countryCode: DEFAULT_COUNTRY_CODE },
+    });
+  }
   function nonEmpty2(): CompanyFacts {
     return makeCompanyFacts({
       totalPurchaseFromSuppliers: 330,
@@ -92,7 +133,7 @@ export function makeCompanyFactsFactory() {
       mainOriginOfOtherSuppliers: { countryCode: DEFAULT_COUNTRY_CODE },
     });
   }
-  return deepFreeze({ nonEmpty2 });
+  return deepFreeze({ nonEmpty, nonEmpty2 });
 }
 
 export const companyFactsFactory = {

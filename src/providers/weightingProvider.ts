@@ -5,7 +5,7 @@ import _ from 'lodash';
 export interface WeightingProvider {
   getOrFail(shortName: string): Weighting;
   getAll(): Weighting[];
-  merge(stakeholderWeights: Weighting[]): WeightingProvider;
+  merge(stakeholderWeights: readonly Weighting[]): WeightingProvider;
 }
 
 export function makeWeightingProvider(

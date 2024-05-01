@@ -12,7 +12,7 @@ import {
 } from 'typeorm';
 import { z } from 'zod';
 import { OldCalcResults, OldCalculator } from '../calculations/oldCalculator';
-import { RatingsUpdater } from '../calculations/ratings.updater';
+import { OldRatingsUpdater } from '../calculations/old.ratings.updater';
 import { OldStakeholderWeightCalculator } from '../calculations/old.stakeholder.weight.calculator';
 import { OldTopicWeightCalculator } from '../calculations/oldTopicWeightCalculator';
 import { MatrixFormat } from '../dto/balance.sheet.dto';
@@ -95,7 +95,7 @@ export class BalanceSheetEntity {
       regionProvider,
       industryProvider
     ).calculate(this.companyFacts);
-    const ratingsUpdater: RatingsUpdater = new RatingsUpdater();
+    const ratingsUpdater: OldRatingsUpdater = new OldRatingsUpdater();
     const stakeholderWeightCalculator = new OldStakeholderWeightCalculator();
     const topicWeightCalculator = new OldTopicWeightCalculator();
     const stakeholderWeights = (

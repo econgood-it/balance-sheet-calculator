@@ -37,7 +37,7 @@ describe('BalanceSheet', () => {
     const balanceSheet = makeBalanceSheet();
     const topics = balanceSheet.getTopics();
     const firstTopic = topics[0];
-    const aspects = balanceSheet.getAspectsOfTopic(firstTopic.shortName);
+    const aspects = balanceSheet.getAspects(firstTopic.shortName);
     expect(aspects).toEqual([
       makeRating({
         shortName: 'A1.1',
@@ -114,12 +114,35 @@ describe('BalanceSheet', () => {
     });
   });
 
+  it('should return all positive aspects of topic', () => {
+    const balanceSheet = makeBalanceSheet();
+    const aspects = balanceSheet.getPositiveAspects('A1');
+    expect(aspects.length).toBe(1);
+    expect(aspects[0].shortName).toEqual('A1.1');
+  });
+
   it('should return all negative aspects', () => {
     const balanceSheet = makeBalanceSheet();
     const aspects = balanceSheet.getNegativeAspects();
     expect(aspects.length).toBe(19);
     aspects.forEach((aspect) => {
       expect(aspect.isPositive).toBeFalsy();
+      expect(aspect.isAspect()).toBeTruthy();
+    });
+  });
+
+  it('should return all negative aspects of a topic', () => {
+    const balanceSheet = makeBalanceSheet();
+    const aspects = balanceSheet.getNegativeAspects('A1');
+    expect(aspects.length).toBe(1);
+    expect(aspects[0].shortName).toEqual('A1.2');
+  });
+
+  it('should return all aspects', () => {
+    const balanceSheet = makeBalanceSheet();
+    const aspects = balanceSheet.getAspects();
+    expect(aspects.length).toBe(60);
+    aspects.forEach((aspect) => {
       expect(aspect.isAspect()).toBeTruthy();
     });
   });

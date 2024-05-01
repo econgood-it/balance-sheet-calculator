@@ -1,54 +1,66 @@
-import { Assertions } from '../../Assertions';
 import * as path from 'path';
-import { OldCompanyFacts } from '../../../src/models/oldCompanyFacts';
-import { OldRating, RatingSchema } from '../../../src/models/oldRating';
-import { companyFactsFactory } from '../../../src/openapi/examples';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import fs from 'fs';
-import { BalanceSheetEntity } from '../../../src/entities/balance.sheet.entity';
-import { OldStakeholderWeight } from '../../../src/models/oldStakeholderWeight';
+import { makeBalanceSheet } from '../../../src/models/balance.sheet';
+import { Weighting } from '../../../src/models/weighting';
+import {
+  CompanyFacts,
+  makeCompanyFacts,
+} from '../../../src/models/company.facts';
+import { makeRating, Rating } from '../../../src/models/rating';
+import { assertRatings } from '../../Assertions';
+import { makeCompanyFactsFactory } from '../../../src/openapi/examples';
 
 describe('Recalculation of ratings', () => {
-  async function readRatingsFromJsonFile(
-    fileName: string
-  ): Promise<OldRating[]> {
+  async function readRatingsFromJsonFile(fileName: string): Promise<Rating[]> {
     const pathToFile = path.join(path.resolve(__dirname), fileName);
     const fileText = fs.readFileSync(pathToFile);
     const jsonParsed = JSON.parse(fileText.toString());
-    return RatingSchema.array().parse(jsonParsed);
+    return jsonParsed.map((rating: any) => {
+      return makeRating({
+        shortName: rating.shortName,
+        name: rating.name,
+        estimations: rating.estimations,
+        points: rating.points,
+        maxPoints: rating.maxPoints,
+        weight: rating.weight,
+        isWeightSelectedByUser: rating.isWeightSelectedByUser,
+        isPositive: rating.isPositive,
+      });
+    });
   }
 
   async function testCalculation(
     fileNameOfRatingInputData: string,
     fileNameOfRatingExpectedData: string,
-    companyFacts: OldCompanyFacts,
-    stakeholderWeights: OldStakeholderWeight[]
+    companyFacts: CompanyFacts,
+    stakeholderWeights: Weighting[]
   ) {
     const ratings = await readRatingsFromJsonFile(fileNameOfRatingInputData);
-
-    const balanceSheetEntity = new BalanceSheetEntity(undefined, {
+    const balanceSheet = makeBalanceSheet({
       version: BalanceSheetVersion.v5_0_8,
       type: BalanceSheetType.Full,
       companyFacts,
       ratings,
       stakeholderWeights,
     });
-    await balanceSheetEntity.reCalculate();
+
+    const newBalanceSheet = await balanceSheet.reCalculate();
 
     const expected = await readRatingsFromJsonFile(
       fileNameOfRatingExpectedData
     );
-    expect(balanceSheetEntity.ratings).toHaveLength(expected.length);
-    Assertions.assertRatings(balanceSheetEntity.ratings, expected);
+    expect(newBalanceSheet.ratings).toHaveLength(expected.length);
+    assertRatings(newBalanceSheet.ratings, expected);
   }
 
   it('with weights selected by user', async () => {
-    const companyFacts = companyFactsFactory.nonEmpty();
-    const ratings: OldRating[] = [
-      {
+    const companyFacts = makeCompanyFactsFactory().nonEmpty();
+    const ratings: Rating[] = [
+      makeRating({
         shortName: 'A1',
         name: 'A1 name',
         estimations: 0,
@@ -57,9 +69,9 @@ describe('Recalculation of ratings', () => {
         weight: 2,
         isWeightSelectedByUser: true,
         isPositive: true,
-      },
+      }),
     ];
-    const balanceSheetEntity = new BalanceSheetEntity(undefined, {
+    const balanceSheetEntity = makeBalanceSheet({
       version: BalanceSheetVersion.v5_0_8,
       type: BalanceSheetType.Full,
       companyFacts,
@@ -74,7 +86,7 @@ describe('Recalculation of ratings', () => {
     testCalculation(
       'emptyRatingsInput.json',
       'emptyRatingExpected.json',
-      companyFactsFactory.empty(),
+      makeCompanyFacts(),
       []
     ));
 
@@ -82,23 +94,23 @@ describe('Recalculation of ratings', () => {
     testCalculation(
       'emptyRatingsInput.json',
       'nonEmptyCompanyFactsExpected.json',
-      companyFactsFactory.nonEmpty(),
+      makeCompanyFactsFactory().nonEmpty(),
       []
     ));
-
+  //
   it('when the company facts values and rating values filled out', async () =>
     testCalculation(
       'filledRatingsInput.json',
       'filledRatingsExpected.json',
-      companyFactsFactory.nonEmpty(),
+      makeCompanyFactsFactory().nonEmpty(),
       []
     ));
-
+  //
   it('with custom stakeholder weights', async () =>
     testCalculation(
       'filledRatingsInput.json',
       'customStakeholderWeightsRatingsExpected.json',
-      companyFactsFactory.nonEmpty(),
+      makeCompanyFactsFactory().nonEmpty(),
       [
         { shortName: 'A', weight: 0.5 },
         { shortName: 'C', weight: 2 },

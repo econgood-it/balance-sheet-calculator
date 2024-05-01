@@ -6,7 +6,7 @@ import {
   OldRating,
 } from '../models/oldRating';
 
-export class RatingsUpdater {
+export class OldRatingsUpdater {
   public async update(
     ratings: OldRating[],
     calcResults: OldCalcResults,

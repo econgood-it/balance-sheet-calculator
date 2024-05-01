@@ -11,29 +11,36 @@ import { Organization } from './organization';
 import { LookupError } from '../exceptions/lookup.error';
 import { isTopic } from './oldRating';
 import { ValueError } from '../exceptions/value.error';
+import { RegionProvider } from '../providers/region.provider';
+import { IndustryProvider } from '../providers/industry.provider';
+import { calculate } from '../calculations/calculator';
+import { makeStakeholderWeightCalculator } from '../calculations/stakeholder.weight.calculator';
+import { makeTopicWeightCalculator } from '../calculations/topic.weight.calculator';
+import { WeightingProvider } from '../providers/weightingProvider';
 
 type BalanceSheetOpts = {
-  id: number | undefined;
+  id?: number;
   type: BalanceSheetType;
   version: BalanceSheetVersion;
   companyFacts: CompanyFacts;
   ratings: readonly Rating[];
   stakeholderWeights: readonly Weighting[];
-  organizationId: number | undefined;
+  organizationId?: number;
 };
 //
 export type BalanceSheet = BalanceSheetOpts & {
   getRating: (shortName: string) => Rating;
   getTopics: () => Rating[];
-  getAspectsOfTopic: (shortNameTopic: string) => Rating[];
+  getAspects: (shortNameTopic?: string) => Rating[];
   assignOrganization: (organization: Organization) => BalanceSheet;
   submitEstimations: (
     submissions: { shortName: string; estimations: number }[]
   ) => BalanceSheet;
   totalPoints: () => number;
-  getPositiveAspects: () => Rating[];
-  getNegativeAspects: () => Rating[];
+  getPositiveAspects: (shortNameTopic?: string) => Rating[];
+  getNegativeAspects: (shortNameTopic?: string) => Rating[];
   getTopicOfAspect: (shortNameAspect: string) => Rating;
+  reCalculate: () => Promise<BalanceSheet>;
 };
 
 export function makeBalanceSheet(opts?: BalanceSheetOpts): BalanceSheet {
@@ -64,22 +71,33 @@ export function makeBalanceSheet(opts?: BalanceSheetOpts): BalanceSheet {
     return data.ratings.filter((rating) => rating.isTopic());
   }
 
-  function getPositiveAspects(): Rating[] {
-    return data.ratings.filter(
+  function getPositiveAspects(shortNameTopic?: string): Rating[] {
+    const positiveAspects = data.ratings.filter(
       (rating) => rating.isAspect() && rating.isPositive
     );
+    return shortNameTopic
+      ? positiveAspects.filter((rating) =>
+          rating.isAspectOfTopic(shortNameTopic)
+        )
+      : positiveAspects;
   }
 
-  function getNegativeAspects(): Rating[] {
-    return data.ratings.filter(
+  function getNegativeAspects(shortNameTopic?: string): Rating[] {
+    const negativeAspects = data.ratings.filter(
       (rating) => rating.isAspect() && !rating.isPositive
     );
+    return shortNameTopic
+      ? negativeAspects.filter((rating) =>
+          rating.isAspectOfTopic(shortNameTopic)
+        )
+      : negativeAspects;
   }
 
-  function getAspectsOfTopic(shortNameTopic: string): Rating[] {
-    return data.ratings.filter((rating) =>
-      rating.isAspectOfTopic(shortNameTopic)
-    );
+  function getAspects(shortNameTopic?: string): Rating[] {
+    const aspects = data.ratings.filter((rating) => rating.isAspect());
+    return shortNameTopic
+      ? aspects.filter((rating) => rating.isAspectOfTopic(shortNameTopic))
+      : aspects;
   }
 
   function getTopicOfAspect(shortNameAspect: string) {
@@ -106,6 +124,121 @@ export function makeBalanceSheet(opts?: BalanceSheetOpts): BalanceSheet {
     return makeBalanceSheet({ ...data, ratings: newRatings });
   }
 
+  function updatePositiveAspects(
+    topicMaxPoints: number,
+    positiveAspects: Rating[]
+  ): Rating[] {
+    const sumOfAspectWeights = positiveAspects.reduce(
+      (acc, curr) => acc + curr.weight,
+      0
+    );
+    return positiveAspects.map((a) => {
+      const maxPoints =
+        sumOfAspectWeights > 0
+          ? (topicMaxPoints * a.weight) / sumOfAspectWeights
+          : 0;
+      return {
+        ...a,
+        maxPoints,
+        points: (maxPoints * a.estimations) / 10.0,
+      };
+    });
+  }
+
+  function updateNegativeAspects(
+    topicMaxPoints: number,
+    negativeAspects: Rating[]
+  ) {
+    return negativeAspects.map((a) => ({
+      ...a,
+      points: (a.estimations * topicMaxPoints) / 50,
+      maxPoints: (-200 * topicMaxPoints) / 50,
+    }));
+  }
+
+  function adjustTopicWeights(
+    topicWeights: WeightingProvider,
+    stakeholderWeights: WeightingProvider
+  ): BalanceSheet {
+    const topics = getTopics();
+    const topicsWithUpdatedWeight = topics.map((t) =>
+      // Topic wheigt is set to 1 if data of company facts is empty.
+      // See Weighting G69
+      makeRating({
+        ...t,
+        weight: t.isWeightSelectedByUser
+          ? t.weight
+          : topicWeights.getOrFail(t.shortName).weight,
+      })
+    );
+    const sumOfTopicWeights = topicsWithUpdatedWeight.reduce(
+      (acc, curr) =>
+        acc +
+        stakeholderWeights.getOrFail(curr.getStakeholderName()).weight *
+          curr.weight,
+      0
+    );
+    const topicsWithUpdatedMaxPoints = topicsWithUpdatedWeight.map((t) => {
+      const stakeholderWeight = stakeholderWeights.getOrFail(
+        t.getStakeholderName()
+      ).weight;
+      return makeRating({
+        ...t,
+        maxPoints: ((stakeholderWeight * t.weight) / sumOfTopicWeights) * 1000,
+      });
+    });
+
+    const updatedRatings = topicsWithUpdatedMaxPoints
+      .map((t) => {
+        const positiveAspects = updatePositiveAspects(
+          t.maxPoints,
+          getPositiveAspects(t.shortName)
+        );
+        const negativeAspects = updateNegativeAspects(
+          t.maxPoints,
+          getNegativeAspects(t.shortName)
+        );
+        const aspects = [...positiveAspects, ...negativeAspects];
+        const topicPoints = aspects.reduce(
+          (sum, current) => sum + current.points,
+          0
+        );
+        const topicEstimations =
+          t.maxPoints > 0 ? topicPoints / t.maxPoints : 0;
+        const topic = makeRating({
+          ...t,
+          points: topicPoints,
+          estimations: topicEstimations,
+        });
+        return [topic, ...positiveAspects, ...negativeAspects];
+      })
+      .flat();
+
+    return replaceRatings(updatedRatings);
+  }
+
+  async function reCalculate(): Promise<BalanceSheet> {
+    // TODO: Replace providers with crockford objects
+    const regionProvider = await RegionProvider.fromVersion(data.version);
+    const industryProvider = await IndustryProvider.fromVersion(data.version);
+    const calcResults = await calculate(
+      regionProvider,
+      industryProvider,
+      data.companyFacts
+    );
+    const stakeholderWeightCalculator =
+      makeStakeholderWeightCalculator(calcResults);
+    const topicWeightCalculator = makeTopicWeightCalculator(
+      calcResults,
+      data.companyFacts
+    );
+    const stakeholderWeights = (
+      await stakeholderWeightCalculator.calculate()
+    ).merge(data.stakeholderWeights);
+    const topicWeights = topicWeightCalculator.calculate();
+    return adjustTopicWeights(topicWeights, stakeholderWeights);
+  }
+
   function submitEstimations(
     submissions: { shortName: string; estimations: number }[]
   ): BalanceSheet {
@@ -125,7 +258,7 @@ export function makeBalanceSheet(opts?: BalanceSheetOpts): BalanceSheet {
     const newRatings = replaceRatings(newAspects);
     // Update topics
     const topics = newRatings.getTopics().map((topic) => {
-      const aspects = newRatings.getAspectsOfTopic(topic.shortName);
+      const aspects = newRatings.getAspects(topic.shortName);
       const points = aspects.reduce(
         (sumAcc, currentRating) => sumAcc + currentRating.points,
         0
@@ -149,7 +282,7 @@ export function makeBalanceSheet(opts?: BalanceSheetOpts): BalanceSheet {
   return deepFreeze({
     ...data,
     getTopics,
-    getAspectsOfTopic,
+    getAspects,
     assignOrganization,
     getRating,
     submitEstimations,
@@ -157,5 +290,6 @@ export function makeBalanceSheet(opts?: BalanceSheetOpts): BalanceSheet {
     getPositiveAspects,
     getNegativeAspects,
     getTopicOfAspect,
+    reCalculate,
   });
 }

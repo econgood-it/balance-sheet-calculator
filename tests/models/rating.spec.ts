@@ -136,6 +136,20 @@ describe('Rating', () => {
     expect(topic.isAspect()).toBeFalsy();
   });
 
+  it('should return the corresponding stakeholder short name', () => {
+    const rating = makeRating({
+      shortName: 'A1.1',
+      name: 'Working conditions and social impact in the supply chain',
+      estimations: 0,
+      points: 0,
+      maxPoints: 50,
+      weight: 1,
+      isWeightSelectedByUser: false,
+      isPositive: true,
+    });
+    expect(rating.getStakeholderName()).toBe('A');
+  });
+
   it('should evaluate if rating is an aspect of a topic', () => {
     const rating = makeRating({
       shortName: 'A1.1',
