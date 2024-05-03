@@ -164,4 +164,63 @@ describe('Rating', () => {
     expect(rating.isAspectOfTopic('A1')).toBeTruthy();
     expect(rating.isAspectOfTopic('A2')).toBeFalsy();
   });
+
+  describe('is merged with request body', () => {
+    it('with request body', () => {
+      const rating = makeRating({
+        shortName: 'A1',
+        name: 'A1 name',
+        estimations: 4,
+        isPositive: true,
+        isWeightSelectedByUser: false,
+        weight: 2,
+        maxPoints: 51,
+        points: 10,
+      });
+      const requestBody = {
+        shortName: 'A1',
+        estimations: 10,
+        weight: 0.5,
+      };
+      const newRating = rating.merge(requestBody);
+      expect(newRating).toMatchObject({
+        shortName: 'A1',
+        name: 'A1 name',
+        estimations: 10,
+        isPositive: true,
+        isWeightSelectedByUser: true,
+        weight: 0.5,
+        maxPoints: 51,
+        points: 10,
+      });
+    });
+
+    it('with request boyd where weight is not selected by user', () => {
+      const rating = makeRating({
+        shortName: 'A1',
+        name: 'A1 name',
+        estimations: 4,
+        isPositive: true,
+        isWeightSelectedByUser: true,
+        weight: 2,
+        maxPoints: 51,
+        points: 10,
+      });
+      const requestBody = {
+        shortName: 'A1',
+        estimations: 10,
+      };
+      const newRating = rating.merge(requestBody);
+      expect(newRating).toMatchObject({
+        shortName: 'A1',
+        name: 'A1 name',
+        estimations: 10,
+        isPositive: true,
+        isWeightSelectedByUser: false,
+        weight: 2,
+        maxPoints: 51,
+        points: 10,
+      });
+    });
+  });
 });

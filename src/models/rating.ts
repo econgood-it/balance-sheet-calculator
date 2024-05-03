@@ -1,6 +1,9 @@
 import deepFreeze from 'deep-freeze';
 import { ValueError } from '../exceptions/value.error';
 import { z } from 'zod';
+import { RatingRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/rating.dto';
+import * as _ from 'lodash';
+import { mergeVal } from '../merge/merge.utils';
 
 type RatingOpts = {
   shortName: string;
@@ -14,6 +17,7 @@ type RatingOpts = {
 };
 
 export type Rating = RatingOpts & {
+  merge: (requestBody: z.infer<typeof RatingRequestBodySchema>) => Rating;
   isTopic: () => boolean;
   isAspect: () => boolean;
   isAspectOfTopic: (shortNameTopic: string) => boolean;
@@ -99,6 +103,22 @@ export function makeRating(opts?: RatingOpts): Rating {
     return data.shortName.substring(0, 1);
   }
 
+  function merge(requestBody: z.infer<typeof RatingRequestBodySchema>): Rating {
+    const mergedRating = {
+      ..._.merge(data, requestBody),
+      ...(data.isPositive && requestBody.weight !== undefined
+        ? {
+            isWeightSelectedByUser: true,
+            weight: mergeVal(data.weight, requestBody.weight),
+          }
+        : {
+            isWeightSelectedByUser: false,
+            weight: data.weight,
+          }),
+    };
+    return makeRating(mergedRating);
+  }
+
   return deepFreeze({
     ...data,
     isTopic,
@@ -107,5 +127,6 @@ export function makeRating(opts?: RatingOpts): Rating {
     submitPositiveEstimations,
     submitNegativeEstimations,
     getStakeholderName,
+    merge,
   });
 }
