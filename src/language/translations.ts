@@ -33,6 +33,9 @@ export function translateBalanceSheet(
   };
 }
 
-const staticTranslate = (lng: keyof Translations, transKey: string): string => {
+export const staticTranslate = (
+  lng: keyof Translations,
+  transKey: string
+): string => {
   return i18next.t(transKey, { lng });
 };

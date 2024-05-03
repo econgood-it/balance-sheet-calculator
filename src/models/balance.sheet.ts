@@ -10,15 +10,18 @@ import { makeRatingFactory } from '../factories/rating.factory';
 import { Organization } from './organization';
 import { LookupError } from '../exceptions/lookup.error';
 import { isTopic } from './oldRating';
-import { ValueError } from '../exceptions/value.error';
 import { RegionProvider } from '../providers/region.provider';
 import { IndustryProvider } from '../providers/industry.provider';
 import { calculate } from '../calculations/calculator';
 import { makeStakeholderWeightCalculator } from '../calculations/stakeholder.weight.calculator';
 import { makeTopicWeightCalculator } from '../calculations/topic.weight.calculator';
 import { WeightingProvider } from '../providers/weightingProvider';
-import { BalanceSheetPatchRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
+import {
+  BalanceSheetPatchRequestBodySchema,
+  BalanceSheetResponseBodySchema,
+} from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
 import { z } from 'zod';
+import { Translations } from '../language/translations';
 
 type BalanceSheetOpts = {
   id?: number;
@@ -43,6 +46,9 @@ export type BalanceSheet = BalanceSheetOpts & {
   getNegativeAspects: (shortNameTopic?: string) => Rating[];
   getTopicOfAspect: (shortNameAspect: string) => Rating;
   reCalculate: () => Promise<BalanceSheet>;
+  toJson: (
+    language: keyof Translations
+  ) => z.infer<typeof BalanceSheetResponseBodySchema>;
 };
 
 export function makeBalanceSheet(opts?: BalanceSheetOpts): BalanceSheet {
@@ -270,8 +276,21 @@ export function makeBalanceSheet(opts?: BalanceSheetOpts): BalanceSheet {
     });
   }
 
+  function toJson(language: keyof Translations) {
+    return BalanceSheetResponseBodySchema.parse({
+      id: data.id,
+      type: data.type,
+      version: data.version,
+      companyFacts: data.companyFacts.toJson(),
+      ratings: data.ratings.map((r) => r.toJson(language)),
+      stakeholderWeights: data.stakeholderWeights,
+      organizationId: data.organizationId,
+    });
+  }
+
   return deepFreeze({
     ...data,
+    toJson,
     merge,
     getTopics,
     getAspects,

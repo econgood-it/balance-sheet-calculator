@@ -12,6 +12,8 @@ import { makeRating } from '../../src/models/rating';
 import { makeOrganization } from '../../src/models/organization';
 import { LookupError } from '../../src/exceptions/lookup.error';
 import { makeWeighting } from '../../src/models/weighting';
+import { BalanceSheetEntity } from '../../src/entities/balance.sheet.entity';
+import { balanceSheetFactory } from '../../src/openapi/examples';
 
 describe('BalanceSheet', () => {
   it('is created with default values', () => {
@@ -294,6 +296,20 @@ describe('BalanceSheet', () => {
           weight: 1.5,
         }),
       ]);
+    });
+  });
+
+  describe('toJson', () => {
+    it('should return json', () => {
+      const balanceSheet = makeBalanceSheet();
+      const json = balanceSheet.toJson('en');
+      expect(json).toMatchObject({
+        version: BalanceSheetVersion.v5_0_8,
+        type: 'Full',
+        companyFacts: balanceSheet.companyFacts.toJson(),
+        stakeholderWeights: [],
+      });
+      expect(json.ratings.length).toBe(80);
     });
   });
 });

@@ -1,9 +1,13 @@
 import deepFreeze from 'deep-freeze';
 import { ValueError } from '../exceptions/value.error';
 import { z } from 'zod';
-import { RatingRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/rating.dto';
+import {
+  RatingRequestBodySchema,
+  RatingResponseBodySchema,
+} from '@ecogood/e-calculator-schemas/dist/rating.dto';
 import * as _ from 'lodash';
 import { mergeVal } from '../merge/merge.utils';
+import { staticTranslate, Translations } from '../language/translations';
 
 type RatingOpts = {
   shortName: string;
@@ -18,6 +22,9 @@ type RatingOpts = {
 
 export type Rating = RatingOpts & {
   merge: (requestBody: z.infer<typeof RatingRequestBodySchema>) => Rating;
+  toJson: (
+    language: keyof Translations
+  ) => z.infer<typeof RatingResponseBodySchema>;
   isTopic: () => boolean;
   isAspect: () => boolean;
   isAspectOfTopic: (shortNameTopic: string) => boolean;
@@ -94,6 +101,22 @@ export function makeRating(opts?: RatingOpts): Rating {
     );
   }
 
+  function toJson(
+    language: keyof Translations
+  ): z.infer<typeof RatingResponseBodySchema> {
+    return RatingResponseBodySchema.parse({
+      shortName: data.shortName,
+      name: staticTranslate(language, data.name),
+      type: isTopic() ? 'topic' : 'aspect',
+      isPositive: data.isPositive,
+      estimations: data.estimations,
+      weight: data.weight,
+      isWeightSelectedByUser: data.isWeightSelectedByUser,
+      points: data.points,
+      maxPoints: data.maxPoints,
+    });
+  }
+
   return deepFreeze({
     ...data,
     isTopic,
@@ -102,5 +125,6 @@ export function makeRating(opts?: RatingOpts): Rating {
     submitEstimations,
     getStakeholderName,
     merge,
+    toJson,
   });
 }

@@ -1,9 +1,13 @@
 import {
   makeCompanyFacts,
   makeEmployeesFraction,
+  makeIndustrySector,
   makeMainOriginOfOtherSuppliers,
   makeSupplyFraction,
 } from '../../src/models/company.facts';
+import { makeBalanceSheet } from '../../src/models/balance.sheet';
+import { BalanceSheetEntity } from '../../src/entities/balance.sheet.entity';
+import { balanceSheetFactory } from '../../src/openapi/examples';
 
 describe('Company Facts', () => {
   it('is created with default values', () => {
@@ -462,5 +466,88 @@ describe('Company Facts', () => {
         supplyFractions: companyFacts.supplyFractions,
       })
     );
+  });
+
+  describe('should return company facts as json', () => {
+    it('and transforms percentage back to decimals', () => {
+      const companyFacts = makeCompanyFacts({
+        ...makeCompanyFacts(),
+        employeesFractions: [
+          makeEmployeesFraction({ countryCode: 'ARE', percentage: 0.3 }),
+          makeEmployeesFraction({ percentage: 0.5 }),
+        ],
+        industrySectors: [
+          makeIndustrySector({
+            industryCode: 'A',
+            amountOfTotalTurnover: 0.7,
+            description: '',
+          }),
+        ],
+      });
+      const json = companyFacts.toJson();
+      expect(json.employeesFractions).toEqual([
+        { countryCode: 'ARE', percentage: 30 },
+        { percentage: 50 },
+      ]);
+      expect(json.industrySectors).toEqual([
+        { industryCode: 'A', amountOfTotalTurnover: 70, description: '' },
+      ]);
+    });
+
+    it('where country code of some suppliers is missing', () => {
+      const companyFacts = makeCompanyFacts({
+        ...makeCompanyFacts(),
+        supplyFractions: [
+          makeSupplyFraction({
+            countryCode: 'ARE',
+            industryCode: 'A',
+            costs: 9,
+          }),
+          makeSupplyFraction({ industryCode: 'Be', costs: 7 }),
+        ],
+        mainOriginOfOtherSuppliers: { countryCode: 'DEU' },
+      });
+      const companyFactsResponse = companyFacts.toJson();
+      expect(
+        companyFactsResponse.supplyFractions.some(
+          (s) => s.countryCode === undefined
+        )
+      ).toBeTruthy();
+    });
+    it('where country code of some employees is missing', () => {
+      const companyFacts = makeCompanyFacts({
+        ...makeCompanyFacts(),
+        employeesFractions: [
+          makeEmployeesFraction({ countryCode: 'ARE', percentage: 0.3 }),
+          makeEmployeesFraction({ percentage: 0.5 }),
+        ],
+        mainOriginOfOtherSuppliers: { countryCode: 'DEU' },
+      });
+      const companyFactsResponse = companyFacts.toJson();
+
+      expect(
+        companyFactsResponse.employeesFractions.some(
+          (s) => s.countryCode === undefined
+        )
+      ).toBeTruthy();
+    });
+    it('where hasCanteen is undefined', () => {
+      const companyFacts = makeCompanyFacts({
+        ...makeCompanyFacts(),
+        hasCanteen: undefined,
+      });
+      const companyFactsResponse = companyFacts.toJson();
+      expect(companyFactsResponse.hasCanteen).toBeUndefined();
+    });
+    it('where country code of main origin of suppliers is not provided', () => {
+      const companyFacts = makeCompanyFacts({
+        ...makeCompanyFacts(),
+        mainOriginOfOtherSuppliers: { countryCode: undefined },
+      });
+      const companyFactsResponse = companyFacts.toJson();
+      expect(
+        companyFactsResponse.mainOriginOfOtherSuppliers.countryCode
+      ).toBeUndefined();
+    });
   });
 });

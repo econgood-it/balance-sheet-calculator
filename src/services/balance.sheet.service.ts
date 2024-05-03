@@ -10,10 +10,69 @@ import { StakeholderWeightsReader } from '../reader/balanceSheetReader/stakehold
 import { TopicWeightsReader } from '../reader/balanceSheetReader/topic.weights.reader';
 
 import { BalanceSheetExcelDiffResponseBody } from '@ecogood/e-calculator-schemas/dist/balance.sheet.diff';
-import { BalanceSheetPatchRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
+import {
+  BalanceSheetPatchRequestBodySchema,
+  BalanceSheetResponseBodySchema,
+} from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
 import { parseLanguageParameter } from '../language/translations';
 import { IOldRepoProvider } from '../repositories/oldRepoProvider';
-import { Authorization } from '../security/authorization';
+import {
+  Authorization,
+  checkIfCurrentUserHasEditorPermissions,
+} from '../security/authorization';
+import { IRepoProvider } from '../repositories/repo.provider';
+import deepFreeze from 'deep-freeze';
+
+export interface IBalanceSheetService {
+  updateBalanceSheet(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void>;
+}
+
+export function makeBalanceSheetService(
+  dataSource: DataSource,
+  repoProvider: IRepoProvider
+): IBalanceSheetService {
+  async function updateBalanceSheet(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    const language = parseLanguageParameter(req.query.lng);
+    dataSource.manager
+      .transaction(async (entityManager) => {
+        const balanceSheetRepository =
+          repoProvider.getBalanceSheetRepo(entityManager);
+
+        const balanceSheetIdParam: number = Number(req.params.id);
+        const balanceSheet = await balanceSheetRepository.findByIdOrFail(
+          balanceSheetIdParam
+        );
+        await checkIfCurrentUserHasEditorPermissions(
+          req,
+          repoProvider.getOrganizationRepo(entityManager),
+          balanceSheet
+        );
+
+        const updatedBalanceSheet = await balanceSheetRepository.save(
+          await balanceSheet
+            .merge(BalanceSheetPatchRequestBodySchema.parse(req.body))
+            .reCalculate()
+        );
+
+        res.json(updatedBalanceSheet.toJson(language));
+      })
+      .catch((error) => {
+        handle(error, next);
+      });
+  }
+
+  return deepFreeze({
+    updateBalanceSheet,
+  });
+}
 
 export class BalanceSheetService {
   constructor(
@@ -65,38 +124,6 @@ export class BalanceSheetService {
         );
 
         res.json(balanceSheetEntity.asMatrixRepresentation(language));
-      })
-      .catch((error) => {
-        handle(error, next);
-      });
-  }
-
-  public async updateBalanceSheet(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
-    const language = parseLanguageParameter(req.query.lng);
-    this.dataSource.manager
-      .transaction(async (entityManager) => {
-        const balanceSheetRepository =
-          this.repoProvider.getBalanceSheetEntityRepo(entityManager);
-
-        const balanceSheetIdParam: number = Number(req.params.id);
-        const balanceSheetEntity = await balanceSheetRepository.findByIdOrFail(
-          balanceSheetIdParam
-        );
-        Authorization.checkIfCurrentUserHasEditorPermissions(
-          req,
-          balanceSheetEntity
-        );
-        const balanceSheetPatchRequestBody =
-          BalanceSheetPatchRequestBodySchema.parse(req.body);
-        balanceSheetEntity.mergeWithPatchRequest(balanceSheetPatchRequestBody);
-        await balanceSheetEntity.reCalculate();
-        await balanceSheetRepository.save(balanceSheetEntity);
-
-        res.json(balanceSheetEntity.toJson(language));
       })
       .catch((error) => {
         handle(error, next);

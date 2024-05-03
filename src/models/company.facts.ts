@@ -1,7 +1,10 @@
 import deepFreeze from 'deep-freeze';
 import { DEFAULT_COUNTRY_CODE } from './region';
 import _ from 'lodash';
-import { CompanyFactsPatchRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/company.facts.dto';
+import {
+  CompanyFactsPatchRequestBodySchema,
+  CompanyFactsResponseBodySchema,
+} from '@ecogood/e-calculator-schemas/dist/company.facts.dto';
 import { z } from 'zod';
 import { decimalToPercentage, percentageToDecimal } from '../math';
 
@@ -69,7 +72,7 @@ export function makeMainOriginOfOtherSuppliers(
   }
 
   return deepFreeze({
-    ...opts,
+    countryCode: opts.countryCode,
     costs: computeCosts(opts.totalPurchaseFromSuppliers, opts.supplyFractions),
   });
 }
@@ -98,35 +101,45 @@ export type CompanyFacts = CompanyFactsOpts & {
   merge: (
     requestBody: z.infer<typeof CompanyFactsPatchRequestBodySchema>
   ) => CompanyFacts;
+  toJson: () => z.infer<typeof CompanyFactsResponseBodySchema>;
   areAllValuesZero: () => boolean;
   withFields: (fields: Partial<CompanyFactsOpts>) => CompanyFacts;
   mainOriginOfOtherSuppliers: MainOriginOfOtherSuppliers;
 };
 
 export function makeCompanyFacts(opts?: CompanyFactsOpts): CompanyFacts {
-  const data = opts || {
-    totalPurchaseFromSuppliers: 0,
-    totalStaffCosts: 0,
-    profit: 0,
-    financialCosts: 0,
-    incomeFromFinancialInvestments: 0,
-    additionsToFixedAssets: 0,
-    turnover: 0,
-    totalAssets: 0,
-    financialAssetsAndCashBalance: 0,
-    numberOfEmployees: 0,
-    isB2B: false,
-    hasCanteen: false,
-    averageJourneyToWorkForStaffInKm: 0,
-    mainOriginOfOtherSuppliers: makeMainOriginOfOtherSuppliers({
-      totalPurchaseFromSuppliers: 0,
-      countryCode: DEFAULT_COUNTRY_CODE,
-      supplyFractions: [],
-    }),
-    supplyFractions: [],
-    employeesFractions: [],
-    industrySectors: [],
-  };
+  const data = opts
+    ? {
+        ...opts,
+        mainOriginOfOtherSuppliers: makeMainOriginOfOtherSuppliers({
+          totalPurchaseFromSuppliers: opts.totalPurchaseFromSuppliers,
+          countryCode: opts.mainOriginOfOtherSuppliers.countryCode,
+          supplyFractions: opts.supplyFractions,
+        }),
+      }
+    : {
+        totalPurchaseFromSuppliers: 0,
+        totalStaffCosts: 0,
+        profit: 0,
+        financialCosts: 0,
+        incomeFromFinancialInvestments: 0,
+        additionsToFixedAssets: 0,
+        turnover: 0,
+        totalAssets: 0,
+        financialAssetsAndCashBalance: 0,
+        numberOfEmployees: 0,
+        isB2B: false,
+        hasCanteen: false,
+        averageJourneyToWorkForStaffInKm: 0,
+        mainOriginOfOtherSuppliers: makeMainOriginOfOtherSuppliers({
+          totalPurchaseFromSuppliers: 0,
+          countryCode: DEFAULT_COUNTRY_CODE,
+          supplyFractions: [],
+        }),
+        supplyFractions: [],
+        employeesFractions: [],
+        industrySectors: [],
+      };
 
   /**
    * =IF(AND($'2. Company Facts'.C7=0,$'2. Company Facts'.F10=0,$'2.
@@ -189,13 +202,26 @@ export function makeCompanyFacts(opts?: CompanyFactsOpts): CompanyFacts {
     });
   }
 
+  function toJson(): z.infer<typeof CompanyFactsResponseBodySchema> {
+    const employeesFractions = data.employeesFractions.map((ef) => ({
+      ...ef,
+      percentage: decimalToPercentage(ef.percentage),
+    }));
+    const industrySectors = data.industrySectors.map((is) => ({
+      ...is,
+      amountOfTotalTurnover: decimalToPercentage(is.amountOfTotalTurnover),
+    }));
+
+    return CompanyFactsResponseBodySchema.parse({
+      ...data,
+      employeesFractions,
+      industrySectors,
+    });
+  }
+
   return deepFreeze({
     ...data,
-    mainOriginOfOtherSuppliers: makeMainOriginOfOtherSuppliers({
-      totalPurchaseFromSuppliers: data.totalPurchaseFromSuppliers,
-      countryCode: data.mainOriginOfOtherSuppliers.countryCode,
-      supplyFractions: data.supplyFractions,
-    }),
+    toJson,
     areAllValuesZero,
     withFields,
     merge,

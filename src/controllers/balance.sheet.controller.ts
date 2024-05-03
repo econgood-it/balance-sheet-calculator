@@ -1,7 +1,11 @@
 import { Application } from 'express';
-import { BalanceSheetService } from '../services/balance.sheet.service';
+import {
+  BalanceSheetService,
+  IBalanceSheetService,
+} from '../services/balance.sheet.service';
 import { allowUserOnly } from './role.access';
 import { upload } from './utils';
+import { IOrganizationService } from '../services/organization.service';
 
 const resourceUrl = '/v1/balancesheets';
 export const BalanceSheetPaths = {
@@ -13,6 +17,17 @@ export const BalanceSheetPaths = {
   diff: `${resourceUrl}/diff/upload`,
   matrix: `${resourceUrl}/:id/matrix`,
 };
+
+export function registerBalanceSheetRoutes(
+  app: Application,
+  balanceSheetService: IBalanceSheetService
+) {
+  app.patch(
+    BalanceSheetPaths.patch,
+    allowUserOnly,
+    balanceSheetService.updateBalanceSheet
+  );
+}
 
 export class BalanceSheetController {
   constructor(
@@ -35,11 +50,6 @@ export class BalanceSheetController {
       this.balanceSheetService.getMatrixRepresentationOfBalanceSheet.bind(
         this.balanceSheetService
       )
-    );
-    this.app.patch(
-      BalanceSheetPaths.patch,
-      allowUserOnly,
-      this.balanceSheetService.updateBalanceSheet.bind(this.balanceSheetService)
     );
     this.app.delete(
       BalanceSheetPaths.delete,

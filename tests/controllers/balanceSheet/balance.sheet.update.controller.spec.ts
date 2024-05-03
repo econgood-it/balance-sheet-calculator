@@ -16,13 +16,19 @@ import { OldRepoProvider } from '../../../src/repositories/oldRepoProvider';
 import { OrganizationBuilder } from '../../OrganizationBuilder';
 import { InMemoryAuthentication } from '../in.memory.authentication';
 import { makeRepoProvider } from '../../../src/repositories/repo.provider';
+import { makeOrganization } from '../../../src/models/organization';
+import { makeBalanceSheet } from '../../../src/models/balance.sheet';
+import { IOrganizationRepo } from '../../../src/repositories/organization.repo';
+import { IBalanceSheetRepo } from '../../../src/repositories/balance.sheet.repo';
 
 describe('Update endpoint of Balance Sheet Controller', () => {
   let dataSource: DataSource;
   let app: Application;
   const configuration = ConfigurationReader.read();
   const endpointPath = '/v1/balancesheets';
-  let repoProvider: OldRepoProvider;
+  let organizationRepo: IOrganizationRepo;
+  let balanceSheetRepo: IBalanceSheetRepo;
+
   const authBuilder = new AuthBuilder();
   const auth = authBuilder.addUser();
   const authWithoutOrgaPermissions = authBuilder.addUser();
@@ -32,12 +38,14 @@ describe('Update endpoint of Balance Sheet Controller', () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
       configuration
     );
-    repoProvider = new OldRepoProvider(configuration);
+    const repoProvider = makeRepoProvider(configuration);
+    organizationRepo = repoProvider.getOrganizationRepo(dataSource.manager);
+    balanceSheetRepo = repoProvider.getBalanceSheetRepo(dataSource.manager);
     app = new App(
       dataSource,
       configuration,
-      makeRepoProvider(configuration),
       repoProvider,
+      new OldRepoProvider(configuration),
       new InMemoryAuthentication(authBuilder.getTokenMap())
     ).app;
   });
@@ -48,9 +56,12 @@ describe('Update endpoint of Balance Sheet Controller', () => {
 
   it('should update company facts of balance sheet', async () => {
     const testApp = supertest(app);
-    const [balanceSheetEntity] = (
-      await organizationBuilder.addBalanceSheetEntity().build(dataSource)
-    ).organizationEntity.balanceSheetEntities!;
+    const organization = await organizationRepo.save(
+      makeOrganization().invite(auth.user.email).join(auth.user)
+    );
+    const balanceSheet = await balanceSheetRepo.save(
+      makeBalanceSheet().assignOrganization(organization)
+    );
 
     const balanceSheetUpdate = {
       companyFacts: {
@@ -75,7 +86,7 @@ describe('Update endpoint of Balance Sheet Controller', () => {
       },
     };
     const response = await testApp
-      .patch(`${endpointPath}/${balanceSheetEntity.id}`)
+      .patch(`${endpointPath}/${balanceSheet.id}`)
       .set(auth.toHeaderPair().key, auth.toHeaderPair().value)
       .send({ ...balanceSheetUpdate });
     expect(response.status).toEqual(200);
@@ -86,9 +97,12 @@ describe('Update endpoint of Balance Sheet Controller', () => {
 
   it('should update ratings of balance sheet', async () => {
     const testApp = supertest(app);
-    const [balanceSheetEntity] = (
-      await organizationBuilder.addBalanceSheetEntity().build(dataSource)
-    ).organizationEntity.balanceSheetEntities!;
+    const organization = await organizationRepo.save(
+      makeOrganization().invite(auth.user.email).join(auth.user)
+    );
+    const balanceSheet = await balanceSheetRepo.save(
+      makeBalanceSheet().assignOrganization(organization)
+    );
     const balanceSheetUpdate = {
       ratings: [
         { shortName: 'A1.1', estimations: 2 },
@@ -100,7 +114,7 @@ describe('Update endpoint of Balance Sheet Controller', () => {
       ],
     };
     const response = await testApp
-      .patch(`${endpointPath}/${balanceSheetEntity.id}`)
+      .patch(`${endpointPath}/${balanceSheet.id}`)
       .set(auth.toHeaderPair().key, auth.toHeaderPair().value)
       .send({ ...balanceSheetUpdate });
     expect(response.status).toEqual(200);
@@ -130,9 +144,16 @@ describe('Update endpoint of Balance Sheet Controller', () => {
   ): Promise<void> {
     const testApp = supertest(app);
 
-    const [balanceSheetEntity] = (
-      await organizationBuilder.addBalanceSheetEntity().build(dataSource)
-    ).organizationEntity.balanceSheetEntities!;
+    const organization = await organizationRepo.save(
+      makeOrganization().invite(auth.user.email).join(auth.user)
+    );
+    const balanceSheet = await balanceSheetRepo.save(
+      makeBalanceSheet({
+        ...makeBalanceSheet(),
+        type: balanceSheetType,
+        version: balanceSheetVersion,
+      }).assignOrganization(organization)
+    );
 
     const balanceSheetUpdate = {
       ratings: [
@@ -150,7 +171,7 @@ describe('Update endpoint of Balance Sheet Controller', () => {
       ],
     };
     const response = await testApp
-      .patch(`${endpointPath}/${balanceSheetEntity.id}`)
+      .patch(`${endpointPath}/${balanceSheet.id}`)
       .set(auth.toHeaderPair().key, auth.toHeaderPair().value)
       .send({ ...balanceSheetUpdate });
 
@@ -176,18 +197,22 @@ describe('Update endpoint of Balance Sheet Controller', () => {
   describe('block access to balance sheet ', () => {
     const patchWithDifferentUsers = async (): Promise<any> => {
       const testApp = supertest(app);
-      const [balanceSheetEntity] = (
-        await organizationBuilder.addBalanceSheetEntity().build(dataSource)
-      ).organizationEntity.balanceSheetEntities!;
+
+      const organization = await organizationRepo.save(
+        makeOrganization().invite(auth.user.email).join(auth.user)
+      );
+      const balanceSheet = await balanceSheetRepo.save(
+        makeBalanceSheet().assignOrganization(organization)
+      );
+
       const balanceSheetUpdate = {
-        id: balanceSheetEntity.id,
         companyFacts: {
           totalPurchaseFromSuppliers: 30000,
         },
       };
 
       return testApp
-        .patch(`${endpointPath}/${balanceSheetEntity.id}`)
+        .patch(`${endpointPath}/${balanceSheet.id}`)
         .set(
           authWithoutOrgaPermissions.toHeaderPair().key,
           authWithoutOrgaPermissions.toHeaderPair().value

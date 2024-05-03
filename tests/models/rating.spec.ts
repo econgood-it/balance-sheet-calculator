@@ -1,6 +1,15 @@
 import { makeRating } from '../../src/models/rating';
 import { ValueError } from '../../src/exceptions/value.error';
 
+jest.mock('../../src/i18n', () => ({
+  init: () => {},
+  use: () => {},
+  t: (k: string) =>
+    k === 'Working conditions and social impact in the supply chain'
+      ? 'Arbeitsbedingungen und gesellschaftliche Auswirkungen in der Zulieferkette'
+      : k,
+}));
+
 describe('Rating', () => {
   it('is created with default Values', () => {
     const rating = makeRating();
@@ -194,6 +203,32 @@ describe('Rating', () => {
         maxPoints: 51,
         points: 10,
       });
+    });
+  });
+
+  it('should return rating as json', () => {
+    const rating = makeRating({
+      shortName: 'D4.1',
+      name: 'Working conditions and social impact in the supply chain',
+      estimations: 4,
+      isPositive: true,
+      isWeightSelectedByUser: true,
+      weight: 2,
+      maxPoints: 51,
+      points: 10,
+    });
+
+    const json = rating.toJson('de');
+    expect(json).toEqual({
+      shortName: 'D4.1',
+      name: 'Arbeitsbedingungen und gesellschaftliche Auswirkungen in der Zulieferkette',
+      type: 'aspect',
+      isPositive: true,
+      estimations: 4,
+      weight: 2,
+      isWeightSelectedByUser: true,
+      points: 10,
+      maxPoints: 51,
     });
   });
 });

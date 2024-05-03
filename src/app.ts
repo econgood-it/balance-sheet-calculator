@@ -1,7 +1,10 @@
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import express, { Application } from 'express';
-import { BalanceSheetController } from './controllers/balance.sheet.controller';
+import {
+  BalanceSheetController,
+  registerBalanceSheetRoutes,
+} from './controllers/balance.sheet.controller';
 import errorMiddleware from './middleware/error.middleware';
 import {
   Authentication,
@@ -23,7 +26,10 @@ import correlationIdMiddleware from './middleware/correlation.id.middleware';
 import morganMiddleware from './middleware/morgan.http.logging.middleware';
 import { Configuration } from './reader/configuration.reader';
 import { IOldRepoProvider } from './repositories/oldRepoProvider';
-import { BalanceSheetService } from './services/balance.sheet.service';
+import {
+  BalanceSheetService,
+  makeBalanceSheetService,
+} from './services/balance.sheet.service';
 import { HealthCheckService } from './services/health.check.service';
 import { IndustryService } from './services/industry.service';
 import {
@@ -73,6 +79,12 @@ class App {
       this.app,
       balanceSheetService
     );
+
+    registerBalanceSheetRoutes(
+      this.app,
+      makeBalanceSheetService(dataSource, repoProvider)
+    );
+
     const userService = new UserService(dataSource, repoProviderOld);
     this.userController = new UserController(this.app, userService);
 
