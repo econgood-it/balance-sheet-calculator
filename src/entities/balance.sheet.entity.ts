@@ -1,7 +1,4 @@
-import {
-  BalanceSheetPatchRequestBodySchema,
-  BalanceSheetResponseBodySchema,
-} from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
+import { BalanceSheetResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
 import { diff } from 'deep-diff';
 import {
   AfterLoad,
@@ -10,15 +7,12 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { z } from 'zod';
 import { OldCalcResults, OldCalculator } from '../calculations/oldCalculator';
 import { OldRatingsUpdater } from '../calculations/old.ratings.updater';
 import { OldStakeholderWeightCalculator } from '../calculations/old.stakeholder.weight.calculator';
 import { OldTopicWeightCalculator } from '../calculations/oldTopicWeightCalculator';
-import { MatrixFormat } from '../dto/balance.sheet.dto';
 import { DatabaseValidationError } from '../exceptions/databaseValidationError';
 import { translateBalanceSheet, Translations } from '../language/translations';
-import { EntityWithDtoMerger } from '../merge/entity.with.dto.merger';
 import { OldBalanceSheet } from '../models/oldBalanceSheet';
 import { companyFactsToResponse } from '../models/oldCompanyFacts';
 import { isTopic, sortRatings } from '../models/oldRating';
@@ -117,26 +111,6 @@ export class BalanceSheetEntity {
 
   public clone(): BalanceSheetEntity {
     return new BalanceSheetEntity(undefined, this.balanceSheet);
-  }
-
-  public mergeWithPatchRequest(
-    balanceSheetPatchRequestBody: z.infer<
-      typeof BalanceSheetPatchRequestBodySchema
-    >
-  ) {
-    const entityWithDTOMerger = new EntityWithDtoMerger();
-    this.balanceSheet = BalanceSheetDBSchema.parse(
-      entityWithDTOMerger.mergeBalanceSheet(
-        this.balanceSheet,
-        balanceSheetPatchRequestBody
-      )
-    );
-  }
-
-  public asMatrixRepresentation(language: keyof Translations) {
-    return new MatrixFormat(
-      translateBalanceSheet(this.balanceSheet, language)
-    ).apply();
   }
 
   public diff(otherBalanceSheet: BalanceSheetEntity) {

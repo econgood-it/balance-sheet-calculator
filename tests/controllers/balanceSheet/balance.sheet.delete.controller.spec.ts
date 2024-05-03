@@ -18,9 +18,12 @@ import { CORRELATION_HEADER_NAME } from '../../../src/middleware/correlation.id.
 import { companyFactsJsonFactory } from '../../../src/openapi/examples';
 import { OldRepoProvider } from '../../../src/repositories/oldRepoProvider';
 import { AuthBuilder } from '../../AuthBuilder';
-import { OrganizationBuilder } from '../../OrganizationBuilder';
 import { InMemoryAuthentication } from '../in.memory.authentication';
 import { makeRepoProvider } from '../../../src/repositories/repo.provider';
+import { IOrganizationRepo } from '../../../src/repositories/organization.repo';
+import { IBalanceSheetRepo } from '../../../src/repositories/balance.sheet.repo';
+import { makeOrganization } from '../../../src/models/organization';
+import { makeBalanceSheet } from '../../../src/models/balance.sheet';
 
 describe('Balance Sheet Controller', () => {
   let dataSource: DataSource;
@@ -31,16 +34,20 @@ describe('Balance Sheet Controller', () => {
   const authBuilder = new AuthBuilder();
   const auth = authBuilder.addUser();
   const authWithoutOrgaPermissions = authBuilder.addUser();
-  const organizationBuilder = new OrganizationBuilder().addMember(auth.user);
+  let organizationRepo: IOrganizationRepo;
+  let balanceSheetRepo: IBalanceSheetRepo;
 
   beforeAll(async () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
       configuration
     );
+    const repoProvider = makeRepoProvider(configuration);
+    organizationRepo = repoProvider.getOrganizationRepo(dataSource.manager);
+    balanceSheetRepo = repoProvider.getBalanceSheetRepo(dataSource.manager);
     app = new App(
       dataSource,
       configuration,
-      makeRepoProvider(configuration),
+      repoProvider,
       new OldRepoProvider(configuration),
       new InMemoryAuthentication(authBuilder.getTokenMap())
     ).app;
@@ -51,10 +58,12 @@ describe('Balance Sheet Controller', () => {
   });
 
   const createBalanceSheet = async () => {
-    const [balanceSheetEntity] = (
-      await organizationBuilder.addBalanceSheetEntity().build(dataSource)
-    ).organizationEntity.balanceSheetEntities!;
-    return balanceSheetEntity;
+    const organization = await organizationRepo.save(
+      makeOrganization().invite(auth.user.email).join(auth.user)
+    );
+    return await balanceSheetRepo.save(
+      makeBalanceSheet().assignOrganization(organization)
+    );
   };
 
   beforeEach(() => {

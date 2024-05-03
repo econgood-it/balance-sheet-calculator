@@ -8,10 +8,13 @@ import { AuthBuilder } from '../../AuthBuilder';
 import { CORRELATION_HEADER_NAME } from '../../../src/middleware/correlation.id.middleware';
 import { OldRating, RatingResponseBody } from '../../../src/models/oldRating';
 import { OldRepoProvider } from '../../../src/repositories/oldRepoProvider';
-import { OrganizationBuilder } from '../../OrganizationBuilder';
 import { InMemoryAuthentication } from '../in.memory.authentication';
-import supertest = require('supertest');
 import { makeRepoProvider } from '../../../src/repositories/repo.provider';
+import { IOrganizationRepo } from '../../../src/repositories/organization.repo';
+import { IBalanceSheetRepo } from '../../../src/repositories/balance.sheet.repo';
+import { makeOrganization } from '../../../src/models/organization';
+import { makeBalanceSheet } from '../../../src/models/balance.sheet';
+import supertest = require('supertest');
 
 describe('Balance Sheet Controller', () => {
   let dataSource: DataSource;
@@ -20,17 +23,21 @@ describe('Balance Sheet Controller', () => {
   const balanceSheetsEndpoint = '/v1/balancesheets';
   const authBuilder = new AuthBuilder();
   const auth = authBuilder.addUser();
+  let organizationRepo: IOrganizationRepo;
+  let balanceSheetRepo: IBalanceSheetRepo;
   const authWithoutOrgaPermissions = authBuilder.addUser();
-  const organizationBuilder = new OrganizationBuilder().addMember(auth.user);
 
   beforeAll(async () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
       configuration
     );
+    const repoProvider = makeRepoProvider(configuration);
+    organizationRepo = repoProvider.getOrganizationRepo(dataSource.manager);
+    balanceSheetRepo = repoProvider.getBalanceSheetRepo(dataSource.manager);
     app = new App(
       dataSource,
       configuration,
-      makeRepoProvider(configuration),
+      repoProvider,
       new OldRepoProvider(configuration),
       new InMemoryAuthentication(authBuilder.getTokenMap())
     ).app;
@@ -41,10 +48,12 @@ describe('Balance Sheet Controller', () => {
   });
 
   const createBalanceSheet = async () => {
-    const [balanceSheetEntity] = (
-      await organizationBuilder.addBalanceSheetEntity().build(dataSource)
-    ).organizationEntity.balanceSheetEntities!;
-    return balanceSheetEntity;
+    const organization = await organizationRepo.save(
+      makeOrganization().invite(auth.user.email).join(auth.user)
+    );
+    return await balanceSheetRepo.save(
+      makeBalanceSheet().assignOrganization(organization)
+    );
   };
 
   it('get balance sheet by id where company facts fields are empty', async () => {

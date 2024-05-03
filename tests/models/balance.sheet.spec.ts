@@ -12,8 +12,7 @@ import { makeRating } from '../../src/models/rating';
 import { makeOrganization } from '../../src/models/organization';
 import { LookupError } from '../../src/exceptions/lookup.error';
 import { makeWeighting } from '../../src/models/weighting';
-import { BalanceSheetEntity } from '../../src/entities/balance.sheet.entity';
-import { balanceSheetFactory } from '../../src/openapi/examples';
+import { isTopic } from '../../src/models/oldRating';
 
 describe('BalanceSheet', () => {
   it('is created with default values', () => {
@@ -310,6 +309,79 @@ describe('BalanceSheet', () => {
         stakeholderWeights: [],
       });
       expect(json.ratings.length).toBe(80);
+    });
+  });
+
+  describe('MatrixRepresentation', () => {
+    const defaultBalanceSheet = makeBalanceSheet();
+
+    it('has totalPoints of 1000', async () => {
+      const defaultRatings = makeRatingFactory().createDefaultRatings(
+        BalanceSheetType.Full,
+        BalanceSheetVersion.v5_0_8
+      );
+
+      const ratings = defaultRatings.map((r) =>
+        isTopic(r) ? { ...r, points: 50 } : r
+      );
+      const balanceSheet = await makeBalanceSheet({
+        ...defaultBalanceSheet,
+        ratings,
+      }).reCalculate();
+      const matrixResponse = balanceSheet.asMatrixRepresentation('en');
+
+      expect(matrixResponse.totalPoints).toEqual(balanceSheet.totalPoints());
+    });
+
+    it('has a topics array of 20', async () => {
+      const matrixResponse = defaultBalanceSheet.asMatrixRepresentation('en');
+      expect(matrixResponse.ratings).toHaveLength(20);
+    });
+    //
+    it('has topic A1 with 30 of 50 reached points', async () => {
+      const balanceSheet = makeBalanceSheet({
+        ...defaultBalanceSheet,
+        ratings: [
+          makeRating({
+            shortName: 'A1',
+            name: 'Human dignity in the supply chain',
+            estimations: 7,
+            points: 30,
+            maxPoints: 50,
+            weight: 1,
+            isWeightSelectedByUser: false,
+            isPositive: true,
+          }),
+          ...defaultBalanceSheet.ratings.slice(1),
+        ],
+      });
+
+      const matrixDTO = balanceSheet.asMatrixRepresentation('en');
+      expect(matrixDTO.ratings[0].points).toBe(30);
+      expect(matrixDTO.ratings[0].maxPoints).toBe(50);
+    });
+    //
+    it('has topic E4 with 20 of 60 reached points', async () => {
+      const balanceSheet = makeBalanceSheet({
+        ...defaultBalanceSheet,
+        ratings: [
+          makeRating({
+            shortName: 'A1',
+            name: 'Human dignity in the supply chain',
+            estimations: 7,
+            points: 20,
+            maxPoints: 60,
+            weight: 1,
+            isWeightSelectedByUser: false,
+            isPositive: true,
+          }),
+          ...defaultBalanceSheet.ratings.slice(1),
+        ],
+      });
+
+      const matrixDTO = balanceSheet.asMatrixRepresentation('en');
+      expect(matrixDTO.ratings[0].points).toBe(20);
+      expect(matrixDTO.ratings[0].maxPoints).toBe(60);
     });
   });
 });

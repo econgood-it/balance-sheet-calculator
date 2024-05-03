@@ -22,6 +22,7 @@ import {
 } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
 import { z } from 'zod';
 import { Translations } from '../language/translations';
+import { MatrixBodySchema } from '@ecogood/e-calculator-schemas/dist/matrix.dto';
 
 type BalanceSheetOpts = {
   id?: number;
@@ -46,6 +47,9 @@ export type BalanceSheet = BalanceSheetOpts & {
   getNegativeAspects: (shortNameTopic?: string) => Rating[];
   getTopicOfAspect: (shortNameAspect: string) => Rating;
   reCalculate: () => Promise<BalanceSheet>;
+  asMatrixRepresentation: (
+    language: keyof Translations
+  ) => z.infer<typeof MatrixBodySchema>;
   toJson: (
     language: keyof Translations
   ) => z.infer<typeof BalanceSheetResponseBodySchema>;
@@ -276,6 +280,13 @@ export function makeBalanceSheet(opts?: BalanceSheetOpts): BalanceSheet {
     });
   }
 
+  function asMatrixRepresentation(language: keyof Translations) {
+    return MatrixBodySchema.parse({
+      ratings: getTopics().map((r) => r.toMatrixFormat(language)),
+      totalPoints: totalPoints(),
+    });
+  }
+
   function toJson(language: keyof Translations) {
     return BalanceSheetResponseBodySchema.parse({
       id: data.id,
@@ -291,6 +302,7 @@ export function makeBalanceSheet(opts?: BalanceSheetOpts): BalanceSheet {
   return deepFreeze({
     ...data,
     toJson,
+    asMatrixRepresentation,
     merge,
     getTopics,
     getAspects,

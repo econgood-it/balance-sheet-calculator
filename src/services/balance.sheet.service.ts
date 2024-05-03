@@ -10,21 +10,30 @@ import { StakeholderWeightsReader } from '../reader/balanceSheetReader/stakehold
 import { TopicWeightsReader } from '../reader/balanceSheetReader/topic.weights.reader';
 
 import { BalanceSheetExcelDiffResponseBody } from '@ecogood/e-calculator-schemas/dist/balance.sheet.diff';
-import {
-  BalanceSheetPatchRequestBodySchema,
-  BalanceSheetResponseBodySchema,
-} from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
+import { BalanceSheetPatchRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
 import { parseLanguageParameter } from '../language/translations';
 import { IOldRepoProvider } from '../repositories/oldRepoProvider';
-import {
-  Authorization,
-  checkIfCurrentUserHasEditorPermissions,
-} from '../security/authorization';
+import { checkIfCurrentUserHasEditorPermissions } from '../security/authorization';
 import { IRepoProvider } from '../repositories/repo.provider';
 import deepFreeze from 'deep-freeze';
 
 export interface IBalanceSheetService {
   updateBalanceSheet(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void>;
+  getBalanceSheet(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void>;
+  deleteBalanceSheet(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void>;
+  getMatrixRepresentationOfBalanceSheet(
     req: Request,
     res: Response,
     next: NextFunction
@@ -69,32 +78,22 @@ export function makeBalanceSheetService(
       });
   }
 
-  return deepFreeze({
-    updateBalanceSheet,
-  });
-}
-
-export class BalanceSheetService {
-  constructor(
-    private dataSource: DataSource,
-    private repoProvider: IOldRepoProvider
-  ) {}
-
-  public async getBalanceSheet(
+  async function getBalanceSheet(
     req: Request,
     res: Response,
     next: NextFunction
   ) {
     const language = parseLanguageParameter(req.query.lng);
-    this.dataSource.manager
+    dataSource.manager
       .transaction(async (entityManager) => {
         const balanceSheetRepository =
-          this.repoProvider.getBalanceSheetEntityRepo(entityManager);
+          repoProvider.getBalanceSheetRepo(entityManager);
         const balanceSheetEntity = await balanceSheetRepository.findByIdOrFail(
           Number(req.params.id)
         );
-        Authorization.checkIfCurrentUserHasEditorPermissions(
+        await checkIfCurrentUserHasEditorPermissions(
           req,
+          repoProvider.getOrganizationRepo(entityManager),
           balanceSheetEntity
         );
         res.json(balanceSheetEntity.toJson(language));
@@ -104,50 +103,25 @@ export class BalanceSheetService {
       });
   }
 
-  public async getMatrixRepresentationOfBalanceSheet(
+  async function deleteBalanceSheet(
     req: Request,
     res: Response,
     next: NextFunction
   ) {
-    const language = parseLanguageParameter(req.query.lng);
-    this.dataSource.manager
-      .transaction(async (entityManager) => {
-        const balanceSheetRepository =
-          this.repoProvider.getBalanceSheetEntityRepo(entityManager);
-        const balanceSheetId: number = Number(req.params.id);
-        const balanceSheetEntity = await balanceSheetRepository.findByIdOrFail(
-          balanceSheetId
-        );
-        Authorization.checkIfCurrentUserHasEditorPermissions(
-          req,
-          balanceSheetEntity
-        );
-
-        res.json(balanceSheetEntity.asMatrixRepresentation(language));
-      })
-      .catch((error) => {
-        handle(error, next);
-      });
-  }
-
-  public async deleteBalanceSheet(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
-    this.dataSource.manager
+    dataSource.manager
       .transaction(async (entityManager) => {
         const balanceSheetId: number = Number(req.params.id);
         const balanceSheetRepository =
-          this.repoProvider.getBalanceSheetEntityRepo(entityManager);
-        const balanceSheetEntity = await balanceSheetRepository.findByIdOrFail(
+          repoProvider.getBalanceSheetRepo(entityManager);
+        const balanceSheet = await balanceSheetRepository.findByIdOrFail(
           balanceSheetId
         );
-        Authorization.checkIfCurrentUserHasEditorPermissions(
+        await checkIfCurrentUserHasEditorPermissions(
           req,
-          balanceSheetEntity
+          repoProvider.getOrganizationRepo(entityManager),
+          balanceSheet
         );
-        await balanceSheetRepository.remove(balanceSheetEntity);
+        await balanceSheetRepository.remove(balanceSheet);
 
         res.json({
           message: `Deleted balance sheet with id ${balanceSheetId}`,
@@ -157,6 +131,47 @@ export class BalanceSheetService {
         handle(error, next);
       });
   }
+
+  async function getMatrixRepresentationOfBalanceSheet(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    const language = parseLanguageParameter(req.query.lng);
+    dataSource.manager
+      .transaction(async (entityManager) => {
+        const balanceSheetRepository =
+          repoProvider.getBalanceSheetRepo(entityManager);
+        const balanceSheetId: number = Number(req.params.id);
+        const balanceSheet = await balanceSheetRepository.findByIdOrFail(
+          balanceSheetId
+        );
+        await checkIfCurrentUserHasEditorPermissions(
+          req,
+          repoProvider.getOrganizationRepo(entityManager),
+          balanceSheet
+        );
+
+        res.json(balanceSheet.asMatrixRepresentation(language));
+      })
+      .catch((error) => {
+        handle(error, next);
+      });
+  }
+
+  return deepFreeze({
+    updateBalanceSheet,
+    getBalanceSheet,
+    deleteBalanceSheet,
+    getMatrixRepresentationOfBalanceSheet,
+  });
+}
+
+export class BalanceSheetService {
+  constructor(
+    private dataSource: DataSource,
+    private repoProvider: IOldRepoProvider
+  ) {}
 
   public async diffBetweenUploadApiBalanceSheet(
     req: Request,

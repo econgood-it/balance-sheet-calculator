@@ -5,9 +5,6 @@ import {
   makeMainOriginOfOtherSuppliers,
   makeSupplyFraction,
 } from '../../src/models/company.facts';
-import { makeBalanceSheet } from '../../src/models/balance.sheet';
-import { BalanceSheetEntity } from '../../src/entities/balance.sheet.entity';
-import { balanceSheetFactory } from '../../src/openapi/examples';
 
 describe('Company Facts', () => {
   it('is created with default values', () => {

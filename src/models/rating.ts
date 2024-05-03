@@ -5,9 +5,10 @@ import {
   RatingRequestBodySchema,
   RatingResponseBodySchema,
 } from '@ecogood/e-calculator-schemas/dist/rating.dto';
-import * as _ from 'lodash';
-import { mergeVal } from '../merge/merge.utils';
 import { staticTranslate, Translations } from '../language/translations';
+import { MatrixRatingBodySchema } from '@ecogood/e-calculator-schemas/dist/matrix.dto';
+import { roundWithPrecision } from '../math';
+import { none, Option, some } from '../calculations/option';
 
 type RatingOpts = {
   shortName: string;
@@ -30,6 +31,9 @@ export type Rating = RatingOpts & {
   isAspectOfTopic: (shortNameTopic: string) => boolean;
   submitEstimations: (estimations: number) => Rating;
   getStakeholderName: () => string;
+  toMatrixFormat: (
+    language: keyof Translations
+  ) => z.infer<typeof MatrixRatingBodySchema>;
 };
 
 export function makeRating(opts?: RatingOpts): Rating {
@@ -101,6 +105,34 @@ export function makeRating(opts?: RatingOpts): Rating {
     );
   }
 
+  function toMatrixFormat(
+    language: keyof Translations
+  ): z.infer<typeof MatrixRatingBodySchema> {
+    const percentage = calcPercentage();
+    const percentageReached = percentage.isPresent()
+      ? percentage.get()
+      : undefined;
+    return MatrixRatingBodySchema.parse({
+      shortName: data.shortName,
+      name: staticTranslate(language, data.name),
+      points: roundWithPrecision(data.points),
+      maxPoints: roundWithPrecision(data.maxPoints),
+      percentageReached,
+      notApplicable: notApplicable(),
+    });
+  }
+
+  function calcPercentage(): Option<number> {
+    if (data.maxPoints === 0 || data.points < 0) {
+      return none();
+    }
+    return some(roundWithPrecision(data.points / data.maxPoints, 1) * 100);
+  }
+
+  function notApplicable(): boolean {
+    return data.weight === 0;
+  }
+
   function toJson(
     language: keyof Translations
   ): z.infer<typeof RatingResponseBodySchema> {
@@ -126,5 +158,6 @@ export function makeRating(opts?: RatingOpts): Rating {
     getStakeholderName,
     merge,
     toJson,
+    toMatrixFormat,
   });
 }

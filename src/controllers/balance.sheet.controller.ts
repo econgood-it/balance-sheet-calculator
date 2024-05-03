@@ -5,7 +5,6 @@ import {
 } from '../services/balance.sheet.service';
 import { allowUserOnly } from './role.access';
 import { upload } from './utils';
-import { IOrganizationService } from '../services/organization.service';
 
 const resourceUrl = '/v1/balancesheets';
 export const BalanceSheetPaths = {
@@ -27,6 +26,21 @@ export function registerBalanceSheetRoutes(
     allowUserOnly,
     balanceSheetService.updateBalanceSheet
   );
+  app.get(
+    BalanceSheetPaths.get,
+    allowUserOnly,
+    balanceSheetService.getBalanceSheet
+  );
+  app.delete(
+    BalanceSheetPaths.delete,
+    allowUserOnly,
+    balanceSheetService.deleteBalanceSheet
+  );
+  app.get(
+    BalanceSheetPaths.matrix,
+    allowUserOnly,
+    balanceSheetService.getMatrixRepresentationOfBalanceSheet
+  );
 }
 
 export class BalanceSheetController {
@@ -39,23 +53,6 @@ export class BalanceSheetController {
   }
 
   public routes() {
-    this.app.get(
-      BalanceSheetPaths.get,
-      allowUserOnly,
-      this.balanceSheetService.getBalanceSheet.bind(this.balanceSheetService)
-    );
-    this.app.get(
-      BalanceSheetPaths.matrix,
-      allowUserOnly,
-      this.balanceSheetService.getMatrixRepresentationOfBalanceSheet.bind(
-        this.balanceSheetService
-      )
-    );
-    this.app.delete(
-      BalanceSheetPaths.delete,
-      allowUserOnly,
-      this.balanceSheetService.deleteBalanceSheet.bind(this.balanceSheetService)
-    );
     this.app.post(
       BalanceSheetPaths.diff,
       allowUserOnly,

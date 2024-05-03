@@ -13,7 +13,6 @@ import {
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import { OldRepoProvider } from '../../../src/repositories/oldRepoProvider';
-import { OrganizationBuilder } from '../../OrganizationBuilder';
 import { InMemoryAuthentication } from '../in.memory.authentication';
 import { makeRepoProvider } from '../../../src/repositories/repo.provider';
 import { makeOrganization } from '../../../src/models/organization';
@@ -32,7 +31,6 @@ describe('Update endpoint of Balance Sheet Controller', () => {
   const authBuilder = new AuthBuilder();
   const auth = authBuilder.addUser();
   const authWithoutOrgaPermissions = authBuilder.addUser();
-  const organizationBuilder = new OrganizationBuilder().addMember(auth.user);
 
   beforeAll(async () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
