@@ -11,8 +11,6 @@ import {
 import { makeRating } from '../../src/models/rating';
 import { makeOrganization } from '../../src/models/organization';
 import { LookupError } from '../../src/exceptions/lookup.error';
-
-import { ValueError } from '../../src/exceptions/value.error';
 import { makeWeighting } from '../../src/models/weighting';
 
 describe('BalanceSheet', () => {
@@ -75,30 +73,6 @@ describe('BalanceSheet', () => {
   it('should fail with lookup error if rating with shortName does not exist', () => {
     const balanceSheet = makeBalanceSheet();
     expect(() => balanceSheet.getRating('B4.3')).toThrow(LookupError);
-  });
-
-  it('submits estimations for ratings', () => {
-    const balanceSheet = makeBalanceSheet();
-    const newBalanceSheet = balanceSheet.submitEstimations([
-      { shortName: 'B3.1', estimations: 5 },
-      {
-        shortName: 'B3.2',
-        estimations: 7,
-      },
-      { shortName: 'B3.3', estimations: -3 },
-    ]);
-    expect(newBalanceSheet.getRating('B3.1').estimations).toBe(5);
-    expect(newBalanceSheet.getRating('B3.2').estimations).toBe(7);
-    expect(newBalanceSheet.getRating('B3.3').estimations).toBe(-3);
-    expect(newBalanceSheet.getRating('B3').points).toBe(27);
-    expect(newBalanceSheet.getRating('B3').estimations).toBe(27 / 50);
-  });
-
-  it('should fail if submitEstimations is called for a topic', () => {
-    const balanceSheet = makeBalanceSheet();
-    expect(() =>
-      balanceSheet.submitEstimations([{ shortName: 'B3', estimations: 5 }])
-    ).toThrow(ValueError);
   });
 
   it('assigns an organization', () => {
@@ -179,11 +153,13 @@ describe('BalanceSheet', () => {
         shortName: rating.shortName,
         estimations: 10,
       }));
-      const newBalanceSheet = balanceSheet.submitEstimations(estimations);
+      const newBalanceSheet = await balanceSheet
+        .merge({ ratings: estimations })
+        .reCalculate();
       expect(newBalanceSheet.totalPoints()).toBeCloseTo(1000, 11);
     });
     it('should return 0 if all topics are 0', async () => {
-      const balanceSheet = makeBalanceSheet();
+      const balanceSheet = await makeBalanceSheet().reCalculate();
       expect(balanceSheet.totalPoints()).toBe(0);
     });
 
@@ -193,7 +169,9 @@ describe('BalanceSheet', () => {
         shortName: rating.shortName,
         estimations: -200,
       }));
-      const newBalanceSheet = balanceSheet.submitEstimations(estimations);
+      const newBalanceSheet = await balanceSheet
+        .merge({ ratings: estimations })
+        .reCalculate();
       expect(newBalanceSheet.totalPoints()).toBe(-3600);
     });
 

@@ -38,9 +38,6 @@ export type BalanceSheet = BalanceSheetOpts & {
   getTopics: () => Rating[];
   getAspects: (shortNameTopic?: string) => Rating[];
   assignOrganization: (organization: Organization) => BalanceSheet;
-  submitEstimations: (
-    submissions: { shortName: string; estimations: number }[]
-  ) => BalanceSheet;
   totalPoints: () => number;
   getPositiveAspects: (shortNameTopic?: string) => Rating[];
   getNegativeAspects: (shortNameTopic?: string) => Rating[];
@@ -244,37 +241,6 @@ export function makeBalanceSheet(opts?: BalanceSheetOpts): BalanceSheet {
     return adjustTopicWeights(topicWeights, stakeholderWeights);
   }
 
-  function submitEstimations(
-    submissions: { shortName: string; estimations: number }[]
-  ): BalanceSheet {
-    // Update aspects
-    const newAspects = submissions.map(({ shortName, estimations }) => {
-      const rating = getRating(shortName);
-      if (rating.isTopic()) {
-        throw new ValueError('You cannot submit estimations for a topic');
-      }
-      return rating.isPositive
-        ? rating.submitPositiveEstimations(estimations)
-        : rating.submitNegativeEstimations(
-            estimations,
-            getTopicOfAspect(shortName).maxPoints
-          );
-    });
-    const newRatings = replaceRatings(newAspects);
-    // Update topics
-    const topics = newRatings.getTopics().map((topic) => {
-      const aspects = newRatings.getAspects(topic.shortName);
-      const points = aspects.reduce(
-        (sumAcc, currentRating) => sumAcc + currentRating.points,
-        0
-      );
-      const estimations = topic.maxPoints > 0 ? points / topic.maxPoints : 0;
-
-      return makeRating({ ...topic, points, estimations });
-    });
-    return replaceRatings([...topics, ...newAspects]);
-  }
-
   const MAX_NEGATIVE_POINTS = -3600;
 
   function totalPoints(): number {
@@ -311,7 +277,6 @@ export function makeBalanceSheet(opts?: BalanceSheetOpts): BalanceSheet {
     getAspects,
     assignOrganization,
     getRating,
-    submitEstimations,
     totalPoints,
     getPositiveAspects,
     getNegativeAspects,

@@ -26,9 +26,8 @@ describe('Rating', () => {
       isWeightSelectedByUser: false,
       isPositive: true,
     });
-    const newRating = rating.submitPositiveEstimations(5);
+    const newRating = rating.submitEstimations(5);
     expect(newRating.estimations).toBe(5);
-    expect(newRating.points).toBe(25);
   });
 
   it('should submit estimations for negative aspect', () => {
@@ -42,29 +41,8 @@ describe('Rating', () => {
       isWeightSelectedByUser: false,
       isPositive: false,
     });
-    const topicMaxPoints = 50;
-    const newRating = rating.submitNegativeEstimations(-60, topicMaxPoints);
+    const newRating = rating.submitEstimations(-60);
     expect(newRating.estimations).toBe(-60);
-    expect(newRating.points).toBe(-60);
-  });
-
-  it('should fail if submitPositiveEstimations is called for negative aspect', () => {
-    const rating = makeRating({
-      shortName: 'A1.2',
-      name: 'Negative aspect: violation of human dignity in the supply chain',
-      estimations: 0,
-      points: 0,
-      maxPoints: -200,
-      weight: 1,
-      isWeightSelectedByUser: false,
-      isPositive: false,
-    });
-    expect(() => rating.submitPositiveEstimations(0)).toThrow(ValueError);
-  });
-
-  it('should fail if submitNegativeEstimations is called for positive aspect', () => {
-    const rating = makeRating();
-    expect(() => rating.submitNegativeEstimations(0, 50)).toThrow(ValueError);
   });
 
   it('should fail to submit estimations outside [0,10] for positive aspect', () => {
@@ -78,8 +56,8 @@ describe('Rating', () => {
       isWeightSelectedByUser: false,
       isPositive: true,
     });
-    expect(() => rating.submitPositiveEstimations(-1)).toThrow(ValueError);
-    expect(() => rating.submitPositiveEstimations(11)).toThrow(ValueError);
+    expect(() => rating.submitEstimations(-1)).toThrow(ValueError);
+    expect(() => rating.submitEstimations(11)).toThrow(ValueError);
   });
 
   it('should ignore validations for estimations if the rating is a topic', () => {
@@ -93,8 +71,8 @@ describe('Rating', () => {
       isWeightSelectedByUser: false,
       isPositive: true,
     });
-    expect(() => rating.submitPositiveEstimations(11)).not.toThrow();
-    expect(() => rating.submitPositiveEstimations(-1)).not.toThrow();
+    expect(() => rating.submitEstimations(11)).not.toThrow();
+    expect(() => rating.submitEstimations(-1)).not.toThrow();
   });
 
   it('should fail to submit estimations outside [-200, 0] for negative aspect', () => {
@@ -108,14 +86,9 @@ describe('Rating', () => {
       isWeightSelectedByUser: false,
       isPositive: false,
     });
-    const topicMaxPoints = 50;
 
-    expect(() => rating.submitNegativeEstimations(2, topicMaxPoints)).toThrow(
-      ValueError
-    );
-    expect(() =>
-      rating.submitNegativeEstimations(-201, topicMaxPoints)
-    ).toThrow(ValueError);
+    expect(() => rating.submitEstimations(2)).toThrow(ValueError);
+    expect(() => rating.submitEstimations(-201)).toThrow(ValueError);
   });
 
   it('should differ between topic and aspect', () => {

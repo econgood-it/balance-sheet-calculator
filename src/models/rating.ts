@@ -21,11 +21,7 @@ export type Rating = RatingOpts & {
   isTopic: () => boolean;
   isAspect: () => boolean;
   isAspectOfTopic: (shortNameTopic: string) => boolean;
-  submitPositiveEstimations: (estimations: number) => Rating;
-  submitNegativeEstimations: (
-    estimations: number,
-    topicMaxPoints: number
-  ) => Rating;
+  submitEstimations: (estimations: number) => Rating;
   getStakeholderName: () => string;
 };
 
@@ -76,47 +72,26 @@ export function makeRating(opts?: RatingOpts): Rating {
     return data.shortName.length === 2;
   }
 
-  function submitPositiveEstimations(estimations: number): Rating {
-    if (!data.isPositive) {
-      throw new ValueError(
-        'You cannot submit positive estimations for a negative rating'
-      );
-    }
-    const points = (data.maxPoints * estimations) / 10.0;
-    return makeRating({ ...data, estimations, points });
-  }
-
-  function submitNegativeEstimations(
-    estimations: number,
-    topicMaxPoints: number
-  ): Rating {
-    if (data.isPositive) {
-      throw new ValueError(
-        'You cannot submit negative estimations for a positive rating'
-      );
-    }
-    const points = (estimations * topicMaxPoints) / 50.0;
-    return makeRating({ ...data, estimations, points });
+  function submitEstimations(estimations: number): Rating {
+    return makeRating({ ...data, estimations });
   }
 
   function getStakeholderName(): string {
     return data.shortName.substring(0, 1);
   }
 
+  function adjustWeight(weight?: number): Rating {
+    if (data.isPositive && weight) {
+      return makeRating({ ...data, weight, isWeightSelectedByUser: true });
+    } else {
+      return makeRating({ ...data, isWeightSelectedByUser: false });
+    }
+  }
+
   function merge(requestBody: z.infer<typeof RatingRequestBodySchema>): Rating {
-    const mergedRating = {
-      ..._.merge(data, requestBody),
-      ...(data.isPositive && requestBody.weight !== undefined
-        ? {
-            isWeightSelectedByUser: true,
-            weight: mergeVal(data.weight, requestBody.weight),
-          }
-        : {
-            isWeightSelectedByUser: false,
-            weight: data.weight,
-          }),
-    };
-    return makeRating(mergedRating);
+    return adjustWeight(requestBody.weight).submitEstimations(
+      requestBody.estimations || data.estimations
+    );
   }
 
   return deepFreeze({
@@ -124,8 +99,7 @@ export function makeRating(opts?: RatingOpts): Rating {
     isTopic,
     isAspect,
     isAspectOfTopic,
-    submitPositiveEstimations,
-    submitNegativeEstimations,
+    submitEstimations,
     getStakeholderName,
     merge,
   });
