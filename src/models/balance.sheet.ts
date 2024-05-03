@@ -4,7 +4,7 @@ import {
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import { CompanyFacts, makeCompanyFacts } from './company.facts';
 import { makeRating, Rating } from './rating';
-import { Weighting } from './weighting';
+import { makeWeighting, Weighting } from './weighting';
 import deepFreeze from 'deep-freeze';
 import { makeRatingFactory } from '../factories/rating.factory';
 import { Organization } from './organization';
@@ -17,6 +17,8 @@ import { calculate } from '../calculations/calculator';
 import { makeStakeholderWeightCalculator } from '../calculations/stakeholder.weight.calculator';
 import { makeTopicWeightCalculator } from '../calculations/topic.weight.calculator';
 import { WeightingProvider } from '../providers/weightingProvider';
+import { BalanceSheetPatchRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
+import { z } from 'zod';
 
 type BalanceSheetOpts = {
   id?: number;
@@ -29,6 +31,9 @@ type BalanceSheetOpts = {
 };
 //
 export type BalanceSheet = BalanceSheetOpts & {
+  merge: (
+    requestBody: z.infer<typeof BalanceSheetPatchRequestBodySchema>
+  ) => BalanceSheet;
   getRating: (shortName: string) => Rating;
   getTopics: () => Rating[];
   getAspects: (shortNameTopic?: string) => Rating[];
@@ -279,8 +284,29 @@ export function makeBalanceSheet(opts?: BalanceSheetOpts): BalanceSheet {
     return sum < MAX_NEGATIVE_POINTS ? MAX_NEGATIVE_POINTS : sum;
   }
 
+  function merge(
+    requestBody: z.infer<typeof BalanceSheetPatchRequestBodySchema>
+  ): BalanceSheet {
+    return makeBalanceSheet({
+      ...data,
+      companyFacts: requestBody.companyFacts
+        ? data.companyFacts.merge(requestBody.companyFacts)
+        : data.companyFacts,
+      ratings: data.ratings.map((rating) => {
+        const newRating = requestBody.ratings.find(
+          (newRating) => newRating.shortName === rating.shortName
+        );
+        return newRating ? rating.merge(newRating) : rating;
+      }),
+      stakeholderWeights:
+        requestBody.stakeholderWeights?.map((sw) => makeWeighting(sw)) ||
+        data.stakeholderWeights,
+    });
+  }
+
   return deepFreeze({
     ...data,
+    merge,
     getTopics,
     getAspects,
     assignOrganization,

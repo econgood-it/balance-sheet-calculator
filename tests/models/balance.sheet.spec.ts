@@ -1,4 +1,7 @@
-import { makeCompanyFacts } from '../../src/models/company.facts';
+import {
+  makeCompanyFacts,
+  makeSupplyFraction,
+} from '../../src/models/company.facts';
 import { makeBalanceSheet } from '../../src/models/balance.sheet';
 import { makeRatingFactory } from '../../src/factories/rating.factory';
 import {
@@ -10,6 +13,7 @@ import { makeOrganization } from '../../src/models/organization';
 import { LookupError } from '../../src/exceptions/lookup.error';
 
 import { ValueError } from '../../src/exceptions/value.error';
+import { makeWeighting } from '../../src/models/weighting';
 
 describe('BalanceSheet', () => {
   it('is created with default values', () => {
@@ -192,6 +196,7 @@ describe('BalanceSheet', () => {
       const newBalanceSheet = balanceSheet.submitEstimations(estimations);
       expect(newBalanceSheet.totalPoints()).toBe(-3600);
     });
+
     //
     // it('should return -3600 if due to different stakeholder weights the sum of all topics is less than -3600', async () => {
     //   const ratings =
@@ -199,5 +204,118 @@ describe('BalanceSheet', () => {
     //   const totalPoints = calculateTotalPoints(ratings);
     //   expect(totalPoints).toBe(-3600);
     // });
+  });
+  describe('is merged', () => {
+    it('with request body', () => {
+      const balanceSheet = makeBalanceSheet();
+      const requestBody = {
+        ratings: [
+          {
+            shortName: 'D4.2',
+            estimations: 4,
+          },
+          {
+            shortName: 'D4.3',
+            estimations: -100,
+          },
+        ],
+        companyFacts: {
+          supplyFractions: [
+            { countryCode: 'BEL', costs: 20, industryCode: 'A' },
+            { countryCode: 'DEU', costs: 13, industryCode: 'B' },
+          ],
+        },
+      };
+
+      const newBalanceSheet = balanceSheet.merge(requestBody);
+      expect(newBalanceSheet.getRating('D4.2').estimations).toBe(4);
+      expect(newBalanceSheet.getRating('D4.3').estimations).toBe(-100);
+      expect(newBalanceSheet.companyFacts.supplyFractions).toEqual([
+        makeSupplyFraction({
+          countryCode: 'BEL',
+          costs: 20,
+          industryCode: 'A',
+        }),
+        makeSupplyFraction({
+          countryCode: 'DEU',
+          costs: 13,
+          industryCode: 'B',
+        }),
+      ]);
+    });
+
+    it('using empty stakeholder weights from request body', () => {
+      const balanceSheet = makeBalanceSheet({
+        ...makeBalanceSheet(),
+        stakeholderWeights: [
+          makeWeighting({
+            shortName: 'A',
+            weight: 0.5,
+          }),
+        ],
+      });
+      const requestBody = {
+        ratings: [],
+        stakeholderWeights: [],
+      };
+
+      const newBalanceSheet = balanceSheet.merge(requestBody);
+      expect(newBalanceSheet.stakeholderWeights).toEqual([]);
+    });
+
+    it('using stakeholder weights from domain', () => {
+      const balanceSheet = makeBalanceSheet({
+        ...makeBalanceSheet(),
+        stakeholderWeights: [
+          makeWeighting({
+            shortName: 'A',
+            weight: 0.5,
+          }),
+        ],
+      });
+      const requestBody = {
+        ratings: [],
+        stakeholderWeights: undefined,
+      };
+
+      const newBalanceSheet = balanceSheet.merge(requestBody);
+      expect(newBalanceSheet.stakeholderWeights).toEqual([
+        makeWeighting({
+          shortName: 'A',
+          weight: 0.5,
+        }),
+      ]);
+    });
+
+    it('using non empty stakeholder weights from request body', () => {
+      const balanceSheet = makeBalanceSheet({
+        ...makeBalanceSheet(),
+        stakeholderWeights: [
+          makeWeighting({
+            shortName: 'A',
+            weight: 0.5,
+          }),
+        ],
+      });
+      const requestBody = {
+        ratings: [],
+        stakeholderWeights: [
+          { shortName: 'A', weight: 2 },
+          { shortName: 'D', weight: 1.5 },
+        ],
+      };
+
+      const newBalanceSheet = balanceSheet.merge(requestBody);
+      expect(newBalanceSheet.stakeholderWeights).toEqual([
+        makeWeighting({
+          shortName: 'A',
+          weight: 2,
+        }),
+        makeWeighting({
+          shortName: 'D',
+          weight: 1.5,
+        }),
+      ]);
+    });
   });
 });
