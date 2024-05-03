@@ -1,6 +1,9 @@
 import deepFreeze from 'deep-freeze';
 import { DEFAULT_COUNTRY_CODE } from './region';
 import _ from 'lodash';
+import { CompanyFactsPatchRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/company.facts.dto';
+import { z } from 'zod';
+import { decimalToPercentage, percentageToDecimal } from '../math';
 
 export type SupplyFraction = {
   countryCode?: string;
@@ -92,6 +95,9 @@ type CompanyFactsOpts = {
 };
 
 export type CompanyFacts = CompanyFactsOpts & {
+  merge: (
+    requestBody: z.infer<typeof CompanyFactsPatchRequestBodySchema>
+  ) => CompanyFacts;
   areAllValuesZero: () => boolean;
   withFields: (fields: Partial<CompanyFactsOpts>) => CompanyFacts;
   mainOriginOfOtherSuppliers: MainOriginOfOtherSuppliers;
@@ -154,6 +160,35 @@ export function makeCompanyFacts(opts?: CompanyFactsOpts): CompanyFacts {
     return makeCompanyFacts({ ...data, ...fields });
   }
 
+  function merge(
+    requestBody: z.infer<typeof CompanyFactsPatchRequestBodySchema>
+  ): CompanyFacts {
+    const supplyFractions =
+      requestBody.supplyFractions?.map((sf) => makeSupplyFraction(sf)) ||
+      data.supplyFractions;
+    const employeesFractions =
+      requestBody.employeesFractions?.map((ef) =>
+        makeEmployeesFraction({
+          ...ef,
+          percentage: percentageToDecimal(ef.percentage),
+        })
+      ) || data.employeesFractions;
+    const industrySectors =
+      requestBody.industrySectors?.map((is) => makeIndustrySector(is)) ||
+      data.industrySectors;
+    const mainOriginOfOtherSuppliers = requestBody.mainOriginOfOtherSuppliers
+      ? { countryCode: requestBody.mainOriginOfOtherSuppliers }
+      : data.mainOriginOfOtherSuppliers;
+    return makeCompanyFacts({
+      ...data,
+      ...requestBody,
+      supplyFractions,
+      employeesFractions,
+      industrySectors,
+      mainOriginOfOtherSuppliers,
+    });
+  }
+
   return deepFreeze({
     ...data,
     mainOriginOfOtherSuppliers: makeMainOriginOfOtherSuppliers({
@@ -163,5 +198,6 @@ export function makeCompanyFacts(opts?: CompanyFactsOpts): CompanyFacts {
     }),
     areAllValuesZero,
     withFields,
+    merge,
   });
 }

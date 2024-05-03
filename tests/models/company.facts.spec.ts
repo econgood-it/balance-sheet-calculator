@@ -1,5 +1,7 @@
 import {
   makeCompanyFacts,
+  makeEmployeesFraction,
+  makeMainOriginOfOtherSuppliers,
   makeSupplyFraction,
 } from '../../src/models/company.facts';
 
@@ -95,5 +97,370 @@ describe('Company Facts', () => {
       countryCode: 'AGO',
       costs: 1000 - 100 - 200,
     });
+  });
+
+  describe('is merged with request body', () => {
+    it('using profit from domain', () => {
+      const companyFacts = makeCompanyFacts().withFields({
+        profit: 200,
+      });
+      const newCompanyFacts = companyFacts.merge({});
+      expect(newCompanyFacts.profit).toEqual(200);
+    });
+
+    it('using profit from dto', async () => {
+      const companyFacts = makeCompanyFacts().withFields({
+        profit: 200,
+      });
+      const newCompanyFacts = companyFacts.merge({ profit: 300 });
+      expect(newCompanyFacts.profit).toEqual(300);
+    });
+
+    it('using supply fractions from domain', () => {
+      const supplyFractions = [
+        makeSupplyFraction({
+          countryCode: 'DEU',
+          costs: 100,
+          industryCode: 'A',
+        }),
+        makeSupplyFraction({
+          countryCode: 'BEL',
+          costs: 200,
+          industryCode: 'B',
+        }),
+      ];
+      const companyFacts = makeCompanyFacts().withFields({
+        supplyFractions,
+      });
+      const newCompanyFacts = companyFacts.merge({});
+      expect(newCompanyFacts.supplyFractions).toEqual(supplyFractions);
+    });
+
+    it('using supply fractions from dto', () => {
+      const supplyFractions = [
+        makeSupplyFraction({
+          countryCode: 'DEU',
+          costs: 100,
+          industryCode: 'A',
+        }),
+        makeSupplyFraction({
+          countryCode: 'BEL',
+          costs: 200,
+          industryCode: 'B',
+        }),
+      ];
+      const companyFacts = makeCompanyFacts().withFields({
+        supplyFractions,
+      });
+      const newSupplyFraction = {
+        countryCode: 'ALG',
+        costs: 5,
+        industryCode: 'Ce',
+      };
+      const newCompanyFacts = companyFacts.merge({
+        supplyFractions: [newSupplyFraction],
+      });
+      expect(newCompanyFacts.supplyFractions).toEqual([
+        makeSupplyFraction(newSupplyFraction),
+      ]);
+    });
+
+    it('using employees fractions from domain', () => {
+      const employeesFractions = [
+        makeEmployeesFraction({
+          countryCode: 'DEU',
+          percentage: 100,
+        }),
+        makeEmployeesFraction({
+          countryCode: 'BEL',
+          percentage: 200,
+        }),
+      ];
+      const companyFacts = makeCompanyFacts().withFields({
+        employeesFractions,
+      });
+      const newCompanyFacts = companyFacts.merge({});
+      expect(newCompanyFacts.employeesFractions).toEqual(employeesFractions);
+    });
+
+    it('using employees fractions from dto', () => {
+      const employeesFractions = [
+        makeEmployeesFraction({
+          countryCode: 'DEU',
+          percentage: 0.5,
+        }),
+        makeEmployeesFraction({
+          countryCode: 'BEL',
+          percentage: 0.9,
+        }),
+      ];
+      const companyFacts = makeCompanyFacts().withFields({
+        employeesFractions,
+      });
+      const newEmployeesFraction = {
+        countryCode: 'ALG',
+        percentage: 30,
+      };
+      const newCompanyFacts = companyFacts.merge({
+        employeesFractions: [newEmployeesFraction],
+      });
+      expect(newCompanyFacts.employeesFractions).toEqual([
+        makeEmployeesFraction({
+          ...newEmployeesFraction,
+          percentage: 0.3,
+        }),
+      ]);
+    });
+  });
+
+  it('using totalPurchaseFromSuppliers from domain', () => {
+    const companyFacts = makeCompanyFacts().withFields({
+      totalPurchaseFromSuppliers: 1000,
+    });
+    const newCompanyFacts = companyFacts.merge({});
+    expect(newCompanyFacts.totalPurchaseFromSuppliers).toEqual(1000);
+  });
+
+  it('using totalPurchaseFromSuppliers from dto', () => {
+    const companyFacts = makeCompanyFacts().withFields({
+      totalPurchaseFromSuppliers: 1000,
+    });
+    const newCompanyFacts = companyFacts.merge({
+      totalPurchaseFromSuppliers: 2000,
+    });
+    expect(newCompanyFacts.totalPurchaseFromSuppliers).toEqual(2000);
+  });
+
+  it('using totalStaffCosts from domain', () => {
+    const companyFacts = makeCompanyFacts().withFields({
+      totalStaffCosts: 1000,
+    });
+    const newCompanyFacts = companyFacts.merge({});
+    expect(newCompanyFacts.totalStaffCosts).toEqual(1000);
+  });
+
+  it('using totalStaffCosts from dto', () => {
+    const companyFacts = makeCompanyFacts().withFields({
+      totalStaffCosts: 1000,
+    });
+    const newCompanyFacts = companyFacts.merge({
+      totalStaffCosts: 2000,
+    });
+    expect(newCompanyFacts.totalStaffCosts).toEqual(2000);
+  });
+
+  it('using financialCosts from domain', () => {
+    const companyFacts = makeCompanyFacts().withFields({
+      financialCosts: 1000,
+    });
+    const newCompanyFacts = companyFacts.merge({});
+    expect(newCompanyFacts.financialCosts).toEqual(1000);
+  });
+
+  it('using financialCosts from dto', () => {
+    const companyFacts = makeCompanyFacts().withFields({
+      financialCosts: 1000,
+    });
+    const newCompanyFacts = companyFacts.merge({
+      financialCosts: 2000,
+    });
+    expect(newCompanyFacts.financialCosts).toEqual(2000);
+  });
+
+  it('using incomeFromFinancialInvestments from domain', () => {
+    const companyFacts = makeCompanyFacts().withFields({
+      incomeFromFinancialInvestments: 1000,
+    });
+    const newCompanyFacts = companyFacts.merge({});
+    expect(newCompanyFacts.incomeFromFinancialInvestments).toEqual(1000);
+  });
+
+  it('using incomeFromFinancialInvestments from dto', () => {
+    const companyFacts = makeCompanyFacts().withFields({
+      incomeFromFinancialInvestments: 1000,
+    });
+    const newCompanyFacts = companyFacts.merge({
+      incomeFromFinancialInvestments: 2000,
+    });
+    expect(newCompanyFacts.incomeFromFinancialInvestments).toEqual(2000);
+  });
+
+  it('using additionsToFixedAssets from domain', () => {
+    const companyFacts = makeCompanyFacts().withFields({
+      additionsToFixedAssets: 1000,
+    });
+    const newCompanyFacts = companyFacts.merge({});
+    expect(newCompanyFacts.additionsToFixedAssets).toEqual(1000);
+  });
+
+  it('using additionsToFixedAssets from dto', () => {
+    const companyFacts = makeCompanyFacts().withFields({
+      additionsToFixedAssets: 1000,
+    });
+    const newCompanyFacts = companyFacts.merge({
+      additionsToFixedAssets: 2000,
+    });
+    expect(newCompanyFacts.additionsToFixedAssets).toEqual(2000);
+  });
+
+  it('using turnover from domain', () => {
+    const companyFacts = makeCompanyFacts().withFields({
+      turnover: 1000,
+    });
+    const newCompanyFacts = companyFacts.merge({});
+    expect(newCompanyFacts.turnover).toEqual(1000);
+  });
+
+  it('using turnover from dto', () => {
+    const companyFacts = makeCompanyFacts().withFields({
+      turnover: 1000,
+    });
+    const newCompanyFacts = companyFacts.merge({
+      turnover: 2000,
+    });
+    expect(newCompanyFacts.turnover).toEqual(2000);
+  });
+
+  it('using totalAssets from domain', () => {
+    const companyFacts = makeCompanyFacts().withFields({
+      totalAssets: 1000,
+    });
+    const newCompanyFacts = companyFacts.merge({});
+    expect(newCompanyFacts.totalAssets).toEqual(1000);
+  });
+
+  it('using totalAssets from dto', () => {
+    const companyFacts = makeCompanyFacts().withFields({
+      totalAssets: 1000,
+    });
+    const newCompanyFacts = companyFacts.merge({
+      totalAssets: 2000,
+    });
+    expect(newCompanyFacts.totalAssets).toEqual(2000);
+  });
+
+  it('using financialAssetsAndCashBalance from domain', () => {
+    const companyFacts = makeCompanyFacts().withFields({
+      financialAssetsAndCashBalance: 1000,
+    });
+    const newCompanyFacts = companyFacts.merge({});
+    expect(newCompanyFacts.financialAssetsAndCashBalance).toEqual(1000);
+  });
+
+  it('using financialAssetsAndCashBalance from dto', () => {
+    const companyFacts = makeCompanyFacts().withFields({
+      financialAssetsAndCashBalance: 1000,
+    });
+    const newCompanyFacts = companyFacts.merge({
+      financialAssetsAndCashBalance: 2000,
+    });
+    expect(newCompanyFacts.financialAssetsAndCashBalance).toEqual(2000);
+  });
+
+  it('using numberOfEmployees from domain', () => {
+    const companyFacts = makeCompanyFacts().withFields({
+      numberOfEmployees: 1000,
+    });
+    const newCompanyFacts = companyFacts.merge({});
+    expect(newCompanyFacts.numberOfEmployees).toEqual(1000);
+  });
+
+  it('using numberOfEmployees from dto', () => {
+    const companyFacts = makeCompanyFacts().withFields({
+      numberOfEmployees: 1000,
+    });
+    const newCompanyFacts = companyFacts.merge({
+      numberOfEmployees: 2000,
+    });
+    expect(newCompanyFacts.numberOfEmployees).toEqual(2000);
+  });
+
+  it('using hasCanteen from domain', () => {
+    const companyFacts = makeCompanyFacts().withFields({
+      hasCanteen: true,
+    });
+    const newCompanyFacts = companyFacts.merge({});
+    expect(newCompanyFacts.hasCanteen).toEqual(true);
+  });
+
+  it('using hasCanteen from dto', () => {
+    const companyFacts = makeCompanyFacts().withFields({
+      hasCanteen: true,
+    });
+    const newCompanyFacts = companyFacts.merge({
+      hasCanteen: false,
+    });
+    expect(newCompanyFacts.hasCanteen).toEqual(false);
+  });
+
+  it('using averageJourneyToWorkForStaffInKm from domain', () => {
+    const companyFacts = makeCompanyFacts().withFields({
+      averageJourneyToWorkForStaffInKm: 1000,
+    });
+    const newCompanyFacts = companyFacts.merge({});
+    expect(newCompanyFacts.averageJourneyToWorkForStaffInKm).toEqual(1000);
+  });
+
+  it('using averageJourneyToWorkForStaffInKm from dto', () => {
+    const companyFacts = makeCompanyFacts().withFields({
+      averageJourneyToWorkForStaffInKm: 1000,
+    });
+    const newCompanyFacts = companyFacts.merge({
+      averageJourneyToWorkForStaffInKm: 2000,
+    });
+    expect(newCompanyFacts.averageJourneyToWorkForStaffInKm).toEqual(2000);
+  });
+
+  it('using isB2B from domain', () => {
+    const companyFacts = makeCompanyFacts().withFields({
+      isB2B: true,
+    });
+    const newCompanyFacts = companyFacts.merge({});
+    expect(newCompanyFacts.isB2B).toEqual(true);
+  });
+
+  it('using isB2B from dto', () => {
+    const companyFacts = makeCompanyFacts().withFields({
+      isB2B: true,
+    });
+    const newCompanyFacts = companyFacts.merge({
+      isB2B: false,
+    });
+    expect(newCompanyFacts.isB2B).toEqual(false);
+  });
+
+  it('using mainOriginOfOtherSuppliers from domain', () => {
+    const companyFacts = makeCompanyFacts().withFields({
+      mainOriginOfOtherSuppliers: {
+        countryCode: 'DEU',
+      },
+    });
+    const newCompanyFacts = companyFacts.merge({});
+    expect(newCompanyFacts.mainOriginOfOtherSuppliers).toEqual(
+      makeMainOriginOfOtherSuppliers({
+        countryCode: 'DEU',
+        totalPurchaseFromSuppliers: companyFacts.totalPurchaseFromSuppliers,
+        supplyFractions: companyFacts.supplyFractions,
+      })
+    );
+  });
+
+  it('using mainOriginOfOtherSuppliers from dto', () => {
+    const companyFacts = makeCompanyFacts().withFields({
+      mainOriginOfOtherSuppliers: {
+        countryCode: 'DEU',
+      },
+    });
+    const newCompanyFacts = companyFacts.merge({
+      totalPurchaseFromSuppliers: 1000,
+      mainOriginOfOtherSuppliers: 'BEL',
+    });
+    expect(newCompanyFacts.mainOriginOfOtherSuppliers).toEqual(
+      makeMainOriginOfOtherSuppliers({
+        countryCode: 'BEL',
+        totalPurchaseFromSuppliers: 1000,
+        supplyFractions: companyFacts.supplyFractions,
+      })
+    );
   });
 });
