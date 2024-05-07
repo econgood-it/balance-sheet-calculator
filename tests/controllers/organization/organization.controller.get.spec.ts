@@ -7,12 +7,13 @@ import supertest from 'supertest';
 import { OrganizationPaths } from '../../../src/controllers/organization.controller';
 import { OldRepoProvider } from '../../../src/repositories/oldRepoProvider';
 import { DatabaseSourceCreator } from '../../../src/databaseSourceCreator';
-import { OrganizationBuilder } from '../../OrganizationBuilder';
 import { InMemoryAuthentication } from '../in.memory.authentication';
 import { makeRepoProvider } from '../../../src/repositories/repo.provider';
 import { IOrganizationRepo } from '../../../src/repositories/organization.repo';
 import { makeOrganization } from '../../../src/models/organization';
 import { OrganizationResponseSchema } from '@ecogood/e-calculator-schemas/dist/organization.dto';
+import { IBalanceSheetRepo } from '../../../src/repositories/balance.sheet.repo';
+import { makeBalanceSheet } from '../../../src/models/balance.sheet';
 
 describe('Organization Controller Get Endpoint', () => {
   let dataSource: DataSource;
@@ -123,17 +124,23 @@ describe('Organization Controller Get Balance Sheets Endpoint', () => {
   const authBuilder = new AuthBuilder();
   const auth = authBuilder.addUser();
   const authWithoutOrgaPermissions = authBuilder.addUser();
+  let organizationRepo: IOrganizationRepo;
+  let balanceSheetRepo: IBalanceSheetRepo;
 
   beforeAll(async () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
       configuration
     );
-    const repoProvider = new OldRepoProvider(configuration);
+
+    const repoProvider = makeRepoProvider(configuration);
+    organizationRepo = repoProvider.getOrganizationRepo(dataSource.manager);
+    balanceSheetRepo = repoProvider.getBalanceSheetRepo(dataSource.manager);
+
     app = new App(
       dataSource,
       configuration,
-      makeRepoProvider(configuration),
       repoProvider,
+      new OldRepoProvider(configuration),
       new InMemoryAuthentication(authBuilder.getTokenMap())
     ).app;
   });
@@ -144,34 +151,37 @@ describe('Organization Controller Get Balance Sheets Endpoint', () => {
 
   it('should return balance sheets of organization', async () => {
     const testApp = supertest(app);
-    const { organizationEntity } = await new OrganizationBuilder()
-      .addMember(auth.user)
-      .addBalanceSheetEntity()
-      .addBalanceSheetEntity()
-      .build(dataSource);
+    const organization = await organizationRepo.save(
+      makeOrganization().invite(auth.user.email).join(auth.user)
+    );
+    const balanceSheet1 = await balanceSheetRepo.save(
+      makeBalanceSheet().assignOrganization(organization)
+    );
+    const balanceSheet2 = await balanceSheetRepo.save(
+      makeBalanceSheet().assignOrganization(organization)
+    );
+
     const response = await testApp
-      .get(`${OrganizationPaths.getAll}/${organizationEntity.id}/balancesheet`)
+      .get(`${OrganizationPaths.getAll}/${organization.id}/balancesheet`)
       .set(auth.toHeaderPair().key, auth.toHeaderPair().value);
     expect(response.status).toBe(200);
-    expect(response.body).toEqual(
-      organizationEntity.balanceSheetEntities
-        ?.map((b) => ({
-          id: b.id,
-        }))
-        .sort((a, b) => a.id! - b.id!)
-    );
+    expect(response.body).toEqual([
+      { id: balanceSheet1.id },
+      { id: balanceSheet2.id },
+    ]);
   });
 
   it('should fail if user is not member of organization', async () => {
     const testApp = supertest(app);
-    const { organizationEntity } = await new OrganizationBuilder()
-      .addMember(auth.user)
-      .addBalanceSheetEntity()
-      .addBalanceSheetEntity()
-      .build(dataSource);
+    const organization = await organizationRepo.save(
+      makeOrganization().invite(auth.user.email).join(auth.user)
+    );
+    await balanceSheetRepo.save(
+      makeBalanceSheet().assignOrganization(organization)
+    );
 
     const response = await testApp
-      .get(`${OrganizationPaths.getAll}/${organizationEntity.id}/balancesheet`)
+      .get(`${OrganizationPaths.getAll}/${organization.id}/balancesheet`)
       .set(
         authWithoutOrgaPermissions.toHeaderPair().key,
         authWithoutOrgaPermissions.toHeaderPair().value

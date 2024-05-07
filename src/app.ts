@@ -12,10 +12,7 @@ import { DataSource } from 'typeorm';
 import { DocsController } from './controllers/docs.controller';
 import { HealthCheckController } from './controllers/health.check.controller';
 import { IndustryController } from './controllers/industry.controller';
-import {
-  OrganizationController,
-  registerOrganizationRoutes,
-} from './controllers/organization.controller';
+import { registerOrganizationRoutes } from './controllers/organization.controller';
 import { RegionController } from './controllers/region.controller';
 import { WorkbookController } from './controllers/workbook.controller';
 import { LoggingService } from './logging';
@@ -26,10 +23,7 @@ import { IOldRepoProvider } from './repositories/oldRepoProvider';
 import { makeBalanceSheetService } from './services/balance.sheet.service';
 import { HealthCheckService } from './services/health.check.service';
 import { IndustryService } from './services/industry.service';
-import {
-  makeOrganizationService,
-  OldOrganizationService,
-} from './services/organization.service';
+import { makeOrganizationService } from './services/organization.service';
 import { RegionService } from './services/region.service';
 import { WorkbookService } from './services/workbook.service';
 import { UserController } from './controllers/user.controller';
@@ -43,7 +37,6 @@ class App {
   private regionController: RegionController;
   private industryController: IndustryController;
   private healthCheckController: HealthCheckController;
-  private organizationController: OrganizationController;
   private docsController: DocsController;
   private authentication: Authentication;
   private workbookController: WorkbookController;
@@ -85,10 +78,6 @@ class App {
     this.healthCheckController = new HealthCheckController(
       this.app,
       new HealthCheckService()
-    );
-    this.organizationController = new OrganizationController(
-      this.app,
-      new OldOrganizationService(dataSource, repoProviderOld)
     );
     registerOrganizationRoutes(
       this.app,

@@ -1,8 +1,5 @@
 import { Application } from 'express';
-import {
-  IOrganizationService,
-  OldOrganizationService,
-} from '../services/organization.service';
+import { IOrganizationService } from '../services/organization.service';
 import { allowUserOnly } from './role.access';
 
 const resourceUrl = '/v1/organization';
@@ -50,23 +47,9 @@ export function registerOrganizationRoutes(
     allowUserOnly,
     organizationService.createBalanceSheet
   );
-}
-
-export class OrganizationController {
-  constructor(
-    private app: Application,
-    public oldOrganizationService: OldOrganizationService
-  ) {
-    this.routes();
-  }
-
-  public routes() {
-    this.app.get(
-      OrganizationPaths.orgaBalanceSheet,
-      allowUserOnly,
-      this.oldOrganizationService.getBalanceSheets.bind(
-        this.oldOrganizationService
-      )
-    );
-  }
+  app.get(
+    OrganizationPaths.orgaBalanceSheet,
+    allowUserOnly,
+    organizationService.getBalanceSheets
+  );
 }

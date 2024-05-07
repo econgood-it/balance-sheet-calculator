@@ -49,6 +49,11 @@ export interface IOrganizationService {
     res: Response,
     next: NextFunction
   ): Promise<void>;
+  getBalanceSheets(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void>;
 }
 
 export function makeOrganizationService(
@@ -205,6 +210,40 @@ export function makeOrganizationService(
       });
   }
 
+  async function getBalanceSheets(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    dataSource.manager
+      .transaction(async (entityManager) => {
+        const organizationRepo =
+          repoProvider.getOrganizationRepo(entityManager);
+        const balanceSheetRepo =
+          repoProvider.getBalanceSheetRepo(entityManager);
+        const organization = await organizationRepo.findByIdOrFail(
+          Number(req.params.id)
+        );
+
+        checkIfCurrentUserIsMember(req, organization);
+        const balanceSheets = await balanceSheetRepo.findByOrganization(
+          organization
+        );
+        res.json(
+          BalanceSheetItemsResponseSchema.parse(
+            balanceSheets
+              .map((b) => ({
+                id: b.id,
+              }))
+              .sort((a, b) => a.id! - b.id!)
+          )
+        );
+      })
+      .catch((error) => {
+        handle(error, next);
+      });
+  }
+
   return deepFreeze({
     createOrganization,
     updateOrganization,
@@ -212,6 +251,7 @@ export function makeOrganizationService(
     inviteUser,
     getOrganizationsOfCurrentUser,
     createBalanceSheet,
+    getBalanceSheets,
   });
 }
 
