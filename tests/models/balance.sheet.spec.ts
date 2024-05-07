@@ -312,6 +312,106 @@ describe('BalanceSheet', () => {
     });
   });
 
+  describe('creates balance sheet from create request', () => {
+    it('using default ratings', async () => {
+      const json = {
+        type: BalanceSheetType.Full,
+        version: BalanceSheetVersion.v5_0_8,
+      };
+
+      const result = makeBalanceSheet.fromJson(json);
+
+      const expectedRatings = makeRatingFactory().createDefaultRatings(
+        json.type,
+        json.version
+      );
+      expect(result.ratings).toMatchObject(expectedRatings);
+    });
+
+    it('using given type and version', () => {
+      const json = {
+        type: BalanceSheetType.Compact,
+        version: BalanceSheetVersion.v5_0_6,
+      };
+
+      const result = makeBalanceSheet.fromJson(json);
+
+      expect(result.type).toBe(json.type);
+      expect(result.version).toBe(json.version);
+    });
+
+    it('using given stakeholder weights', () => {
+      const json = {
+        type: BalanceSheetType.Compact,
+        version: BalanceSheetVersion.v5_0_6,
+        stakeholderWeights: [
+          { shortName: 'A', weight: 0.5 },
+          { shortName: 'B', weight: 1 },
+        ],
+      };
+
+      const result = makeBalanceSheet.fromJson(json);
+      expect(result.stakeholderWeights).toEqual([
+        makeWeighting({ shortName: 'A', weight: 0.5 }),
+        makeWeighting({ shortName: 'B', weight: 1 }),
+      ]);
+    });
+
+    it('json with a merged rating to a balance sheet entity', () => {
+      const json = {
+        type: BalanceSheetType.Full,
+        version: BalanceSheetVersion.v5_0_8,
+        ratings: [
+          { shortName: 'A1.1', estimations: 5, weight: 1 },
+          { shortName: 'D1', weight: 1.5 },
+          { shortName: 'D1.2', estimations: 3, weight: 0.5 },
+          { shortName: 'E2.1', estimations: 3 },
+        ],
+      };
+      const result = makeBalanceSheet.fromJson(json);
+
+      const defaultRatings = makeRatingFactory().createDefaultRatings(
+        json.type,
+        json.version
+      );
+      const expectedRatings = defaultRatings.map((r) => {
+        if (r.shortName === 'A1.1') {
+          return {
+            shortName: 'A1.1',
+            estimations: 5,
+            weight: 1,
+            isWeightSelectedByUser: true,
+          };
+        } else if (r.shortName === 'D1.2') {
+          return {
+            shortName: 'D1.2',
+            estimations: 3,
+            weight: 0.5,
+            isWeightSelectedByUser: true,
+          };
+        } else if (r.shortName === 'E2.1') {
+          return {
+            ...r,
+            shortName: 'E2.1',
+            estimations: 3,
+            isWeightSelectedByUser: false,
+          };
+        } else if (r.shortName === 'D1') {
+          return {
+            ...r,
+            shortName: 'D1',
+            weight: 1.5,
+            isWeightSelectedByUser: true,
+          };
+        } else {
+          return r;
+        }
+      });
+
+      expect(result.ratings).toMatchObject(expectedRatings);
+    });
+  });
+
   describe('MatrixRepresentation', () => {
     const defaultBalanceSheet = makeBalanceSheet();
 

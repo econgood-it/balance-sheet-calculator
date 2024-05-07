@@ -5,6 +5,7 @@ import {
   makeMainOriginOfOtherSuppliers,
   makeSupplyFraction,
 } from '../../src/models/company.facts';
+import { expect } from '@jest/globals';
 
 describe('Company Facts', () => {
   it('is created with default values', () => {
@@ -546,5 +547,73 @@ describe('Company Facts', () => {
         companyFactsResponse.mainOriginOfOtherSuppliers.countryCode
       ).toBeUndefined();
     });
+  });
+
+  it('creates company facts from json', () => {
+    const json = {
+      totalPurchaseFromSuppliers: 1000,
+      totalStaffCosts: 2000,
+      profit: 3000,
+      financialCosts: 4000,
+      incomeFromFinancialInvestments: 5000,
+      additionsToFixedAssets: 6000,
+      turnover: 7000,
+      totalAssets: 8000,
+      financialAssetsAndCashBalance: 9000,
+      numberOfEmployees: 10000,
+      hasCanteen: true,
+      averageJourneyToWorkForStaffInKm: 11000,
+      isB2B: false,
+      supplyFractions: [
+        {
+          countryCode: 'DEU',
+          industryCode: 'A',
+          costs: 100,
+        },
+      ],
+      employeesFractions: [
+        {
+          countryCode: 'ARE',
+          percentage: 30,
+        },
+        {
+          percentage: 50,
+        },
+      ],
+      industrySectors: [
+        {
+          industryCode: 'A',
+          amountOfTotalTurnover: 70,
+          description: '',
+        },
+      ],
+      mainOriginOfOtherSuppliers: 'DEU',
+    };
+    const companyFacts = makeCompanyFacts.fromJson(json);
+    expect(companyFacts.supplyFractions).toEqual([
+      makeSupplyFraction({
+        countryCode: 'DEU',
+        industryCode: 'A',
+        costs: 100,
+      }),
+    ]);
+    expect(companyFacts.employeesFractions).toEqual([
+      makeEmployeesFraction({ countryCode: 'ARE', percentage: 0.3 }),
+      makeEmployeesFraction({ percentage: 0.5 }),
+    ]);
+    expect(companyFacts.industrySectors).toEqual([
+      makeIndustrySector({
+        industryCode: 'A',
+        amountOfTotalTurnover: 0.7,
+        description: '',
+      }),
+    ]);
+    expect(companyFacts.mainOriginOfOtherSuppliers).toEqual(
+      makeMainOriginOfOtherSuppliers({
+        countryCode: 'DEU',
+        totalPurchaseFromSuppliers: 1000,
+        supplyFractions: companyFacts.supplyFractions,
+      })
+    );
   });
 });

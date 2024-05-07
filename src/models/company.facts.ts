@@ -2,6 +2,7 @@ import deepFreeze from 'deep-freeze';
 import { DEFAULT_COUNTRY_CODE } from './region';
 import _ from 'lodash';
 import {
+  CompanyFactsCreateRequestBodySchema,
   CompanyFactsPatchRequestBodySchema,
   CompanyFactsResponseBodySchema,
 } from '@ecogood/e-calculator-schemas/dist/company.facts.dto';
@@ -187,8 +188,12 @@ export function makeCompanyFacts(opts?: CompanyFactsOpts): CompanyFacts {
         })
       ) || data.employeesFractions;
     const industrySectors =
-      requestBody.industrySectors?.map((is) => makeIndustrySector(is)) ||
-      data.industrySectors;
+      requestBody.industrySectors?.map((is) =>
+        makeIndustrySector({
+          ...is,
+          amountOfTotalTurnover: percentageToDecimal(is.amountOfTotalTurnover),
+        })
+      ) || data.industrySectors;
     const mainOriginOfOtherSuppliers = requestBody.mainOriginOfOtherSuppliers
       ? { countryCode: requestBody.mainOriginOfOtherSuppliers }
       : data.mainOriginOfOtherSuppliers;
@@ -227,3 +232,10 @@ export function makeCompanyFacts(opts?: CompanyFactsOpts): CompanyFacts {
     merge,
   });
 }
+
+makeCompanyFacts.fromJson = function fromJson(
+  json: z.input<typeof CompanyFactsCreateRequestBodySchema>
+): CompanyFacts {
+  const companyFacts = CompanyFactsCreateRequestBodySchema.parse(json);
+  return makeCompanyFacts().merge(companyFacts);
+};

@@ -17,6 +17,7 @@ import { makeStakeholderWeightCalculator } from '../calculations/stakeholder.wei
 import { makeTopicWeightCalculator } from '../calculations/topic.weight.calculator';
 import { WeightingProvider } from '../providers/weightingProvider';
 import {
+  BalanceSheetCreateRequestBodySchema,
   BalanceSheetPatchRequestBodySchema,
   BalanceSheetResponseBodySchema,
 } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
@@ -315,3 +316,20 @@ export function makeBalanceSheet(opts?: BalanceSheetOpts): BalanceSheet {
     reCalculate,
   });
 }
+
+makeBalanceSheet.fromJson = function fromJson(
+  json: z.input<typeof BalanceSheetCreateRequestBodySchema>
+): BalanceSheet {
+  const balanceSheet = BalanceSheetCreateRequestBodySchema.parse(json);
+  const version = balanceSheet.version;
+  const type = balanceSheet.type;
+  const companyFacts = makeCompanyFacts.fromJson(balanceSheet.companyFacts);
+  const ratings = makeRatingFactory().createDefaultRatings(type, version);
+  return makeBalanceSheet({
+    version,
+    type,
+    companyFacts,
+    ratings,
+    stakeholderWeights: balanceSheet.stakeholderWeights,
+  }).merge({ ratings: balanceSheet.ratings });
+};

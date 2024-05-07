@@ -25,6 +25,7 @@ import { z } from 'zod';
 import { IRepoProvider } from '../repositories/repo.provider';
 import { makeOrganization } from '../models/organization';
 import deepFreeze from 'deep-freeze';
+import { makeBalanceSheet } from '../models/balance.sheet';
 
 export interface IOrganizationService {
   createOrganization(
@@ -44,6 +45,11 @@ export interface IOrganizationService {
   ): Promise<void>;
   inviteUser(req: Request, res: Response, next: NextFunction): Promise<void>;
   getOrganizationsOfCurrentUser(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void>;
+  createBalanceSheet(
     req: Request,
     res: Response,
     next: NextFunction
@@ -172,12 +178,45 @@ export function makeOrganizationService(
       });
   }
 
+  async function createBalanceSheet(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    const balanceSheet = makeBalanceSheet.fromJson(req.body);
+    const language = parseLanguageParameter(req.query.lng);
+    dataSource.manager
+      .transaction(async (entityManager) => {
+        const balanceSheetRepo =
+          repoProvider.getBalanceSheetRepo(entityManager);
+        const orgaRepo = repoProvider.getOrganizationRepo(entityManager);
+
+        const organization = await orgaRepo.findByIdOrFail(
+          Number(req.params.id)
+        );
+        if (!organization) {
+          throw new NotFoundException('Organization not found');
+        }
+        checkIfCurrentUserIsMember(req, organization);
+
+        const createdBalanceSheet = await balanceSheetRepo.save(
+          await balanceSheet.assignOrganization(organization).reCalculate()
+        );
+
+        res.json(createdBalanceSheet.toJson(language));
+      })
+      .catch((error) => {
+        handle(error, next);
+      });
+  }
+
   return deepFreeze({
     createOrganization,
     updateOrganization,
     getOrganization,
     inviteUser,
     getOrganizationsOfCurrentUser,
+    createBalanceSheet,
   });
 }
 

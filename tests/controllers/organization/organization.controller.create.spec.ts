@@ -104,8 +104,9 @@ describe('Organization Balance Sheet Controller', () => {
   let dataSource: DataSource;
   let app: Application;
   const configuration = ConfigurationReader.read();
-  let organizationRepo: IOldOrganizationEntityRepo;
-  let balaneSheetEntityRepo: IBalanceSheetEntityRepo;
+  let oldOrganizationEntityRepo: IOldOrganizationEntityRepo;
+  let oldBalaneSheetEntityRepo: IBalanceSheetEntityRepo;
+  let organizationRepo: IOrganizationRepo;
   const authBuilder = new AuthBuilder();
   const auth = authBuilder.addUser();
   const authNoMember = authBuilder.addUser();
@@ -114,18 +115,21 @@ describe('Organization Balance Sheet Controller', () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
       configuration
     );
-    const repoProvider = new OldRepoProvider(configuration);
-    organizationRepo = repoProvider.getOrganizationEntityRepo(
+    const oldRepoProvider = new OldRepoProvider(configuration);
+    oldOrganizationEntityRepo = oldRepoProvider.getOrganizationEntityRepo(
       dataSource.manager
     );
-    balaneSheetEntityRepo = repoProvider.getBalanceSheetEntityRepo(
+    oldBalaneSheetEntityRepo = oldRepoProvider.getBalanceSheetEntityRepo(
       dataSource.manager
     );
+    const repoProvider = makeRepoProvider(configuration);
+    organizationRepo = repoProvider.getOrganizationRepo(dataSource.manager);
+
     app = new App(
       dataSource,
       configuration,
-      makeRepoProvider(configuration),
       repoProvider,
+      oldRepoProvider,
       new InMemoryAuthentication(authBuilder.getTokenMap())
     ).app;
   });
@@ -154,10 +158,11 @@ describe('Organization Balance Sheet Controller', () => {
       .post(`${OrganizationPaths.getAll}/${organizationEntity.id}/balancesheet`)
       .set(auth.toHeaderPair().key, auth.toHeaderPair().value)
       .send(balanceSheetBuilder.buildRequestBody());
-    const foundOrganizationEntity = await organizationRepo.findByIdOrFail(
-      organizationEntity.id!,
-      true
-    );
+    const foundOrganizationEntity =
+      await oldOrganizationEntityRepo.findByIdOrFail(
+        organizationEntity.id!,
+        true
+      );
     expect(
       foundOrganizationEntity.balanceSheetEntities?.map((b) => b.id)
     ).toEqual([response.body.id, response2.body.id]);
@@ -199,9 +204,9 @@ describe('Organization Balance Sheet Controller', () => {
 
     it('where B1 weight is very high', async () => {
       const testApp = supertest(app);
-      const organizationEntity = await new OrganizationBuilder()
-        .addMember(auth.user)
-        .build(dataSource);
+      const organization = await organizationRepo.save(
+        makeOrganization().invite(auth.user.email).join(auth.user)
+      );
       const json = {
         ...balanceSheetJson,
         companyFacts: {
@@ -216,9 +221,7 @@ describe('Organization Balance Sheet Controller', () => {
         },
       };
       const response = await testApp
-        .post(
-          `${OrganizationPaths.getAll}/${organizationEntity.organizationEntity.id}/balancesheet`
-        )
+        .post(`${OrganizationPaths.getAll}/${organization.id}/balancesheet`)
         .set(auth.toHeaderPair().key, auth.toHeaderPair().value)
         .send(json);
       expect(response.status).toEqual(200);
@@ -227,9 +230,10 @@ describe('Organization Balance Sheet Controller', () => {
 
     it('where B2 weight is high', async () => {
       const testApp = supertest(app);
-      const organizationEntity = await new OrganizationBuilder()
-        .addMember(auth.user)
-        .build(dataSource);
+
+      const organization = await organizationRepo.save(
+        makeOrganization().invite(auth.user.email).join(auth.user)
+      );
       const json = {
         ...balanceSheetJson,
         companyFacts: {
@@ -239,9 +243,7 @@ describe('Organization Balance Sheet Controller', () => {
         },
       };
       const response = await testApp
-        .post(
-          `${OrganizationPaths.getAll}/${organizationEntity.organizationEntity.id}/balancesheet`
-        )
+        .post(`${OrganizationPaths.getAll}/${organization.id}/balancesheet`)
         .set(auth.toHeaderPair().key, auth.toHeaderPair().value)
         .send(json);
       expect(response.status).toEqual(200);
@@ -249,9 +251,9 @@ describe('Organization Balance Sheet Controller', () => {
     });
     it('where B4 weight is 0.5', async () => {
       const testApp = supertest(app);
-      const organizationEntity = await new OrganizationBuilder()
-        .addMember(auth.user)
-        .build(dataSource);
+      const organization = await organizationRepo.save(
+        makeOrganization().invite(auth.user.email).join(auth.user)
+      );
       const json = {
         ...balanceSheetJson,
         companyFacts: {
@@ -261,9 +263,7 @@ describe('Organization Balance Sheet Controller', () => {
       };
 
       const response = await testApp
-        .post(
-          `${OrganizationPaths.getAll}/${organizationEntity.organizationEntity.id}/balancesheet`
-        )
+        .post(`${OrganizationPaths.getAll}/${organization.id}/balancesheet`)
         .set(auth.toHeaderPair().key, auth.toHeaderPair().value)
         .send(json);
       expect(response.status).toEqual(200);
@@ -272,9 +272,9 @@ describe('Organization Balance Sheet Controller', () => {
 
     it('creates BalanceSheet where B4 weight is 1', async () => {
       const testApp = supertest(app);
-      const organizationEntity = await new OrganizationBuilder()
-        .addMember(auth.user)
-        .build(dataSource);
+      const organization = await organizationRepo.save(
+        makeOrganization().invite(auth.user.email).join(auth.user)
+      );
       const json = {
         ...balanceSheetJson,
         companyFacts: {
@@ -283,9 +283,7 @@ describe('Organization Balance Sheet Controller', () => {
         },
       };
       const response = await testApp
-        .post(
-          `${OrganizationPaths.getAll}/${organizationEntity.organizationEntity.id}/balancesheet`
-        )
+        .post(`${OrganizationPaths.getAll}/${organization.id}/balancesheet`)
         .set(auth.toHeaderPair().key, auth.toHeaderPair().value)
         .send(json);
       expect(response.status).toEqual(200);
@@ -296,35 +294,15 @@ describe('Organization Balance Sheet Controller', () => {
   it('balance sheet creation should fail if user is not member of organization', async () => {
     const balanceSheet = balanceSheetJsonFactory.emptyFullV508();
     const testApp = supertest(app);
-    const { organizationEntity } = await new OrganizationBuilder()
-      .addMember(auth.user)
-      .build(dataSource);
+    const organization = await organizationRepo.save(
+      makeOrganization().invite(auth.user.email).join(auth.user)
+    );
 
     const response = await testApp
-      .post(`${OrganizationPaths.getAll}/${organizationEntity.id}/balancesheet`)
+      .post(`${OrganizationPaths.getAll}/${organization.id}/balancesheet`)
       .set(authNoMember.toHeaderPair().key, authNoMember.toHeaderPair().value)
       .send(balanceSheet);
     expect(response.status).toEqual(403);
-  });
-
-  it('creates BalanceSheet from company facts without saving results', async () => {
-    const balanceSheet = balanceSheetJsonFactory.emptyFullV508();
-    const testApp = supertest(app);
-    const { organizationEntity } = await new OrganizationBuilder()
-      .addMember(auth.user)
-      .build(dataSource);
-    const response = await testApp
-      .post(`${OrganizationPaths.getAll}/${organizationEntity.id}/balancesheet`)
-      .set(auth.toHeaderPair().key, auth.toHeaderPair().value)
-      .query({ save: 'false' })
-      .send(balanceSheet);
-    expect(response.status).toBe(200);
-
-    const foundOrganizationEntity = await organizationRepo.findByIdOrFail(
-      organizationEntity.id!,
-      true
-    );
-    expect(foundOrganizationEntity.balanceSheetEntities).toHaveLength(0);
   });
 
   it('upload and save balance sheet', async () => {
@@ -345,14 +323,15 @@ describe('Organization Balance Sheet Controller', () => {
         .filter((r: RatingResponseBody) => r.shortName.length === 2)
         .reduce((sum: number, current: OldRating) => sum + current.maxPoints, 0)
     ).toBeCloseTo(999.9999999999998);
-    const foundBalanceSheet = await balaneSheetEntityRepo.findByIdOrFail(
+    const foundBalanceSheet = await oldBalaneSheetEntityRepo.findByIdOrFail(
       response.body.id
     );
     expect(foundBalanceSheet).toBeDefined();
-    const foundOrganizationEntity = await organizationRepo.findByIdOrFail(
-      organizationEntity.id!,
-      true
-    );
+    const foundOrganizationEntity =
+      await oldOrganizationEntityRepo.findByIdOrFail(
+        organizationEntity.id!,
+        true
+      );
     expect(
       foundOrganizationEntity.balanceSheetEntities?.map((b) => b.id)
     ).toEqual([response.body.id]);
