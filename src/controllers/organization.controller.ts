@@ -4,7 +4,6 @@ import {
   OldOrganizationService,
 } from '../services/organization.service';
 import { allowUserOnly } from './role.access';
-import { upload } from './utils';
 
 const resourceUrl = '/v1/organization';
 export const OrganizationPaths = {
@@ -62,15 +61,6 @@ export class OrganizationController {
   }
 
   public routes() {
-    this.app.post(
-      OrganizationPaths.orgaBalanceSheetUpload,
-      allowUserOnly,
-      upload.single('balanceSheet'),
-      this.oldOrganizationService.uploadBalanceSheet.bind(
-        this.oldOrganizationService
-      )
-    );
-
     this.app.get(
       OrganizationPaths.orgaBalanceSheet,
       allowUserOnly,

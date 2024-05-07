@@ -1,10 +1,7 @@
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import express, { Application } from 'express';
-import {
-  BalanceSheetController,
-  registerBalanceSheetRoutes,
-} from './controllers/balance.sheet.controller';
+import { registerBalanceSheetRoutes } from './controllers/balance.sheet.controller';
 import errorMiddleware from './middleware/error.middleware';
 import {
   Authentication,
@@ -26,10 +23,7 @@ import correlationIdMiddleware from './middleware/correlation.id.middleware';
 import morganMiddleware from './middleware/morgan.http.logging.middleware';
 import { Configuration } from './reader/configuration.reader';
 import { IOldRepoProvider } from './repositories/oldRepoProvider';
-import {
-  BalanceSheetService,
-  makeBalanceSheetService,
-} from './services/balance.sheet.service';
+import { makeBalanceSheetService } from './services/balance.sheet.service';
 import { HealthCheckService } from './services/health.check.service';
 import { IndustryService } from './services/industry.service';
 import {
@@ -45,7 +39,6 @@ import { IRepoProvider } from './repositories/repo.provider';
 class App {
   public readonly app: Application;
   // declaring our controllers
-  private balanceSheetController: BalanceSheetController;
   private userController: UserController;
   private regionController: RegionController;
   private industryController: IndustryController;
@@ -70,15 +63,6 @@ class App {
     this.authentication = new Authentication(authProvider);
     this.authentication.addBasicAuthToDocsEndpoint(this.app, configuration);
     this.authentication.addAuthToApplication(this.app);
-    // Creating controllers
-    const balanceSheetService = new BalanceSheetService(
-      dataSource,
-      repoProviderOld
-    );
-    this.balanceSheetController = new BalanceSheetController(
-      this.app,
-      balanceSheetService
-    );
 
     registerBalanceSheetRoutes(
       this.app,

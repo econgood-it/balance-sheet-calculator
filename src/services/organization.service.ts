@@ -6,21 +6,16 @@ import {
   OrganizationRequestSchema,
   OrganizationResponseSchema,
 } from '@ecogood/e-calculator-schemas/dist/organization.dto';
-import { Workbook } from 'exceljs';
 import { DataSource } from 'typeorm';
-import { BalanceSheetCreateRequest } from '../dto/balance.sheet.dto';
-import { BalanceSheetEntity } from '../entities/balance.sheet.entity';
 import { handle } from '../exceptions/error.handler';
 import { NoAccessError } from '../exceptions/no.access.error';
 import NotFoundException from '../exceptions/not.found.exception';
 import { parseLanguageParameter } from '../language/translations';
-import { BalanceSheetReader } from '../reader/balanceSheetReader/balance.sheet.reader';
 import { IOldRepoProvider } from '../repositories/oldRepoProvider';
 import {
   Authorization,
   checkIfCurrentUserIsMember,
 } from '../security/authorization';
-import { parseSaveFlag } from './utils';
 import { z } from 'zod';
 import { IRepoProvider } from '../repositories/repo.provider';
 import { makeOrganization } from '../models/organization';
@@ -226,50 +221,6 @@ export class OldOrganizationService {
     private oldRepoProvider: IOldRepoProvider
   ) {}
 
-  public async createBalanceSheet(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
-    try {
-      const balanceSheetEntity = new BalanceSheetCreateRequest(
-        req.body
-      ).toBalanceEntity();
-      this.createBalanceSheetEntityForOrganization(
-        req,
-        res,
-        next,
-        balanceSheetEntity
-      );
-    } catch (error: any) {
-      handle(error, next);
-    }
-  }
-
-  public async uploadBalanceSheet(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
-    try {
-      if (req.file) {
-        const wb = await new Workbook().xlsx.load(req.file.buffer);
-        const balanceSheetReader = new BalanceSheetReader();
-        const balanceSheetEntity = balanceSheetReader.readFromWorkbook(wb);
-        this.createBalanceSheetEntityForOrganization(
-          req,
-          res,
-          next,
-          balanceSheetEntity
-        );
-      } else {
-        res.json({ message: 'File empty' });
-      }
-    } catch (error: any) {
-      handle(error, next);
-    }
-  }
-
   public async getBalanceSheets(
     req: Request,
     res: Response,
@@ -295,44 +246,6 @@ export class OldOrganizationService {
               : []
           )
         );
-      })
-      .catch((error) => {
-        handle(error, next);
-      });
-  }
-
-  private createBalanceSheetEntityForOrganization(
-    req: Request,
-    res: Response,
-    next: NextFunction,
-    balanceSheetEntity: BalanceSheetEntity
-  ) {
-    const language = parseLanguageParameter(req.query.lng);
-    const saveFlag = parseSaveFlag(req.query.save);
-    this.dataSource.manager
-      .transaction(async (entityManager) => {
-        const balanceSheetRepo =
-          this.oldRepoProvider.getBalanceSheetEntityRepo(entityManager);
-        const orgaRepo =
-          this.oldRepoProvider.getOrganizationEntityRepo(entityManager);
-
-        const organizationEntity = await orgaRepo.findByIdOrFail(
-          Number(req.params.id),
-          true
-        );
-        if (!organizationEntity) {
-          throw new NotFoundException('Organization not found');
-        }
-        Authorization.checkIfCurrentUserIsMember(req, organizationEntity);
-
-        await balanceSheetEntity.reCalculate();
-        if (saveFlag) {
-          await balanceSheetRepo.save(balanceSheetEntity);
-          organizationEntity.addBalanceSheetEntity(balanceSheetEntity);
-          await orgaRepo.save(organizationEntity);
-        }
-
-        res.json(balanceSheetEntity.toJson(language));
       })
       .catch((error) => {
         handle(error, next);

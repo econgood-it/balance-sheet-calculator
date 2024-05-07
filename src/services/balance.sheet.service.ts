@@ -1,18 +1,8 @@
-import { Workbook } from 'exceljs';
 import { NextFunction, Request, Response } from 'express';
 import { DataSource } from 'typeorm';
 import { handle } from '../exceptions/error.handler';
-import { BalanceSheetReader } from '../reader/balanceSheetReader/balance.sheet.reader';
-
-import { diff } from 'deep-diff';
-import { CalcResultsReader } from '../reader/balanceSheetReader/calc.results.reader';
-import { StakeholderWeightsReader } from '../reader/balanceSheetReader/stakeholder.weights.reader';
-import { TopicWeightsReader } from '../reader/balanceSheetReader/topic.weights.reader';
-
-import { BalanceSheetExcelDiffResponseBody } from '@ecogood/e-calculator-schemas/dist/balance.sheet.diff';
 import { BalanceSheetPatchRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
 import { parseLanguageParameter } from '../language/translations';
-import { IOldRepoProvider } from '../repositories/oldRepoProvider';
 import { checkIfCurrentUserHasEditorPermissions } from '../security/authorization';
 import { IRepoProvider } from '../repositories/repo.provider';
 import deepFreeze from 'deep-freeze';
@@ -165,63 +155,4 @@ export function makeBalanceSheetService(
     deleteBalanceSheet,
     getMatrixRepresentationOfBalanceSheet,
   });
-}
-
-export class BalanceSheetService {
-  constructor(
-    private dataSource: DataSource,
-    private repoProvider: IOldRepoProvider
-  ) {}
-
-  public async diffBetweenUploadApiBalanceSheet(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
-    try {
-      if (req.file) {
-        const wb = await new Workbook().xlsx.load(req.file.buffer);
-        const balanceSheetReader = new BalanceSheetReader();
-        const calcResultsReader = new CalcResultsReader();
-        const topicWeightsReader = new TopicWeightsReader();
-        const stakeholderWeightsReader = new StakeholderWeightsReader();
-
-        const balanceSheetEntityUpload =
-          balanceSheetReader.readFromWorkbook(wb);
-        const calcResultsUpload = calcResultsReader.readFromWorkbook(wb);
-        const stakeholderWeightsUpload =
-          stakeholderWeightsReader.readFromWorkbook(wb);
-        const topicWeightsUpload = topicWeightsReader.readFromWorkbook(wb);
-        const balanceSheetEntityApi = balanceSheetEntityUpload.clone();
-
-        const { calcResults, stakeholderWeights, topicWeights } =
-          await balanceSheetEntityApi.reCalculate();
-
-        res.json(
-          BalanceSheetExcelDiffResponseBody.parse({
-            lhs: 'upload',
-            rhs: 'api',
-            diffStakeHolderWeights:
-              stakeholderWeightsUpload &&
-              diff(
-                Object.fromEntries(stakeholderWeightsUpload),
-                Object.fromEntries(stakeholderWeights)
-              ),
-            diffTopicWeights:
-              topicWeightsUpload &&
-              diff(
-                Object.fromEntries(topicWeightsUpload),
-                Object.fromEntries(topicWeights)
-              ),
-            diffCalc: calcResultsUpload && diff(calcResultsUpload, calcResults),
-            diff: balanceSheetEntityUpload.diff(balanceSheetEntityApi),
-          })
-        );
-      } else {
-        res.json({ message: 'File empty' });
-      }
-    } catch (error) {
-      handle(error as Error, next);
-    }
-  }
 }

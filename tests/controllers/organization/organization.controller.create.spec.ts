@@ -3,7 +3,6 @@ import {
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import { Application } from 'express';
-import path from 'path';
 import supertest from 'supertest';
 import { DataSource } from 'typeorm';
 import App from '../../../src/app';
@@ -12,7 +11,7 @@ import { DatabaseSourceCreator } from '../../../src/databaseSourceCreator';
 import { BalanceSheetEntity } from '../../../src/entities/balance.sheet.entity';
 import { OldRatingsFactory } from '../../../src/factories/oldRatingsFactory';
 import { INDUSTRY_CODE_FOR_FINANCIAL_SERVICES } from '../../../src/models/oldCompanyFacts';
-import { OldRating, RatingResponseBody } from '../../../src/models/oldRating';
+import { RatingResponseBody } from '../../../src/models/oldRating';
 import {
   balanceSheetJsonFactory,
   companyFactsFactory,
@@ -20,7 +19,6 @@ import {
   makeOrganizationCreateRequest,
 } from '../../../src/openapi/examples';
 import { ConfigurationReader } from '../../../src/reader/configuration.reader';
-import { IBalanceSheetEntityRepo } from '../../../src/repositories/old.balance.sheet.entity.repo';
 import { IOldOrganizationEntityRepo } from '../../../src/repositories/oldOrganization.entity.repo';
 import { OldRepoProvider } from '../../../src/repositories/oldRepoProvider';
 import { AuthBuilder } from '../../AuthBuilder';
@@ -105,7 +103,6 @@ describe('Organization Balance Sheet Controller', () => {
   let app: Application;
   const configuration = ConfigurationReader.read();
   let oldOrganizationEntityRepo: IOldOrganizationEntityRepo;
-  let oldBalaneSheetEntityRepo: IBalanceSheetEntityRepo;
   let organizationRepo: IOrganizationRepo;
   const authBuilder = new AuthBuilder();
   const auth = authBuilder.addUser();
@@ -117,9 +114,6 @@ describe('Organization Balance Sheet Controller', () => {
     );
     const oldRepoProvider = new OldRepoProvider(configuration);
     oldOrganizationEntityRepo = oldRepoProvider.getOrganizationEntityRepo(
-      dataSource.manager
-    );
-    oldBalaneSheetEntityRepo = oldRepoProvider.getBalanceSheetEntityRepo(
       dataSource.manager
     );
     const repoProvider = makeRepoProvider(configuration);
@@ -302,53 +296,6 @@ describe('Organization Balance Sheet Controller', () => {
       .post(`${OrganizationPaths.getAll}/${organization.id}/balancesheet`)
       .set(authNoMember.toHeaderPair().key, authNoMember.toHeaderPair().value)
       .send(balanceSheet);
-    expect(response.status).toEqual(403);
-  });
-
-  it('upload and save balance sheet', async () => {
-    const testApp = supertest(app);
-    const fileDir = path.resolve(__dirname, '../../reader/balanceSheetReader');
-    const { organizationEntity } = await new OrganizationBuilder()
-      .addMember(auth.user)
-      .build(dataSource);
-    const response = await testApp
-      .post(
-        `${OrganizationPaths.getAll}/${organizationEntity.id}/balancesheet/upload`
-      )
-      .set(auth.toHeaderPair().key, auth.toHeaderPair().value)
-      .attach('balanceSheet', path.join(fileDir, 'full_5_0_8.xlsx'));
-    expect(response.status).toEqual(200);
-    expect(
-      response.body.ratings
-        .filter((r: RatingResponseBody) => r.shortName.length === 2)
-        .reduce((sum: number, current: OldRating) => sum + current.maxPoints, 0)
-    ).toBeCloseTo(999.9999999999998);
-    const foundBalanceSheet = await oldBalaneSheetEntityRepo.findByIdOrFail(
-      response.body.id
-    );
-    expect(foundBalanceSheet).toBeDefined();
-    const foundOrganizationEntity =
-      await oldOrganizationEntityRepo.findByIdOrFail(
-        organizationEntity.id!,
-        true
-      );
-    expect(
-      foundOrganizationEntity.balanceSheetEntities?.map((b) => b.id)
-    ).toEqual([response.body.id]);
-  });
-
-  it('should fail to upload balance sheet if user is not member of organization', async () => {
-    const testApp = supertest(app);
-    const fileDir = path.resolve(__dirname, '../../reader/balanceSheetReader');
-    const { organizationEntity } = await new OrganizationBuilder()
-      .addMember(auth.user)
-      .build(dataSource);
-    const response = await testApp
-      .post(
-        `${OrganizationPaths.getAll}/${organizationEntity.id}/balancesheet/upload`
-      )
-      .set(authNoMember.toHeaderPair().key, authNoMember.toHeaderPair().value)
-      .attach('balanceSheet', path.join(fileDir, 'full_5_0_8.xlsx'));
     expect(response.status).toEqual(403);
   });
 });
