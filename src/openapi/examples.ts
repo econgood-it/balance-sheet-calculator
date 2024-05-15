@@ -6,7 +6,6 @@ import {
 
 import { WorkbookSection } from '../models/workbook';
 import { z } from 'zod';
-import { CompanyFactsResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/company.facts.dto';
 import deepFreeze from 'deep-freeze';
 import {
   CompanyFacts,
@@ -14,8 +13,6 @@ import {
   makeEmployeesFraction,
   makeSupplyFraction,
 } from '../models/company.facts';
-import { BalanceSheetCreateRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
-import { makeRatingFactory } from '../factories/rating.factory';
 import { OrganizationRequestSchema } from '@ecogood/e-calculator-schemas/dist/organization.dto';
 
 const arabEmiratesCode = 'ARE';
@@ -115,23 +112,408 @@ export function makeJsonFactory() {
       type: BalanceSheetType.Full,
       version: BalanceSheetVersion.v5_0_8,
       companyFacts: emptyCompanyFacts(),
-      ratings: makeRatingFactory().createDefaultRatings(
-        BalanceSheetType.Full,
-        BalanceSheetVersion.v5_0_8
-      ),
-      stakeholderWeights: [],
-    };
-  }
-
-  function emptyCompactV506() {
-    return {
-      type: BalanceSheetType.Compact,
-      version: BalanceSheetVersion.v5_0_6,
-      companyFacts: emptyCompanyFacts(),
-      ratings: makeRatingFactory().createDefaultRatings(
-        BalanceSheetType.Compact,
-        BalanceSheetVersion.v5_0_6
-      ),
+      ratings: [
+        {
+          shortName: 'A1',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'A1.1',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'A1.2',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'A2',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'A2.1',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'A2.2',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'A2.3',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'A3',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'A3.1',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'A3.2',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'A4',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'A4.1',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'A4.2',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'B1',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'B1.1',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'B1.2',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'B1.3',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'B2',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'B2.1',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'B2.2',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'B3',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'B3.1',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'B3.2',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'B3.3',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'B4',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'B4.1',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'B4.2',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'C1',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'C1.1',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'C1.2',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'C1.3',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'C1.4',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'C2',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'C2.1',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'C2.2',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'C2.3',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'C2.4',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'C3',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'C3.1',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'C3.2',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'C3.3',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'C3.4',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'C4',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'C4.1',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'C4.2',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'C4.3',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'C4.4',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'D1',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'D1.1',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'D1.2',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'D1.3',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'D2',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'D2.1',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'D2.2',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'D2.3',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'D3',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'D3.1',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'D3.2',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'D3.3',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'D4',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'D4.1',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'D4.2',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'D4.3',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'E1',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'E1.1',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'E1.2',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'E1.3',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'E2',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'E2.1',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'E2.2',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'E2.3',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'E2.4',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'E3',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'E3.1',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'E3.2',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'E3.3',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'E4',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'E4.1',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'E4.2',
+          estimations: 0,
+          weight: 1,
+        },
+        {
+          shortName: 'E4.3',
+          estimations: 0,
+          weight: 1,
+        },
+      ],
       stakeholderWeights: [],
     };
   }
@@ -167,7 +549,6 @@ export function makeJsonFactory() {
   return deepFreeze({
     emptyFullV508,
     minimalCompactV506,
-    emptyCompactV506,
     emptyCompanyFacts,
   });
 }
