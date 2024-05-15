@@ -54,8 +54,7 @@ npm install
 ```
 
 Afterwards you have to create in the root directory a file _.env-cmdrc.json_. This file holds the configuration
-for the application. Just replace the _applicationuser_ and
-_applicationpwd_ by your preferred user and password.
+for the application. Just replace the values with marked with <> by the real values.
 These credentials are used to secure the application. If you want to run the
 application on a different port just replace the _4000_ by the your port.
 
@@ -68,13 +67,15 @@ application on a different port just replace the _4000_ by the your port.
     "DB_USER": "postgres",
     "DB_PASSWORD": "oKLyNUr2doEBlMup47ii",
     "ENVIRONMENT": "DEV",
-    "ADMIN_EMAIL": "adminuser",
-    "ADMIN_PASSWORD": "adminpwd",
     "DOCS_USER": "docsuser",
     "DOCS_PASSWORD": "docspwd",
-    "JWT_SECRET": "6,AfDvPl<#{qPYu?-~",
     "PORT": 4000,
-    "WORKBOOK_API_TOKEN": "apitoken"
+    "WORKBOOK_API_TOKEN": "<apitoken>",
+    "ZITADEL_KEY": "<zitadelkey>",
+    "ZITADEL_KEY_ID": "<zitadelkeyid>",
+    "ZITADEL_APP_ID": "<zitadelappid>",
+    "ZITADEL_CLIENT_ID": "<zitadelclientid>",
+    "ZITADEL_AUTHORITY_URL": "<zitadelauthorityurl>"
   }
 }
 ```
