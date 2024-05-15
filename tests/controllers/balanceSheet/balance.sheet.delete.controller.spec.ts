@@ -10,13 +10,9 @@ import {
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import supertest from 'supertest';
-import {
-  BALANCE_SHEET_RELATIONS,
-  BalanceSheetEntity,
-} from '../../../src/entities/balance.sheet.entity';
+import { BalanceSheetEntity } from '../../../src/entities/balance.sheet.entity';
 import { CORRELATION_HEADER_NAME } from '../../../src/middleware/correlation.id.middleware';
-import { companyFactsJsonFactory } from '../../../src/openapi/examples';
-import { OldRepoProvider } from '../../../src/repositories/oldRepoProvider';
+
 import { AuthBuilder } from '../../AuthBuilder';
 import { InMemoryAuthentication } from '../in.memory.authentication';
 import { makeRepoProvider } from '../../../src/repositories/repo.provider';
@@ -24,6 +20,10 @@ import { IOrganizationRepo } from '../../../src/repositories/organization.repo';
 import { IBalanceSheetRepo } from '../../../src/repositories/balance.sheet.repo';
 import { makeOrganization } from '../../../src/models/organization';
 import { makeBalanceSheet } from '../../../src/models/balance.sheet';
+import {
+  makeCompanyFactsFactory,
+  makeJsonFactory,
+} from '../../../src/openapi/examples';
 
 describe('Balance Sheet Controller', () => {
   let dataSource: DataSource;
@@ -48,7 +48,6 @@ describe('Balance Sheet Controller', () => {
       dataSource,
       configuration,
       repoProvider,
-      new OldRepoProvider(configuration),
       new InMemoryAuthentication(authBuilder.getTokenMap())
     ).app;
   });
@@ -70,7 +69,7 @@ describe('Balance Sheet Controller', () => {
     balanceSheetJson = {
       type: BalanceSheetType.Full,
       version: BalanceSheetVersion.v5_0_8,
-      companyFacts: companyFactsJsonFactory.emptyRequest(),
+      companyFacts: makeJsonFactory().emptyCompanyFacts(),
     };
   });
 
@@ -93,7 +92,6 @@ describe('Balance Sheet Controller', () => {
 
     await dataSource.getRepository(BalanceSheetEntity).findOneOrFail({
       where: { id: createdBalanceSheet.id },
-      relations: BALANCE_SHEET_RELATIONS,
     });
 
     const response = await testApp

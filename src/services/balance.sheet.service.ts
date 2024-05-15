@@ -3,11 +3,21 @@ import { DataSource } from 'typeorm';
 import { handle } from '../exceptions/error.handler';
 import { BalanceSheetPatchRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
 import { parseLanguageParameter } from '../language/translations';
-import { checkIfCurrentUserHasEditorPermissions } from '../security/authorization';
+import {
+  checkIfCurrentUserHasEditorPermissions,
+  checkIfCurrentUserIsMember,
+} from '../security/authorization';
 import { IRepoProvider } from '../repositories/repo.provider';
 import deepFreeze from 'deep-freeze';
+import { makeBalanceSheet } from '../models/balance.sheet';
+import NotFoundException from '../exceptions/not.found.exception';
 
 export interface IBalanceSheetService {
+  createBalanceSheet(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void>;
   updateBalanceSheet(
     req: Request,
     res: Response,
@@ -34,6 +44,20 @@ export function makeBalanceSheetService(
   dataSource: DataSource,
   repoProvider: IRepoProvider
 ): IBalanceSheetService {
+  async function createBalanceSheet(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const balanceSheet = makeBalanceSheet.fromJson(req.body);
+      const language = parseLanguageParameter(req.query.lng);
+      res.json((await balanceSheet.reCalculate()).toJson(language));
+    } catch (error: any) {
+      handle(error, next);
+    }
+  }
+
   async function updateBalanceSheet(
     req: Request,
     res: Response,
@@ -150,6 +174,7 @@ export function makeBalanceSheetService(
   }
 
   return deepFreeze({
+    createBalanceSheet,
     updateBalanceSheet,
     getBalanceSheet,
     deleteBalanceSheet,

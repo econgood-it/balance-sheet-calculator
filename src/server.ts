@@ -6,7 +6,6 @@ import { LoggingService } from './logging';
 import { ConfigurationReader } from './reader/configuration.reader';
 import { User as AuthUser } from './models/user';
 import App from './app';
-import { OldRepoProvider } from './repositories/oldRepoProvider';
 import { ZitadelAuthentication } from './security/authentication';
 import { makeRepoProvider } from './repositories/repo.provider';
 
@@ -28,7 +27,6 @@ DatabaseSourceCreator.createDataSourceAndRunMigrations(configuration)
       dataSource,
       configuration,
       makeRepoProvider(configuration),
-      new OldRepoProvider(configuration),
       new ZitadelAuthentication(
         configuration.zitadelKeyId,
         configuration.zitadelKey,

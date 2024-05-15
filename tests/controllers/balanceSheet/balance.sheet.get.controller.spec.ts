@@ -6,8 +6,7 @@ import { DataSource } from 'typeorm';
 import { Application } from 'express';
 import { AuthBuilder } from '../../AuthBuilder';
 import { CORRELATION_HEADER_NAME } from '../../../src/middleware/correlation.id.middleware';
-import { OldRating, RatingResponseBody } from '../../../src/models/oldRating';
-import { OldRepoProvider } from '../../../src/repositories/oldRepoProvider';
+
 import { InMemoryAuthentication } from '../in.memory.authentication';
 import { makeRepoProvider } from '../../../src/repositories/repo.provider';
 import { IOrganizationRepo } from '../../../src/repositories/organization.repo';
@@ -15,6 +14,9 @@ import { IBalanceSheetRepo } from '../../../src/repositories/balance.sheet.repo'
 import { makeOrganization } from '../../../src/models/organization';
 import { makeBalanceSheet } from '../../../src/models/balance.sheet';
 import supertest = require('supertest');
+import { RatingResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/rating.dto';
+import { Rating } from '../../../src/models/rating';
+import { z } from 'zod';
 
 describe('Balance Sheet Controller', () => {
   let dataSource: DataSource;
@@ -38,7 +40,6 @@ describe('Balance Sheet Controller', () => {
       dataSource,
       configuration,
       repoProvider,
-      new OldRepoProvider(configuration),
       new InMemoryAuthentication(authBuilder.getTokenMap())
     ).app;
   });
@@ -73,8 +74,11 @@ describe('Balance Sheet Controller', () => {
     );
     expect(
       response.body.ratings
-        .filter((r: RatingResponseBody) => r.shortName.length === 2)
-        .reduce((sum: number, current: OldRating) => sum + current.maxPoints, 0)
+        .filter(
+          (r: z.infer<typeof RatingResponseBodySchema>) =>
+            r.shortName.length === 2
+        )
+        .reduce((sum: number, current: Rating) => sum + current.maxPoints, 0)
     ).toBeCloseTo(999.9999999999998);
   });
 

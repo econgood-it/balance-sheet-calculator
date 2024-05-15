@@ -3,13 +3,9 @@ import {
   SectionSchema,
   WorkbookResponseBodySchema,
 } from '@ecogood/e-calculator-schemas/dist/workbook.dto';
+import deepFreeze from 'deep-freeze';
 
 export type WorkbookSection = z.infer<typeof SectionSchema>;
-type Workbook = z.infer<typeof WorkbookResponseBodySchema>;
-interface IWorkbookEntity {
-  findByShortName(shortName: string): WorkbookSection | undefined;
-  toJson(): Workbook;
-}
 
 const AspectSchema = z
   .object({
@@ -47,17 +43,29 @@ const StakeholderSchema = z
 
 export function workbookEntityFromFile() {}
 
-export class WorkbookEntity implements IWorkbookEntity {
-  private sections: WorkbookSection[];
-  constructor(json: any) {
-    this.sections = StakeholderSchema.array().parse(json).flat(2);
+type WorkbookOpts = {
+  sections: readonly WorkbookSection[];
+};
+
+export type Workbook = WorkbookOpts & {
+  findByShortName(shortName: string): WorkbookSection | undefined;
+  toJson(): z.infer<typeof WorkbookResponseBodySchema>;
+};
+
+export function makeWorkbook(opts: WorkbookOpts): Workbook {
+  function findByShortName(shortName: string): WorkbookSection | undefined {
+    return opts.sections.find((s) => s.shortName === shortName);
   }
 
-  findByShortName(shortName: string): WorkbookSection | undefined {
-    return this.sections.find((s) => s.shortName === shortName);
+  function toJson(): z.infer<typeof WorkbookResponseBodySchema> {
+    return WorkbookResponseBodySchema.parse({ sections: opts.sections });
   }
 
-  toJson(): Workbook {
-    return WorkbookResponseBodySchema.parse({ sections: this.sections });
-  }
+  return deepFreeze({ ...opts, findByShortName, toJson });
 }
+
+makeWorkbook.fromJson = function fromJson(json: any): Workbook {
+  return makeWorkbook({
+    sections: StakeholderSchema.array().parse(json).flat(2),
+  });
+};

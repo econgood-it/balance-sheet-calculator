@@ -1,5 +1,5 @@
 import { Application } from 'express';
-import { UserService } from '../services/user.service';
+import { IUserService } from '../services/user.service';
 import { allowUserOnly } from './role.access';
 
 const resourceUrl = '/v1/user';
@@ -8,21 +8,14 @@ export const UserPaths = {
   joinOrganization: `${resourceUrl}/me/invitation/:id`,
 };
 
-export class UserController {
-  constructor(private app: Application, private userService: UserService) {
-    this.routes();
-  }
-
-  private routes() {
-    this.app.get(
-      UserPaths.getInvitation,
-      allowUserOnly,
-      this.userService.getInvitations.bind(this.userService)
-    );
-    this.app.patch(
-      UserPaths.joinOrganization,
-      allowUserOnly,
-      this.userService.joinOrganization.bind(this.userService)
-    );
-  }
+export function registerUserRoutes(
+  app: Application,
+  userService: IUserService
+) {
+  app.get(UserPaths.getInvitation, allowUserOnly, userService.getInvitations);
+  app.patch(
+    UserPaths.joinOrganization,
+    allowUserOnly,
+    userService.joinOrganization
+  );
 }

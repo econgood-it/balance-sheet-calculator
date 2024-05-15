@@ -1,23 +1,39 @@
 import { DataSource } from 'typeorm';
-import { IOldRepoProvider } from '../repositories/oldRepoProvider';
 import { NextFunction, Request, Response } from 'express';
 import { handle } from '../exceptions/error.handler';
 import { NoAccessError } from '../exceptions/no.access.error';
+import deepFreeze from 'deep-freeze';
+import { IRepoProvider } from '../repositories/repo.provider';
+import { OrganizationResponseSchema } from '@ecogood/e-calculator-schemas/dist/organization.dto';
 
-export class UserService {
-  constructor(
-    private dataSource: DataSource,
-    private repoProvider: IOldRepoProvider
-  ) {}
+export interface IUserService {
+  getInvitations(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void>;
+  joinOrganization(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void>;
+}
 
-  public async getInvitations(req: Request, res: Response, next: NextFunction) {
-    this.dataSource.manager
+export function makeUserService(
+  dataSource: DataSource,
+  repoProvider: IRepoProvider
+): IUserService {
+  async function getInvitations(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    dataSource.manager
       .transaction(async (entityManager) => {
         if (!req.authenticatedUser) {
           throw new NoAccessError();
         }
-        const orgaRepo =
-          this.repoProvider.getOrganizationEntityRepo(entityManager);
+        const orgaRepo = repoProvider.getOrganizationRepo(entityManager);
         const organizationEntities =
           await orgaRepo.findOrganizationsWithInvitation(
             req.authenticatedUser.email
@@ -25,7 +41,7 @@ export class UserService {
         res.json(
           organizationEntities.map((o) => ({
             id: o.id,
-            name: o.organization.name,
+            name: o.name,
           }))
         );
       })
@@ -34,27 +50,29 @@ export class UserService {
       });
   }
 
-  public async joinOrganization(
+  async function joinOrganization(
     req: Request,
     res: Response,
     next: NextFunction
   ) {
-    this.dataSource.manager
+    dataSource.manager
       .transaction(async (entityManager) => {
         if (!req.authenticatedUser) {
           throw new NoAccessError();
         }
-        const orgaRepo =
-          this.repoProvider.getOrganizationEntityRepo(entityManager);
-        const organizationEntity = await orgaRepo.findByIdOrFail(
+        const orgaRepo = repoProvider.getOrganizationRepo(entityManager);
+        const organization = await orgaRepo.findByIdOrFail(
           Number(req.params.id)
         );
-        organizationEntity.join(req.authenticatedUser);
-        await orgaRepo.save(organizationEntity);
-        res.json(organizationEntity.toJson());
+        const orgaWithNewMember = await orgaRepo.save(
+          organization.join(req.authenticatedUser)
+        );
+        res.json(OrganizationResponseSchema.parse(orgaWithNewMember));
       })
       .catch((error) => {
         handle(error, next);
       });
   }
+
+  return deepFreeze({ getInvitations, joinOrganization });
 }

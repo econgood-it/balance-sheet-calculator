@@ -63,12 +63,13 @@ export function makeOrganization(opts?: OrganizationOpts): Organization {
   }
 
   function join(user: User): Organization {
-    if (!data.invitations.includes(user.email)) {
-      throw new NoAccessError();
-    }
     if (data.members.some((m) => m.id === user.id)) {
       throw new ConflictError();
     }
+    if (!data.invitations.includes(user.email)) {
+      throw new NoAccessError();
+    }
+
     return makeOrganization({
       ...data,
       members: [
@@ -77,6 +78,7 @@ export function makeOrganization(opts?: OrganizationOpts): Organization {
           id: user.id,
         },
       ],
+      invitations: data.invitations.filter((i) => i !== user.email),
     });
   }
 

@@ -1,6 +1,5 @@
 import { BalanceSheetPaths } from '../../controllers/balance.sheet.controller';
 import { z } from 'zod';
-import { balanceSheetJsonFactory } from '../examples';
 
 import {
   applicationJson,
@@ -19,6 +18,7 @@ import {
   BalanceSheetPatchRequestBodySchema,
   BalanceSheetResponseBodySchema,
 } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
+import { makeJsonFactory } from '../examples';
 
 export function registerBalanceSheetPatch(
   registry: OpenAPIRegistry,
@@ -44,7 +44,7 @@ export function registerBalanceSheetPatch(
             schema: BalanceSheetPatchRequestBodySchema,
             examples: {
               default: {
-                value: balanceSheetJsonFactory.emptyFullV508(),
+                value: makeJsonFactory().emptyFullV508(),
               },
               minimal: {
                 value: {

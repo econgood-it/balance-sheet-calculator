@@ -60,6 +60,7 @@ describe('Organization', () => {
     const user = { id: '1', email, role: Role.User };
     const newOrganization = organization.invite(email).join(user);
     expect(newOrganization.members).toEqual([{ id: '1' }]);
+    expect(newOrganization.invitations).toEqual([]);
   });
 
   it('should fail to join a new member if invitation is missing', () => {

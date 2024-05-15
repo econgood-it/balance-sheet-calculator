@@ -17,6 +17,11 @@ export function registerBalanceSheetRoutes(
   app: Application,
   balanceSheetService: IBalanceSheetService
 ) {
+  app.post(
+    BalanceSheetPaths.post,
+    allowUserOnly,
+    balanceSheetService.createBalanceSheet
+  );
   app.patch(
     BalanceSheetPaths.patch,
     allowUserOnly,

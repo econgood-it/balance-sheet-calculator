@@ -1,15 +1,15 @@
-import {
-  FinanceCalcResults,
-  OldFinanceCalc,
-} from '../../src/calculations/old.finance.calc';
 import { makeCompanyFacts } from '../../src/models/company.facts';
-import { makeFinanceCalc } from '../../src/calculations/finance.calc';
+import {
+  DEFAULT_SUPPLY_ECONOMIC_RATIO,
+  DEFAULT_SUPPLY_ECONOMIC_RATIO_E22,
+  makeFinanceCalc,
+} from '../../src/calculations/finance.calc';
 
 describe('Finance Calculator', () => {
   it('should return default value of economic ratio', () => {
     const financeCalcResults = makeFinanceCalc().calculate(makeCompanyFacts());
     expect(financeCalcResults.economicRatio).toBeCloseTo(
-      OldFinanceCalc.DEFAULT_SUPPLY_ECONOMIC_RATIO,
+      DEFAULT_SUPPLY_ECONOMIC_RATIO,
       3
     );
   });
@@ -32,8 +32,7 @@ describe('Finance Calculator', () => {
       financialCosts: 2,
     });
 
-    const financeCalcResults: FinanceCalcResults =
-      makeFinanceCalc().calculate(companyFacts);
+    const financeCalcResults = makeFinanceCalc().calculate(companyFacts);
     expect(financeCalcResults.sumOfFinancialAspects).toBeCloseTo(35, 3);
   });
 
@@ -44,10 +43,9 @@ describe('Finance Calculator', () => {
       totalAssets: 0,
     });
 
-    const financeCalcResults: FinanceCalcResults =
-      makeFinanceCalc().calculate(companyFacts);
+    const financeCalcResults = makeFinanceCalc().calculate(companyFacts);
     expect(financeCalcResults.economicRatioE22).toBeCloseTo(
-      OldFinanceCalc.DEFAULT_SUPPLY_ECONOMIC_RATIO_E22,
+      DEFAULT_SUPPLY_ECONOMIC_RATIO_E22,
       3
     );
   });

@@ -9,7 +9,6 @@ import deepFreeze from 'deep-freeze';
 import { makeRatingFactory } from '../factories/rating.factory';
 import { Organization } from './organization';
 import { LookupError } from '../exceptions/lookup.error';
-import { isTopic } from './oldRating';
 import { RegionProvider } from '../providers/region.provider';
 import { IndustryProvider } from '../providers/industry.provider';
 import { calculate } from '../calculations/calculator';
@@ -24,6 +23,8 @@ import {
 import { z } from 'zod';
 import { Translations } from '../language/translations';
 import { MatrixBodySchema } from '@ecogood/e-calculator-schemas/dist/matrix.dto';
+
+export const BalanceSheetVersionSchema = z.nativeEnum(BalanceSheetVersion);
 
 type BalanceSheetOpts = {
   id?: number;
@@ -256,7 +257,7 @@ export function makeBalanceSheet(opts?: BalanceSheetOpts): BalanceSheet {
 
   function totalPoints(): number {
     const sum = data.ratings
-      .filter((r) => isTopic(r))
+      .filter((r) => r.isTopic())
       .reduce((sumAcc, currentRating) => sumAcc + currentRating.points, 0);
     return sum < MAX_NEGATIVE_POINTS ? MAX_NEGATIVE_POINTS : sum;
   }

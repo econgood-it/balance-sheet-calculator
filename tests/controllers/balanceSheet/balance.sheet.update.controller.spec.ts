@@ -7,18 +7,18 @@ import { ConfigurationReader } from '../../../src/reader/configuration.reader';
 
 import { AuthBuilder } from '../../AuthBuilder';
 import { CORRELATION_HEADER_NAME } from '../../../src/middleware/correlation.id.middleware';
-import { OldRating } from '../../../src/models/oldRating';
+
 import {
   BalanceSheetType,
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
-import { OldRepoProvider } from '../../../src/repositories/oldRepoProvider';
 import { InMemoryAuthentication } from '../in.memory.authentication';
 import { makeRepoProvider } from '../../../src/repositories/repo.provider';
 import { makeOrganization } from '../../../src/models/organization';
 import { makeBalanceSheet } from '../../../src/models/balance.sheet';
 import { IOrganizationRepo } from '../../../src/repositories/organization.repo';
 import { IBalanceSheetRepo } from '../../../src/repositories/balance.sheet.repo';
+import { Rating } from '../../../src/models/rating';
 
 describe('Update endpoint of Balance Sheet Controller', () => {
   let dataSource: DataSource;
@@ -43,7 +43,6 @@ describe('Update endpoint of Balance Sheet Controller', () => {
       dataSource,
       configuration,
       repoProvider,
-      new OldRepoProvider(configuration),
       new InMemoryAuthentication(authBuilder.getTokenMap())
     ).app;
   });
@@ -186,7 +185,7 @@ describe('Update endpoint of Balance Sheet Controller', () => {
     });
   }
 
-  function findAspect(shortName: string, response: any): OldRating | undefined {
+  function findAspect(shortName: string, response: any): Rating | undefined {
     return response.body.ratings.find(
       (r: { shortName: string }) => r.shortName === shortName
     );

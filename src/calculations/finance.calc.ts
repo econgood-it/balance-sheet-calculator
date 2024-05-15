@@ -1,5 +1,5 @@
 import { none, Option, some } from './option';
-import { INDUSTRY_CODE_FOR_FINANCIAL_SERVICES } from '../models/oldCompanyFacts';
+
 import { CompanyFacts } from '../models/company.facts';
 import deepFreeze from 'deep-freeze';
 
@@ -10,10 +10,10 @@ export interface FinanceCalcResults {
   companyIsActiveInFinancialServices: boolean;
 }
 
+export const INDUSTRY_CODE_FOR_FINANCIAL_SERVICES = 'K';
+export const DEFAULT_SUPPLY_ECONOMIC_RATIO = 0.3;
+export const DEFAULT_SUPPLY_ECONOMIC_RATIO_E22 = 0.2;
 export function makeFinanceCalc() {
-  const DEFAULT_SUPPLY_ECONOMIC_RATIO = 0.3;
-  const DEFAULT_SUPPLY_ECONOMIC_RATIO_E22 = 0.2;
-
   function calculate(companyFacts: CompanyFacts): FinanceCalcResults {
     const sumOfFinancialAspects = getSumOfFinancialAspects(companyFacts);
     const economicRatio = calculateEconomicRatio(companyFacts).getOrElse(

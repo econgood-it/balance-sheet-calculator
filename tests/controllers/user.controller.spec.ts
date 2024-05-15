@@ -3,14 +3,13 @@ import { Application } from 'express';
 import { ConfigurationReader } from '../../src/reader/configuration.reader';
 import { AuthBuilder } from '../AuthBuilder';
 import { DatabaseSourceCreator } from '../../src/databaseSourceCreator';
-import { OldRepoProvider } from '../../src/repositories/oldRepoProvider';
 import App from '../../src/app';
 import { InMemoryAuthentication } from './in.memory.authentication';
 import supertest from 'supertest';
-import { OrganizationBuilder } from '../OrganizationBuilder';
 import { UserPaths } from '../../src/controllers/user.controller';
-import { IOldOrganizationEntityRepo } from '../../src/repositories/oldOrganization.entity.repo';
 import { makeRepoProvider } from '../../src/repositories/repo.provider';
+import { IOrganizationRepo } from '../../src/repositories/organization.repo';
+import { makeOrganization } from '../../src/models/organization';
 
 describe('User Controller', () => {
   let dataSource: DataSource;
@@ -19,18 +18,17 @@ describe('User Controller', () => {
   const authBuilder = new AuthBuilder();
   const auth = authBuilder.addUser();
   const authOtherUser = authBuilder.addUser();
-  let orgaRepo: IOldOrganizationEntityRepo;
+  let orgaRepo: IOrganizationRepo;
 
   beforeAll(async () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
       configuration
     );
-    const repoProvider = new OldRepoProvider(configuration);
-    orgaRepo = repoProvider.getOrganizationEntityRepo(dataSource.manager);
+    const repoProvider = makeRepoProvider(configuration);
+    orgaRepo = repoProvider.getOrganizationRepo(dataSource.manager);
     app = new App(
       dataSource,
       configuration,
-      makeRepoProvider(configuration),
       repoProvider,
       new InMemoryAuthentication(authBuilder.getTokenMap())
     ).app;
@@ -42,20 +40,20 @@ describe('User Controller', () => {
 
   it('should return invitations of user', async () => {
     const testApp = supertest(app);
-    const { organizationEntity: orga1 } = await new OrganizationBuilder()
-      .inviteMember(auth.user.email)
-      .build(dataSource);
-    const { organizationEntity: orga2 } = await new OrganizationBuilder()
-      .rename('Orga2')
-      .inviteMember(auth.user.email)
-      .build(dataSource);
+    const orga1 = await orgaRepo.save(
+      makeOrganization().invite(auth.user.email)
+    );
+    const orga2 = await orgaRepo.save(
+      makeOrganization().rename('Orga2').invite(auth.user.email)
+    );
+
     const response = await testApp
       .get(UserPaths.getInvitation)
       .set(auth.toHeaderPair().key, auth.toHeaderPair().value);
     expect(response.status).toBe(200);
     expect(response.body).toEqual([
-      { id: orga1.id, name: orga1.organization.name },
-      { id: orga2.id, name: orga2.organization.name },
+      { id: orga1.id, name: orga1.name },
+      { id: orga2.id, name: orga2.name },
     ]);
   });
 
@@ -82,25 +80,24 @@ describe('User Controller', () => {
 
   it('should join invited user', async () => {
     const testApp = supertest(app);
-    const { organizationEntity } = await new OrganizationBuilder()
-      .inviteMember(auth.user.email)
-      .build(dataSource);
+    const organization = await orgaRepo.save(
+      makeOrganization().invite(auth.user.email)
+    );
+
     const response = await testApp
-      .patch(`${UserPaths.getInvitation}/${organizationEntity.id}`)
+      .patch(`${UserPaths.getInvitation}/${organization.id}`)
       .set(auth.toHeaderPair().key, auth.toHeaderPair().value);
     expect(response.status).toBe(200);
-    const foundOrga = await orgaRepo.findByIdOrFail(organizationEntity.id!);
+    const foundOrga = await orgaRepo.findByIdOrFail(organization.id!);
     expect(foundOrga.members).toEqual([{ id: auth.user.id }]);
-    expect(foundOrga.organization.invitations).toEqual([]);
+    expect(foundOrga.invitations).toEqual([]);
   });
 
   it('should return 403 if user is not authorized to join', async () => {
     const testApp = supertest(app);
-    const { organizationEntity } = await new OrganizationBuilder().build(
-      dataSource
-    );
+    const organization = await orgaRepo.save(makeOrganization());
     const response = await testApp
-      .patch(`${UserPaths.getInvitation}/${organizationEntity.id}`)
+      .patch(`${UserPaths.getInvitation}/${organization.id}`)
       .set(auth.toHeaderPair().key, auth.toHeaderPair().value);
     expect(response.status).toBe(403);
   });

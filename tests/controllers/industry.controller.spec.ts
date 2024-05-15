@@ -5,7 +5,6 @@ import { DatabaseSourceCreator } from '../../src/databaseSourceCreator';
 import App from '../../src/app';
 import { AuthBuilder } from '../AuthBuilder';
 import supertest from 'supertest';
-import { OldRepoProvider } from '../../src/repositories/oldRepoProvider';
 import { InMemoryAuthentication } from './in.memory.authentication';
 import { makeRepoProvider } from '../../src/repositories/repo.provider';
 
@@ -24,7 +23,6 @@ describe('Industry Controller', () => {
       dataSource,
       configuration,
       makeRepoProvider(configuration),
-      new OldRepoProvider(configuration),
       new InMemoryAuthentication(authBuilder.getTokenMap())
     ).app;
   });

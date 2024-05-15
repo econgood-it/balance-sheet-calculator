@@ -1,5 +1,3 @@
-import { BalanceSheetResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
-import { diff } from 'deep-diff';
 import {
   AfterLoad,
   Column,
@@ -7,31 +5,12 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { OldCalcResults, OldCalculator } from '../calculations/oldCalculator';
-import { OldRatingsUpdater } from '../calculations/old.ratings.updater';
-import { OldStakeholderWeightCalculator } from '../calculations/old.stakeholder.weight.calculator';
-import { OldTopicWeightCalculator } from '../calculations/oldTopicWeightCalculator';
 import { DatabaseValidationError } from '../exceptions/databaseValidationError';
-import { translateBalanceSheet, Translations } from '../language/translations';
-import { OldBalanceSheet } from '../models/oldBalanceSheet';
-import { companyFactsToResponse } from '../models/oldCompanyFacts';
-import { isTopic, sortRatings } from '../models/oldRating';
-import { IndustryProvider } from '../providers/industry.provider';
-import Provider from '../providers/provider';
-import { RegionProvider } from '../providers/region.provider';
 import { OrganizationEntity } from './organization.entity';
 import {
   BalanceSheetDB,
   BalanceSheetDBSchema,
 } from './schemas/balance.sheet.schema';
-
-export const BALANCE_SHEET_RELATIONS = ['organizationEntity'];
-
-type CalculationResult = {
-  calcResults: OldCalcResults;
-  stakeholderWeights: Provider<string, number>;
-  topicWeights: Provider<string, number>;
-};
 
 @Entity()
 export class BalanceSheetEntity {
@@ -48,10 +27,6 @@ export class BalanceSheetEntity {
     (organizationEntity) => organizationEntity.balanceSheetEntities
   )
   public readonly organizationEntity: OrganizationEntity | undefined;
-
-  // @ManyToOne(() => OrganizationEntity)
-  // @JoinColumn({ name: 'organizationEntityId' })
-  // public readonly organizationEntity: OrganizationEntity | undefined;
 
   @Column()
   public organizationEntityId: number | undefined;
@@ -82,77 +57,6 @@ export class BalanceSheetEntity {
     return this.balanceSheet.stakeholderWeights;
   }
 
-  public async reCalculate(): Promise<CalculationResult> {
-    const regionProvider = await RegionProvider.fromVersion(this.version);
-    const industryProvider = await IndustryProvider.fromVersion(this.version);
-    const calcResults: OldCalcResults = await new OldCalculator(
-      regionProvider,
-      industryProvider
-    ).calculate(this.companyFacts);
-    const ratingsUpdater: OldRatingsUpdater = new OldRatingsUpdater();
-    const stakeholderWeightCalculator = new OldStakeholderWeightCalculator();
-    const topicWeightCalculator = new OldTopicWeightCalculator();
-    const stakeholderWeights = (
-      await stakeholderWeightCalculator.calcStakeholderWeights(calcResults)
-    ).merge(this.stakeholderWeights);
-
-    const topicWeights = topicWeightCalculator.calcTopicWeights(
-      calcResults,
-      this.companyFacts
-    );
-    this.balanceSheet.ratings = await ratingsUpdater.update(
-      this.ratings,
-      calcResults,
-      stakeholderWeights,
-      topicWeights
-    );
-    return { calcResults, stakeholderWeights, topicWeights };
-  }
-
-  public clone(): BalanceSheetEntity {
-    return new BalanceSheetEntity(undefined, this.balanceSheet);
-  }
-
-  public diff(otherBalanceSheet: BalanceSheetEntity) {
-    const diffRatings = diff(this.ratings, otherBalanceSheet.ratings);
-    const diffCompanyFacts = diff(
-      this.companyFacts,
-      otherBalanceSheet.companyFacts
-    );
-
-    return {
-      diffRatings: diffRatings?.map((d) =>
-        d.path && d.path.length >= 2 && d.path[0] === 'ratings'
-          ? {
-              ...d,
-              shortName: this.ratings[d.path[1]].shortName,
-            }
-          : d
-      ),
-      diffCompanyFacts,
-      diffVersion: diff(this.version, otherBalanceSheet.version),
-      diffType: diff(this.type, otherBalanceSheet.type),
-    };
-  }
-
-  public toJson(language: keyof Translations) {
-    const transBalanceSheet = translateBalanceSheet(
-      this.balanceSheet,
-      language
-    );
-    return BalanceSheetResponseBodySchema.parse({
-      id: this.id,
-      ...transBalanceSheet,
-      companyFacts: companyFactsToResponse(transBalanceSheet.companyFacts),
-      ratings: sortRatings(
-        transBalanceSheet.ratings.map((r) => ({
-          ...r,
-          type: isTopic(r) ? 'topic' : 'aspect',
-        }))
-      ),
-    });
-  }
-
   @AfterLoad()
   validateBalanceSheet() {
     const result = BalanceSheetDBSchema.strict().safeParse(this.balanceSheet);
@@ -163,9 +67,5 @@ export class BalanceSheetEntity {
         this.id
       );
     }
-  }
-
-  public toOldBalanceSheet(): OldBalanceSheet {
-    return this.balanceSheet;
   }
 }

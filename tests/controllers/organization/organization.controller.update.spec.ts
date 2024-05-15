@@ -5,7 +5,6 @@ import App from '../../../src/app';
 import { OrganizationPaths } from '../../../src/controllers/organization.controller';
 import { DatabaseSourceCreator } from '../../../src/databaseSourceCreator';
 import { ConfigurationReader } from '../../../src/reader/configuration.reader';
-import { OldRepoProvider } from '../../../src/repositories/oldRepoProvider';
 import { AuthBuilder } from '../../AuthBuilder';
 import { InMemoryAuthentication } from '../in.memory.authentication';
 import { makeRepoProvider } from '../../../src/repositories/repo.provider';
@@ -36,12 +35,10 @@ describe('Organization Controller', () => {
     );
     const repoProvider = makeRepoProvider(configuration);
     organizationRepo = repoProvider.getOrganizationRepo(dataSource.manager);
-    const oldRepoProvider = new OldRepoProvider(configuration);
     app = new App(
       dataSource,
       configuration,
       repoProvider,
-      oldRepoProvider,
       new InMemoryAuthentication(authBuilder.getTokenMap())
     ).app;
   });

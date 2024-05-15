@@ -6,15 +6,13 @@ import App from '../../src/app';
 import { AuthBuilder } from '../AuthBuilder';
 import supertest from 'supertest';
 
-import { oldOrganizationFactory } from '../../src/openapi/examples';
 import { WorkbookPaths } from '../../src/controllers/workbook.controller';
-import { workbookEntityFromFile } from '../workbook';
+import { workbookFromFile } from '../workbook';
 import {
-  InMemoryRepoProvider,
-  InMemoryWorkbookEntityRepo,
-} from '../repositories/workbook.entity.repo.spec';
+  makeInMemoryRepoProvider,
+  makeInMemoryWorkbookRepo,
+} from '../repositories/workbook.repo.spec';
 import { InMemoryAuthentication } from './in.memory.authentication';
-import { makeRepoProvider } from '../../src/repositories/repo.provider';
 
 describe('Workbook Controller', () => {
   let dataSource: DataSource;
@@ -30,8 +28,7 @@ describe('Workbook Controller', () => {
     app = new App(
       dataSource,
       configuration,
-      makeRepoProvider(configuration),
-      new InMemoryRepoProvider(new InMemoryWorkbookEntityRepo()),
+      makeInMemoryRepoProvider(makeInMemoryWorkbookRepo()),
       new InMemoryAuthentication(authBuilder.getTokenMap())
     ).app;
   });
@@ -47,16 +44,15 @@ describe('Workbook Controller', () => {
       .set(auth.toHeaderPair().key, auth.toHeaderPair().value)
       .send();
     expect(response.status).toBe(200);
-    expect(response.body).toEqual(workbookEntityFromFile().toJson());
+    expect(response.body).toEqual(workbookFromFile().toJson());
   });
 
   it('should fail return workbook if user is unauthenticated', async () => {
-    const orgaJson = oldOrganizationFactory.default();
     const testApp = supertest(app);
     const response = await testApp
       .get(WorkbookPaths.get)
       .set(auth.toHeaderPair().key, 'Bearer invalid token')
-      .send(orgaJson);
+      .send();
     expect(response.status).toBe(401);
   });
 });

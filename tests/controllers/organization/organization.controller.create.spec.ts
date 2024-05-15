@@ -8,36 +8,31 @@ import { DataSource } from 'typeorm';
 import App from '../../../src/app';
 import { OrganizationPaths } from '../../../src/controllers/organization.controller';
 import { DatabaseSourceCreator } from '../../../src/databaseSourceCreator';
-import { BalanceSheetEntity } from '../../../src/entities/balance.sheet.entity';
-import { OldRatingsFactory } from '../../../src/factories/oldRatingsFactory';
-import { INDUSTRY_CODE_FOR_FINANCIAL_SERVICES } from '../../../src/models/oldCompanyFacts';
-import { RatingResponseBody } from '../../../src/models/oldRating';
+
 import {
-  balanceSheetJsonFactory,
-  companyFactsFactory,
-  companyFactsJsonFactory,
+  makeJsonFactory,
   makeOrganizationCreateRequest,
 } from '../../../src/openapi/examples';
 import { ConfigurationReader } from '../../../src/reader/configuration.reader';
-import { IOldOrganizationEntityRepo } from '../../../src/repositories/oldOrganization.entity.repo';
-import { OldRepoProvider } from '../../../src/repositories/oldRepoProvider';
+
 import { AuthBuilder } from '../../AuthBuilder';
-import { OrganizationBuilder } from '../../OrganizationBuilder';
 import { InMemoryAuthentication } from '../in.memory.authentication';
-import { BalanceSheetMockBuilder } from '../../BalanceSheetMockBuilder';
 import { v4 as uuid4 } from 'uuid';
-import { BalanceSheetDBSchema } from '../../../src/entities/schemas/balance.sheet.schema';
 import { IOrganizationRepo } from '../../../src/repositories/organization.repo';
 import { makeRepoProvider } from '../../../src/repositories/repo.provider';
 import { makeOrganization } from '../../../src/models/organization';
+import { IBalanceSheetRepo } from '../../../src/repositories/balance.sheet.repo';
+import { RatingResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/rating.dto';
+import { z } from 'zod';
+import { INDUSTRY_CODE_FOR_FINANCIAL_SERVICES } from '../../../src/calculations/finance.calc';
 
 const assertTopicWeight = (
   shortName: string,
   expectedWeight: number,
-  ratings: RatingResponseBody[]
+  ratings: z.infer<typeof RatingResponseBodySchema>[]
 ) => {
   const topic = ratings.find(
-    (t: RatingResponseBody) => t.shortName === shortName
+    (t: z.infer<typeof RatingResponseBodySchema>) => t.shortName === shortName
   );
   expect(topic).toBeDefined();
   expect(topic && topic.weight).toBe(expectedWeight);
@@ -56,12 +51,11 @@ describe('Organization Controller', () => {
     );
     const repoProvider = makeRepoProvider(configuration);
     organizationRepo = repoProvider.getOrganizationRepo(dataSource.manager);
-    const oldRepoProvider = new OldRepoProvider(configuration);
+
     app = new App(
       dataSource,
       configuration,
       repoProvider,
-      oldRepoProvider,
       new InMemoryAuthentication(authBuilder.getTokenMap())
     ).app;
   });
@@ -102,7 +96,7 @@ describe('Organization Balance Sheet Controller', () => {
   let dataSource: DataSource;
   let app: Application;
   const configuration = ConfigurationReader.read();
-  let oldOrganizationEntityRepo: IOldOrganizationEntityRepo;
+  let balanceSheetRepo: IBalanceSheetRepo;
   let organizationRepo: IOrganizationRepo;
   const authBuilder = new AuthBuilder();
   const auth = authBuilder.addUser();
@@ -112,18 +106,14 @@ describe('Organization Balance Sheet Controller', () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
       configuration
     );
-    const oldRepoProvider = new OldRepoProvider(configuration);
-    oldOrganizationEntityRepo = oldRepoProvider.getOrganizationEntityRepo(
-      dataSource.manager
-    );
     const repoProvider = makeRepoProvider(configuration);
     organizationRepo = repoProvider.getOrganizationRepo(dataSource.manager);
+    balanceSheetRepo = repoProvider.getBalanceSheetRepo(dataSource.manager);
 
     app = new App(
       dataSource,
       configuration,
       repoProvider,
-      oldRepoProvider,
       new InMemoryAuthentication(authBuilder.getTokenMap())
     ).app;
   });
@@ -132,68 +122,53 @@ describe('Organization Balance Sheet Controller', () => {
     await dataSource.destroy();
   });
   it('should create balance sheets for organization', async () => {
-    const balanceSheetBuilder = new BalanceSheetMockBuilder();
     const testApp = supertest(app);
-    const { organizationEntity } = await new OrganizationBuilder()
-      .addMember(auth.user)
-      .build(dataSource);
-    const response = await testApp
-      .post(`${OrganizationPaths.getAll}/${organizationEntity.id}/balancesheet`)
-      .set(auth.toHeaderPair().key, auth.toHeaderPair().value)
-      .send(balanceSheetBuilder.buildRequestBody());
-    expect(response.status).toBe(200);
-    const balanceSheetEntity = new BalanceSheetEntity(
-      response.body.id,
-      BalanceSheetDBSchema.parse(balanceSheetBuilder.build())
+    const organization = await organizationRepo.save(
+      makeOrganization().invite(auth.user.email).join(auth.user)
     );
-    await balanceSheetEntity.reCalculate();
-    expect(response.body).toMatchObject(balanceSheetEntity.toJson('en'));
-    const response2 = await testApp
-      .post(`${OrganizationPaths.getAll}/${organizationEntity.id}/balancesheet`)
+    const response = await testApp
+      .post(`${OrganizationPaths.getAll}/${organization.id}/balancesheet`)
       .set(auth.toHeaderPair().key, auth.toHeaderPair().value)
-      .send(balanceSheetBuilder.buildRequestBody());
-    const foundOrganizationEntity =
-      await oldOrganizationEntityRepo.findByIdOrFail(
-        organizationEntity.id!,
-        true
-      );
-    expect(
-      foundOrganizationEntity.balanceSheetEntities?.map((b) => b.id)
-    ).toEqual([response.body.id, response2.body.id]);
+      .send({
+        type: BalanceSheetType.Compact,
+        version: BalanceSheetVersion.v5_0_8,
+      });
+    expect(response.status).toBe(200);
+    const response2 = await testApp
+      .post(`${OrganizationPaths.getAll}/${organization.id}/balancesheet`)
+      .set(auth.toHeaderPair().key, auth.toHeaderPair().value)
+      .send({
+        type: BalanceSheetType.Full,
+        version: BalanceSheetVersion.v5_0_8,
+      });
+    const foundBalanceSheets = await balanceSheetRepo.findByOrganization(
+      organization
+    );
+    expect(foundBalanceSheets?.map((b) => b.id)).toEqual([
+      response.body.id,
+      response2.body.id,
+    ]);
   });
 
   it('should create balance sheet of type compact', async () => {
     const testApp = supertest(app);
-    const { organizationEntity } = await new OrganizationBuilder()
-      .addMember(auth.user)
-      .build(dataSource);
-    const response = await testApp
-      .post(`${OrganizationPaths.getAll}/${organizationEntity.id}/balancesheet`)
-      .set(auth.toHeaderPair().key, auth.toHeaderPair().value)
-      .send(balanceSheetJsonFactory.minimalCompactV506());
-    expect(response.status).toEqual(200);
-    const expectedType = balanceSheetJsonFactory.minimalCompactV506().type;
-    const expectedVersion =
-      balanceSheetJsonFactory.minimalCompactV506().version;
-    const expectedRatings = OldRatingsFactory.createDefaultRatings(
-      expectedType,
-      expectedVersion
+    const organization = await organizationRepo.save(
+      makeOrganization().invite(auth.user.email).join(auth.user)
     );
-    const balanceSheetEntity = new BalanceSheetEntity(response.body.id, {
-      type: expectedType,
-      version: expectedVersion,
-      companyFacts: companyFactsFactory.emptyWithoutOptionalValues(),
-      ratings: expectedRatings,
-      stakeholderWeights: [],
-    });
-    expect(response.body).toMatchObject(balanceSheetEntity.toJson('en'));
+
+    const response = await testApp
+      .post(`${OrganizationPaths.getAll}/${organization.id}/balancesheet`)
+      .set(auth.toHeaderPair().key, auth.toHeaderPair().value)
+      .send(makeJsonFactory().minimalCompactV506());
+    expect(response.status).toEqual(200);
+    expect(response.body.type).toEqual(BalanceSheetType.Compact);
   });
 
   describe('should create balance sheet', () => {
     const balanceSheetJson = {
       type: BalanceSheetType.Full,
       version: BalanceSheetVersion.v5_0_8,
-      companyFacts: companyFactsJsonFactory.emptyRequest(),
+      companyFacts: makeJsonFactory().emptyCompanyFacts(),
     };
 
     it('where B1 weight is very high', async () => {
@@ -286,7 +261,7 @@ describe('Organization Balance Sheet Controller', () => {
   });
 
   it('balance sheet creation should fail if user is not member of organization', async () => {
-    const balanceSheet = balanceSheetJsonFactory.emptyFullV508();
+    const balanceSheet = makeJsonFactory().emptyFullV508();
     const testApp = supertest(app);
     const organization = await organizationRepo.save(
       makeOrganization().invite(auth.user.email).join(auth.user)
@@ -314,12 +289,10 @@ describe('Organization Invitation Controller', () => {
     );
     const repoProvider = makeRepoProvider(configuration);
     organizationRepo = repoProvider.getOrganizationRepo(dataSource.manager);
-    const oldRepoProvider = new OldRepoProvider(configuration);
     app = new App(
       dataSource,
       configuration,
       repoProvider,
-      oldRepoProvider,
       new InMemoryAuthentication(authBuilder.getTokenMap())
     ).app;
   });

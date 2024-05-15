@@ -5,7 +5,6 @@ import App from '../../../src/app';
 import { AuthBuilder } from '../../AuthBuilder';
 import supertest from 'supertest';
 import { OrganizationPaths } from '../../../src/controllers/organization.controller';
-import { OldRepoProvider } from '../../../src/repositories/oldRepoProvider';
 import { DatabaseSourceCreator } from '../../../src/databaseSourceCreator';
 import { InMemoryAuthentication } from '../in.memory.authentication';
 import { makeRepoProvider } from '../../../src/repositories/repo.provider';
@@ -30,12 +29,10 @@ describe('Organization Controller Get Endpoint', () => {
     );
     const repoProvider = makeRepoProvider(configuration);
     organizationRepo = repoProvider.getOrganizationRepo(dataSource.manager);
-    const oldRepoProvider = new OldRepoProvider(configuration);
     app = new App(
       dataSource,
       configuration,
       repoProvider,
-      oldRepoProvider,
       new InMemoryAuthentication(authBuilder.getTokenMap())
     ).app;
   });
@@ -140,7 +137,6 @@ describe('Organization Controller Get Balance Sheets Endpoint', () => {
       dataSource,
       configuration,
       repoProvider,
-      new OldRepoProvider(configuration),
       new InMemoryAuthentication(authBuilder.getTokenMap())
     ).app;
   });

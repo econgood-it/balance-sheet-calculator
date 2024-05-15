@@ -1,8 +1,8 @@
-import { CompanySize } from '../../src/calculations/old.employees.calc';
 import { none, some } from '../../src/calculations/option';
 import { makeTopicWeightCalculator } from '../../src/calculations/topic.weight.calculator';
 import { CalcResults } from '../../src/calculations/calculator';
 import { CompanyFacts, makeCompanyFacts } from '../../src/models/company.facts';
+import { CompanySize } from '../../src/calculations/employees.calc';
 
 describe('Topic Weight Calculator', () => {
   let calcResults: CalcResults;

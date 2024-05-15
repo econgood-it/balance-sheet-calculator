@@ -1,8 +1,5 @@
 import { none, Option, some } from './option';
-import {
-  INDUSTRY_CODE_FOR_CONSTRUCTION_INDUSTRY,
-  INDUSTRY_CODE_FOR_MINING,
-} from '../models/oldCompanyFacts';
+
 import { CompanyFacts } from '../models/company.facts';
 import deepFreeze from 'deep-freeze';
 
@@ -12,6 +9,8 @@ export interface SocialEnvironmentCalcResults {
 }
 
 export function makeSocialEnvironmentCalc() {
+  const INDUSTRY_CODE_FOR_MINING = 'B';
+  const INDUSTRY_CODE_FOR_CONSTRUCTION_INDUSTRY = 'F';
   function calculate(companyFacts: CompanyFacts): SocialEnvironmentCalcResults {
     return {
       profitInPercentOfTurnover: calcProfitInPercentOfTotalSales(companyFacts),

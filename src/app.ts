@@ -14,38 +14,34 @@ import { HealthCheckController } from './controllers/health.check.controller';
 import { IndustryController } from './controllers/industry.controller';
 import { registerOrganizationRoutes } from './controllers/organization.controller';
 import { RegionController } from './controllers/region.controller';
-import { WorkbookController } from './controllers/workbook.controller';
+import { registerWorkbookRoutes } from './controllers/workbook.controller';
 import { LoggingService } from './logging';
 import correlationIdMiddleware from './middleware/correlation.id.middleware';
 import morganMiddleware from './middleware/morgan.http.logging.middleware';
 import { Configuration } from './reader/configuration.reader';
-import { IOldRepoProvider } from './repositories/oldRepoProvider';
 import { makeBalanceSheetService } from './services/balance.sheet.service';
 import { HealthCheckService } from './services/health.check.service';
 import { IndustryService } from './services/industry.service';
 import { makeOrganizationService } from './services/organization.service';
 import { RegionService } from './services/region.service';
-import { WorkbookService } from './services/workbook.service';
-import { UserController } from './controllers/user.controller';
-import { UserService } from './services/user.service';
+import { makeWorkbookService } from './services/workbook.service';
+import { registerUserRoutes } from './controllers/user.controller';
+import { makeUserService } from './services/user.service';
 import { IRepoProvider } from './repositories/repo.provider';
 
 class App {
   public readonly app: Application;
   // declaring our controllers
-  private userController: UserController;
   private regionController: RegionController;
   private industryController: IndustryController;
   private healthCheckController: HealthCheckController;
   private docsController: DocsController;
   private authentication: Authentication;
-  private workbookController: WorkbookController;
 
   constructor(
     dataSource: DataSource,
     private configuration: Configuration,
     repoProvider: IRepoProvider,
-    repoProviderOld: IOldRepoProvider,
     authProvider: IAuthenticationProvider
   ) {
     this.app = express();
@@ -62,8 +58,7 @@ class App {
       makeBalanceSheetService(dataSource, repoProvider)
     );
 
-    const userService = new UserService(dataSource, repoProviderOld);
-    this.userController = new UserController(this.app, userService);
+    registerUserRoutes(this.app, makeUserService(dataSource, repoProvider));
 
     const regionService = new RegionService();
     this.regionController = new RegionController(this.app, regionService);
@@ -71,10 +66,7 @@ class App {
       this.app,
       new IndustryService()
     );
-    this.workbookController = new WorkbookController(
-      this.app,
-      new WorkbookService(repoProviderOld)
-    );
+    registerWorkbookRoutes(this.app, makeWorkbookService(repoProvider));
     this.healthCheckController = new HealthCheckController(
       this.app,
       new HealthCheckService()

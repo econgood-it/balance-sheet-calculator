@@ -11,11 +11,7 @@ import { handle } from '../exceptions/error.handler';
 import { NoAccessError } from '../exceptions/no.access.error';
 import NotFoundException from '../exceptions/not.found.exception';
 import { parseLanguageParameter } from '../language/translations';
-import { IOldRepoProvider } from '../repositories/oldRepoProvider';
-import {
-  Authorization,
-  checkIfCurrentUserIsMember,
-} from '../security/authorization';
+import { checkIfCurrentUserIsMember } from '../security/authorization';
 import { z } from 'zod';
 import { IRepoProvider } from '../repositories/repo.provider';
 import { makeOrganization } from '../models/organization';
@@ -253,42 +249,4 @@ export function makeOrganizationService(
     createBalanceSheet,
     getBalanceSheets,
   });
-}
-
-export class OldOrganizationService {
-  constructor(
-    private dataSource: DataSource,
-    private oldRepoProvider: IOldRepoProvider
-  ) {}
-
-  public async getBalanceSheets(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
-    this.dataSource.manager
-      .transaction(async (entityManager) => {
-        const organizationEntityRepo =
-          this.oldRepoProvider.getOrganizationEntityRepo(entityManager);
-        const organizationEntity = await organizationEntityRepo.findByIdOrFail(
-          Number(req.params.id),
-          true
-        );
-        Authorization.checkIfCurrentUserIsMember(req, organizationEntity);
-        res.json(
-          BalanceSheetItemsResponseSchema.parse(
-            organizationEntity.balanceSheetEntities
-              ? organizationEntity.balanceSheetEntities
-                  .map((b) => ({
-                    id: b.id,
-                  }))
-                  .sort((a, b) => a.id! - b.id!)
-              : []
-          )
-        );
-      })
-      .catch((error) => {
-        handle(error, next);
-      });
-  }
 }

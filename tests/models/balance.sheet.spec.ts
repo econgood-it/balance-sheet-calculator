@@ -12,7 +12,6 @@ import { makeRating } from '../../src/models/rating';
 import { makeOrganization } from '../../src/models/organization';
 import { LookupError } from '../../src/exceptions/lookup.error';
 import { makeWeighting } from '../../src/models/weighting';
-import { isTopic } from '../../src/models/oldRating';
 
 describe('BalanceSheet', () => {
   it('is created with default values', () => {
@@ -422,7 +421,7 @@ describe('BalanceSheet', () => {
       );
 
       const ratings = defaultRatings.map((r) =>
-        isTopic(r) ? { ...r, points: 50 } : r
+        r.isTopic() ? { ...r, points: 50 } : r
       );
       const balanceSheet = await makeBalanceSheet({
         ...defaultBalanceSheet,

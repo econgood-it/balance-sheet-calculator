@@ -1,13 +1,15 @@
 import { RegionProvider } from '../../src/providers/region.provider';
 
-import { CompanySize } from '../../src/calculations/old.employees.calc';
 import { BalanceSheetVersion } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import {
   CompanyFacts,
   makeCompanyFacts,
   makeEmployeesFraction,
 } from '../../src/models/company.facts';
-import { makeEmployeesCalc } from '../../src/calculations/employees.calc';
+import {
+  CompanySize,
+  makeEmployeesCalc,
+} from '../../src/calculations/employees.calc';
 
 describe('Employees Calculator', () => {
   describe('should calculate the itucAverage ', () => {

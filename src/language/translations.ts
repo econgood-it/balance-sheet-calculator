@@ -1,5 +1,4 @@
 import i18next from '../i18n';
-import { OldBalanceSheet } from '../models/oldBalanceSheet';
 
 export interface Translations {
   de: string;
@@ -19,19 +18,6 @@ export const parseLanguageParameter = (lngParam: any): keyof Translations => {
     return 'en';
   }
 };
-
-export function translateBalanceSheet(
-  balanceSheet: OldBalanceSheet,
-  lng: keyof Translations
-): OldBalanceSheet {
-  return {
-    ...balanceSheet,
-    ratings: balanceSheet.ratings.map((r) => ({
-      ...r,
-      name: staticTranslate(lng, r.name),
-    })),
-  };
-}
 
 export const staticTranslate = (
   lng: keyof Translations,

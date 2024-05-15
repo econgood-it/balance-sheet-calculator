@@ -1,16 +1,23 @@
 import { NextFunction, Request, Response } from 'express';
 import { handle } from '../exceptions/error.handler';
-import { IOldRepoProvider } from '../repositories/oldRepoProvider';
+import { IRepoProvider } from '../repositories/repo.provider';
+import deepFreeze from 'deep-freeze';
 
-export class WorkbookService {
-  constructor(private repoProvider: IOldRepoProvider) {}
-  public async getWorkbook(req: Request, res: Response, next: NextFunction) {
+export interface IWorkbookService {
+  getWorkbook(req: Request, res: Response, next: NextFunction): Promise<void>;
+}
+
+export function makeWorkbookService(
+  repoProvider: IRepoProvider
+): IWorkbookService {
+  async function getWorkbook(req: Request, res: Response, next: NextFunction) {
     try {
-      const workbookRepo = this.repoProvider.getWorkbookEntityRepo();
-      const workbookEntity = await workbookRepo.getWorkbookEntity();
-      res.json(workbookEntity.toJson());
+      const workbookRepo = repoProvider.getWorkbookRepo();
+      const workbook = await workbookRepo.getWorkbook();
+      res.json(workbook.toJson());
     } catch (error) {
       handle(error as Error, next);
     }
   }
+  return deepFreeze({ getWorkbook });
 }

@@ -1,4 +1,3 @@
-import { SupplyCalcResults } from '../../src/calculations/old.supplier.calc';
 import { RegionProvider } from '../../src/providers/region.provider';
 import { IndustryProvider } from '../../src/providers/industry.provider';
 import { BalanceSheetVersion } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
@@ -42,7 +41,7 @@ describe('Supply Calculator', () => {
   });
 
   it('should calculate ', async () => {
-    const supplyCalcResults: SupplyCalcResults = makeSupplierCalc(
+    const supplyCalcResults = makeSupplierCalc(
       regionProvider,
       industryProvider
     ).calculate(companyFactsWithSupplyFractions);
@@ -58,7 +57,7 @@ describe('Supply Calculator', () => {
     regionProvider = await RegionProvider.fromVersion(
       BalanceSheetVersion.v5_0_8
     );
-    const supplyCalcResults: SupplyCalcResults = makeSupplierCalc(
+    const supplyCalcResults = makeSupplierCalc(
       regionProvider,
       industryProvider
     ).calculate(nonDefaultMainOriginOfOtherSuppliers);

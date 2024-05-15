@@ -2,11 +2,23 @@ import {
   BalanceSheetType,
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
-import { OldRating, RatingSchema } from '../models/oldRating';
+
 import path from 'path';
 import fs from 'fs';
 import { makeRating, Rating } from '../models/rating';
 import deepFreeze from 'deep-freeze';
+import { z } from 'zod';
+
+const RatingSchema = z.object({
+  shortName: z.string(),
+  name: z.string(),
+  estimations: z.number(),
+  points: z.number(),
+  maxPoints: z.number(),
+  weight: z.number(),
+  isWeightSelectedByUser: z.boolean(),
+  isPositive: z.boolean(),
+});
 
 export function makeRatingFactory() {
   function createDefaultRatings(
@@ -27,7 +39,7 @@ export function makeRatingFactory() {
     const fileText = fs.readFileSync(path);
     const jsonParsed = JSON.parse(fileText.toString());
     const ratings = RatingSchema.array().parse(jsonParsed);
-    return ratings.map((rating: OldRating) => makeRating({ ...rating }));
+    return ratings.map((rating) => makeRating({ ...rating }));
   }
 
   return deepFreeze({

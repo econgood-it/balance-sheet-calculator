@@ -1,14 +1,10 @@
-import { OldBalanceSheet } from '../models/oldBalanceSheet';
-import { OldRatingsFactory } from '../factories/oldRatingsFactory';
-import { OldCompanyFacts } from '../models/oldCompanyFacts';
 import { DEFAULT_COUNTRY_CODE } from '../models/region';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
-import { OldOrganization } from '../models/oldOrganization';
-import { OldStakeholderWeight } from '../models/oldStakeholderWeight';
-import { WorkbookSection } from '../entities/workbook.entity';
+
+import { WorkbookSection } from '../models/workbook';
 import { z } from 'zod';
 import { CompanyFactsResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/company.facts.dto';
 import deepFreeze from 'deep-freeze';
@@ -18,37 +14,14 @@ import {
   makeEmployeesFraction,
   makeSupplyFraction,
 } from '../models/company.facts';
+import { BalanceSheetCreateRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
+import { makeRatingFactory } from '../factories/rating.factory';
+import { OrganizationRequestSchema } from '@ecogood/e-calculator-schemas/dist/organization.dto';
 
 const arabEmiratesCode = 'ARE';
 const afghanistanCode = 'AFG';
 const agricultureCode = 'A';
 const pharmaceuticCode = 'Ce';
-export const balanceSheetJsonFactory = {
-  emptyFullV508: (): OldBalanceSheet => ({
-    type: BalanceSheetType.Full,
-    version: BalanceSheetVersion.v5_0_8,
-    companyFacts: companyFactsJsonFactory.emptyRequest(),
-    ratings: OldRatingsFactory.createDefaultRatings(
-      BalanceSheetType.Full,
-      BalanceSheetVersion.v5_0_8
-    ),
-    stakeholderWeights: [],
-  }),
-  emptyCompactV506: (): OldBalanceSheet => ({
-    type: BalanceSheetType.Compact,
-    version: BalanceSheetVersion.v5_0_6,
-    companyFacts: companyFactsJsonFactory.emptyRequest(),
-    ratings: OldRatingsFactory.createDefaultRatings(
-      BalanceSheetType.Compact,
-      BalanceSheetVersion.v5_0_6
-    ),
-    stakeholderWeights: [],
-  }),
-  minimalCompactV506: () => ({
-    type: BalanceSheetType.Compact,
-    version: BalanceSheetVersion.v5_0_6,
-  }),
-};
 
 export function makeCompanyFactsFactory() {
   function nonEmpty(): CompanyFacts {
@@ -136,178 +109,68 @@ export function makeCompanyFactsFactory() {
   return deepFreeze({ nonEmpty, nonEmpty2 });
 }
 
-export const companyFactsFactory = {
-  empty: (): OldCompanyFacts => ({
-    totalPurchaseFromSuppliers: 0,
-    totalStaffCosts: 0,
-    profit: 0,
-    financialCosts: 0,
-    incomeFromFinancialInvestments: 0,
-    additionsToFixedAssets: 0,
-    turnover: 0,
-    totalAssets: 0,
-    financialAssetsAndCashBalance: 0,
-    numberOfEmployees: 0,
-    hasCanteen: false,
-    averageJourneyToWorkForStaffInKm: 0,
-    isB2B: false,
-    supplyFractions: [],
-    employeesFractions: [],
-    industrySectors: [],
-    mainOriginOfOtherSuppliers: { countryCode: DEFAULT_COUNTRY_CODE, costs: 0 },
-  }),
-  emptyWithoutOptionalValues: (): OldCompanyFacts => ({
-    totalPurchaseFromSuppliers: 0,
-    totalStaffCosts: 0,
-    profit: 0,
-    financialCosts: 0,
-    incomeFromFinancialInvestments: 0,
-    additionsToFixedAssets: 0,
-    turnover: 0,
-    totalAssets: 0,
-    financialAssetsAndCashBalance: 0,
-    numberOfEmployees: 0,
-    averageJourneyToWorkForStaffInKm: 0,
-    isB2B: false,
-    supplyFractions: [],
-    employeesFractions: [],
-    industrySectors: [],
-    mainOriginOfOtherSuppliers: { costs: 0 },
-  }),
-  nonEmpty: (): OldCompanyFacts => ({
-    totalPurchaseFromSuppliers: 10_000,
-    totalStaffCosts: 900,
-    profit: 500,
-    financialCosts: 600,
-    incomeFromFinancialInvestments: 700,
-    additionsToFixedAssets: 800,
-    turnover: 0,
-    totalAssets: 30,
-    financialAssetsAndCashBalance: 40,
-    numberOfEmployees: 0,
-    hasCanteen: false,
-    averageJourneyToWorkForStaffInKm: 0,
-    isB2B: false,
-    supplyFractions: [
-      {
-        industryCode: agricultureCode,
-        countryCode: arabEmiratesCode,
-        costs: 500,
-      },
-      {
-        industryCode: pharmaceuticCode,
-        countryCode: afghanistanCode,
-        costs: 600,
-      },
-    ],
-    employeesFractions: [
-      { countryCode: afghanistanCode, percentage: 0.5 },
-      { countryCode: arabEmiratesCode, percentage: 0.5 },
-    ],
-    industrySectors: [],
-    mainOriginOfOtherSuppliers: {
-      countryCode: DEFAULT_COUNTRY_CODE,
-      costs: 8_900,
-    },
-  }),
-  nonEmpty2: (): OldCompanyFacts => ({
-    totalPurchaseFromSuppliers: 330,
-    totalStaffCosts: 2345,
-    profit: 238,
-    financialCosts: 473,
-    incomeFromFinancialInvestments: 342,
-    additionsToFixedAssets: 234,
-    turnover: 30,
-    totalAssets: 40,
-    financialAssetsAndCashBalance: 0,
-    numberOfEmployees: 0,
-    hasCanteen: false,
-    averageJourneyToWorkForStaffInKm: 0,
-    isB2B: false,
-    supplyFractions: [
-      {
-        industryCode: agricultureCode,
-        countryCode: arabEmiratesCode,
-        costs: 300,
-      },
-      {
-        industryCode: pharmaceuticCode,
-        countryCode: afghanistanCode,
-        costs: 20,
-      },
-    ],
-    employeesFractions: [
-      { countryCode: arabEmiratesCode, percentage: 0.3 },
-      { countryCode: afghanistanCode, percentage: 0.7 },
-    ],
-    industrySectors: [],
-    mainOriginOfOtherSuppliers: {
-      countryCode: DEFAULT_COUNTRY_CODE,
-      costs: 10,
-    },
-  }),
-};
-export const companyFactsJsonFactory = {
-  emptyRequest: (): any => ({
-    totalPurchaseFromSuppliers: 0,
-    totalStaffCosts: 0,
-    profit: 0,
-    financialCosts: 0,
-    incomeFromFinancialInvestments: 0,
-    additionsToFixedAssets: 0,
-    turnover: 0,
-    totalAssets: 0,
-    financialAssetsAndCashBalance: 0,
-    numberOfEmployees: 0,
-    hasCanteen: false,
-    averageJourneyToWorkForStaffInKm: 0,
-    isB2B: false,
-    supplyFractions: [],
-    employeesFractions: [],
-    industrySectors: [],
-    mainOriginOfOtherSuppliers: 'AWO',
-  }),
-  emptyResponse: (): z.infer<typeof CompanyFactsResponseBodySchema> => ({
-    ...companyFactsJsonFactory.emptyRequest(),
-    mainOriginOfOtherSuppliers: { countryCode: 'AWO', costs: 0 },
-  }),
-  nonEmptyRequest: (): any => ({
-    id: undefined,
-    totalPurchaseFromSuppliers: 10000,
-    totalStaffCosts: 900,
-    profit: 500,
-    financialCosts: 600,
-    incomeFromFinancialInvestments: 700,
-    additionsToFixedAssets: 800,
-    turnover: 0,
-    totalAssets: 30,
-    financialAssetsAndCashBalance: 40,
-    numberOfEmployees: 0,
-    hasCanteen: false,
-    averageJourneyToWorkForStaffInKm: 0,
-    isB2B: false,
-    supplyFractions: [
-      {
-        id: undefined,
-        industryCode: agricultureCode,
-        countryCode: arabEmiratesCode,
-        costs: 500,
-      },
-      {
-        id: undefined,
-        industryCode: pharmaceuticCode,
-        countryCode: afghanistanCode,
-        costs: 600,
-      },
-    ],
-    employeesFractions: [
-      { id: undefined, countryCode: arabEmiratesCode, percentage: 50 },
-      { id: undefined, countryCode: afghanistanCode, percentage: 80 },
-    ],
-    industrySectors: [{ industryCode: 'A', amountOfTotalTurnover: 100 }],
-    mainOriginOfOtherSuppliers: 'AWO',
-  }),
-};
+export function makeJsonFactory() {
+  function emptyFullV508() {
+    return {
+      type: BalanceSheetType.Full,
+      version: BalanceSheetVersion.v5_0_8,
+      companyFacts: emptyCompanyFacts(),
+      ratings: makeRatingFactory().createDefaultRatings(
+        BalanceSheetType.Full,
+        BalanceSheetVersion.v5_0_8
+      ),
+      stakeholderWeights: [],
+    };
+  }
+
+  function emptyCompactV506() {
+    return {
+      type: BalanceSheetType.Compact,
+      version: BalanceSheetVersion.v5_0_6,
+      companyFacts: emptyCompanyFacts(),
+      ratings: makeRatingFactory().createDefaultRatings(
+        BalanceSheetType.Compact,
+        BalanceSheetVersion.v5_0_6
+      ),
+      stakeholderWeights: [],
+    };
+  }
+
+  function minimalCompactV506() {
+    return {
+      type: BalanceSheetType.Compact,
+      version: BalanceSheetVersion.v5_0_6,
+    };
+  }
+
+  function emptyCompanyFacts() {
+    return {
+      totalPurchaseFromSuppliers: 0,
+      totalStaffCosts: 0,
+      profit: 0,
+      financialCosts: 0,
+      incomeFromFinancialInvestments: 0,
+      additionsToFixedAssets: 0,
+      turnover: 0,
+      totalAssets: 0,
+      financialAssetsAndCashBalance: 0,
+      numberOfEmployees: 0,
+      hasCanteen: false,
+      averageJourneyToWorkForStaffInKm: 0,
+      isB2B: false,
+      supplyFractions: [],
+      employeesFractions: [],
+      industrySectors: [],
+      mainOriginOfOtherSuppliers: 'AWO',
+    };
+  }
+  return deepFreeze({
+    emptyFullV508,
+    minimalCompactV506,
+    emptyCompactV506,
+    emptyCompanyFacts,
+  });
+}
 
 export const WorkbookSectionsJsonFactory = {
   default: (): WorkbookSection[] => [
@@ -326,28 +189,8 @@ export const WorkbookSectionsJsonFactory = {
   ],
 };
 
-export const StakeholderWeightsFactory = {
-  default: (): OldStakeholderWeight[] => [
-    { shortName: 'A', weight: 0.5 },
-    { shortName: 'C', weight: 1.5 },
-  ],
-};
-
-export const balanceSheetFactory = {
-  emptyFullV508: (): OldBalanceSheet => ({
-    type: BalanceSheetType.Full,
-    version: BalanceSheetVersion.v5_0_8,
-    companyFacts: companyFactsFactory.empty(),
-    ratings: OldRatingsFactory.createDefaultRatings(
-      BalanceSheetType.Full,
-      BalanceSheetVersion.v5_0_8
-    ),
-    stakeholderWeights: [],
-  }),
-};
-
-export const oldOrganizationFactory = {
-  default: (): OldOrganization => ({
+export const organizationJsonFactory = {
+  default: (): z.infer<typeof OrganizationRequestSchema> => ({
     name: 'My organization',
     address: {
       street: 'Example street',
@@ -355,7 +198,6 @@ export const oldOrganizationFactory = {
       zip: '999999',
       city: 'Example city',
     },
-    invitations: [],
   }),
 };
 

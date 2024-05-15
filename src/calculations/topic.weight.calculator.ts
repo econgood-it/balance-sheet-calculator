@@ -1,4 +1,3 @@
-import { CompanySize } from './old.employees.calc';
 import deepFreeze from 'deep-freeze';
 import { CalcResults } from './calculator';
 import { CompanyFacts } from '../models/company.facts';
@@ -7,6 +6,7 @@ import {
   WeightingProvider,
 } from '../providers/weightingProvider';
 import { makeWeighting } from '../models/weighting';
+import { CompanySize } from './employees.calc';
 
 export function makeTopicWeightCalculator(
   calcResults: CalcResults,
