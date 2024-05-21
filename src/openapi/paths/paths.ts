@@ -11,6 +11,7 @@ import { registerOrganizationPut } from './organization.put';
 import { registerWorkbookGet } from './workbook.get';
 import { registerUserGet } from './user.get';
 import { registerUserPatch } from './user.patch';
+import { registerBalanceSheetPost } from './balancesheet.post';
 
 export const Tags = {
   balanceSheets: 'balancesheets',
@@ -42,6 +43,7 @@ export function registerPaths(
   params: OpenApiParams
 ) {
   registerBalanceSheetGet(registry, params);
+  registerBalanceSheetPost(registry, params);
   registerBalanceSheetPatch(registry, params);
   registerBalanceSheetDelete(registry, params);
   registerOrganizationPost(registry, params);
