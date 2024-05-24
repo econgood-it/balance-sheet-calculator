@@ -10,6 +10,9 @@ import { registerPaths } from './paths/paths';
 export function buildSwaggerDoc(configuration: Configuration): OpenAPIObject {
   const registry = new OpenAPIRegistry();
 
+  const urlExtension =
+    configuration.environment !== Environment.PROD ? 'dev.' : '';
+
   const oauth2SecuritySchema = registry.registerComponent(
     'securitySchemes',
     'oauth2',
@@ -17,9 +20,8 @@ export function buildSwaggerDoc(configuration: Configuration): OpenAPIObject {
       type: 'oauth2',
       flows: {
         authorizationCode: {
-          authorizationUrl:
-            'https://zitadel.dev.econgood.org:443/oauth/v2/authorize',
-          tokenUrl: 'https://zitadel.dev.econgood.org:443/oauth/v2/token',
+          authorizationUrl: `https://zitadel.${urlExtension}econgood.org:443/oauth/v2/authorize`,
+          tokenUrl: `https://zitadel.${urlExtension}econgood.org:443/oauth/v2/token`,
           scopes: {
             openid: 'openid',
             email: 'email',
@@ -35,7 +37,7 @@ export function buildSwaggerDoc(configuration: Configuration): OpenAPIObject {
 
   const generator = new OpenAPIGenerator(registry.definitions, '3.0.0');
 
-  const version = '3.7.3';
+  const version = '3.7.4';
 
   const devServer = {
     url: 'http://localhost:4000',
@@ -46,7 +48,7 @@ export function buildSwaggerDoc(configuration: Configuration): OpenAPIObject {
     description: 'Test server',
   };
   const prodServer = {
-    url: 'https://balance-sheet-api.prod.econgood.org',
+    url: 'https://balance-sheet-api.econgood.org',
     description: 'Production server',
   };
 
@@ -59,7 +61,7 @@ export function buildSwaggerDoc(configuration: Configuration): OpenAPIObject {
 
   return generator.generateDocument({
     info: {
-      title: `ECG Balance Calculator ${version}`,
+      title: `ECG Balance Calculator ${version} ${configuration.environment}`,
       version,
       description:
         'In the moment the ECG ratings for a company are calculated by a Excel file. The idea of this API is to replace the Excel file in the future.',
