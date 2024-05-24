@@ -8,6 +8,8 @@ import {
   SupplyFraction,
 } from '../models/company.facts';
 import deepFreeze from 'deep-freeze';
+import { BalanceSheetVersion } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
+import { gte } from 'lodash';
 
 export interface SupplyCalcResults {
   supplyRiskSum: number;
@@ -17,7 +19,8 @@ export interface SupplyCalcResults {
 
 export function makeSupplierCalc(
   regionProvider: RegionProvider,
-  industryProvider: IndustryProvider
+  industryProvider: IndustryProvider,
+  balanceSheetVersion: BalanceSheetVersion
 ) {
   const DEFAULT_SUPPLY_CHAIN_WEIGHT = 1;
   const DEFAULT_ITUC = 2.99;
@@ -106,23 +109,23 @@ export function makeSupplierCalc(
     supplyRiskSum: number
   ): number {
     let result: number = 0;
-    for (const supplyFraction of companyFacts.supplyFractions) {
-      // TODO: EXCEL Limitation: Excel does not consider ITUC of country code AWO(World)
-      const ituc =
-        supplyFraction.countryCode &&
-        supplyFraction.countryCode !== DEFAULT_COUNTRY_CODE
-          ? regionProvider.getOrFail(supplyFraction.countryCode).ituc
-          : DEFAULT_ITUC;
-      result += ituc * calculateSupplyRisk(supplyFraction, supplyRiskSum);
-    }
-    // TODO: EXCEL Limitation: Excel does not consider ITUC of country code AWO(World)
-    const countryCode = companyFacts.mainOriginOfOtherSuppliers.countryCode;
-    const ituc =
-      countryCode && countryCode !== DEFAULT_COUNTRY_CODE
+    // TODO: EXCEL Limitation: Excel does not consider ITUC of country code AWO(World) for versions < 5.0.9
+    const getITUC = (countryCode: string | undefined) => {
+      return countryCode &&
+        (gte(balanceSheetVersion, BalanceSheetVersion.v5_0_9) ||
+          countryCode !== DEFAULT_COUNTRY_CODE)
         ? regionProvider.getOrFail(countryCode).ituc
         : DEFAULT_ITUC;
+    };
+    for (const supplyFraction of companyFacts.supplyFractions) {
+      result +=
+        getITUC(supplyFraction.countryCode) *
+        calculateSupplyRisk(supplyFraction, supplyRiskSum);
+    }
+    const countryCode = companyFacts.mainOriginOfOtherSuppliers.countryCode;
+
     result +=
-      ituc *
+      getITUC(countryCode) *
       calculateSupplyRisk(
         companyFacts.mainOriginOfOtherSuppliers,
         supplyRiskSum

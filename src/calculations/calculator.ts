@@ -10,6 +10,7 @@ import {
   makeSocialEnvironmentCalc,
   SocialEnvironmentCalcResults,
 } from './social.environment.calc';
+import { BalanceSheetVersion } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 
 export interface CalcResults {
   supplyCalcResults: SupplyCalcResults;
@@ -22,12 +23,14 @@ export interface CalcResults {
 export async function calculate(
   regionProvider: RegionProvider,
   industryProvider: IndustryProvider,
+  version: BalanceSheetVersion,
   companyFacts: CompanyFacts
 ): Promise<CalcResults> {
   return {
     supplyCalcResults: makeSupplierCalc(
       regionProvider,
-      industryProvider
+      industryProvider,
+      version
     ).calculate(companyFacts),
     financeCalcResults: makeFinanceCalc().calculate(companyFacts),
     employeesCalcResults:

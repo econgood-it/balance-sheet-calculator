@@ -238,6 +238,7 @@ export function makeBalanceSheet(opts?: BalanceSheetOpts): BalanceSheet {
     const calcResults = await calculate(
       regionProvider,
       industryProvider,
+      data.version,
       data.companyFacts
     );
     const stakeholderWeightCalculator =

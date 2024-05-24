@@ -22,6 +22,7 @@ describe('Stakeholder Weight Calculator', () => {
     const precalculations = await calculate(
       regionProvider,
       industryProvider,
+      BalanceSheetVersion.v5_0_9,
       makeCompanyFactsFactory().nonEmpty2()
     );
     const stakeholderWeightCalculator =
@@ -35,6 +36,7 @@ describe('Stakeholder Weight Calculator', () => {
     const precalculations = await calculate(
       regionProvider,
       industryProvider,
+      BalanceSheetVersion.v5_0_9,
       makeCompanyFactsFactory().nonEmpty2()
     );
     const stakeholderWeightCalculator =
@@ -47,6 +49,7 @@ describe('Stakeholder Weight Calculator', () => {
     const precalculations = await calculate(
       regionProvider,
       industryProvider,
+      BalanceSheetVersion.v5_0_9,
       makeCompanyFactsFactory().nonEmpty2()
     );
     const stakeholderWeightCalculator =
@@ -59,6 +62,7 @@ describe('Stakeholder Weight Calculator', () => {
     const precalculations = await calculate(
       regionProvider,
       industryProvider,
+      BalanceSheetVersion.v5_0_9,
       makeCompanyFactsFactory().nonEmpty2()
     );
     const stakeholderWeightCalculator =
@@ -81,6 +85,7 @@ describe('Stakeholder Weight Calculator', () => {
     const calcResults = await calculate(
       regionProvider,
       industryProvider,
+      BalanceSheetVersion.v5_0_9,
       makeCompanyFactsFactory().nonEmpty2()
     );
     const stakeholderWeightCalculator =
