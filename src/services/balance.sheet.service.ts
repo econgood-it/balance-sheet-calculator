@@ -3,14 +3,10 @@ import { DataSource } from 'typeorm';
 import { handle } from '../exceptions/error.handler';
 import { BalanceSheetPatchRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
 import { parseLanguageParameter } from '../language/translations';
-import {
-  checkIfCurrentUserHasEditorPermissions,
-  checkIfCurrentUserIsMember,
-} from '../security/authorization';
+import { checkIfCurrentUserHasEditorPermissions } from '../security/authorization';
 import { IRepoProvider } from '../repositories/repo.provider';
 import deepFreeze from 'deep-freeze';
 import { makeBalanceSheet } from '../models/balance.sheet';
-import NotFoundException from '../exceptions/not.found.exception';
 
 export interface IBalanceSheetService {
   createBalanceSheet(

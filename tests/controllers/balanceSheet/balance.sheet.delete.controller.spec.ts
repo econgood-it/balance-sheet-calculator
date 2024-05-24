@@ -20,10 +20,7 @@ import { IOrganizationRepo } from '../../../src/repositories/organization.repo';
 import { IBalanceSheetRepo } from '../../../src/repositories/balance.sheet.repo';
 import { makeOrganization } from '../../../src/models/organization';
 import { makeBalanceSheet } from '../../../src/models/balance.sheet';
-import {
-  makeCompanyFactsFactory,
-  makeJsonFactory,
-} from '../../../src/openapi/examples';
+import { makeJsonFactory } from '../../../src/openapi/examples';
 
 describe('Balance Sheet Controller', () => {
   let dataSource: DataSource;

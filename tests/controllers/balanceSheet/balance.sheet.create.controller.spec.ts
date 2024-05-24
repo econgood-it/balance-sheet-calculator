@@ -17,8 +17,6 @@ import { ConfigurationReader } from '../../../src/reader/configuration.reader';
 import { AuthBuilder } from '../../AuthBuilder';
 import { InMemoryAuthentication } from '../in.memory.authentication';
 import { makeRepoProvider } from '../../../src/repositories/repo.provider';
-import { RatingResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/rating.dto';
-import { z } from 'zod';
 import { BalanceSheetPaths } from '../../../src/controllers/balance.sheet.controller';
 
 describe('Balance Sheet Controller', () => {

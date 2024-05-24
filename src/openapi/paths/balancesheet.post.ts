@@ -1,24 +1,13 @@
-import { makeJsonFactory, organizationJsonFactory } from '../examples';
+import { makeJsonFactory } from '../examples';
 
-import {
-  applicationJson,
-  HttpCodes,
-  Methods,
-  replaceExpressParamsByOpenApiParams,
-  Tags,
-} from './paths';
+import { applicationJson, HttpCodes, Methods, Tags } from './paths';
 import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { OpenApiParams } from '../params';
-import { OrganizationPaths } from '../../controllers/organization.controller';
-import {
-  OrganizationRequestSchema,
-  OrganizationResponseSchema,
-} from '@ecogood/e-calculator-schemas/dist/organization.dto';
+
 import {
   BalanceSheetCreateRequestBodySchema,
   BalanceSheetResponseBodySchema,
 } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
-import { z } from 'zod';
 import { BalanceSheetPaths } from '../../controllers/balance.sheet.controller';
 
 export function registerBalanceSheetPost(
