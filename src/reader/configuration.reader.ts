@@ -1,7 +1,7 @@
 export enum Environment {
-  DEV,
-  TEST,
-  PROD,
+  DEV = 'DEV',
+  TEST = 'TEST',
+  PROD = 'PROD',
 }
 
 export class Configuration {
