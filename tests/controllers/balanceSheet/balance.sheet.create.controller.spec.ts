@@ -43,10 +43,10 @@ describe('Balance Sheet Controller', () => {
     await dataSource.destroy();
   });
 
-  it('should create balance sheet on post request', async () => {
+  it('should calculated balance sheet without saving results', async () => {
     const balanceSheetJson = {
       type: BalanceSheetType.Full,
-      version: BalanceSheetVersion.v5_0_8,
+      version: BalanceSheetVersion.v5_0_9,
       companyFacts: makeJsonFactory().emptyCompanyFacts(),
     };
     const testApp = supertest(app);
@@ -56,6 +56,22 @@ describe('Balance Sheet Controller', () => {
       .send(balanceSheetJson);
     expect(response.status).toBe(200);
     expect(response.body.id).toBeUndefined();
+  });
+
+  it('should return matrix for balance sheet without saving results', async () => {
+    const balanceSheetJson = {
+      type: BalanceSheetType.Full,
+      version: BalanceSheetVersion.v5_0_9,
+      companyFacts: makeJsonFactory().emptyCompanyFacts(),
+    };
+    const testApp = supertest(app);
+    const response = await testApp
+      .post(BalanceSheetPaths.matrixWithoutSave)
+      .set(auth.toHeaderPair().key, auth.toHeaderPair().value)
+      .send(balanceSheetJson);
+    expect(response.status).toBe(200);
+    expect(response.body.id).toBeUndefined();
+    expect(response.body.ratings).toHaveLength(20);
   });
 
   it('should fail to create balance sheet if user is unauthenticated', async () => {

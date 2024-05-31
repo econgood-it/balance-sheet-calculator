@@ -9,7 +9,12 @@ import deepFreeze from 'deep-freeze';
 import { makeBalanceSheet } from '../models/balance.sheet';
 
 export interface IBalanceSheetService {
-  createBalanceSheet(
+  calculateBalanceSheet(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void>;
+  calculateBalanceSheetMatrix(
     req: Request,
     res: Response,
     next: NextFunction
@@ -40,7 +45,7 @@ export function makeBalanceSheetService(
   dataSource: DataSource,
   repoProvider: IRepoProvider
 ): IBalanceSheetService {
-  async function createBalanceSheet(
+  async function calculateBalanceSheet(
     req: Request,
     res: Response,
     next: NextFunction
@@ -49,6 +54,22 @@ export function makeBalanceSheetService(
       const balanceSheet = makeBalanceSheet.fromJson(req.body);
       const language = parseLanguageParameter(req.query.lng);
       res.json((await balanceSheet.reCalculate()).toJson(language));
+    } catch (error: any) {
+      handle(error, next);
+    }
+  }
+
+  async function calculateBalanceSheetMatrix(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const balanceSheet = makeBalanceSheet.fromJson(req.body);
+      const language = parseLanguageParameter(req.query.lng);
+      res.json(
+        (await balanceSheet.reCalculate()).asMatrixRepresentation(language)
+      );
     } catch (error: any) {
       handle(error, next);
     }
@@ -170,10 +191,11 @@ export function makeBalanceSheetService(
   }
 
   return deepFreeze({
-    createBalanceSheet,
+    calculateBalanceSheet,
     updateBalanceSheet,
     getBalanceSheet,
     deleteBalanceSheet,
     getMatrixRepresentationOfBalanceSheet,
+    calculateBalanceSheetMatrix,
   });
 }

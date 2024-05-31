@@ -11,6 +11,7 @@ export const BalanceSheetPaths = {
   delete: `${resourceUrl}/:id`,
   diff: `${resourceUrl}/diff/upload`,
   matrix: `${resourceUrl}/:id/matrix`,
+  matrixWithoutSave: `${resourceUrl}/matrix`,
 };
 
 export function registerBalanceSheetRoutes(
@@ -20,7 +21,12 @@ export function registerBalanceSheetRoutes(
   app.post(
     BalanceSheetPaths.post,
     allowUserOnly,
-    balanceSheetService.createBalanceSheet
+    balanceSheetService.calculateBalanceSheet
+  );
+  app.post(
+    BalanceSheetPaths.matrixWithoutSave,
+    allowUserOnly,
+    balanceSheetService.calculateBalanceSheetMatrix
   );
   app.patch(
     BalanceSheetPaths.patch,
