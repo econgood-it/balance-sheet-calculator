@@ -1,0 +1,592 @@
+[
+  {
+    "shortName": "A1",
+    "name": "Human dignity in the supply chain",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": 50,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": true
+  },
+  {
+    "shortName": "A1.1",
+    "name": "Human dignity in the supply chain",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": 50,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": true
+  },
+  {
+    "shortName": "A1.2",
+    "name": "Negative aspect: violation of human dignity in the supply chain",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": -200,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": false
+  },
+  {
+    "shortName": "A2",
+    "name": "Solidarity and social justice in the supply chain",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": 50,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": true
+  },
+  {
+    "shortName": "A2.1",
+    "name": "Solidarity and social justice in the supply chain",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": 50,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": true
+  },
+  {
+    "shortName": "A2.2",
+    "name": "Negative aspect: abuse of market power against suppliers",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": -200,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": false
+  },
+  {
+    "shortName": "A3",
+    "name": "Environmental sustainability in the supply chain",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": 50,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": true
+  },
+  {
+    "shortName": "A3.1",
+    "name": "Environmental sustainability in the supply chain",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": 50,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": true
+  },
+  {
+    "shortName": "A3.2",
+    "name": "Negative aspect: disproportionate environmental impact throughout the supply chain",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": -200,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": false
+  },
+  {
+    "shortName": "A4",
+    "name": "Transparency & co-determination in the supply chain",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": 50,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": true
+  },
+  {
+    "shortName": "A4.1",
+    "name": "Transparency & co-determination in the supply chain",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": 50,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": true
+  },
+  {
+    "shortName": "B1",
+    "name": "Ethical position in relation to financial resources",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": 50,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": true
+  },
+  {
+    "shortName": "B1.1",
+    "name": "Ethical position in relation to financial resources",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": 50,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": true
+  },
+  {
+    "shortName": "B2",
+    "name": "Social position in relation to financial resources",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": 50,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": true
+  },
+  {
+    "shortName": "B2.1",
+    "name": "Social position in relation to financial resources",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": 50,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": true
+  },
+  {
+    "shortName": "B2.2",
+    "name": "Negative aspect: unfair distribution of funds",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": -200,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": false
+  },
+  {
+    "shortName": "B3",
+    "name": "Use of funds in relation to social and environmental impacts",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": 50,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": true
+  },
+  {
+    "shortName": "B3.1",
+    "name": "Use of funds in relation to social and environmental impacts",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": 50,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": true
+  },
+  {
+    "shortName": "B3.2",
+    "name": "Negative aspect: reliance on environmentally unsafe resources",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": -200,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": false
+  },
+  {
+    "shortName": "B4",
+    "name": "Ownership and co-determination",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": 50,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": true
+  },
+  {
+    "shortName": "B4.1",
+    "name": "Ownership and co-determination",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": 50,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": true
+  },
+  {
+    "shortName": "B4.2",
+    "name": "Negative aspect: hostile takeover",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": -200,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": false
+  },
+  {
+    "shortName": "C1",
+    "name": "Human dignity in the workplace and working environment",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": 50,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": true
+  },
+  {
+    "shortName": "C1.1",
+    "name": "Human dignity in the workplace and working environment",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": 50,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": true
+  },
+  {
+    "shortName": "C1.2",
+    "name": "Negative aspect: unfit working conditions",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": -200,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": false
+  },
+  {
+    "shortName": "C2",
+    "name": "Self-determined working arrangements",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": 50,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": true
+  },
+  {
+    "shortName": "C2.1",
+    "name": "Self-determined working arrangements",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": 50,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": true
+  },
+  {
+    "shortName": "C2.2",
+    "name": "Negative aspect: unfair employment contracts",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": -200,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": false
+  },
+  {
+    "shortName": "C3",
+    "name": "Environmentally-friendly behaviour of staff",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": 50,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": true
+  },
+  {
+    "shortName": "C3.1",
+    "name": "Environmentally-friendly behaviour of staff",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": 50,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": true
+  },
+  {
+    "shortName": "C3.2",
+    "name": "Negative aspect: guidance on waste/ environmentally damaging practices",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": -200,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": false
+  },
+  {
+    "shortName": "C4",
+    "name": "Co-determination and transparency within the organisation",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": 50,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": true
+  },
+  {
+    "shortName": "C4.1",
+    "name": "Co-determination and transparency within the organisation",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": 50,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": true
+  },
+  {
+    "shortName": "C4.2",
+    "name": "Negative aspect: obstruction of works councils",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": -200,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": false
+  },
+  {
+    "shortName": "D1",
+    "name": "Ethical customer relations",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": 50,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": true
+  },
+  {
+    "shortName": "D1.1",
+    "name": "Ethical customer relations",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": 50,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": true
+  },
+  {
+    "shortName": "D1.2",
+    "name": "Negative aspect: unethical advertising",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": -200,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": false
+  },
+  {
+    "shortName": "D2",
+    "name": "Cooperation and solidarity with other companies",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": 50,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": true
+  },
+  {
+    "shortName": "D2.1",
+    "name": "Cooperation and solidarity with other companies",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": 50,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": true
+  },
+  {
+    "shortName": "D2.2",
+    "name": "Negative aspect: abuse of market power to the detriment of other companies",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": -200,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": false
+  },
+  {
+    "shortName": "D3",
+    "name": "Impact on the environment of the use and disposal of products and services",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": 50,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": true
+  },
+  {
+    "shortName": "D3.1",
+    "name": "Impact on the environment of the use and disposal of products and services",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": 50,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": true
+  },
+  {
+    "shortName": "D3.2",
+    "name": "Negative aspect: wilful disregard of disproportionate environmental impacts",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": -200,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": false
+  },
+  {
+    "shortName": "D4",
+    "name": "Customer participation and product transparency",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": 50,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": true
+  },
+  {
+    "shortName": "D4.1",
+    "name": "Customer participation and product transparency",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": 50,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": true
+  },
+  {
+    "shortName": "D4.2",
+    "name": "Negative aspect: non-disclosure of hazardous substances",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": -200,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": false
+  },
+  {
+    "shortName": "E1",
+    "name": "Purpose of products and services and their effects on society",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": 50,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": true
+  },
+  {
+    "shortName": "E1.1",
+    "name": "Purpose of products and services and their effects on society",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": 50,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": true
+  },
+  {
+    "shortName": "E1.2",
+    "name": "Negative aspect: unethical and unfit products and services",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": -200,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": false
+  },
+  {
+    "shortName": "E2",
+    "name": "Contribution to the community",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": 50,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": true
+  },
+  {
+    "shortName": "E2.1",
+    "name": "Contribution to the community",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": 50,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": true
+  },
+  {
+    "shortName": "E2.2",
+    "name": "Negative aspect: inappropriate non-payment of tax",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": -200,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": false
+  },
+  {
+    "shortName": "E2.3",
+    "name": "Negative aspect: no anti-corruption policy",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": -200,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": false
+  },
+  {
+    "shortName": "E3",
+    "name": "Reduction of environmental impact",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": 50,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": true
+  },
+  {
+    "shortName": "E3.1",
+    "name": "Reduction of environmental impact",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": 50,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": true
+  },
+  {
+    "shortName": "E3.2",
+    "name": "Negative aspect: infringement of environmental regulations and disproportionate environmental pollution",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": -200,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": false
+  },
+  {
+    "shortName": "E4",
+    "name": "Social co-determination and transparency",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": 50,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": true
+  },
+  {
+    "shortName": "E4.1",
+    "name": "Social co-determination and transparency",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": 50,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": true
+  },
+  {
+    "shortName": "E4.2",
+    "name": "Negative aspect: lack of transparency and wilful misinformation",
+    "estimations": 0,
+    "points": 0,
+    "maxPoints": -200,
+    "weight": 1,
+    "isWeightSelectedByUser": false,
+    "isPositive": false
+  }
+]
