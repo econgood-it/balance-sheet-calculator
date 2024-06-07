@@ -73,7 +73,7 @@ describe('WorkbookRepo', () => {
     const content = Buffer.from(fileText.toString()).toString('base64');
     mockedAxios.get.mockResolvedValue({ data: { content } });
 
-    const workbook = await workbookRepo.getWorkbook();
+    const workbook = await workbookRepo.getWorkbook('en');
     expect(mockedAxios.get).toHaveBeenCalledWith(
       'https://git.ecogood.org/api/v1/repos/public/matrix-development/contents/export/workbook-en.json',
       { headers: { Authorization: `token ${apiToken}` } }
@@ -83,5 +83,24 @@ describe('WorkbookRepo', () => {
       shortName: 'C2.1',
       title: 'C2.1 Renumeration Structure',
     });
+  });
+
+  it('should request workbook in German', async () => {
+    const workbookRepo = makeWorkbookRepo(apiToken);
+
+    const workbookPath = path.join(
+      path.resolve(__dirname, '../'),
+      'workbook.json'
+    );
+    const fileText = fs.readFileSync(workbookPath);
+
+    const content = Buffer.from(fileText.toString()).toString('base64');
+    mockedAxios.get.mockResolvedValue({ data: { content } });
+
+    await workbookRepo.getWorkbook('de');
+    expect(mockedAxios.get).toHaveBeenCalledWith(
+      'https://git.ecogood.org/api/v1/repos/public/matrix-development/contents/export/workbook-de.json',
+      { headers: { Authorization: `token ${apiToken}` } }
+    );
   });
 });

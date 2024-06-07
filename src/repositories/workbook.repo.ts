@@ -2,9 +2,10 @@ import { z } from 'zod';
 import axios from 'axios';
 import deepFreeze from 'deep-freeze';
 import { makeWorkbook, Workbook } from '../models/workbook';
+import { Translations } from '../language/translations';
 
 export interface IWorkbookRepo {
-  getWorkbook(): Promise<Workbook>;
+  getWorkbook(lng: keyof Translations): Promise<Workbook>;
 }
 
 const ApiResponseSchema = z.object({
@@ -12,9 +13,9 @@ const ApiResponseSchema = z.object({
 });
 
 export function makeWorkbookRepo(apiToken: string): IWorkbookRepo {
-  async function getWorkbook(): Promise<Workbook> {
+  async function getWorkbook(lng: keyof Translations): Promise<Workbook> {
     const response = await axios.get(
-      'https://git.ecogood.org/api/v1/repos/public/matrix-development/contents/export/workbook-en.json',
+      `https://git.ecogood.org/api/v1/repos/public/matrix-development/contents/export/workbook-${lng}.json`,
       { headers: { Authorization: `token ${apiToken}` } }
     );
     const { content } = ApiResponseSchema.parse(response.data);
