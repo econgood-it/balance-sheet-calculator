@@ -3,7 +3,7 @@ import {
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import { CompanyFacts, makeCompanyFacts } from './company.facts';
-import { makeRating, Rating } from './rating';
+import { makeRating, makeRatingsQuery, Rating } from './rating';
 import { makeWeighting, Weighting } from './weighting';
 import deepFreeze from 'deep-freeze';
 import { makeRatingFactory } from '../factories/rating.factory';
@@ -72,13 +72,7 @@ export function makeBalanceSheet(opts?: BalanceSheetOpts): BalanceSheet {
   };
 
   function getRating(shortName: string): Rating {
-    const rating = data.ratings.find(
-      (rating) => rating.shortName === shortName
-    );
-    if (!rating) {
-      throw new LookupError(`Rating with shortName ${shortName} not found`);
-    }
-    return rating;
+    return makeRatingsQuery(data.ratings).getRating(shortName);
   }
 
   function getTopics(): Rating[] {
@@ -108,10 +102,7 @@ export function makeBalanceSheet(opts?: BalanceSheetOpts): BalanceSheet {
   }
 
   function getAspects(shortNameTopic?: string): Rating[] {
-    const aspects = data.ratings.filter((rating) => rating.isAspect());
-    return shortNameTopic
-      ? aspects.filter((rating) => rating.isAspectOfTopic(shortNameTopic))
-      : aspects;
+    return makeRatingsQuery(data.ratings).getAspects(shortNameTopic);
   }
 
   function getTopicOfAspect(shortNameAspect: string) {

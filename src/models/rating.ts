@@ -9,6 +9,7 @@ import { staticTranslate, Translations } from '../language/translations';
 import { MatrixRatingBodySchema } from '@ecogood/e-calculator-schemas/dist/matrix.dto';
 import { roundWithPrecision } from '../math';
 import { none, Option, some } from '../calculations/option';
+import { LookupError } from '../exceptions/lookup.error';
 
 type RatingOpts = {
   shortName: string;
@@ -159,5 +160,30 @@ export function makeRating(opts?: RatingOpts): Rating {
     merge,
     toJson,
     toMatrixFormat,
+  });
+}
+
+type RatingsQuery = {
+  getRating: (shortName: string) => Rating;
+  getAspects: (shortNameTopic?: string) => Rating[];
+};
+
+export function makeRatingsQuery(ratings: readonly Rating[]): RatingsQuery {
+  function getRating(shortName: string): Rating {
+    const rating = ratings.find((rating) => rating.shortName === shortName);
+    if (!rating) {
+      throw new LookupError(`Rating with shortName ${shortName} not found`);
+    }
+    return rating;
+  }
+  function getAspects(shortNameTopic?: string) {
+    const aspects = ratings.filter((rating) => rating.isAspect());
+    return shortNameTopic
+      ? aspects.filter((rating) => rating.isAspectOfTopic(shortNameTopic))
+      : aspects;
+  }
+  return deepFreeze({
+    getRating,
+    getAspects,
   });
 }

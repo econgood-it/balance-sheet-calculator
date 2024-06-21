@@ -3,8 +3,22 @@ import {
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import { makeRatingFactory } from '../../src/factories/rating.factory';
+import { makeRatingsQuery } from '../../src/models/rating';
 
 describe('Ratings factory', () => {
+  it('should create default ratings for a full balance sheet of version 5.10', () => {
+    const ratingsQuery = makeRatingsQuery(
+      makeRatingFactory().createDefaultRatings(
+        BalanceSheetType.Full,
+        BalanceSheetVersion.v5_1_0
+      )
+    );
+    expect(ratingsQuery.getAspects('E2').map((e) => e.shortName)).toEqual([
+      'E2.1',
+      'E2.2',
+      'E2.3',
+    ]);
+  });
   it('should create default ratings for a full balance sheet of version 5.09', () => {
     const ratings = makeRatingFactory().createDefaultRatings(
       BalanceSheetType.Full,

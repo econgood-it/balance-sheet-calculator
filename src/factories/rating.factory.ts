@@ -2,12 +2,13 @@ import {
   BalanceSheetType,
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
-
-import path from 'path';
-import fs from 'fs';
 import { makeRating, Rating } from '../models/rating';
 import deepFreeze from 'deep-freeze';
 import { z } from 'zod';
+import { makeFull5v08 } from './ratings_full_5.08';
+import { eq, gte } from 'lodash';
+import { makeFull5v10 } from './ratings_full_5.10';
+import { makeCompact5v08 } from './ratings_compact_5.08';
 
 const RatingSchema = z.object({
   shortName: z.string(),
@@ -25,21 +26,21 @@ export function makeRatingFactory() {
     balanceSheetType: BalanceSheetType,
     balanceSheetVersion: BalanceSheetVersion
   ): Rating[] {
-    const fileName = `ratings_${balanceSheetType
-      .toString()
-      .toLowerCase()}_${balanceSheetVersion.toString().toLowerCase()}.json`;
-    const pathToRatings = path.join(
-      path.resolve(__dirname, '../files/factories/'),
-      fileName
-    );
-    return fromFile(pathToRatings);
+    if (balanceSheetType === BalanceSheetType.Full) {
+      if (eq(balanceSheetVersion, BalanceSheetVersion.v5_1_0)) {
+        return fromObject(makeFull5v10());
+      }
+      if (gte(balanceSheetVersion, BalanceSheetVersion.v5_0_8)) {
+        return fromObject(makeFull5v08());
+      }
+    }
+    return fromObject(makeCompact5v08());
   }
 
-  function fromFile(path: string): Rating[] {
-    const fileText = fs.readFileSync(path);
-    const jsonParsed = JSON.parse(fileText.toString());
-    const ratings = RatingSchema.array().parse(jsonParsed);
-    return ratings.map((rating) => makeRating({ ...rating }));
+  function fromObject(obj: any): Rating[] {
+    return RatingSchema.array()
+      .parse(obj)
+      .map((rating) => makeRating({ ...rating }));
   }
 
   return deepFreeze({
