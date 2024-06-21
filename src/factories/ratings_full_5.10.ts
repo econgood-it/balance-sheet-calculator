@@ -252,7 +252,7 @@ export function makeFull5v10() {
     },
     {
       shortName: 'B4.1',
-      name: 'Common Good-orientated ownership structure',
+      name: 'Transparency and co-decision-making',
       estimations: 0,
       points: 0,
       maxPoints: 50,
@@ -262,6 +262,16 @@ export function makeFull5v10() {
     },
     {
       shortName: 'B4.2',
+      name: 'Common Good-orientated ownership structure',
+      estimations: 0,
+      points: 0,
+      maxPoints: 50,
+      weight: 1,
+      isWeightSelectedByUser: false,
+      isPositive: true,
+    },
+    {
+      shortName: 'B4.3',
       name: 'Negative aspect: hostile takeover',
       estimations: 0,
       points: 0,

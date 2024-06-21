@@ -18,6 +18,11 @@ describe('Ratings factory', () => {
       'E2.2',
       'E2.3',
     ]);
+    expect(ratingsQuery.getAspects('B4').map((e) => e.shortName)).toEqual([
+      'B4.1',
+      'B4.2',
+      'B4.3',
+    ]);
   });
   it('should create default ratings for a full balance sheet of version 5.09', () => {
     const ratings = makeRatingFactory().createDefaultRatings(
