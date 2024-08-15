@@ -93,7 +93,7 @@ export function makeRating(opts?: RatingOpts): Rating {
   }
 
   function adjustWeight(weight?: number): Rating {
-    if (data.isPositive && weight) {
+    if (data.isPositive && weight !== undefined) {
       return makeRating({ ...data, weight, isWeightSelectedByUser: true });
     } else {
       return makeRating({ ...data, isWeightSelectedByUser: false });

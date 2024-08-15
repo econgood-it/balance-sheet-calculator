@@ -177,7 +177,7 @@ describe('Rating', () => {
       });
     });
 
-    it('with request boyd where weight is not selected by user', () => {
+    it('with request body where weight is not selected by user', () => {
       const rating = makeRating({
         shortName: 'A1',
         name: 'A1 name',
@@ -206,6 +206,35 @@ describe('Rating', () => {
     });
   });
 
+  it('with request body where weight of 0 is selected by user', () => {
+    const rating = makeRating({
+      shortName: 'A1',
+      name: 'A1 name',
+      estimations: 4,
+      isPositive: true,
+      isWeightSelectedByUser: true,
+      weight: 2,
+      maxPoints: 51,
+      points: 10,
+    });
+    const requestBody = {
+      shortName: 'A1',
+      estimations: 10,
+      weight: 0,
+    };
+    const newRating = rating.merge(requestBody);
+    expect(newRating).toMatchObject({
+      shortName: 'A1',
+      name: 'A1 name',
+      estimations: 10,
+      isPositive: true,
+      isWeightSelectedByUser: true,
+      weight: 0,
+      maxPoints: 51,
+      points: 10,
+    });
+  });
+
   it('should return rating as json', () => {
     const rating = makeRating({
       shortName: 'D4.1',
@@ -231,107 +260,107 @@ describe('Rating', () => {
       maxPoints: 51,
     });
   });
-  describe('Matrix Rating DTO', () => {
-    const topicWithZeroValues = makeRating();
-    const language = 'en';
+});
+describe('Matrix Rating DTO', () => {
+  const topicWithZeroValues = makeRating();
+  const language = 'en';
 
-    it('has reached points are 30 of 50', () => {
-      const topic = makeRating({
-        ...topicWithZeroValues,
-        points: 30,
-        maxPoints: 50,
-      });
-      const matrixFormat = topic.toMatrixFormat(language);
-      expect(matrixFormat.points).toBe(30);
-      expect(matrixFormat.maxPoints).toBe(50);
+  it('has reached points are 30 of 50', () => {
+    const topic = makeRating({
+      ...topicWithZeroValues,
+      points: 30,
+      maxPoints: 50,
     });
+    const matrixFormat = topic.toMatrixFormat(language);
+    expect(matrixFormat.points).toBe(30);
+    expect(matrixFormat.maxPoints).toBe(50);
+  });
 
-    it('has reached points are 31 of 50 (round 30.5982934 of 50.08990)', () => {
-      const topic = makeRating({
-        ...topicWithZeroValues,
-        points: 30.5982934,
-        maxPoints: 50.0899,
-      });
-      const matrixFormat = topic.toMatrixFormat(language);
-      expect(matrixFormat.points).toBe(31);
-      expect(matrixFormat.maxPoints).toBe(50);
+  it('has reached points are 31 of 50 (round 30.5982934 of 50.08990)', () => {
+    const topic = makeRating({
+      ...topicWithZeroValues,
+      points: 30.5982934,
+      maxPoints: 50.0899,
     });
+    const matrixFormat = topic.toMatrixFormat(language);
+    expect(matrixFormat.points).toBe(31);
+    expect(matrixFormat.maxPoints).toBe(50);
+  });
 
-    it('has reached points are -100 of 60', () => {
-      const topic = makeRating({
-        ...topicWithZeroValues,
-        points: -100,
-        maxPoints: 60,
-      });
-      const matrixFormat = topic.toMatrixFormat(language);
-      expect(matrixFormat.points).toBe(-100);
-      expect(matrixFormat.maxPoints).toBe(60);
+  it('has reached points are -100 of 60', () => {
+    const topic = makeRating({
+      ...topicWithZeroValues,
+      points: -100,
+      maxPoints: 60,
     });
+    const matrixFormat = topic.toMatrixFormat(language);
+    expect(matrixFormat.points).toBe(-100);
+    expect(matrixFormat.maxPoints).toBe(60);
+  });
 
-    it('has reached 100%', () => {
-      const topic = makeRating({
-        ...topicWithZeroValues,
-        points: 50,
-        maxPoints: 50,
-      });
-      const matrixFormat = topic.toMatrixFormat(language);
-      expect(matrixFormat.percentageReached).toBe(100);
+  it('has reached 100%', () => {
+    const topic = makeRating({
+      ...topicWithZeroValues,
+      points: 50,
+      maxPoints: 50,
     });
+    const matrixFormat = topic.toMatrixFormat(language);
+    expect(matrixFormat.percentageReached).toBe(100);
+  });
 
-    it('has reached 0%', () => {
-      const topic = makeRating({
-        ...topicWithZeroValues,
-        maxPoints: 50,
-      });
-      const matrixFormat = topic.toMatrixFormat(language);
-      expect(matrixFormat.percentageReached).toBe(0);
+  it('has reached 0%', () => {
+    const topic = makeRating({
+      ...topicWithZeroValues,
+      maxPoints: 50,
     });
+    const matrixFormat = topic.toMatrixFormat(language);
+    expect(matrixFormat.percentageReached).toBe(0);
+  });
 
-    it('has undefined percentage when division by 0', () => {
-      const topic = makeRating({ ...topicWithZeroValues, points: 10 });
-      const matrixFormat = topic.toMatrixFormat(language);
-      expect(matrixFormat.percentageReached).toBeUndefined();
-    });
+  it('has undefined percentage when division by 0', () => {
+    const topic = makeRating({ ...topicWithZeroValues, points: 10 });
+    const matrixFormat = topic.toMatrixFormat(language);
+    expect(matrixFormat.percentageReached).toBeUndefined();
+  });
 
-    it('has reached 20% (rounded to the next ten step)', () => {
-      const topic = makeRating({
-        ...topicWithZeroValues,
-        points: 10,
-        maxPoints: 60,
-      });
-      const matrixFormat = topic.toMatrixFormat(language);
-      expect(matrixFormat.percentageReached).toBe(20);
+  it('has reached 20% (rounded to the next ten step)', () => {
+    const topic = makeRating({
+      ...topicWithZeroValues,
+      points: 10,
+      maxPoints: 60,
     });
+    const matrixFormat = topic.toMatrixFormat(language);
+    expect(matrixFormat.percentageReached).toBe(20);
+  });
 
-    it('has unvalid percentage', () => {
-      const topic = makeRating({
-        ...topicWithZeroValues,
-        points: -10,
-        maxPoints: 60,
-      });
-      const matrixFormat = topic.toMatrixFormat(language);
-      expect(matrixFormat.percentageReached).toBeUndefined();
+  it('has unvalid percentage', () => {
+    const topic = makeRating({
+      ...topicWithZeroValues,
+      points: -10,
+      maxPoints: 60,
     });
+    const matrixFormat = topic.toMatrixFormat(language);
+    expect(matrixFormat.percentageReached).toBeUndefined();
+  });
 
-    it('has shortName A1', () => {
-      const matrixFormat = topicWithZeroValues.toMatrixFormat(language);
-      expect(matrixFormat.shortName).toEqual('A1');
-    });
+  it('has shortName A1', () => {
+    const matrixFormat = topicWithZeroValues.toMatrixFormat(language);
+    expect(matrixFormat.shortName).toEqual('A1');
+  });
 
-    it('has name A1 name', () => {
-      const matrixFormat = topicWithZeroValues.toMatrixFormat(language);
-      expect(matrixFormat.name).toEqual('Human dignity in the supply chain');
-    });
+  it('has name A1 name', () => {
+    const matrixFormat = topicWithZeroValues.toMatrixFormat(language);
+    expect(matrixFormat.name).toEqual('Human dignity in the supply chain');
+  });
 
-    it('is not applicable', () => {
-      const matrixFormat = topicWithZeroValues.toMatrixFormat(language);
-      expect(matrixFormat.notApplicable).toBeTruthy();
-    });
+  it('is not applicable', () => {
+    const matrixFormat = topicWithZeroValues.toMatrixFormat(language);
+    expect(matrixFormat.notApplicable).toBeTruthy();
+  });
 
-    it('is applicable', () => {
-      const topic = makeRating({ ...topicWithZeroValues, weight: 0.5 });
-      const matrixFormat = topic.toMatrixFormat(language);
-      expect(matrixFormat.notApplicable).toBeFalsy();
-    });
+  it('is applicable', () => {
+    const topic = makeRating({ ...topicWithZeroValues, weight: 0.5 });
+    const matrixFormat = topic.toMatrixFormat(language);
+    expect(matrixFormat.notApplicable).toBeFalsy();
   });
 });

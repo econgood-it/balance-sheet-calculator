@@ -6,9 +6,10 @@ import { makeRating, Rating } from '../models/rating';
 import deepFreeze from 'deep-freeze';
 import { z } from 'zod';
 import { makeFull5v08 } from './ratings_full_5.08';
-import { eq, gte } from 'lodash';
+
 import { makeFull5v10 } from './ratings_full_5.10';
 import { makeCompact5v08 } from './ratings_compact_5.08';
+import { gte, eq } from '@mr42/version-comparator/dist/version.comparator';
 
 const RatingSchema = z.object({
   shortName: z.string(),

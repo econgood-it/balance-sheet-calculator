@@ -152,7 +152,17 @@ export function makeFull5v10() {
     },
     {
       shortName: 'B1.2',
-      name: 'Common Good-orientated borrowing',
+      name: 'Financial independence through own funding for self-governing organizations',
+      estimations: 0,
+      points: 0,
+      maxPoints: 16.6666666666667,
+      weight: 0,
+      isWeightSelectedByUser: false,
+      isPositive: true,
+    },
+    {
+      shortName: 'B1.3',
+      name: 'Common Good-oriented borrowing',
       estimations: 0,
       points: 0,
       maxPoints: 16.6666666666667,
@@ -161,7 +171,7 @@ export function makeFull5v10() {
       isPositive: true,
     },
     {
-      shortName: 'B1.3',
+      shortName: 'B1.4',
       name: 'Ethical position of external financial partners',
       estimations: 0,
       points: 0,

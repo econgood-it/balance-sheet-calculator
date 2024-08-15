@@ -23,6 +23,8 @@ import {
 import { z } from 'zod';
 import { Translations } from '../language/translations';
 import { MatrixBodySchema } from '@ecogood/e-calculator-schemas/dist/matrix.dto';
+import { eq } from '@mr42/version-comparator/dist/version.comparator';
+import { ValueError } from '../exceptions/value.error';
 
 export const BalanceSheetVersionSchema = z.nativeEnum(BalanceSheetVersion);
 
@@ -70,6 +72,17 @@ export function makeBalanceSheet(opts?: BalanceSheetOpts): BalanceSheet {
     stakeholderWeights: [],
     organizationId: undefined,
   };
+
+  function validatedData() {
+    if (eq(data.version, BalanceSheetVersion.v5_1_0)) {
+      if (getRating('B1.1').weight !== 0 && getRating('B1.2').weight !== 0) {
+        throw new ValueError(
+          'At least one of B1.1 and B1.2 must have weight 0'
+        );
+      }
+    }
+    return data;
+  }
 
   function getRating(shortName: string): Rating {
     return makeRatingsQuery(data.ratings).getRating(shortName);
@@ -294,7 +307,7 @@ export function makeBalanceSheet(opts?: BalanceSheetOpts): BalanceSheet {
   }
 
   return deepFreeze({
-    ...data,
+    ...validatedData(),
     toJson,
     asMatrixRepresentation,
     merge,
