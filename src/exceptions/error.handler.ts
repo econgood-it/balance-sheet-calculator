@@ -10,10 +10,14 @@ import { ZodError } from 'zod';
 import { DatabaseValidationError } from './databaseValidationError';
 import { ConflictError } from './conflict.error';
 import { ConflictException } from './conflict.exception';
+import { ValueError } from './value.error';
 
 export const handle = (error: Error, next: NextFunction) => {
   if (error instanceof ZodError) {
     return next(new BadRequestException(JSON.parse(error.message)));
+  }
+  if (error instanceof ValueError) {
+    return next(new BadRequestException(error.message));
   }
   if (error instanceof EntityNotFoundError) {
     return next(new NotFoundException(error.message));

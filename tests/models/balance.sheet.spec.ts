@@ -186,27 +186,14 @@ describe('BalanceSheet', () => {
     // });
   });
 
-  it('should fail for version 5.10 if B1.1 and B1.2 have a weight greater 0', () => {
-    const balanceSheet = makeBalanceSheet.fromJson({
-      version: BalanceSheetVersion.v5_1_0,
-      type: BalanceSheetType.Full,
-    });
-    const estimations = [
-      { shortName: 'B1.1', estimations: 10, weight: 1 },
-      { shortName: 'B1.2', estimations: 10, weight: 1 },
-    ];
-    expect(() => balanceSheet.merge({ ratings: estimations })).toThrow(
-      ValueError
-    );
-  });
-
   it.each([
     { b11: 0, b12: 0, shouldFail: false },
     { b11: 0, b12: 1, shouldFail: false },
     { b11: 1, b12: 0, shouldFail: false },
+    { b11: 1, b12: 1, shouldFail: true },
   ])(
     'should validation for version 5.10 if at least one of B1.1 and B1.2 have a weight of 0',
-    ({ b11, b12, shouldFail }) => {
+    async ({ b11, b12, shouldFail }) => {
       const balanceSheet = makeBalanceSheet.fromJson({
         version: BalanceSheetVersion.v5_1_0,
         type: BalanceSheetType.Full,
@@ -223,6 +210,11 @@ describe('BalanceSheet', () => {
         expect(() =>
           balanceSheet.merge({ ratings: estimations })
         ).not.toThrow();
+        const calculatedBalanceSheet = await balanceSheet
+          .merge({ ratings: estimations })
+          .reCalculate();
+        expect(calculatedBalanceSheet.getRating('B1.1').weight).toBe(b11);
+        expect(calculatedBalanceSheet.getRating('B1.2').weight).toBe(b12);
       }
     }
   );
