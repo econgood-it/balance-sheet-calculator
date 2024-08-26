@@ -199,7 +199,7 @@ describe('Rating', () => {
         estimations: 10,
         isPositive: true,
         isWeightSelectedByUser: false,
-        weight: 2,
+        weight: 1,
         maxPoints: 51,
         points: 10,
       });
