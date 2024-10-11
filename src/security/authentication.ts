@@ -46,16 +46,23 @@ export class ZitadelAuthentication implements IAuthenticationProvider {
     passport.authenticate(
       'zitadel-introspection',
       { session: false },
-      (err: any, user: { sub: string; email?: string; scope: string }) => {
+      (
+        err: any,
+        user: { sub: string; email?: string; scope: string; username?: string }
+      ) => {
         if (err) {
           return next(new UnauthorizedException(err.message));
         }
-        if (!(user && user.email)) {
+
+        const isValidUser = user && user.email;
+        const isValidServiceUser = user && user.username;
+
+        if (!isValidUser && !isValidServiceUser) {
           return next(new UnauthorizedException('User information missing'));
         }
         req.authenticatedUser = {
           id: user.sub,
-          email: user.email,
+          email: user.email ?? 'service-user@econgood.org',
           role: user.scope.split(' ').some((s) => s.includes('role:admin'))
             ? Role.Admin
             : Role.User,
