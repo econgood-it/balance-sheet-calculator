@@ -40,8 +40,6 @@ export type Rating = RatingOpts & {
   ) => z.infer<typeof MatrixRatingBodySchema>;
 };
 
-const DEFAULT_WEIGHT = 1;
-
 export function makeRating(opts?: RatingOpts): Rating {
   const data = opts || {
     shortName: 'A1',
