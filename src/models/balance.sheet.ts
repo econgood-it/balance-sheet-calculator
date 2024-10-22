@@ -270,6 +270,9 @@ export function makeBalanceSheet(opts?: BalanceSheetOpts): BalanceSheet {
   function merge(
     requestBody: z.infer<typeof BalanceSheetPatchRequestBodySchema>
   ): BalanceSheet {
+    const defaultRatings = makeRatingsQuery(
+      makeRatingFactory().createDefaultRatings(data.type, data.version)
+    );
     return makeBalanceSheet({
       ...data,
       companyFacts: requestBody.companyFacts
@@ -279,7 +282,12 @@ export function makeBalanceSheet(opts?: BalanceSheetOpts): BalanceSheet {
         const newRating = requestBody.ratings.find(
           (newRating) => newRating.shortName === rating.shortName
         );
-        return newRating ? rating.merge(newRating) : rating;
+        return newRating
+          ? rating.merge(
+              newRating,
+              defaultRatings.getRating(rating.shortName).weight
+            )
+          : rating;
       }),
       stakeholderWeights:
         requestBody.stakeholderWeights?.map((sw) => makeWeighting(sw)) ||

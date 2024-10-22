@@ -240,6 +240,27 @@ describe('BalanceSheet', () => {
     }
   );
 
+  it('should reset weights correctly', async () => {
+    const balancesheet = makeBalanceSheet
+      .fromJson({
+        version: BalanceSheetVersion.v5_1_0,
+        type: BalanceSheetType.Full,
+      })
+      .merge({
+        ratings: [
+          { shortName: 'B1.1', weight: 0 },
+          { shortName: 'B1.2', weight: 2 },
+        ],
+      });
+    expect(balancesheet.getRating('B1.1').weight).toEqual(0);
+    expect(balancesheet.getRating('B1.2').weight).toEqual(2);
+    const balanceSheetWithResetedWeights = balancesheet.merge({
+      ratings: [{ shortName: 'B1.1' }, { shortName: 'B1.2' }],
+    });
+    expect(balanceSheetWithResetedWeights.getRating('B1.1').weight).toEqual(1);
+    expect(balanceSheetWithResetedWeights.getRating('B1.2').weight).toEqual(0);
+  });
+
   describe('is merged', () => {
     it('with request body', () => {
       const balanceSheet = makeBalanceSheet();

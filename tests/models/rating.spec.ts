@@ -164,7 +164,7 @@ describe('Rating', () => {
         estimations: 10,
         weight: 0.5,
       };
-      const newRating = rating.merge(requestBody);
+      const newRating = rating.merge(requestBody, 1);
       expect(newRating).toMatchObject({
         shortName: 'A1',
         name: 'A1 name',
@@ -172,34 +172,6 @@ describe('Rating', () => {
         isPositive: true,
         isWeightSelectedByUser: true,
         weight: 0.5,
-        maxPoints: 51,
-        points: 10,
-      });
-    });
-
-    it('with request body where weight is not selected by user', () => {
-      const rating = makeRating({
-        shortName: 'A1',
-        name: 'A1 name',
-        estimations: 4,
-        isPositive: true,
-        isWeightSelectedByUser: true,
-        weight: 2,
-        maxPoints: 51,
-        points: 10,
-      });
-      const requestBody = {
-        shortName: 'A1',
-        estimations: 10,
-      };
-      const newRating = rating.merge(requestBody);
-      expect(newRating).toMatchObject({
-        shortName: 'A1',
-        name: 'A1 name',
-        estimations: 10,
-        isPositive: true,
-        isWeightSelectedByUser: false,
-        weight: 1,
         maxPoints: 51,
         points: 10,
       });
@@ -222,7 +194,7 @@ describe('Rating', () => {
       estimations: 10,
       weight: 0,
     };
-    const newRating = rating.merge(requestBody);
+    const newRating = rating.merge(requestBody, 1);
     expect(newRating).toMatchObject({
       shortName: 'A1',
       name: 'A1 name',
@@ -230,6 +202,35 @@ describe('Rating', () => {
       isPositive: true,
       isWeightSelectedByUser: true,
       weight: 0,
+      maxPoints: 51,
+      points: 10,
+    });
+  });
+
+  it('with request body where weight is reset to default weight', () => {
+    const rating = makeRating({
+      shortName: 'A1',
+      name: 'A1 name',
+      estimations: 4,
+      isPositive: true,
+      isWeightSelectedByUser: true,
+      weight: 2,
+      maxPoints: 51,
+      points: 10,
+    });
+    const requestBody = {
+      shortName: 'A1',
+      estimations: 10,
+    };
+    const defaultWeight = 1.5;
+    const newRating = rating.merge(requestBody, defaultWeight);
+    expect(newRating).toMatchObject({
+      shortName: 'A1',
+      name: 'A1 name',
+      estimations: 10,
+      isPositive: true,
+      isWeightSelectedByUser: false,
+      weight: defaultWeight,
       maxPoints: 51,
       points: 10,
     });

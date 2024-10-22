@@ -23,7 +23,10 @@ type RatingOpts = {
 };
 
 export type Rating = RatingOpts & {
-  merge: (requestBody: z.infer<typeof RatingRequestBodySchema>) => Rating;
+  merge: (
+    requestBody: z.infer<typeof RatingRequestBodySchema>,
+    defaultWeight: number
+  ) => Rating;
   toJson: (
     language: keyof Translations
   ) => z.infer<typeof RatingResponseBodySchema>;
@@ -94,20 +97,23 @@ export function makeRating(opts?: RatingOpts): Rating {
     return data.shortName.substring(0, 1);
   }
 
-  function adjustWeight(weight?: number): Rating {
+  function adjustWeight(defaultWeight: number, weight?: number): Rating {
     if (data.isPositive && weight !== undefined) {
       return makeRating({ ...data, weight, isWeightSelectedByUser: true });
     } else {
       return makeRating({
         ...data,
         isWeightSelectedByUser: false,
-        weight: DEFAULT_WEIGHT, // TODO: Get default weight from factory especially for version 5.10
+        weight: defaultWeight, // TODO: Get default weight from factory especially for version 5.10
       });
     }
   }
 
-  function merge(requestBody: z.infer<typeof RatingRequestBodySchema>): Rating {
-    return adjustWeight(requestBody.weight).submitEstimations(
+  function merge(
+    requestBody: z.infer<typeof RatingRequestBodySchema>,
+    defaultWeight: number
+  ): Rating {
+    return adjustWeight(defaultWeight, requestBody.weight).submitEstimations(
       requestBody.estimations || data.estimations
     );
   }
