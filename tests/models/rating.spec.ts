@@ -147,7 +147,7 @@ describe('Rating', () => {
     expect(rating.isAspectOfTopic('A2')).toBeFalsy();
   });
 
-  describe('is merged with request body', () => {
+  describe('is merged', () => {
     it('with request body', () => {
       const rating = makeRating({
         shortName: 'A1',
@@ -175,6 +175,34 @@ describe('Rating', () => {
         maxPoints: 51,
         points: 10,
       });
+    });
+  });
+
+  it('with request body where estimations is 0', () => {
+    const rating = makeRating({
+      shortName: 'A1',
+      name: 'A1 name',
+      estimations: 4,
+      isPositive: true,
+      isWeightSelectedByUser: false,
+      weight: 1,
+      maxPoints: 51,
+      points: 10,
+    });
+    const requestBody = {
+      shortName: 'A1',
+      estimations: 0,
+    };
+    const newRating = rating.merge(requestBody, 1);
+    expect(newRating).toMatchObject({
+      shortName: 'A1',
+      name: 'A1 name',
+      estimations: 0,
+      isPositive: true,
+      isWeightSelectedByUser: false,
+      weight: 1,
+      maxPoints: 51,
+      points: 10,
     });
   });
 

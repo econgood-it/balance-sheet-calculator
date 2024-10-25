@@ -112,7 +112,7 @@ export function makeRating(opts?: RatingOpts): Rating {
     defaultWeight: number
   ): Rating {
     return adjustWeight(defaultWeight, requestBody.weight).submitEstimations(
-      requestBody.estimations || data.estimations
+      requestBody.estimations ?? data.estimations
     );
   }
 
