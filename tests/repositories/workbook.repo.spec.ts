@@ -17,7 +17,7 @@ import {
   IBalanceSheetRepo,
   makeBalanceSheetRepository,
 } from '../../src/repositories/balance.sheet.repo';
-import { Workbook } from '../../src/models/workbook';
+import { WorkbookOld } from '../../src/models/workbookOld';
 
 jest.mock('axios');
 const mockedAxios = jest.mocked(axios);
@@ -25,7 +25,7 @@ const mockedAxios = jest.mocked(axios);
 export function makeInMemoryWorkbookRepo(): IWorkbookRepo {
   const workbook = workbookFromFile();
 
-  async function getWorkbook(): Promise<Workbook> {
+  async function getWorkbook(): Promise<WorkbookOld> {
     return Promise.resolve(workbook);
   }
   return deepFreeze({

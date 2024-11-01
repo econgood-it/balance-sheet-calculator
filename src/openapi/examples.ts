@@ -4,7 +4,7 @@ import {
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 
-import { WorkbookSection } from '../models/workbook';
+import { WorkbookSectionOld } from '../models/workbookOld';
 import { z } from 'zod';
 import deepFreeze from 'deep-freeze';
 import {
@@ -554,7 +554,7 @@ export function makeJsonFactory() {
 }
 
 export const WorkbookSectionsJsonFactory = {
-  default: (): WorkbookSection[] => [
+  default: (): WorkbookSectionOld[] => [
     {
       shortName: 'C',
       title: 'C. Employees, including co-working employers',
