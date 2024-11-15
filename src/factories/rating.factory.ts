@@ -5,11 +5,13 @@ import {
 import { makeRating, Rating } from '../models/rating';
 import deepFreeze from 'deep-freeze';
 import { z } from 'zod';
-import { makeFull5v08 } from './ratings_full_5.08';
 
 import { makeFull5v10 } from './ratings_full_5.10';
 import { makeCompact5v08 } from './ratings_compact_5.08';
-import { gte } from '@mr42/version-comparator/dist/version.comparator';
+import { lt } from '@mr42/version-comparator/dist/version.comparator';
+import { makeWorkbook, Workbook } from '../models/workbook';
+import { ValueError } from '../exceptions/value.error';
+import { makeFull5v08 } from './ratings_full_5.08';
 
 const RatingSchema = z.object({
   shortName: z.string(),
@@ -27,20 +29,38 @@ export function makeRatingFactory() {
     balanceSheetType: BalanceSheetType,
     balanceSheetVersion: BalanceSheetVersion
   ): Rating[] {
-    if (balanceSheetType === BalanceSheetType.Full) {
-      if (gte(balanceSheetVersion, BalanceSheetVersion.v5_1_0)) {
-        return fromObject(makeFull5v10());
-      }
-      if (gte(balanceSheetVersion, BalanceSheetVersion.v5_0_8)) {
-        return fromObject(makeFull5v08());
-      }
+    // TODO: Replace hard coded language here and test number of positive aspects afterwards for german version
+    // TODO: Include type from workbook in rating already here instead of inferring it later from the name
+    const workbook = makeWorkbook.fromFile(
+      balanceSheetVersion,
+      balanceSheetType,
+      'en'
+    );
+    if (lt(balanceSheetVersion, BalanceSheetVersion.v5_1_0)) {
+      return balanceSheetType === BalanceSheetType.Full
+        ? fromObject(makeFull5v08(), workbook)
+        : fromObject(makeCompact5v08(), workbook);
     }
-    return fromObject(makeCompact5v08());
+    return fromObject(makeFull5v10(), workbook);
   }
 
-  function fromObject(obj: any): Rating[] {
+  function fromObject(objs: any, workbook: Workbook): Rating[] {
     return RatingSchema.array()
-      .parse(obj)
+      .parse(
+        objs.map((o: any) => {
+          const foundWorkbookRating = workbook.findByShortName(o.shortName);
+          if (foundWorkbookRating === undefined) {
+            throw new ValueError(
+              `ShortName ${o.shortName} not found in workbook`
+            );
+          }
+          return {
+            ...o,
+            name: foundWorkbookRating.name,
+            isPositive: foundWorkbookRating.isPositive,
+          };
+        })
+      )
       .map((rating) => makeRating({ ...rating }));
   }
 

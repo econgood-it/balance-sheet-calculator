@@ -32,6 +32,32 @@ describe('Ratings factory', () => {
     expect(ratingsQuery.getRating('B1.1').weight).toEqual(1);
     expect(ratingsQuery.getRating('B1.2').weight).toEqual(0);
   });
+  it('should create default ratings for a compact balance sheet of version 5.10', () => {
+    const ratings = makeRatingFactory().createDefaultRatings(
+      BalanceSheetType.Compact,
+      BalanceSheetVersion.v5_1_0
+    );
+    const ratingsQuery = makeRatingsQuery(ratings);
+    expect(ratingsQuery.getAspects('E2').map((e) => e.shortName)).toEqual([
+      'E2.1',
+      'E2.2',
+      'E2.3',
+    ]);
+    expect(ratingsQuery.getAspects('B4').map((e) => e.shortName)).toEqual([
+      'B4.1',
+      'B4.2',
+      'B4.3',
+    ]);
+    expect(ratingsQuery.getAspects('B1').map((e) => e.shortName)).toEqual([
+      'B1.1',
+      'B1.2',
+      'B1.3',
+      'B1.4',
+    ]);
+    expect(ratingsQuery.getRating('B1.1').weight).toEqual(1);
+    expect(ratingsQuery.getRating('B1.2').weight).toEqual(0);
+    expect(ratings).toHaveLength(81);
+  });
   it('should create default ratings for a full balance sheet of version 5.09', () => {
     const ratings = makeRatingFactory().createDefaultRatings(
       BalanceSheetType.Full,
@@ -53,7 +79,7 @@ describe('Ratings factory', () => {
       weight: 1,
     });
   });
-  it('should create default ratings for a full balance sheet', () => {
+  it('should create default ratings for a full balance sheet of version 5.08', () => {
     const ratings = makeRatingFactory().createDefaultRatings(
       BalanceSheetType.Full,
       BalanceSheetVersion.v5_0_8
@@ -121,7 +147,7 @@ describe('Ratings factory', () => {
     });
   });
 
-  it('should create a default ratings for a compact balance sheet', () => {
+  it('should create a default ratings for a compact balance sheet of version 5.08', () => {
     const ratings = makeRatingFactory().createDefaultRatings(
       BalanceSheetType.Compact,
       BalanceSheetVersion.v5_0_6

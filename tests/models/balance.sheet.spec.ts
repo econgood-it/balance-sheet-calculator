@@ -94,6 +94,15 @@ describe('BalanceSheet', () => {
     });
   });
 
+  it('should return all positive aspects of compact', () => {
+    const balanceSheet = makeBalanceSheet.fromJson({
+      version: BalanceSheetVersion.v5_0_8,
+      type: BalanceSheetType.Compact,
+    });
+    const aspects = balanceSheet.getPositiveAspects();
+    expect(aspects.length).toBe(20);
+  });
+
   it('should return all positive aspects of topic', () => {
     const balanceSheet = makeBalanceSheet();
     const aspects = balanceSheet.getPositiveAspects('A1');

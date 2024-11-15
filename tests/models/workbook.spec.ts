@@ -16,7 +16,7 @@ describe('Full Workbook', () => {
 
     expect(workbook.findByShortName('B1.2')).toEqual({
       shortName: 'B1.2',
-      name: 'B1.2 Common Good-orientated borrowing',
+      name: 'Common Good-orientated borrowing',
       description:
         'Any borrowing is a commitment to an increase in the added value, so as to be able to pay in' +
         'terest and make repayments. Borrowed capital should be raised primarily through solidarity ' +
@@ -41,7 +41,7 @@ describe('Full Workbook', () => {
     // The description is not yet translated, since it is not used in the e calculator
     expect(workbook.findByShortName('B1.2')).toEqual({
       shortName: 'B1.2',
-      name: 'B1.2 Gemeinwohlorientierte Fremdfinanzierung',
+      name: 'Gemeinwohlorientierte Fremdfinanzierung',
       description:
         'Any borrowing is a commitment to an increase in the added value, so as to be able to pay in' +
         'terest and make repayments. Borrowed capital should be raised primarily through solidarity ' +
@@ -65,7 +65,7 @@ describe('Full Workbook', () => {
 
     expect(workbook.findByShortName('A1.1')).toEqual({
       shortName: 'A1.1',
-      name: 'A1.1 Working conditions and social impact in the supply chain',
+      name: 'Working conditions and social impact in the supply chain',
       description:
         'The aim is for organizations to be actively involved in how the goods and services they purchase are provided. To this end, they should take the appropriate steps to ensure fair and ethical working practices throughout the supply chain.',
       isPositive: true,
@@ -73,7 +73,7 @@ describe('Full Workbook', () => {
     });
     expect(workbook.findByShortName('B1.2')).toEqual({
       shortName: 'B1.2',
-      name: 'B1.2 Financial independence through own funding for self-governing organizations',
+      name: 'Financial independence through own funding for self-governing organizations',
       description:
         'This aspect only applies, if B1.1 does not apply. To ensure independence and autonomy for an organization, a high level of revenue from own activities enables financial independence, economic resilience and protects an organization from unwanted external influences, and from unnecessary financial risks.',
       isPositive: true,
@@ -82,7 +82,7 @@ describe('Full Workbook', () => {
 
     expect(workbook.findByShortName('E4.3')).toEqual({
       shortName: 'E4.3',
-      name: 'E4.3 Negative aspect: lack of transparency and deliberate misinformation',
+      name: 'Negative aspect: lack of transparency and deliberate misinformation',
       description:
         'Organizations and companies have a responsibility to provide information to society transparently and comprehensively. If an organization deliberately publishes false information about itself, its plans, its understanding of facts, or its mission, it harms society and impedes informed choices and discourse. Harm can be caused by: * deliberate misleading through mis-information, non-disclosure of relevant facts, illegitimate interpretation of facts * biased reporting of risks to the detriment of the public, future generations, and nature * neglect of scientific findings or empirical facts * promotion of stereotypes, resentments, group-based misanthropy, or prejudices   * gather and disseminate information with the aim of manipulation or tailored opinion forming * prevent dissemination or discredit information for strategic reasons',
       isPositive: false, // TODO: change this after json is corrected by MDT
@@ -102,7 +102,7 @@ describe('Full Workbook', () => {
 
     expect(workbook.findByShortName('A1.1')).toEqual({
       shortName: 'A1.1',
-      name: 'A1.1 Arbeitsbedingungen und soziale Auswirkungen in der Lieferkette',
+      name: 'Arbeitsbedingungen und soziale Auswirkungen in der Lieferkette',
       description:
         'Ziel ist es, dass Organisationen sich aktiv daran beteiligen, wie die von ihnen gekauften Waren und Dienstleistungen hergestellt werden. Zu diesem Zweck sollten sie geeignete Maßnahmen ergreifen, um faire und ethische Arbeitspraktiken in der gesamten Lieferkette sicherzustellen. ',
       isPositive: true,
@@ -110,7 +110,7 @@ describe('Full Workbook', () => {
     });
     expect(workbook.findByShortName('E4.3')).toEqual({
       shortName: 'E4.3',
-      name: 'E4.3 Negativaspekt: Intransparenz und gezielte Falschinformation',
+      name: 'Negativaspekt: Intransparenz und gezielte Falschinformation',
       description:
         'Organisationen und Unternehmen haben die Verantwortung, die Gesellschaft transparent und umfassend zu informieren. Wenn eine Organisation absichtlich falsche Informationen über sich selbst, ihre Pläne, ihr Verständnis von Fakten oder ihre Mission veröffentlicht, schadet sie dem Gemeinwesen und behindert fundierte Entscheidungen und Diskussionen. Schäden können verursacht werden durch: - bewusste Irreführung durch Fehlinformation, Verschweigen relevanter Tatsachen, tendenziöse Auslegung von Tatsachen - verzerrte Berichterstattung über Risiken zum Nachteil der Öffentlichkeit, künftiger Generationen und der Natur - Missachtung wissenschaftlicher Erkenntnisse oder empirischer Fakten - Förderung von Stereotypen, Ressentiments, gruppenbezogener Menschenfeindlichkeit oder Vorurteilen - Informationsverbreitung mit dem Ziel der Manipulation oder gezielten Meinungsbildung - Informationszurückhaltung oder Diskreditierung von Informationsquellen aus strategischen Gründen',
       isPositive: false, // TODO: change this after json is corrected by MDT
@@ -132,7 +132,7 @@ describe('Compact Workbook', () => {
 
     expect(workbook.findByShortName('B1.1')).toEqual({
       shortName: 'B1.1',
-      name: 'B1.1 Ethical position in relation to financial resources',
+      name: 'Ethical position in relation to financial resources',
       description:
         'A high level of internal equity capital enables financial independence, ' +
         'economic resilience and protects the company from unwanted external ' +
@@ -154,7 +154,7 @@ describe('Compact Workbook', () => {
     // The description is not yet translated, since it is not used in the e calculator
     expect(workbook.findByShortName('B1.1')).toEqual({
       shortName: 'B1.1',
-      name: 'B1.1 Ethische Haltung im Umgang mit Geldmitteln',
+      name: 'Ethische Haltung im Umgang mit Geldmitteln',
       description:
         'A high level of internal equity capital enables financial independence, ' +
         'economic resilience and protects the company from unwanted external ' +
@@ -175,7 +175,7 @@ describe('Compact Workbook', () => {
 
     expect(workbook.findByShortName('A1.1')).toEqual({
       shortName: 'A1.1',
-      name: 'A1.1 Working conditions and social impact in the supply chain',
+      name: 'Working conditions and social impact in the supply chain',
       description:
         'The aim is for organizations to be actively involved in how the goods and services they purchase are provided. To this end, they should take the appropriate steps to ensure fair and ethical working practices throughout the supply chain.',
       isPositive: true,
@@ -183,7 +183,7 @@ describe('Compact Workbook', () => {
     });
     expect(workbook.findByShortName('B1.2')).toEqual({
       shortName: 'B1.2',
-      name: 'B1.2 Financial independence through own funding for self-governing organizations',
+      name: 'Financial independence through own funding for self-governing organizations',
       description:
         'This aspect only applies, if B1.1 does not apply. To ensure independence and autonomy for an organization, a high level of revenue from own activities enables financial independence, economic resilience and protects an organization from unwanted external influences, and from unnecessary financial risks.',
       isPositive: true,
@@ -192,7 +192,7 @@ describe('Compact Workbook', () => {
 
     expect(workbook.findByShortName('E4.3')).toEqual({
       shortName: 'E4.3',
-      name: 'E4.3 Negative aspect: lack of transparency and deliberate misinformation',
+      name: 'Negative aspect: lack of transparency and deliberate misinformation',
       description:
         'Organizations and companies have a responsibility to provide information to society transparently and comprehensively. If an organization deliberately publishes false information about itself, its plans, its understanding of facts, or its mission, it harms society and impedes informed choices and discourse. Harm can be caused by: * deliberate misleading through mis-information, non-disclosure of relevant facts, illegitimate interpretation of facts * biased reporting of risks to the detriment of the public, future generations, and nature * neglect of scientific findings or empirical facts * promotion of stereotypes, resentments, group-based misanthropy, or prejudices   * gather and disseminate information with the aim of manipulation or tailored opinion forming * prevent dissemination or discredit information for strategic reasons',
       isPositive: false,
@@ -212,7 +212,7 @@ describe('Compact Workbook', () => {
 
     expect(workbook.findByShortName('A1.1')).toEqual({
       shortName: 'A1.1',
-      name: 'A1.1 Arbeitsbedingungen und soziale Auswirkungen in der Lieferkette',
+      name: 'Arbeitsbedingungen und soziale Auswirkungen in der Lieferkette',
       description:
         'Ziel ist es, dass Organisationen sich aktiv daran beteiligen, wie die von ihnen gekauften Waren und Dienstleistungen hergestellt werden. Zu diesem Zweck sollten sie geeignete Maßnahmen ergreifen, um faire und ethische Arbeitspraktiken in der gesamten Lieferkette sicherzustellen. ',
       isPositive: true,
@@ -220,7 +220,7 @@ describe('Compact Workbook', () => {
     });
     expect(workbook.findByShortName('E4.3')).toEqual({
       shortName: 'E4.3',
-      name: 'E4.3 Negativaspekt: Intransparenz und gezielte Falschinformation',
+      name: 'Negativaspekt: Intransparenz und gezielte Falschinformation',
       description:
         'Organisationen und Unternehmen haben die Verantwortung, die Gesellschaft transparent und umfassend zu informieren. Wenn eine Organisation absichtlich falsche Informationen über sich selbst, ihre Pläne, ihr Verständnis von Fakten oder ihre Mission veröffentlicht, schadet sie dem Gemeinwesen und behindert fundierte Entscheidungen und Diskussionen. Schäden können verursacht werden durch: - bewusste Irreführung durch Fehlinformation, Verschweigen relevanter Tatsachen, tendenziöse Auslegung von Tatsachen - verzerrte Berichterstattung über Risiken zum Nachteil der Öffentlichkeit, künftiger Generationen und der Natur - Missachtung wissenschaftlicher Erkenntnisse oder empirischer Fakten - Förderung von Stereotypen, Ressentiments, gruppenbezogener Menschenfeindlichkeit oder Vorurteilen - Informationsverbreitung mit dem Ziel der Manipulation oder gezielten Meinungsbildung - Informationszurückhaltung oder Diskreditierung von Informationsquellen aus strategischen Gründen',
       isPositive: false,
@@ -361,38 +361,49 @@ describe('Workbook group', () => {
         {
           type: 'topic',
           shortName: 'A1',
-          name: 'A1 Human dignity throughout the supply chain',
+          name: 'Human dignity throughout the supply chain',
           description:
-            'All goods and services purchased by an organization have an associated impact on society, which can be either positive or negative. Of these, one of the most important is the working conditions of all employees throughout the supply chain. An organization is responsible for the well-being of all people - including its direct and indirect suppliers.',
+            'All goods and services purchased by an organization have an associated impact on society, which can be ' +
+            'either positive or negative. Of these, one of the most important is the working conditions of all employees ' +
+            'throughout the supply chain. An organization is responsible for the well-being of all people - ' +
+            'including its direct and indirect suppliers.',
+          isPositive: true,
         },
         {
           type: 'aspect',
           shortName: 'A1.1',
-          name: 'A1.1 Working conditions and social impact in the supply chain',
+          name: 'Working conditions and social impact in the supply chain',
           isPositive: true,
           description:
-            'The aim is for organizations to be actively involved in how the goods and services they purchase are provided. To this end, they should take the appropriate steps to ensure fair and ethical working practices throughout the supply chain.',
+            'The aim is for organizations to be actively involved in how the goods and services they purchase are ' +
+            'provided. To this end, they should take the appropriate steps to ensure fair and ethical working practices ' +
+            'throughout the supply chain.',
         },
         {
           type: 'aspect',
           shortName: 'A1.2',
-          name: 'A1.2 Negative aspect: violation of human dignity in the supply chain',
+          name: 'Negative aspect: violation of human dignity in the supply chain',
           isPositive: false,
           description:
-            'Significant social problems can be associated with the production of many goods that are used on a daily basis. However, if one takes into consideration global, complex production processes, it is almost impossible for companies and private individuals to completely exclude all violations of human dignity.',
+            'Significant social problems can be associated with the production of many goods that are used on a daily ' +
+            'basis. However, if one takes into consideration global, complex production processes, it is almost ' +
+            'impossible for companies and private individuals to completely exclude all violations of human dignity.',
         },
         {
           type: 'topic',
           shortName: 'A2',
-          name: 'A2 Solidarity and social justice throughout the supply chain',
+          name: 'Solidarity and social justice throughout the supply chain',
           description:
-            ' ***An ECG organization...*** - ensures that business relations with their direct suppliers are fair and just. - recognises its co-responsibility for solidarity and social justice throughout the supply chain, and develops its business practices accordingly.',
+            ' ***An ECG organization...*** - ensures that business relations with their direct suppliers are fair and ' +
+            'just. - recognises its co-responsibility for solidarity and social justice throughout the supply chain, ' +
+            'and develops its business practices accordingly.',
+          isPositive: true,
         },
         {
           type: 'aspect',
           shortName: 'A2.1',
           isPositive: true,
-          name: 'A2.1 Fair and just business practices towards direct suppliers',
+          name: 'Fair and just business practices towards direct suppliers',
           description:
             'We can demonstrate solidarity and social justice towards our direct suppliers through fair and just business practices regarding pricing and terms of payment and delivery. It is also important to recognise that added value created through the supply chain must be shared fairly to facilitate an economic existence for everyone involved. ### Questions for compiling the report - To what extent have we integrated fair and just business practices towards our direct suppliers into our policies?  - To what extent have we identified actual or potential adverse impacts regarding fair and just business practices towards our direct suppliers? - (FV) What action have we taken to prevent and mitigate potential adverse impacts, bring actual adverse impacts to an end and to establish fair and just business practices towards our direct suppliers not only with regard to pricing and terms of payment and delivery, but also with regard to our daily business operations and a fair share of value added?  - (FV) To what extent have we established and are maintaining a complaints procedure for our direct suppliers? - How satisfied are our suppliers with regard to pricing and terms of payment and delivery as well as with their share of added value?  - (FV) How do we monitor the effectiveness of our policies and measures regarding fair and just business practices towards our direct suppliers?',
         },

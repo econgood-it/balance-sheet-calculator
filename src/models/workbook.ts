@@ -10,13 +10,22 @@ import deepFreeze from 'deep-freeze';
 import { Translations } from '../language/translations';
 import { gte } from '@mr42/version-comparator/dist/version.comparator';
 
-const AspectSchema = z.object({
-  type: z.string(),
-  isPositive: z.boolean(),
-  shortName: z.string(),
-  name: z.string(),
-  description: z.string(),
-});
+function removeShortNameInName(name: string, shortName: string): string {
+  return name.replace(shortName, '').trimStart();
+}
+
+const AspectSchema = z
+  .object({
+    type: z.string(),
+    isPositive: z.boolean(),
+    shortName: z.string(),
+    name: z.string(),
+    description: z.string(),
+  })
+  .transform((a) => ({
+    ...a,
+    name: removeShortNameInName(a.name, a.shortName),
+  }));
 const TopicSchema = z
   .object({
     topics: z.object({
@@ -27,7 +36,13 @@ const TopicSchema = z
       aspects: AspectSchema.array(),
     }),
   })
-  .transform((ts) => [_.omit(ts.topics, 'aspects'), ...ts.topics.aspects]);
+  .transform((ts) => {
+    const topic = { ..._.omit(ts.topics, 'aspects'), isPositive: true };
+    return [
+      { ...topic, name: removeShortNameInName(topic.name, topic.shortName) },
+      ...ts.topics.aspects,
+    ];
+  });
 export const GroupSchema = z
   .object({
     group: z.object({
@@ -52,6 +67,7 @@ type WorbookRating = {
   shortName: string;
   name: string;
   description: string;
+  isPositive: boolean;
 };
 
 type WorkbookOpts = {
