@@ -100,7 +100,7 @@ export function makeRating(opts?: RatingOpts): Rating {
       return makeRating({
         ...data,
         isWeightSelectedByUser: false,
-        weight: defaultWeight, // TODO: Get default weight from factory especially for version 5.10
+        weight: defaultWeight,
       });
     }
   }
@@ -171,7 +171,7 @@ export function makeRating(opts?: RatingOpts): Rating {
   });
 }
 
-type RatingsQuery = {
+export type RatingsQuery = {
   getRating: (shortName: string) => Rating;
   getAspects: (shortNameTopic?: string) => Rating[];
 };

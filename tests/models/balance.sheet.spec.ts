@@ -312,6 +312,117 @@ describe('BalanceSheet', () => {
       ]);
     });
 
+    it('where B1.1 has weight 0 and has not been selected by user', () => {
+      const balanceSheet = makeBalanceSheet.fromJson({
+        version: BalanceSheetVersion.v5_1_0,
+        type: BalanceSheetType.Full,
+      });
+      const newBalanceSheet = balanceSheet.merge({
+        ratings: [
+          {
+            shortName: 'B1.1',
+            estimations: 0,
+          },
+          { shortName: 'B1.2', estimations: 0 },
+        ],
+      });
+
+      expect(newBalanceSheet.getRating('B1.1')).toEqual({
+        ...balanceSheet.getRating('B1.1'),
+        weight: 1,
+        isWeightSelectedByUser: false,
+      });
+      expect(newBalanceSheet.getRating('B1.2')).toEqual({
+        ...balanceSheet.getRating('B1.2'),
+        weight: 0,
+        isWeightSelectedByUser: false,
+      });
+    });
+
+    it('where B1.1 has weight 0 and has been selected by user', () => {
+      const balanceSheet = makeBalanceSheet.fromJson({
+        version: BalanceSheetVersion.v5_1_0,
+        type: BalanceSheetType.Full,
+      });
+      const newBalanceSheet = balanceSheet.merge({
+        ratings: [
+          {
+            shortName: 'B1.1',
+            estimations: 0,
+            weight: 0,
+          },
+          { shortName: 'B1.2', estimations: 0 },
+        ],
+      });
+
+      expect(newBalanceSheet.getRating('B1.1')).toEqual({
+        ...balanceSheet.getRating('B1.1'),
+        weight: 0,
+        isWeightSelectedByUser: true,
+      });
+      expect(newBalanceSheet.getRating('B1.2')).toEqual({
+        ...balanceSheet.getRating('B1.2'),
+        weight: 1,
+        isWeightSelectedByUser: false,
+      });
+    });
+
+    it('where B1.1 has weight 0 and weights of B1.1 and B1.2 have been selected by user', () => {
+      const balanceSheet = makeBalanceSheet.fromJson({
+        version: BalanceSheetVersion.v5_1_0,
+        type: BalanceSheetType.Full,
+      });
+      const newBalanceSheet = balanceSheet.merge({
+        ratings: [
+          {
+            shortName: 'B1.1',
+            estimations: 0,
+            weight: 0,
+          },
+          { shortName: 'B1.2', estimations: 0, weight: 2 },
+        ],
+      });
+
+      expect(newBalanceSheet.getRating('B1.1')).toEqual({
+        ...balanceSheet.getRating('B1.1'),
+        weight: 0,
+        isWeightSelectedByUser: true,
+      });
+      expect(newBalanceSheet.getRating('B1.2')).toEqual({
+        ...balanceSheet.getRating('B1.2'),
+        weight: 2,
+        isWeightSelectedByUser: true,
+      });
+    });
+
+    it('where B1.1 has weight 0 and has been selected by user for version < 5.10', () => {
+      const balanceSheet = makeBalanceSheet.fromJson({
+        version: BalanceSheetVersion.v5_0_9,
+        type: BalanceSheetType.Full,
+      });
+      const newBalanceSheet = balanceSheet.merge({
+        ratings: [
+          {
+            shortName: 'B1.1',
+            estimations: 0,
+            weight: 0,
+          },
+          { shortName: 'B1.2', estimations: 0 },
+        ],
+      });
+
+      expect(newBalanceSheet.getRating('B1.1')).toEqual({
+        ...balanceSheet.getRating('B1.1'),
+        weight: 0,
+        isWeightSelectedByUser: true,
+      });
+      expect(newBalanceSheet.getRating('B1.2')).toEqual({
+        ...balanceSheet.getRating('B1.2'),
+        weight: 1,
+        isWeightSelectedByUser: false,
+      });
+    });
+
     it('using empty stakeholder weights from request body', () => {
       const balanceSheet = makeBalanceSheet({
         ...makeBalanceSheet(),

@@ -3,7 +3,7 @@ import {
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import { CompanyFacts, makeCompanyFacts } from './company.facts';
-import { makeRating, makeRatingsQuery, Rating } from './rating';
+import { makeRating, makeRatingsQuery, Rating, RatingsQuery } from './rating';
 import { makeWeighting, Weighting } from './weighting';
 import deepFreeze from 'deep-freeze';
 import { makeRatingFactory } from '../factories/rating.factory';
@@ -25,6 +25,7 @@ import { Translations } from '../language/translations';
 import { MatrixBodySchema } from '@ecogood/e-calculator-schemas/dist/matrix.dto';
 import { eq } from '@mr42/version-comparator/dist/version.comparator';
 import { ValueError } from '../exceptions/value.error';
+import { gte } from 'lodash';
 
 export const BalanceSheetVersionSchema = z.nativeEnum(BalanceSheetVersion);
 
@@ -267,6 +268,22 @@ export function makeBalanceSheet(opts?: BalanceSheetOpts): BalanceSheet {
     return sum < MAX_NEGATIVE_POINTS ? MAX_NEGATIVE_POINTS : sum;
   }
 
+  function defaultWeight(
+    shortName: string,
+    requestBody: z.infer<typeof BalanceSheetPatchRequestBodySchema>,
+    defaultRatingsQuery: RatingsQuery
+  ) {
+    if (gte(data.version, BalanceSheetVersion.v5_1_0) && shortName === 'B1.2') {
+      const b11Rating = requestBody.ratings.find(
+        (newRating) => newRating.shortName === 'B1.1'
+      );
+      if (b11Rating?.weight === 0) {
+        return defaultRatingsQuery.getRating('B1.1').weight;
+      }
+    }
+    return defaultRatingsQuery.getRating(shortName).weight;
+  }
+
   function merge(
     requestBody: z.infer<typeof BalanceSheetPatchRequestBodySchema>
   ): BalanceSheet {
@@ -282,10 +299,11 @@ export function makeBalanceSheet(opts?: BalanceSheetOpts): BalanceSheet {
         const newRating = requestBody.ratings.find(
           (newRating) => newRating.shortName === rating.shortName
         );
+
         return newRating
           ? rating.merge(
               newRating,
-              defaultRatings.getRating(rating.shortName).weight
+              defaultWeight(rating.shortName, requestBody, defaultRatings)
             )
           : rating;
       }),
