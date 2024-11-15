@@ -14,6 +14,7 @@ import { LookupError } from '../exceptions/lookup.error';
 type RatingOpts = {
   shortName: string;
   name: string;
+  type: 'aspect' | 'topic';
   estimations: number;
   points: number;
   maxPoints: number;
@@ -44,6 +45,7 @@ export function makeRating(opts?: RatingOpts): Rating {
   const data = opts || {
     shortName: 'A1',
     name: 'Human dignity in the supply chain',
+    type: 'topic',
     estimations: 0,
     points: 0,
     maxPoints: 0,
@@ -72,19 +74,15 @@ export function makeRating(opts?: RatingOpts): Rating {
   }
 
   function isTopic(): boolean {
-    return isTopicShortName();
+    return data.type === 'topic';
   }
 
   function isAspect(): boolean {
-    return !isTopicShortName();
+    return data.type === 'aspect';
   }
 
   function isAspectOfTopic(shortNameTopic: string): boolean {
     return isAspect() && data.shortName.startsWith(shortNameTopic);
-  }
-
-  function isTopicShortName(): boolean {
-    return data.shortName.length === 2;
   }
 
   function submitEstimations(estimations: number): Rating {

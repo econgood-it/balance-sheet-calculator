@@ -16,6 +16,7 @@ describe('Rating', () => {
     expect(rating).toMatchObject({
       shortName: 'A1',
       name: 'Human dignity in the supply chain',
+      type: 'topic',
       estimations: 0,
       points: 0,
       maxPoints: 0,
@@ -28,6 +29,7 @@ describe('Rating', () => {
     const rating = makeRating({
       shortName: 'A1.1',
       name: 'Working conditions and social impact in the supply chain',
+      type: 'aspect',
       estimations: 0,
       points: 0,
       maxPoints: 50,
@@ -43,6 +45,7 @@ describe('Rating', () => {
     const rating = makeRating({
       shortName: 'A1.2',
       name: 'Negative aspect: violation of human dignity in the supply chain',
+      type: 'aspect',
       estimations: 0,
       points: 0,
       maxPoints: -200,
@@ -58,6 +61,7 @@ describe('Rating', () => {
     const rating = makeRating({
       shortName: 'A1.1',
       name: 'Working conditions and social impact in the supply chain',
+      type: 'aspect',
       estimations: 0,
       points: 0,
       maxPoints: 50,
@@ -73,6 +77,7 @@ describe('Rating', () => {
     const rating = makeRating({
       shortName: 'A1',
       name: 'Human dignity in the supply chain',
+      type: 'topic',
       estimations: 0,
       points: 0,
       maxPoints: 0,
@@ -88,6 +93,7 @@ describe('Rating', () => {
     const rating = makeRating({
       shortName: 'A1.2',
       name: 'Negative aspect: violation of human dignity in the supply chain',
+      type: 'aspect',
       estimations: 0,
       points: 0,
       maxPoints: -200,
@@ -105,6 +111,7 @@ describe('Rating', () => {
     const aspect = makeRating({
       shortName: 'A1.1',
       name: 'Working conditions and social impact in the supply chain',
+      type: 'aspect',
       estimations: 0,
       points: 0,
       maxPoints: 50,
@@ -122,6 +129,7 @@ describe('Rating', () => {
     const rating = makeRating({
       shortName: 'A1.1',
       name: 'Working conditions and social impact in the supply chain',
+      type: 'aspect',
       estimations: 0,
       points: 0,
       maxPoints: 50,
@@ -136,6 +144,7 @@ describe('Rating', () => {
     const rating = makeRating({
       shortName: 'A1.1',
       name: 'Working conditions and social impact in the supply chain',
+      type: 'aspect',
       estimations: 0,
       points: 0,
       maxPoints: 50,
@@ -152,6 +161,7 @@ describe('Rating', () => {
       const rating = makeRating({
         shortName: 'A1',
         name: 'A1 name',
+        type: 'topic',
         estimations: 4,
         isPositive: true,
         isWeightSelectedByUser: false,
@@ -182,6 +192,7 @@ describe('Rating', () => {
     const rating = makeRating({
       shortName: 'A1',
       name: 'A1 name',
+      type: 'topic',
       estimations: 4,
       isPositive: true,
       isWeightSelectedByUser: false,
@@ -210,6 +221,7 @@ describe('Rating', () => {
     const rating = makeRating({
       shortName: 'A1',
       name: 'A1 name',
+      type: 'topic',
       estimations: 4,
       isPositive: true,
       isWeightSelectedByUser: true,
@@ -239,6 +251,7 @@ describe('Rating', () => {
     const rating = makeRating({
       shortName: 'A1',
       name: 'A1 name',
+      type: 'topic',
       estimations: 4,
       isPositive: true,
       isWeightSelectedByUser: true,
@@ -268,6 +281,7 @@ describe('Rating', () => {
     const rating = makeRating({
       shortName: 'D4.1',
       name: 'Working conditions and social impact in the supply chain',
+      type: 'aspect',
       estimations: 4,
       isPositive: true,
       isWeightSelectedByUser: true,

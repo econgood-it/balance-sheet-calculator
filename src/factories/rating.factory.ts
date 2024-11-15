@@ -12,10 +12,12 @@ import { lt } from '@mr42/version-comparator/dist/version.comparator';
 import { makeWorkbook, Workbook } from '../models/workbook';
 import { ValueError } from '../exceptions/value.error';
 import { makeFull5v08 } from './ratings_full_5.08';
+import { omit } from 'lodash';
 
 const RatingSchema = z.object({
   shortName: z.string(),
   name: z.string(),
+  type: z.union([z.literal('aspect'), z.literal('topic')]),
   estimations: z.number(),
   points: z.number(),
   maxPoints: z.number(),
@@ -30,7 +32,6 @@ export function makeRatingFactory() {
     balanceSheetVersion: BalanceSheetVersion
   ): Rating[] {
     // TODO: Replace hard coded language here and test number of positive aspects afterwards for german version
-    // TODO: Include type from workbook in rating already here instead of inferring it later from the name
     const workbook = makeWorkbook.fromFile(
       balanceSheetVersion,
       balanceSheetType,
@@ -56,8 +57,7 @@ export function makeRatingFactory() {
           }
           return {
             ...o,
-            name: foundWorkbookRating.name,
-            isPositive: foundWorkbookRating.isPositive,
+            ...omit(foundWorkbookRating, ['shortName', 'description']),
           };
         })
       )

@@ -23,6 +23,7 @@ describe('Recalculation of ratings', () => {
       return makeRating({
         shortName: rating.shortName,
         name: rating.name,
+        type: rating.type,
         estimations: rating.estimations,
         points: rating.points,
         maxPoints: rating.maxPoints,
@@ -63,6 +64,7 @@ describe('Recalculation of ratings', () => {
       makeRating({
         shortName: 'A1',
         name: 'A1 name',
+        type: 'topic',
         estimations: 0,
         points: 0,
         maxPoints: 0,
