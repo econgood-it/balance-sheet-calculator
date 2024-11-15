@@ -9,7 +9,7 @@ import { makeFull5v08 } from './ratings_full_5.08';
 
 import { makeFull5v10 } from './ratings_full_5.10';
 import { makeCompact5v08 } from './ratings_compact_5.08';
-import { gte, eq } from '@mr42/version-comparator/dist/version.comparator';
+import { gte } from '@mr42/version-comparator/dist/version.comparator';
 
 const RatingSchema = z.object({
   shortName: z.string(),
@@ -28,7 +28,7 @@ export function makeRatingFactory() {
     balanceSheetVersion: BalanceSheetVersion
   ): Rating[] {
     if (balanceSheetType === BalanceSheetType.Full) {
-      if (eq(balanceSheetVersion, BalanceSheetVersion.v5_1_0)) {
+      if (gte(balanceSheetVersion, BalanceSheetVersion.v5_1_0)) {
         return fromObject(makeFull5v10());
       }
       if (gte(balanceSheetVersion, BalanceSheetVersion.v5_0_8)) {

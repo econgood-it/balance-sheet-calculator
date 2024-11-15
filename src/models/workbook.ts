@@ -1,10 +1,14 @@
-import { BalanceSheetVersion } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
+import {
+  BalanceSheetType,
+  BalanceSheetVersion,
+} from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import { z } from 'zod';
 import path from 'path';
 import fs from 'fs';
 import _ from 'lodash';
 import deepFreeze from 'deep-freeze';
 import { Translations } from '../language/translations';
+import { gte } from '@mr42/version-comparator/dist/version.comparator';
 
 const AspectSchema = z.object({
   type: z.string(),
@@ -52,6 +56,7 @@ type WorbookRating = {
 
 type WorkbookOpts = {
   version: BalanceSheetVersion;
+  type: BalanceSheetType;
   groups: readonly WorkbookGroup[];
   ratings: readonly WorbookRating[];
 };
@@ -62,6 +67,7 @@ export type Workbook = WorkbookOpts & {
 
 export function makeWorkbook({
   version,
+  type,
   groups,
   ratings,
 }: WorkbookOpts): Workbook {
@@ -71,6 +77,7 @@ export function makeWorkbook({
 
   return deepFreeze({
     version,
+    type,
     groups,
     ratings,
     findByShortName,
@@ -79,11 +86,20 @@ export function makeWorkbook({
 
 makeWorkbook.fromFile = function fromJson(
   version: BalanceSheetVersion,
+  type: BalanceSheetType,
   lng: keyof Translations
 ): Workbook {
+  const versionPath = gte(version, BalanceSheetVersion.v5_1_0)
+    ? '5.10'
+    : '5.08';
+
+  const typePath = gte(version, BalanceSheetVersion.v5_1_0)
+    ? 'full'
+    : type.toString().toLowerCase();
+
   const workbookPath = path.join(
     path.resolve(__dirname, '../files/workbook'),
-    `${lng}.json`
+    `${lng}_${typePath}_${versionPath}.json`
   );
   const fileText = fs.readFileSync(workbookPath);
   const jsonParsed = JSON.parse(fileText.toString());
@@ -95,5 +111,5 @@ makeWorkbook.fromFile = function fromJson(
     ratings.push(...group.ratings);
   }
 
-  return makeWorkbook({ version, groups, ratings });
+  return makeWorkbook({ version, type, groups, ratings });
 };

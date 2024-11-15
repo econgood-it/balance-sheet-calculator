@@ -1,10 +1,68 @@
-import { BalanceSheetVersion } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
+import {
+  BalanceSheetType,
+  BalanceSheetVersion,
+} from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import { GroupSchema, makeWorkbook } from '../../src/models/workbook';
 
-describe('Workbook', () => {
-  it('is created from file in English', () => {
-    const workbook = makeWorkbook.fromFile(BalanceSheetVersion.v5_1_0, 'en');
+describe('Full Workbook', () => {
+  it('is created from file for versions < 5.10 in English', async () => {
+    const workbook = makeWorkbook.fromFile(
+      BalanceSheetVersion.v5_0_9,
+      BalanceSheetType.Full,
+      'en'
+    );
+    expect(workbook.version).toEqual(BalanceSheetVersion.v5_0_9);
+    expect(workbook.type).toEqual(BalanceSheetType.Full);
+
+    expect(workbook.findByShortName('B1.2')).toEqual({
+      shortName: 'B1.2',
+      name: 'B1.2 Common Good-orientated borrowing',
+      description:
+        'Any borrowing is a commitment to an increase in the added value, so as to be able to pay in' +
+        'terest and make repayments. Borrowed capital should be raised primarily through solidarity ' +
+        'financing, for example, subordinated loans from patrons or Crowd-funding support, as these ' +
+        'sources will share the same ethos. Only then should loans with ethical banks be considered. ' +
+        'Should it be necessary to take out a loan from a commercial bank, the terms and conditions of ' +
+        'any additional related risks should be checked.',
+      isPositive: true,
+      type: 'aspect',
+    });
+    expect(workbook.ratings).toHaveLength(80);
+  });
+  it('is created from file for versions < 5.10 in German', async () => {
+    const workbook = makeWorkbook.fromFile(
+      BalanceSheetVersion.v5_0_9,
+      BalanceSheetType.Full,
+      'de'
+    );
+    expect(workbook.version).toEqual(BalanceSheetVersion.v5_0_9);
+    expect(workbook.type).toEqual(BalanceSheetType.Full);
+
+    // The description is not yet translated, since it is not used in the e calculator
+    expect(workbook.findByShortName('B1.2')).toEqual({
+      shortName: 'B1.2',
+      name: 'B1.2 Gemeinwohlorientierte Fremdfinanzierung',
+      description:
+        'Any borrowing is a commitment to an increase in the added value, so as to be able to pay in' +
+        'terest and make repayments. Borrowed capital should be raised primarily through solidarity ' +
+        'financing, for example, subordinated loans from patrons or Crowd-funding support, as these ' +
+        'sources will share the same ethos. Only then should loans with ethical banks be considered. ' +
+        'Should it be necessary to take out a loan from a commercial bank, the terms and conditions of ' +
+        'any additional related risks should be checked.',
+      isPositive: true,
+      type: 'aspect',
+    });
+    expect(workbook.ratings).toHaveLength(80);
+  });
+  it('is created from file for versions >= 5.10 in English', () => {
+    const workbook = makeWorkbook.fromFile(
+      BalanceSheetVersion.v5_1_0,
+      BalanceSheetType.Full,
+      'en'
+    );
     expect(workbook.version).toEqual(BalanceSheetVersion.v5_1_0);
+    expect(workbook.type).toEqual(BalanceSheetType.Full);
+
     expect(workbook.findByShortName('A1.1')).toEqual({
       shortName: 'A1.1',
       name: 'A1.1 Working conditions and social impact in the supply chain',
@@ -13,19 +71,35 @@ describe('Workbook', () => {
       isPositive: true,
       type: 'aspect',
     });
+    expect(workbook.findByShortName('B1.2')).toEqual({
+      shortName: 'B1.2',
+      name: 'B1.2 Financial independence through own funding for self-governing organizations',
+      description:
+        'This aspect only applies, if B1.1 does not apply. To ensure independence and autonomy for an organization, a high level of revenue from own activities enables financial independence, economic resilience and protects an organization from unwanted external influences, and from unnecessary financial risks.',
+      isPositive: true,
+      type: 'aspect',
+    });
+
     expect(workbook.findByShortName('E4.3')).toEqual({
       shortName: 'E4.3',
       name: 'E4.3 Negative aspect: lack of transparency and deliberate misinformation',
       description:
         'Organizations and companies have a responsibility to provide information to society transparently and comprehensively. If an organization deliberately publishes false information about itself, its plans, its understanding of facts, or its mission, it harms society and impedes informed choices and discourse. Harm can be caused by: * deliberate misleading through mis-information, non-disclosure of relevant facts, illegitimate interpretation of facts * biased reporting of risks to the detriment of the public, future generations, and nature * neglect of scientific findings or empirical facts * promotion of stereotypes, resentments, group-based misanthropy, or prejudices   * gather and disseminate information with the aim of manipulation or tailored opinion forming * prevent dissemination or discredit information for strategic reasons',
-      isPositive: true, // TODO: change this after json is corrected by MDT
+      isPositive: false, // TODO: change this after json is corrected by MDT
       type: 'aspect',
     });
+    expect(workbook.ratings).toHaveLength(81);
   });
 
-  it('is created from file in German', () => {
-    const workbook = makeWorkbook.fromFile(BalanceSheetVersion.v5_1_0, 'de');
+  it('is created from file for versions >= 5.10 in German', () => {
+    const workbook = makeWorkbook.fromFile(
+      BalanceSheetVersion.v5_1_0,
+      BalanceSheetType.Full,
+      'de'
+    );
     expect(workbook.version).toEqual(BalanceSheetVersion.v5_1_0);
+    expect(workbook.type).toEqual(BalanceSheetType.Full);
+
     expect(workbook.findByShortName('A1.1')).toEqual({
       shortName: 'A1.1',
       name: 'A1.1 Arbeitsbedingungen und soziale Auswirkungen in der Lieferkette',
@@ -39,9 +113,120 @@ describe('Workbook', () => {
       name: 'E4.3 Negativaspekt: Intransparenz und gezielte Falschinformation',
       description:
         'Organisationen und Unternehmen haben die Verantwortung, die Gesellschaft transparent und umfassend zu informieren. Wenn eine Organisation absichtlich falsche Informationen über sich selbst, ihre Pläne, ihr Verständnis von Fakten oder ihre Mission veröffentlicht, schadet sie dem Gemeinwesen und behindert fundierte Entscheidungen und Diskussionen. Schäden können verursacht werden durch: - bewusste Irreführung durch Fehlinformation, Verschweigen relevanter Tatsachen, tendenziöse Auslegung von Tatsachen - verzerrte Berichterstattung über Risiken zum Nachteil der Öffentlichkeit, künftiger Generationen und der Natur - Missachtung wissenschaftlicher Erkenntnisse oder empirischer Fakten - Förderung von Stereotypen, Ressentiments, gruppenbezogener Menschenfeindlichkeit oder Vorurteilen - Informationsverbreitung mit dem Ziel der Manipulation oder gezielten Meinungsbildung - Informationszurückhaltung oder Diskreditierung von Informationsquellen aus strategischen Gründen',
-      isPositive: true, // TODO: change this after json is corrected by MDT
+      isPositive: false, // TODO: change this after json is corrected by MDT
       type: 'aspect',
     });
+    expect(workbook.ratings).toHaveLength(81);
+  });
+});
+
+describe('Compact Workbook', () => {
+  it('is created from file for versions < 5.10 in English', async () => {
+    const workbook = makeWorkbook.fromFile(
+      BalanceSheetVersion.v5_0_9,
+      BalanceSheetType.Compact,
+      'en'
+    );
+    expect(workbook.version).toEqual(BalanceSheetVersion.v5_0_9);
+    expect(workbook.type).toEqual(BalanceSheetType.Compact);
+
+    expect(workbook.findByShortName('B1.1')).toEqual({
+      shortName: 'B1.1',
+      name: 'B1.1 Ethical position in relation to financial resources',
+      description:
+        'A high level of internal equity capital enables financial independence, ' +
+        'economic resilience and protects the company from unwanted external ' +
+        'influences and especially from unnecessary financial risks.',
+      isPositive: true,
+      type: 'aspect',
+    });
+    expect(workbook.ratings).toHaveLength(59);
+  });
+  it('is created from file for versions < 5.10 in German', async () => {
+    const workbook = makeWorkbook.fromFile(
+      BalanceSheetVersion.v5_0_9,
+      BalanceSheetType.Compact,
+      'de'
+    );
+    expect(workbook.version).toEqual(BalanceSheetVersion.v5_0_9);
+    expect(workbook.type).toEqual(BalanceSheetType.Compact);
+
+    // The description is not yet translated, since it is not used in the e calculator
+    expect(workbook.findByShortName('B1.1')).toEqual({
+      shortName: 'B1.1',
+      name: 'B1.1 Ethische Haltung im Umgang mit Geldmitteln',
+      description:
+        'A high level of internal equity capital enables financial independence, ' +
+        'economic resilience and protects the company from unwanted external ' +
+        'influences and especially from unnecessary financial risks.',
+      isPositive: true,
+      type: 'aspect',
+    });
+    expect(workbook.ratings).toHaveLength(59);
+  });
+  it('is created from file for version >= 5.10 in English', () => {
+    const workbook = makeWorkbook.fromFile(
+      BalanceSheetVersion.v5_1_0,
+      BalanceSheetType.Compact,
+      'en'
+    );
+    expect(workbook.version).toEqual(BalanceSheetVersion.v5_1_0);
+    expect(workbook.type).toEqual(BalanceSheetType.Compact);
+
+    expect(workbook.findByShortName('A1.1')).toEqual({
+      shortName: 'A1.1',
+      name: 'A1.1 Working conditions and social impact in the supply chain',
+      description:
+        'The aim is for organizations to be actively involved in how the goods and services they purchase are provided. To this end, they should take the appropriate steps to ensure fair and ethical working practices throughout the supply chain.',
+      isPositive: true,
+      type: 'aspect',
+    });
+    expect(workbook.findByShortName('B1.2')).toEqual({
+      shortName: 'B1.2',
+      name: 'B1.2 Financial independence through own funding for self-governing organizations',
+      description:
+        'This aspect only applies, if B1.1 does not apply. To ensure independence and autonomy for an organization, a high level of revenue from own activities enables financial independence, economic resilience and protects an organization from unwanted external influences, and from unnecessary financial risks.',
+      isPositive: true,
+      type: 'aspect',
+    });
+
+    expect(workbook.findByShortName('E4.3')).toEqual({
+      shortName: 'E4.3',
+      name: 'E4.3 Negative aspect: lack of transparency and deliberate misinformation',
+      description:
+        'Organizations and companies have a responsibility to provide information to society transparently and comprehensively. If an organization deliberately publishes false information about itself, its plans, its understanding of facts, or its mission, it harms society and impedes informed choices and discourse. Harm can be caused by: * deliberate misleading through mis-information, non-disclosure of relevant facts, illegitimate interpretation of facts * biased reporting of risks to the detriment of the public, future generations, and nature * neglect of scientific findings or empirical facts * promotion of stereotypes, resentments, group-based misanthropy, or prejudices   * gather and disseminate information with the aim of manipulation or tailored opinion forming * prevent dissemination or discredit information for strategic reasons',
+      isPositive: false,
+      type: 'aspect',
+    });
+    expect(workbook.ratings).toHaveLength(81);
+  });
+
+  it('is created from file for versions >= 5.10 in German', () => {
+    const workbook = makeWorkbook.fromFile(
+      BalanceSheetVersion.v5_1_0,
+      BalanceSheetType.Compact,
+      'de'
+    );
+    expect(workbook.version).toEqual(BalanceSheetVersion.v5_1_0);
+    expect(workbook.type).toEqual(BalanceSheetType.Compact);
+
+    expect(workbook.findByShortName('A1.1')).toEqual({
+      shortName: 'A1.1',
+      name: 'A1.1 Arbeitsbedingungen und soziale Auswirkungen in der Lieferkette',
+      description:
+        'Ziel ist es, dass Organisationen sich aktiv daran beteiligen, wie die von ihnen gekauften Waren und Dienstleistungen hergestellt werden. Zu diesem Zweck sollten sie geeignete Maßnahmen ergreifen, um faire und ethische Arbeitspraktiken in der gesamten Lieferkette sicherzustellen. ',
+      isPositive: true,
+      type: 'aspect',
+    });
+    expect(workbook.findByShortName('E4.3')).toEqual({
+      shortName: 'E4.3',
+      name: 'E4.3 Negativaspekt: Intransparenz und gezielte Falschinformation',
+      description:
+        'Organisationen und Unternehmen haben die Verantwortung, die Gesellschaft transparent und umfassend zu informieren. Wenn eine Organisation absichtlich falsche Informationen über sich selbst, ihre Pläne, ihr Verständnis von Fakten oder ihre Mission veröffentlicht, schadet sie dem Gemeinwesen und behindert fundierte Entscheidungen und Diskussionen. Schäden können verursacht werden durch: - bewusste Irreführung durch Fehlinformation, Verschweigen relevanter Tatsachen, tendenziöse Auslegung von Tatsachen - verzerrte Berichterstattung über Risiken zum Nachteil der Öffentlichkeit, künftiger Generationen und der Natur - Missachtung wissenschaftlicher Erkenntnisse oder empirischer Fakten - Förderung von Stereotypen, Ressentiments, gruppenbezogener Menschenfeindlichkeit oder Vorurteilen - Informationsverbreitung mit dem Ziel der Manipulation oder gezielten Meinungsbildung - Informationszurückhaltung oder Diskreditierung von Informationsquellen aus strategischen Gründen',
+      isPositive: false,
+      type: 'aspect',
+    });
+    expect(workbook.ratings).toHaveLength(81);
   });
 });
 
