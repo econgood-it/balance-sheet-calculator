@@ -3,8 +3,6 @@ import {
   BalanceSheetType,
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
-
-import { WorkbookSectionOld } from '../models/workbookOld';
 import { z } from 'zod';
 import deepFreeze from 'deep-freeze';
 import {
@@ -553,23 +551,6 @@ export function makeJsonFactory() {
   });
 }
 
-export const WorkbookSectionsJsonFactory = {
-  default: (): WorkbookSectionOld[] => [
-    {
-      shortName: 'C',
-      title: 'C. Employees, including co-working employers',
-    },
-    {
-      shortName: 'C1',
-      title: 'C1 Human dignity in the workplace and working environment ',
-    },
-    {
-      shortName: 'C1.3',
-      title: 'C1.3 Diversity and equal opportunities',
-    },
-  ],
-};
-
 export const organizationJsonFactory = {
   default: (): z.infer<typeof OrganizationRequestSchema> => ({
     name: 'My organization',
@@ -581,6 +562,24 @@ export const organizationJsonFactory = {
     },
   }),
 };
+
+export function makeWorkbookResponse() {
+  const data = {
+    version: BalanceSheetVersion.v5_1_0,
+    type: BalanceSheetType.Full,
+    groups: [
+      { shortName: 'A', name: 'Lieferant*innen' },
+      {
+        shortName: 'B',
+        name: 'Eigentümer*innen und Finanzpartner*innen',
+      },
+      { shortName: 'C', name: 'Mitarbeitende' },
+      { shortName: 'D', name: 'Kund*innen und Mitunternehmen' },
+      { shortName: 'E', name: 'Gesellschaftliches Umfeld' },
+    ],
+  };
+  return deepFreeze({ ...data });
+}
 
 export function makeOrganizationCreateRequest() {
   const data = {

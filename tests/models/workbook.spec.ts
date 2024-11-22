@@ -118,6 +118,52 @@ describe('Full Workbook', () => {
     });
     expect(workbook.ratings).toHaveLength(81);
   });
+
+  it('is created from file for version < 5.10 and returned as json', () => {
+    const workbook = makeWorkbook.fromFile(
+      BalanceSheetVersion.v5_0_8,
+      BalanceSheetType.Full,
+      'de'
+    );
+    const json = workbook.toJson();
+    expect(json).toEqual({
+      version: BalanceSheetVersion.v5_0_8,
+      type: BalanceSheetType.Full,
+      groups: [
+        { shortName: 'A', name: 'Lieferant*innen' },
+        {
+          shortName: 'B',
+          name: 'Eigentümer*innen und Finanzpartner*innen',
+        },
+        { shortName: 'C', name: 'Mitarbeitende' },
+        { shortName: 'D', name: 'Kund*innen und Mitunternehmen' },
+        { shortName: 'E', name: 'Gesellschaftliches Umfeld' },
+      ],
+    });
+  });
+
+  it('is created from file for version >= 5.10 and returned as json', () => {
+    const workbook = makeWorkbook.fromFile(
+      BalanceSheetVersion.v5_1_0,
+      BalanceSheetType.Full,
+      'de'
+    );
+    const json = workbook.toJson();
+    expect(json).toEqual({
+      version: BalanceSheetVersion.v5_1_0,
+      type: BalanceSheetType.Full,
+      groups: [
+        { shortName: 'A', name: 'Lieferant\\*innen' },
+        {
+          shortName: 'B',
+          name: 'Eigentümer\\*innen, Eigenkapital- und Finanzpartner\\*innen',
+        },
+        { shortName: 'C', name: 'Mitarbeitende und Arbeitspartner\\*innen' },
+        { shortName: 'D', name: 'Kund\\*innen und Geschäftspartner\\*innen ' },
+        { shortName: 'E', name: 'Globale Gemeinschaft, Natur und Lebewesen' },
+      ],
+    });
+  });
 });
 
 describe('Compact Workbook', () => {
@@ -356,7 +402,7 @@ describe('Workbook group', () => {
     const workbookGroup = GroupSchema.parse(group);
     expect(workbookGroup).toEqual({
       shortName: 'A',
-      name: 'A. Suppliers',
+      name: 'Suppliers',
       ratings: [
         {
           type: 'topic',

@@ -3,7 +3,8 @@ import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { OpenApiParams } from '../params';
 import { WorkbookPaths } from '../../controllers/workbook.controller';
 import { WorkbookResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/workbook.dto';
-import { WorkbookSectionsJsonFactory } from '../examples';
+import { makeWorkbookResponse } from '../examples';
+import { z } from 'zod';
 
 export function registerWorkbookGet(
   registry: OpenAPIRegistry,
@@ -18,6 +19,11 @@ export function registerWorkbookGet(
 
     request: {
       headers: [params.CorrelationIdHeader],
+      query: z.object({
+        lng: params.LanguageParam,
+        version: params.BalanceSheetVersionParam,
+        type: params.BalanceSheetTypeParam,
+      }),
     },
     responses: {
       [HttpCodes.okey]: {
@@ -25,7 +31,7 @@ export function registerWorkbookGet(
         content: {
           [applicationJson]: {
             schema: WorkbookResponseBodySchema,
-            example: WorkbookSectionsJsonFactory.default(),
+            example: makeWorkbookResponse(),
           },
         },
       },

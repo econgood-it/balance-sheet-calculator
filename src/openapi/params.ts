@@ -1,10 +1,16 @@
 import { z } from 'zod';
 import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
+import {
+  BalanceSheetType,
+  BalanceSheetVersion,
+} from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 
 export type OpenApiParams = {
   CorrelationIdHeader: any;
   SaveFlagParam: any;
   LanguageParam: any;
+  BalanceSheetVersionParam: any;
+  BalanceSheetTypeParam: any;
   BalanceSheetIdParam: any;
   OrganizationIdParam: any;
   InvitationEmailParam: any;
@@ -90,11 +96,36 @@ export function registerParams(registry: OpenAPIRegistry) {
         },
       })
   );
+
+  const BalanceSheetVersionParam = registry.registerParameter(
+    'BalanceSheetVersion',
+    z.nativeEnum(BalanceSheetVersion).openapi({
+      param: {
+        name: 'version',
+        in: 'query',
+        description: 'Choose the version.',
+      },
+    })
+  );
+
+  const BalanceSheetTypeParam = registry.registerParameter(
+    'BalanceSheetType',
+    z.nativeEnum(BalanceSheetType).openapi({
+      param: {
+        name: 'type',
+        in: 'query',
+        description: 'Choose the type.',
+      },
+    })
+  );
+
   return {
     CorrelationIdHeader,
     SaveFlagParam,
     LanguageParam,
     BalanceSheetIdParam,
+    BalanceSheetVersionParam,
+    BalanceSheetTypeParam,
     OrganizationIdParam,
     InvitationEmailParam,
   };

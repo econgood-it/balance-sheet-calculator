@@ -66,7 +66,7 @@ class App {
       this.app,
       new IndustryService()
     );
-    registerWorkbookRoutes(this.app, makeWorkbookService(repoProvider));
+    registerWorkbookRoutes(this.app, makeWorkbookService());
     this.healthCheckController = new HealthCheckController(
       this.app,
       new HealthCheckService()

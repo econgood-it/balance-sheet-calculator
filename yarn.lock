@@ -519,10 +519,10 @@
     enabled "2.0.x"
     kuler "^2.0.0"
 
-"@ecogood/e-calculator-schemas@^1.8.0":
-  version "1.8.0"
-  resolved "https://registry.yarnpkg.com/@ecogood/e-calculator-schemas/-/e-calculator-schemas-1.8.0.tgz#02f0fe989ce21812f7850565b005d0dc6a1f7092"
-  integrity sha512-id31YbS0B+0HfM70GIP0a7kin9boOIiZhZgaqWLNgf4VKo9CPIAVA6k39+WV6LNKbl11CpSK6R7cdNHYlBLrCw==
+"@ecogood/e-calculator-schemas@^1.9.0":
+  version "1.9.0"
+  resolved "https://registry.yarnpkg.com/@ecogood/e-calculator-schemas/-/e-calculator-schemas-1.9.0.tgz#1007f31e41602b0bc09ad70c52cccc50cd1a0078"
+  integrity sha512-erD/KRaXeSbMzedRa1yhOBQoRsTSGwKajWDuB6iRueFPdGZq4sxUn7Mg7n/pENzCPSkbC5a9sBHC1d2IagrNIw==
 
 "@eslint-community/eslint-utils@^4.2.0":
   version "4.4.0"

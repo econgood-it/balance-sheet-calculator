@@ -7,8 +7,10 @@ import path from 'path';
 import fs from 'fs';
 import _ from 'lodash';
 import deepFreeze from 'deep-freeze';
-import { Translations } from '../language/translations';
+import { parseLanguageParameter, Translations } from '../language/translations';
 import { gte } from '@mr42/version-comparator/dist/version.comparator';
+import { Request } from 'express';
+import { WorkbookResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/workbook.dto';
 
 function removeShortNameInName(name: string, shortName: string): string {
   return name.replace(shortName, '').trimStart();
@@ -53,7 +55,7 @@ export const GroupSchema = z
   })
   .transform((g) => ({
     shortName: g.group.shortName,
-    name: g.group.name,
+    name: removeShortNameInName(g.group.name, `${g.group.shortName}.`),
     ratings: g.group.values.flat(),
   }));
 
@@ -79,6 +81,7 @@ type WorkbookOpts = {
 
 export type Workbook = WorkbookOpts & {
   findByShortName(shortName: string): WorbookRating | undefined;
+  toJson(): z.infer<typeof WorkbookResponseBodySchema>;
 };
 
 export function makeWorkbook({
@@ -90,6 +93,16 @@ export function makeWorkbook({
   function findByShortName(shortName: string): WorbookRating | undefined {
     return ratings.find((wr) => wr.shortName === shortName);
   }
+  function toJson() {
+    return WorkbookResponseBodySchema.parse({
+      version,
+      type,
+      groups: groups.map((g) => ({
+        shortName: g.shortName,
+        name: g.name,
+      })),
+    });
+  }
 
   return deepFreeze({
     version,
@@ -97,6 +110,7 @@ export function makeWorkbook({
     groups,
     ratings,
     findByShortName,
+    toJson,
   });
 }
 
@@ -128,4 +142,11 @@ makeWorkbook.fromFile = function fromJson(
   }
 
   return makeWorkbook({ version, type, groups, ratings });
+};
+
+makeWorkbook.fromRequest = function (req: Request) {
+  const language = parseLanguageParameter(req.query.lng);
+  const version = z.nativeEnum(BalanceSheetVersion).parse(req.query.version);
+  const type = z.nativeEnum(BalanceSheetType).parse(req.query.type);
+  return makeWorkbook.fromFile(version, type, language);
 };
