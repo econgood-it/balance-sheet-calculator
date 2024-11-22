@@ -1,5 +1,3 @@
-import i18next from '../i18n';
-
 export interface Translations {
   de: string;
   en: string;
@@ -17,11 +15,4 @@ export const parseLanguageParameter = (lngParam: any): keyof Translations => {
   } else {
     return 'en';
   }
-};
-
-export const staticTranslate = (
-  lng: keyof Translations,
-  transKey: string
-): string => {
-  return i18next.t(transKey, { lng });
 };

@@ -6,15 +6,6 @@ import {
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 
-jest.mock('../../src/i18n', () => ({
-  init: () => {},
-  use: () => {},
-  t: (k: string) =>
-    k === 'Working conditions and social impact in the supply chain'
-      ? 'Arbeitsbedingungen und gesellschaftliche Auswirkungen in der Zulieferkette'
-      : k,
-}));
-
 describe('Rating', () => {
   it('is created with default Values', () => {
     const rating = makeRating();
