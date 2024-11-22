@@ -26,6 +26,7 @@ import { MatrixBodySchema } from '@ecogood/e-calculator-schemas/dist/matrix.dto'
 import { eq } from '@mr42/version-comparator/dist/version.comparator';
 import { ValueError } from '../exceptions/value.error';
 import { gte } from 'lodash';
+import { makeWorkbook } from './workbook';
 
 export const BalanceSheetVersionSchema = z.nativeEnum(BalanceSheetVersion);
 
@@ -314,19 +315,22 @@ export function makeBalanceSheet(opts?: BalanceSheetOpts): BalanceSheet {
   }
 
   function asMatrixRepresentation(language: keyof Translations) {
+    const workBook = makeWorkbook.fromFile(data.version, data.type, language);
     return MatrixBodySchema.parse({
-      ratings: getTopics().map((r) => r.toMatrixFormat(language)),
+      ratings: getTopics().map((r) => r.toMatrixFormat(workBook)),
       totalPoints: totalPoints(),
     });
   }
 
   function toJson(language: keyof Translations) {
+    const workBook = makeWorkbook.fromFile(data.version, data.type, language);
+
     return BalanceSheetResponseBodySchema.parse({
       id: data.id,
       type: data.type,
       version: data.version,
       companyFacts: data.companyFacts.toJson(),
-      ratings: data.ratings.map((r) => r.toJson(language)),
+      ratings: data.ratings.map((r) => r.toJson(workBook)),
       stakeholderWeights: data.stakeholderWeights,
       organizationId: data.organizationId,
     });

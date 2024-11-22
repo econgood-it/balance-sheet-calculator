@@ -45,7 +45,6 @@ describe('BalanceSheet', () => {
     expect(aspects).toEqual([
       makeRating({
         shortName: 'A1.1',
-        name: 'Working conditions and social impact in the supply chain',
         type: 'aspect',
         estimations: 0,
         points: 0,
@@ -56,7 +55,6 @@ describe('BalanceSheet', () => {
       }),
       makeRating({
         shortName: 'A1.2',
-        name: 'Negative aspect: violation of human dignity in the supply chain',
         type: 'aspect',
         estimations: 0,
         points: 0,
@@ -143,7 +141,6 @@ describe('BalanceSheet', () => {
     expect(balanceSheet.getTopicOfAspect('B1.1')).toEqual(
       makeRating({
         shortName: 'B1',
-        name: 'Ethical position in relation to financial resources',
         type: 'topic',
         estimations: 0,
         points: 0,
@@ -644,7 +641,6 @@ describe('BalanceSheet', () => {
         ratings: [
           makeRating({
             shortName: 'A1',
-            name: 'Human dignity in the supply chain',
             type: 'topic',
             estimations: 7,
             points: 30,
@@ -668,7 +664,6 @@ describe('BalanceSheet', () => {
         ratings: [
           makeRating({
             shortName: 'A1',
-            name: 'Human dignity in the supply chain',
             type: 'topic',
             estimations: 7,
             points: 20,

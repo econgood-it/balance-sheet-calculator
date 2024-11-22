@@ -5,15 +5,14 @@ import {
   RatingRequestBodySchema,
   RatingResponseBodySchema,
 } from '@ecogood/e-calculator-schemas/dist/rating.dto';
-import { staticTranslate, Translations } from '../language/translations';
 import { MatrixRatingBodySchema } from '@ecogood/e-calculator-schemas/dist/matrix.dto';
 import { roundWithPrecision } from '../math';
 import { none, Option, some } from '../calculations/option';
 import { LookupError } from '../exceptions/lookup.error';
+import { Workbook } from './workbook';
 
 type RatingOpts = {
   shortName: string;
-  name: string;
   type: 'aspect' | 'topic';
   estimations: number;
   points: number;
@@ -28,16 +27,14 @@ export type Rating = RatingOpts & {
     requestBody: z.infer<typeof RatingRequestBodySchema>,
     defaultWeight: number
   ) => Rating;
-  toJson: (
-    language: keyof Translations
-  ) => z.infer<typeof RatingResponseBodySchema>;
+  toJson: (workBook: Workbook) => z.infer<typeof RatingResponseBodySchema>;
   isTopic: () => boolean;
   isAspect: () => boolean;
   isAspectOfTopic: (shortNameTopic: string) => boolean;
   submitEstimations: (estimations: number) => Rating;
   getStakeholderName: () => string;
   toMatrixFormat: (
-    language: keyof Translations
+    workBook: Workbook
   ) => z.infer<typeof MatrixRatingBodySchema>;
 };
 
@@ -115,7 +112,7 @@ export function makeRating(opts?: RatingOpts): Rating {
   }
 
   function toMatrixFormat(
-    language: keyof Translations
+    workBook: Workbook
   ): z.infer<typeof MatrixRatingBodySchema> {
     const percentage = calcPercentage();
     const percentageReached = percentage.isPresent()
@@ -123,7 +120,7 @@ export function makeRating(opts?: RatingOpts): Rating {
       : undefined;
     return MatrixRatingBodySchema.parse({
       shortName: data.shortName,
-      name: staticTranslate(language, data.name),
+      name: workBook.findByShortName(data.shortName)?.name ?? '',
       points: roundWithPrecision(data.points),
       maxPoints: roundWithPrecision(data.maxPoints),
       percentageReached,
@@ -143,11 +140,11 @@ export function makeRating(opts?: RatingOpts): Rating {
   }
 
   function toJson(
-    language: keyof Translations
+    workBook: Workbook
   ): z.infer<typeof RatingResponseBodySchema> {
     return RatingResponseBodySchema.parse({
       shortName: data.shortName,
-      name: staticTranslate(language, data.name),
+      name: workBook.findByShortName(data.shortName)?.name ?? '',
       type: isTopic() ? 'topic' : 'aspect',
       isPositive: data.isPositive,
       estimations: data.estimations,

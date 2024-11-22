@@ -1,5 +1,10 @@
 import { makeRating } from '../../src/models/rating';
 import { ValueError } from '../../src/exceptions/value.error';
+import { makeWorkbook } from '../../src/models/workbook';
+import {
+  BalanceSheetType,
+  BalanceSheetVersion,
+} from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 
 jest.mock('../../src/i18n', () => ({
   init: () => {},
@@ -28,7 +33,6 @@ describe('Rating', () => {
   it('should submit estimations', () => {
     const rating = makeRating({
       shortName: 'A1.1',
-      name: 'Working conditions and social impact in the supply chain',
       type: 'aspect',
       estimations: 0,
       points: 0,
@@ -44,7 +48,6 @@ describe('Rating', () => {
   it('should submit estimations for negative aspect', () => {
     const rating = makeRating({
       shortName: 'A1.2',
-      name: 'Negative aspect: violation of human dignity in the supply chain',
       type: 'aspect',
       estimations: 0,
       points: 0,
@@ -60,7 +63,6 @@ describe('Rating', () => {
   it('should fail to submit estimations outside [0,10] for positive aspect', () => {
     const rating = makeRating({
       shortName: 'A1.1',
-      name: 'Working conditions and social impact in the supply chain',
       type: 'aspect',
       estimations: 0,
       points: 0,
@@ -76,7 +78,6 @@ describe('Rating', () => {
   it('should ignore validations for estimations if the rating is a topic', () => {
     const rating = makeRating({
       shortName: 'A1',
-      name: 'Human dignity in the supply chain',
       type: 'topic',
       estimations: 0,
       points: 0,
@@ -92,7 +93,6 @@ describe('Rating', () => {
   it('should fail to submit estimations outside [-200, 0] for negative aspect', () => {
     const rating = makeRating({
       shortName: 'A1.2',
-      name: 'Negative aspect: violation of human dignity in the supply chain',
       type: 'aspect',
       estimations: 0,
       points: 0,
@@ -110,7 +110,6 @@ describe('Rating', () => {
     const topic = makeRating();
     const aspect = makeRating({
       shortName: 'A1.1',
-      name: 'Working conditions and social impact in the supply chain',
       type: 'aspect',
       estimations: 0,
       points: 0,
@@ -128,7 +127,6 @@ describe('Rating', () => {
   it('should return the corresponding stakeholder short name', () => {
     const rating = makeRating({
       shortName: 'A1.1',
-      name: 'Working conditions and social impact in the supply chain',
       type: 'aspect',
       estimations: 0,
       points: 0,
@@ -143,7 +141,6 @@ describe('Rating', () => {
   it('should evaluate if rating is an aspect of a topic', () => {
     const rating = makeRating({
       shortName: 'A1.1',
-      name: 'Working conditions and social impact in the supply chain',
       type: 'aspect',
       estimations: 0,
       points: 0,
@@ -160,7 +157,6 @@ describe('Rating', () => {
     it('with request body', () => {
       const rating = makeRating({
         shortName: 'A1',
-        name: 'A1 name',
         type: 'topic',
         estimations: 4,
         isPositive: true,
@@ -177,7 +173,6 @@ describe('Rating', () => {
       const newRating = rating.merge(requestBody, 1);
       expect(newRating).toMatchObject({
         shortName: 'A1',
-        name: 'A1 name',
         estimations: 10,
         isPositive: true,
         isWeightSelectedByUser: true,
@@ -191,7 +186,6 @@ describe('Rating', () => {
   it('with request body where estimations is 0', () => {
     const rating = makeRating({
       shortName: 'A1',
-      name: 'A1 name',
       type: 'topic',
       estimations: 4,
       isPositive: true,
@@ -207,7 +201,6 @@ describe('Rating', () => {
     const newRating = rating.merge(requestBody, 1);
     expect(newRating).toMatchObject({
       shortName: 'A1',
-      name: 'A1 name',
       estimations: 0,
       isPositive: true,
       isWeightSelectedByUser: false,
@@ -220,7 +213,6 @@ describe('Rating', () => {
   it('with request body where weight of 0 is selected by user', () => {
     const rating = makeRating({
       shortName: 'A1',
-      name: 'A1 name',
       type: 'topic',
       estimations: 4,
       isPositive: true,
@@ -237,7 +229,6 @@ describe('Rating', () => {
     const newRating = rating.merge(requestBody, 1);
     expect(newRating).toMatchObject({
       shortName: 'A1',
-      name: 'A1 name',
       estimations: 10,
       isPositive: true,
       isWeightSelectedByUser: true,
@@ -250,7 +241,6 @@ describe('Rating', () => {
   it('with request body where weight is reset to default weight', () => {
     const rating = makeRating({
       shortName: 'A1',
-      name: 'A1 name',
       type: 'topic',
       estimations: 4,
       isPositive: true,
@@ -267,7 +257,6 @@ describe('Rating', () => {
     const newRating = rating.merge(requestBody, defaultWeight);
     expect(newRating).toMatchObject({
       shortName: 'A1',
-      name: 'A1 name',
       estimations: 10,
       isPositive: true,
       isWeightSelectedByUser: false,
@@ -280,7 +269,6 @@ describe('Rating', () => {
   it('should return rating as json', () => {
     const rating = makeRating({
       shortName: 'D4.1',
-      name: 'Working conditions and social impact in the supply chain',
       type: 'aspect',
       estimations: 4,
       isPositive: true,
@@ -290,10 +278,15 @@ describe('Rating', () => {
       points: 10,
     });
 
-    const json = rating.toJson('de');
+    const workbook = makeWorkbook.fromFile(
+      BalanceSheetVersion.v5_0_8,
+      BalanceSheetType.Full,
+      'de'
+    );
+    const json = rating.toJson(workbook);
     expect(json).toEqual({
       shortName: 'D4.1',
-      name: 'Arbeitsbedingungen und gesellschaftliche Auswirkungen in der Zulieferkette',
+      name: 'Kund*innen-Mitwirkung, gemeinsame Produktentwicklung und Marktforschung',
       type: 'aspect',
       isPositive: true,
       estimations: 4,
@@ -307,14 +300,19 @@ describe('Rating', () => {
 describe('Matrix Rating DTO', () => {
   const topicWithZeroValues = makeRating();
   const language = 'en';
-
+  const workbook = makeWorkbook.fromFile(
+    BalanceSheetVersion.v5_0_8,
+    BalanceSheetType.Full,
+    language
+  );
   it('has reached points are 30 of 50', () => {
     const topic = makeRating({
       ...topicWithZeroValues,
       points: 30,
       maxPoints: 50,
     });
-    const matrixFormat = topic.toMatrixFormat(language);
+
+    const matrixFormat = topic.toMatrixFormat(workbook);
     expect(matrixFormat.points).toBe(30);
     expect(matrixFormat.maxPoints).toBe(50);
   });
@@ -325,7 +323,7 @@ describe('Matrix Rating DTO', () => {
       points: 30.5982934,
       maxPoints: 50.0899,
     });
-    const matrixFormat = topic.toMatrixFormat(language);
+    const matrixFormat = topic.toMatrixFormat(workbook);
     expect(matrixFormat.points).toBe(31);
     expect(matrixFormat.maxPoints).toBe(50);
   });
@@ -336,7 +334,7 @@ describe('Matrix Rating DTO', () => {
       points: -100,
       maxPoints: 60,
     });
-    const matrixFormat = topic.toMatrixFormat(language);
+    const matrixFormat = topic.toMatrixFormat(workbook);
     expect(matrixFormat.points).toBe(-100);
     expect(matrixFormat.maxPoints).toBe(60);
   });
@@ -347,7 +345,7 @@ describe('Matrix Rating DTO', () => {
       points: 50,
       maxPoints: 50,
     });
-    const matrixFormat = topic.toMatrixFormat(language);
+    const matrixFormat = topic.toMatrixFormat(workbook);
     expect(matrixFormat.percentageReached).toBe(100);
   });
 
@@ -356,13 +354,13 @@ describe('Matrix Rating DTO', () => {
       ...topicWithZeroValues,
       maxPoints: 50,
     });
-    const matrixFormat = topic.toMatrixFormat(language);
+    const matrixFormat = topic.toMatrixFormat(workbook);
     expect(matrixFormat.percentageReached).toBe(0);
   });
 
   it('has undefined percentage when division by 0', () => {
     const topic = makeRating({ ...topicWithZeroValues, points: 10 });
-    const matrixFormat = topic.toMatrixFormat(language);
+    const matrixFormat = topic.toMatrixFormat(workbook);
     expect(matrixFormat.percentageReached).toBeUndefined();
   });
 
@@ -372,7 +370,7 @@ describe('Matrix Rating DTO', () => {
       points: 10,
       maxPoints: 60,
     });
-    const matrixFormat = topic.toMatrixFormat(language);
+    const matrixFormat = topic.toMatrixFormat(workbook);
     expect(matrixFormat.percentageReached).toBe(20);
   });
 
@@ -382,28 +380,28 @@ describe('Matrix Rating DTO', () => {
       points: -10,
       maxPoints: 60,
     });
-    const matrixFormat = topic.toMatrixFormat(language);
+    const matrixFormat = topic.toMatrixFormat(workbook);
     expect(matrixFormat.percentageReached).toBeUndefined();
   });
 
   it('has shortName A1', () => {
-    const matrixFormat = topicWithZeroValues.toMatrixFormat(language);
+    const matrixFormat = topicWithZeroValues.toMatrixFormat(workbook);
     expect(matrixFormat.shortName).toEqual('A1');
   });
 
   it('has name A1 name', () => {
-    const matrixFormat = topicWithZeroValues.toMatrixFormat(language);
+    const matrixFormat = topicWithZeroValues.toMatrixFormat(workbook);
     expect(matrixFormat.name).toEqual('Human dignity in the supply chain');
   });
 
   it('is not applicable', () => {
-    const matrixFormat = topicWithZeroValues.toMatrixFormat(language);
+    const matrixFormat = topicWithZeroValues.toMatrixFormat(workbook);
     expect(matrixFormat.notApplicable).toBeTruthy();
   });
 
   it('is applicable', () => {
     const topic = makeRating({ ...topicWithZeroValues, weight: 0.5 });
-    const matrixFormat = topic.toMatrixFormat(language);
+    const matrixFormat = topic.toMatrixFormat(workbook);
     expect(matrixFormat.notApplicable).toBeFalsy();
   });
 });

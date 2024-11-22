@@ -27,7 +27,6 @@ export function assertRatings(
       );
       expect(received[i].points).toBeCloseTo(expected[i].points, numDigits);
       expect(received[i].weight).toBeCloseTo(expected[i].weight, numDigits);
-      expect(received[i].name).toBe(expected[i].name);
       expect(received[i].isWeightSelectedByUser).toBe(
         expected[i].isWeightSelectedByUser
       );

@@ -22,7 +22,6 @@ describe('Recalculation of ratings', () => {
     return jsonParsed.map((rating: any) => {
       return makeRating({
         shortName: rating.shortName,
-        name: rating.name,
         type: rating.type,
         estimations: rating.estimations,
         points: rating.points,
@@ -63,7 +62,6 @@ describe('Recalculation of ratings', () => {
     const ratings: Rating[] = [
       makeRating({
         shortName: 'A1',
-        name: 'A1 name',
         type: 'topic',
         estimations: 0,
         points: 0,
