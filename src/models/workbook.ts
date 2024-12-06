@@ -5,12 +5,78 @@ import {
 import { z } from 'zod';
 import path from 'path';
 import fs from 'fs';
-import _ from 'lodash';
+import _, { parseInt } from 'lodash';
 import deepFreeze from 'deep-freeze';
 import { parseLanguageParameter, Translations } from '../language/translations';
 import { gte } from '@mr42/version-comparator/dist/version.comparator';
 import { Request } from 'express';
 import { WorkbookResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/workbook.dto';
+
+type WorkbookGroup = {
+  shortName: string;
+  name: string;
+};
+
+type WorbookRating = {
+  type: string;
+  shortName: string;
+  name: string;
+  description: string;
+  isPositive: boolean;
+};
+
+type EvaluationLevel = {
+  level: number;
+  name: string;
+  pointsFrom: number;
+  pointsTo: number;
+};
+
+type WorkbookOpts = {
+  version: BalanceSheetVersion;
+  type: BalanceSheetType;
+  groups: readonly WorkbookGroup[];
+  evaluationLevels: readonly EvaluationLevel[];
+  ratings: readonly WorbookRating[];
+};
+
+export type Workbook = WorkbookOpts & {
+  findByShortName(shortName: string): WorbookRating | undefined;
+  toJson(): z.infer<typeof WorkbookResponseBodySchema>;
+};
+
+export function makeWorkbook({
+  version,
+  type,
+  groups,
+  evaluationLevels,
+  ratings,
+}: WorkbookOpts): Workbook {
+  function findByShortName(shortName: string): WorbookRating | undefined {
+    return ratings.find((wr) => wr.shortName === shortName);
+  }
+  function toJson() {
+    return WorkbookResponseBodySchema.parse({
+      version,
+      type,
+      groups: groups.map((g) => ({
+        shortName: g.shortName,
+        name: g.name,
+      })),
+      evaluationLevels,
+    });
+  }
+
+  return deepFreeze({
+    version,
+    type,
+    groups,
+    evaluationLevels,
+    ratings,
+    findByShortName,
+    toJson,
+  });
+}
 
 function removeShortNameInName(name: string, shortName: string): string {
   return name.replace(shortName, '').trimStart();
@@ -59,60 +125,12 @@ export const GroupSchema = z
     ratings: g.group.values.flat(),
   }));
 
-type WorkbookGroup = {
-  shortName: string;
-  name: string;
-};
-
-type WorbookRating = {
-  type: string;
-  shortName: string;
-  name: string;
-  description: string;
-  isPositive: boolean;
-};
-
-type WorkbookOpts = {
-  version: BalanceSheetVersion;
-  type: BalanceSheetType;
-  groups: readonly WorkbookGroup[];
-  ratings: readonly WorbookRating[];
-};
-
-export type Workbook = WorkbookOpts & {
-  findByShortName(shortName: string): WorbookRating | undefined;
-  toJson(): z.infer<typeof WorkbookResponseBodySchema>;
-};
-
-export function makeWorkbook({
-  version,
-  type,
-  groups,
-  ratings,
-}: WorkbookOpts): Workbook {
-  function findByShortName(shortName: string): WorbookRating | undefined {
-    return ratings.find((wr) => wr.shortName === shortName);
-  }
-  function toJson() {
-    return WorkbookResponseBodySchema.parse({
-      version,
-      type,
-      groups: groups.map((g) => ({
-        shortName: g.shortName,
-        name: g.name,
-      })),
-    });
-  }
-
-  return deepFreeze({
-    version,
-    type,
-    groups,
-    ratings,
-    findByShortName,
-    toJson,
-  });
-}
+const EvaluationLevelSchema = z.object({
+  level: z.string().transform((s) => parseInt(s)),
+  name: z.string(),
+  pointsFrom: z.string().transform((s) => parseInt(s)),
+  pointsTo: z.string().transform((s) => parseInt(s)),
+});
 
 makeWorkbook.fromFile = function fromJson(
   version: BalanceSheetVersion,
@@ -133,6 +151,9 @@ makeWorkbook.fromFile = function fromJson(
   );
   const fileText = fs.readFileSync(workbookPath);
   const jsonParsed = JSON.parse(fileText.toString());
+  const evaluationLevels = EvaluationLevelSchema.array().parse(
+    jsonParsed[0].evaluationLevels
+  );
   const parsedGroups = GroupSchema.array().parse(jsonParsed.slice(1));
   const groups: WorkbookGroup[] = [];
   const ratings: WorbookRating[] = [];
@@ -141,7 +162,7 @@ makeWorkbook.fromFile = function fromJson(
     ratings.push(...group.ratings);
   }
 
-  return makeWorkbook({ version, type, groups, ratings });
+  return makeWorkbook({ version, type, groups, evaluationLevels, ratings });
 };
 
 makeWorkbook.fromRequest = function (req: Request) {
