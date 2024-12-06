@@ -519,10 +519,12 @@
     enabled "2.0.x"
     kuler "^2.0.0"
 
-"@ecogood/e-calculator-schemas@^1.9.0":
-  version "1.9.0"
-  resolved "https://registry.yarnpkg.com/@ecogood/e-calculator-schemas/-/e-calculator-schemas-1.9.0.tgz#1007f31e41602b0bc09ad70c52cccc50cd1a0078"
-  integrity sha512-erD/KRaXeSbMzedRa1yhOBQoRsTSGwKajWDuB6iRueFPdGZq4sxUn7Mg7n/pENzCPSkbC5a9sBHC1d2IagrNIw==
+"@ecogood/e-calculator-schemas@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@ecogood/e-calculator-schemas/-/e-calculator-schemas-2.0.0.tgz#caab014a10b0039a0352f7430de017fd7613b696"
+  integrity sha512-iUFI24FbM9u6VExCnrvF33cLClGntKoMXLusPz8mxT4WZqhREbDYqgrlKqgBzly0XHLh6VdmnwAGHFvoYfBSFg==
+  dependencies:
+    zod "^3.23.8"
 
 "@eslint-community/eslint-utils@^4.2.0":
   version "4.4.0"
@@ -7452,7 +7454,7 @@ zip-stream@^4.1.0:
     compress-commons "^4.1.0"
     readable-stream "^3.6.0"
 
-zod@^3.19.1:
-  version "3.21.4"
-  resolved "https://registry.yarnpkg.com/zod/-/zod-3.21.4.tgz#10882231d992519f0a10b5dd58a38c9dabbb64db"
-  integrity sha512-m46AKbrzKVzOzs/DZgVnG5H55N1sv1M8qZU3A8RIKbs3mrACDNeIOeilDymVb2HdmP8uwshOCF4uJ8uM9rCqJw==
+zod@3.23.8, zod@^3.23.8:
+  version "3.23.8"
+  resolved "https://registry.yarnpkg.com/zod/-/zod-3.23.8.tgz#e37b957b5d52079769fb8097099b592f0ef4067d"
+  integrity sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g==
