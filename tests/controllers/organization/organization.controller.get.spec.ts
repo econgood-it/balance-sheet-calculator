@@ -13,6 +13,10 @@ import { makeOrganization } from '../../../src/models/organization';
 import { OrganizationResponseSchema } from '@ecogood/e-calculator-schemas/dist/organization.dto';
 import { IBalanceSheetRepo } from '../../../src/repositories/balance.sheet.repo';
 import { makeBalanceSheet } from '../../../src/models/balance.sheet';
+import {
+  BalanceSheetType,
+  BalanceSheetVersion,
+} from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 
 describe('Organization Controller Get Endpoint', () => {
   let dataSource: DataSource;
@@ -151,10 +155,20 @@ describe('Organization Controller Get Balance Sheets Endpoint', () => {
       makeOrganization().invite(auth.user.email).join(auth.user)
     );
     const balanceSheet1 = await balanceSheetRepo.save(
-      makeBalanceSheet().assignOrganization(organization)
+      makeBalanceSheet
+        .fromJson({
+          version: BalanceSheetVersion.v5_0_8,
+          type: BalanceSheetType.Compact,
+        })
+        .assignOrganization(organization)
     );
     const balanceSheet2 = await balanceSheetRepo.save(
-      makeBalanceSheet().assignOrganization(organization)
+      makeBalanceSheet
+        .fromJson({
+          version: BalanceSheetVersion.v5_1_0,
+          type: BalanceSheetType.Full,
+        })
+        .assignOrganization(organization)
     );
 
     const response = await testApp
@@ -162,8 +176,16 @@ describe('Organization Controller Get Balance Sheets Endpoint', () => {
       .set(auth.toHeaderPair().key, auth.toHeaderPair().value);
     expect(response.status).toBe(200);
     expect(response.body).toEqual([
-      { id: balanceSheet1.id },
-      { id: balanceSheet2.id },
+      {
+        id: balanceSheet1.id,
+        version: BalanceSheetVersion.v5_0_8,
+        type: BalanceSheetType.Compact,
+      },
+      {
+        id: balanceSheet2.id,
+        version: BalanceSheetVersion.v5_1_0,
+        type: BalanceSheetType.Full,
+      },
     ]);
   });
 

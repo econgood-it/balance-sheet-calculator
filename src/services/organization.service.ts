@@ -230,6 +230,8 @@ export function makeOrganizationService(
             balanceSheets
               .map((b) => ({
                 id: b.id,
+                version: b.version,
+                type: b.type,
               }))
               .sort((a, b) => a.id! - b.id!)
           )
