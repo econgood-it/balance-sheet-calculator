@@ -917,7 +917,7 @@
     "group": {
       "label": "B",
       "shortName": "B",
-      "name": "B. Owners and financial partners",
+      "name": "B. Owners, equity- and financial service providers",
       "values": [
         {
           "label": "1",
@@ -2070,7 +2070,7 @@
     "group": {
       "label": "C",
       "shortName": "C",
-      "name": "C. Employees, including co-working employers",
+      "name": "C. Employees",
       "values": [
         {
           "label": "1",
