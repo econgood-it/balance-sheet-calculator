@@ -1,6 +1,5 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 import * as dotenv from 'dotenv';
-import { z } from 'zod';
 import { CertificationAuthorityNames } from '../entities/certification.authority.entity';
 
 // Load the environment variables
