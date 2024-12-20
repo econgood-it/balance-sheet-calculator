@@ -14,12 +14,14 @@ describe('ConfigurationReader', () => {
   const docsUser = 'docsuser';
   const docsPwd = 'crazydocspwd';
   const port = '4000';
-  const workbookToken = 'crazyworkbookPwd';
   const zitadelAuthUrl = 'https://zitadel.com';
   const zitadelKeyId = '382903810845309';
   const zitadelKey = 'fdjalrejwqpjl j---';
   const zitadelAppId = '489328014';
   const zitadelClientId = 'jdlasrjlrelqjrewq';
+  const ecgAuditAdminId = '9489032859043872590';
+  const ecgPeerGroupAdminId = '4832901483921748';
+  const ecgAuditApiUserId = '43214838409312';
 
   beforeEach(() => {
     jest.resetModules(); // Most important - it clears the cache
@@ -40,7 +42,9 @@ describe('ConfigurationReader', () => {
     process.env.PORT = port;
     process.env.DOCS_USER = docsUser;
     process.env.DOCS_PASSWORD = docsPwd;
-    process.env.WORKBOOK_API_TOKEN = workbookToken;
+    process.env.ECG_AUDIT_ADMIN_ID = ecgAuditAdminId;
+    process.env.ECG_PEER_GROUP_ADMIN_ID = ecgPeerGroupAdminId;
+    process.env.ECG_AUDIT_API_USER_ID = ecgAuditApiUserId;
     process.env.ZITADEL_KEY_ID = zitadelKeyId;
     process.env.ZITADEL_KEY = zitadelKey;
     process.env.ZITADEL_APP_ID = zitadelAppId;
@@ -60,12 +64,14 @@ describe('ConfigurationReader', () => {
     expect(config.appPort).toBe(Number.parseInt(port));
     expect(config.docsUser).toBe(docsUser);
     expect(config.docsPassword).toBe(docsPwd);
-    expect(config.workbookApiToken).toBe(workbookToken);
     expect(config.zitadelKeyId).toBe(zitadelKeyId);
     expect(config.zitadelKey).toBe(zitadelKey);
     expect(config.zitadelAppId).toBe(zitadelAppId);
     expect(config.zitadelClientId).toBe(zitadelClientId);
     expect(config.zitadelAuthorityUrl).toBe(zitadelAuthUrl);
+    expect(config.ecgAuditAdminId).toBe(ecgAuditAdminId);
+    expect(config.ecgPeerGroupAdminId).toBe(ecgPeerGroupAdminId);
+    expect(config.ecgAuditApiUserId).toBe(ecgAuditApiUserId);
   });
 
   it('should fail if dbHost is missing', function () {

@@ -17,12 +17,14 @@ export class Configuration {
     public readonly appPort: number,
     public readonly docsUser: string,
     public readonly docsPassword: string,
-    public readonly workbookApiToken: string,
     public readonly zitadelKeyId: string,
     public readonly zitadelKey: string,
     public readonly zitadelAppId: string,
     public readonly zitadelClientId: string,
-    public readonly zitadelAuthorityUrl: string
+    public readonly zitadelAuthorityUrl: string,
+    public readonly ecgAuditAdminId: string,
+    public readonly ecgPeerGroupAdminId: string,
+    public readonly ecgAuditApiUserId: string
   ) {
     const basePath = [Environment.TEST, Environment.PROD].includes(environment)
       ? 'dist/'
@@ -48,12 +50,14 @@ export class ConfigurationReader {
     const appPort = process.env.PORT;
     const docsUser = process.env.DOCS_USER;
     const docsPassword = process.env.DOCS_PASSWORD;
-    const workbookApiToken = process.env.WORKBOOK_API_TOKEN;
     const zitadelKeyId = process.env.ZITADEL_KEY_ID;
     const zitadelKey = process.env.ZITADEL_KEY;
     const zitadelAppId = process.env.ZITADEL_APP_ID;
     const zitadelClientId = process.env.ZITADEL_CLIENT_ID;
     const zitadelAuthorityUrl = process.env.ZITADEL_AUTHORITY_URL;
+    const ecgAuditAdminId = process.env.ECG_AUDIT_ADMIN_ID;
+    const ecgPeerGroupAdminId = process.env.ECG_PEER_GROUP_ADMIN_ID;
+    const ecgAuditApiUserId = process.env.ECG_AUDIT_API_USER_ID;
     ConfigurationReader.checkIfEnvironmentVariableIsSet('DB_NAME', dbName);
     ConfigurationReader.checkIfEnvironmentVariableIsSet('DB_PORT', dbPort);
     ConfigurationReader.checkIfEnvironmentVariableIsSet('DB_HOST', dbHost);
@@ -94,11 +98,19 @@ export class ConfigurationReader {
       'ZITADEL_AUTHORITY_URL',
       zitadelAuthorityUrl
     );
-
     ConfigurationReader.checkIfEnvironmentVariableIsSet(
-      'WORKBOOK_API_TOKEN',
-      workbookApiToken
+      'ECG_AUDIT_ADMIN_ID',
+      ecgAuditAdminId
     );
+    ConfigurationReader.checkIfEnvironmentVariableIsSet(
+      'ECG_PEER_GROUP_ADMIN_ID',
+      ecgPeerGroupAdminId
+    );
+    ConfigurationReader.checkIfEnvironmentVariableIsSet(
+      'ECG_AUDIT_API_USER_ID',
+      ecgAuditApiUserId
+    );
+
     let environmentAsEnum: Environment;
     if (environment === 'DEV') {
       environmentAsEnum = Environment.DEV;
@@ -121,12 +133,14 @@ export class ConfigurationReader {
       Number(appPort),
       docsUser as string,
       docsPassword as string,
-      workbookApiToken as string,
       zitadelKeyId as string,
       zitadelKey as string,
       zitadelAppId as string,
       zitadelClientId as string,
-      zitadelAuthorityUrl as string
+      zitadelAuthorityUrl as string,
+      ecgAuditAdminId as string,
+      ecgPeerGroupAdminId as string,
+      ecgAuditApiUserId as string
     );
   }
 

@@ -70,7 +70,6 @@ application on a different port just replace the _4000_ by the your port.
     "DOCS_USER": "docsuser",
     "DOCS_PASSWORD": "docspwd",
     "PORT": 4000,
-    "WORKBOOK_API_TOKEN": "<apitoken>",
     "ZITADEL_KEY": "<zitadelkey>",
     "ZITADEL_KEY_ID": "<zitadelkeyid>",
     "ZITADEL_APP_ID": "<zitadelappid>",
