@@ -297,14 +297,22 @@ describe('Matrix Rating DTO', () => {
     language
   );
 
-  it('rounds the percentage like in excel twice', () => {
+  it('rounds the percentage like in excel', () => {
     const topic = makeRating({
       ...topicWithZeroValues,
-      points: 2.72727,
-      maxPoints: 18.182,
+      points: 2.7272727272727266,
+      maxPoints: 18.18181818181818,
     });
     const matrixFormat = topic.toMatrixFormat(workbook);
     expect(matrixFormat.percentageReached).toBe(20);
+
+    const topic2 = makeRating({
+      ...topicWithZeroValues,
+      points: 13.454545454545453,
+      maxPoints: 54.54545454545454,
+    });
+    const matrixFormat2 = topic2.toMatrixFormat(workbook);
+    expect(matrixFormat2.percentageReached).toBe(20);
   });
 
   it('has reached points are 30 of 50', () => {

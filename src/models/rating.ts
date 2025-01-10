@@ -132,12 +132,13 @@ export function makeRating(opts?: RatingOpts): Rating {
     if (data.maxPoints === 0 || data.points < 0) {
       return none();
     }
-    return some(
-      roundWithPrecision(
-        roundWithPrecision(data.points / data.maxPoints, 2),
-        1
-      ) * 100
-    );
+    // Excel precision is 15 digits
+    // see https://answers.microsoft.com/en-us/msoffice/forum/all/number-precision-on-excel/1fd94ab1-ae50-4453-922a-a4dd0613cfd9
+    // and https://en.wikipedia.org/wiki/Numeric_precision_in_Microsoft_Excel
+    const value =
+      roundWithPrecision(data.points, 15) /
+      roundWithPrecision(data.maxPoints, 15);
+    return some(roundWithPrecision(value, 1) * 100);
   }
 
   function notApplicable(): boolean {
