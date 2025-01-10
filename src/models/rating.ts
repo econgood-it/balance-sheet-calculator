@@ -132,7 +132,12 @@ export function makeRating(opts?: RatingOpts): Rating {
     if (data.maxPoints === 0 || data.points < 0) {
       return none();
     }
-    return some(roundWithPrecision(data.points / data.maxPoints, 1) * 100);
+    return some(
+      roundWithPrecision(
+        roundWithPrecision(data.points / data.maxPoints, 2),
+        1
+      ) * 100
+    );
   }
 
   function notApplicable(): boolean {

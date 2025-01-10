@@ -296,6 +296,17 @@ describe('Matrix Rating DTO', () => {
     BalanceSheetType.Full,
     language
   );
+
+  it('rounds the percentage like in excel twice', () => {
+    const topic = makeRating({
+      ...topicWithZeroValues,
+      points: 2.72727,
+      maxPoints: 18.182,
+    });
+    const matrixFormat = topic.toMatrixFormat(workbook);
+    expect(matrixFormat.percentageReached).toBe(20);
+  });
+
   it('has reached points are 30 of 50', () => {
     const topic = makeRating({
       ...topicWithZeroValues,
