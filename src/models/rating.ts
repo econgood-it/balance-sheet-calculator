@@ -140,7 +140,7 @@ export function makeRating(opts?: RatingOpts): Rating {
       roundWithPrecision(data.points, excelPrecision) /
       roundWithPrecision(data.maxPoints, excelPrecision);
     return some(
-      roundWithPrecision(roundWithPrecision(value, excelPrecision) * 100, -1)
+      roundWithPrecision(roundWithPrecision(value, excelPrecision), 1) * 100
     );
   }
 
