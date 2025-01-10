@@ -135,10 +135,13 @@ export function makeRating(opts?: RatingOpts): Rating {
     // Excel precision is 15 digits
     // see https://answers.microsoft.com/en-us/msoffice/forum/all/number-precision-on-excel/1fd94ab1-ae50-4453-922a-a4dd0613cfd9
     // and https://en.wikipedia.org/wiki/Numeric_precision_in_Microsoft_Excel
+    const excelPrecision = 15;
     const value =
-      roundWithPrecision(data.points, 15) /
-      roundWithPrecision(data.maxPoints, 15);
-    return some(roundWithPrecision(value, 1) * 100);
+      roundWithPrecision(data.points, excelPrecision) /
+      roundWithPrecision(data.maxPoints, excelPrecision);
+    return some(
+      roundWithPrecision(roundWithPrecision(value, excelPrecision) * 100, -1)
+    );
   }
 
   function notApplicable(): boolean {

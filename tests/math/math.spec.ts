@@ -25,6 +25,12 @@ describe('Math ', () => {
 
   it('roundWithPrecision round to round to nearest 10', async () => {
     expect(roundWithPrecision(numberToRound, -1)).toBe(12350);
+    expect(roundWithPrecision(23, -1)).toBe(20);
+    expect(roundWithPrecision(25, -1)).toBe(30);
+    expect(roundWithPrecision(28, -1)).toBe(30);
+    expect(roundWithPrecision(5, -1)).toBe(10);
+    expect(roundWithPrecision(0, -1)).toBe(0);
+    expect(roundWithPrecision(-7, -1)).toBe(-10);
   });
 
   it('roundWithPrecision round to round to nearest 100', async () => {
