@@ -179,10 +179,10 @@ export function makeOrganizationService(
     res: Response,
     next: NextFunction
   ) {
-    const balanceSheet = makeBalanceSheet.fromJson(req.body);
-    const language = parseLanguageParameter(req.query.lng);
     dataSource.manager
       .transaction(async (entityManager) => {
+        const balanceSheet = makeBalanceSheet.fromJson(req.body);
+        const language = parseLanguageParameter(req.query.lng);
         const balanceSheetRepo =
           repoProvider.getBalanceSheetRepo(entityManager);
         const orgaRepo = repoProvider.getOrganizationRepo(entityManager);
