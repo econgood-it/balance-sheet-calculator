@@ -297,13 +297,29 @@ describe('Matrix Rating DTO', () => {
     language
   );
 
+  it('rounds the percentage correct in the version 5.1', () => {
+    const topic = makeRating({
+      ...topicWithZeroValues,
+      points: 32.5301204819277,
+      maxPoints: 72.289156626506,
+    });
+    const matrixFormat = topic.toMatrixFormat(
+      workbook,
+      BalanceSheetVersion.v5_1_0
+    );
+    expect(matrixFormat.percentageReached).toBe(45);
+  });
+
   it('rounds the percentage like in excel: example 1', () => {
     const topic = makeRating({
       ...topicWithZeroValues,
       points: 2.7272727272727266,
       maxPoints: 18.18181818181818,
     });
-    const matrixFormat = topic.toMatrixFormat(workbook);
+    const matrixFormat = topic.toMatrixFormat(
+      workbook,
+      BalanceSheetVersion.v5_0_8
+    );
     expect(matrixFormat.percentageReached).toBe(20);
   });
 
@@ -313,7 +329,10 @@ describe('Matrix Rating DTO', () => {
       points: 13.454545454545453,
       maxPoints: 54.54545454545454,
     });
-    const matrixFormat = topic.toMatrixFormat(workbook);
+    const matrixFormat = topic.toMatrixFormat(
+      workbook,
+      BalanceSheetVersion.v5_0_8
+    );
     expect(matrixFormat.percentageReached).toBe(20);
   });
   it('rounds the percentage like in excel: example 3', () => {
@@ -322,7 +341,10 @@ describe('Matrix Rating DTO', () => {
       points: 5.454545454545453,
       maxPoints: 36.36363636363636,
     });
-    const matrixFormat = topic.toMatrixFormat(workbook);
+    const matrixFormat = topic.toMatrixFormat(
+      workbook,
+      BalanceSheetVersion.v5_0_8
+    );
     expect(matrixFormat.percentageReached).toBe(20);
   });
 
@@ -333,7 +355,10 @@ describe('Matrix Rating DTO', () => {
       maxPoints: 50,
     });
 
-    const matrixFormat = topic.toMatrixFormat(workbook);
+    const matrixFormat = topic.toMatrixFormat(
+      workbook,
+      BalanceSheetVersion.v5_0_8
+    );
     expect(matrixFormat.points).toBe(30);
     expect(matrixFormat.maxPoints).toBe(50);
   });
@@ -344,7 +369,10 @@ describe('Matrix Rating DTO', () => {
       points: 30.5982934,
       maxPoints: 50.0899,
     });
-    const matrixFormat = topic.toMatrixFormat(workbook);
+    const matrixFormat = topic.toMatrixFormat(
+      workbook,
+      BalanceSheetVersion.v5_0_8
+    );
     expect(matrixFormat.points).toBe(31);
     expect(matrixFormat.maxPoints).toBe(50);
   });
@@ -355,7 +383,10 @@ describe('Matrix Rating DTO', () => {
       points: -100,
       maxPoints: 60,
     });
-    const matrixFormat = topic.toMatrixFormat(workbook);
+    const matrixFormat = topic.toMatrixFormat(
+      workbook,
+      BalanceSheetVersion.v5_0_8
+    );
     expect(matrixFormat.points).toBe(-100);
     expect(matrixFormat.maxPoints).toBe(60);
   });
@@ -366,7 +397,10 @@ describe('Matrix Rating DTO', () => {
       points: 50,
       maxPoints: 50,
     });
-    const matrixFormat = topic.toMatrixFormat(workbook);
+    const matrixFormat = topic.toMatrixFormat(
+      workbook,
+      BalanceSheetVersion.v5_0_8
+    );
     expect(matrixFormat.percentageReached).toBe(100);
   });
 
@@ -375,13 +409,19 @@ describe('Matrix Rating DTO', () => {
       ...topicWithZeroValues,
       maxPoints: 50,
     });
-    const matrixFormat = topic.toMatrixFormat(workbook);
+    const matrixFormat = topic.toMatrixFormat(
+      workbook,
+      BalanceSheetVersion.v5_0_8
+    );
     expect(matrixFormat.percentageReached).toBe(0);
   });
 
   it('has undefined percentage when division by 0', () => {
     const topic = makeRating({ ...topicWithZeroValues, points: 10 });
-    const matrixFormat = topic.toMatrixFormat(workbook);
+    const matrixFormat = topic.toMatrixFormat(
+      workbook,
+      BalanceSheetVersion.v5_0_8
+    );
     expect(matrixFormat.percentageReached).toBeUndefined();
   });
 
@@ -391,7 +431,10 @@ describe('Matrix Rating DTO', () => {
       points: 10,
       maxPoints: 60,
     });
-    const matrixFormat = topic.toMatrixFormat(workbook);
+    const matrixFormat = topic.toMatrixFormat(
+      workbook,
+      BalanceSheetVersion.v5_0_8
+    );
     expect(matrixFormat.percentageReached).toBe(20);
   });
 
@@ -401,28 +444,43 @@ describe('Matrix Rating DTO', () => {
       points: -10,
       maxPoints: 60,
     });
-    const matrixFormat = topic.toMatrixFormat(workbook);
+    const matrixFormat = topic.toMatrixFormat(
+      workbook,
+      BalanceSheetVersion.v5_0_8
+    );
     expect(matrixFormat.percentageReached).toBeUndefined();
   });
 
   it('has shortName A1', () => {
-    const matrixFormat = topicWithZeroValues.toMatrixFormat(workbook);
+    const matrixFormat = topicWithZeroValues.toMatrixFormat(
+      workbook,
+      BalanceSheetVersion.v5_0_8
+    );
     expect(matrixFormat.shortName).toEqual('A1');
   });
 
   it('has name A1 name', () => {
-    const matrixFormat = topicWithZeroValues.toMatrixFormat(workbook);
+    const matrixFormat = topicWithZeroValues.toMatrixFormat(
+      workbook,
+      BalanceSheetVersion.v5_0_8
+    );
     expect(matrixFormat.name).toEqual('Human dignity in the supply chain');
   });
 
   it('is not applicable', () => {
-    const matrixFormat = topicWithZeroValues.toMatrixFormat(workbook);
+    const matrixFormat = topicWithZeroValues.toMatrixFormat(
+      workbook,
+      BalanceSheetVersion.v5_0_8
+    );
     expect(matrixFormat.notApplicable).toBeTruthy();
   });
 
   it('is applicable', () => {
     const topic = makeRating({ ...topicWithZeroValues, weight: 0.5 });
-    const matrixFormat = topic.toMatrixFormat(workbook);
+    const matrixFormat = topic.toMatrixFormat(
+      workbook,
+      BalanceSheetVersion.v5_0_8
+    );
     expect(matrixFormat.notApplicable).toBeFalsy();
   });
 });

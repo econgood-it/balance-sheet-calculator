@@ -10,6 +10,8 @@ import { roundWithPrecision } from '../math';
 import { none, Option, some } from '../calculations/option';
 import { LookupError } from '../exceptions/lookup.error';
 import { Workbook } from './workbook';
+import { BalanceSheetVersion } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
+import { gte } from '@mr42/version-comparator/dist/version.comparator';
 
 type RatingOpts = {
   shortName: string;
@@ -34,7 +36,8 @@ export type Rating = RatingOpts & {
   submitEstimations: (estimations: number) => Rating;
   getStakeholderName: () => string;
   toMatrixFormat: (
-    workBook: Workbook
+    workBook: Workbook,
+    balanceSheetVersion: BalanceSheetVersion
   ) => z.infer<typeof MatrixRatingBodySchema>;
 };
 
@@ -112,9 +115,10 @@ export function makeRating(opts?: RatingOpts): Rating {
   }
 
   function toMatrixFormat(
-    workBook: Workbook
+    workBook: Workbook,
+    balanceSheetVersion: BalanceSheetVersion
   ): z.infer<typeof MatrixRatingBodySchema> {
-    const percentage = calcPercentage();
+    const percentage = calcPercentage(balanceSheetVersion);
     const percentageReached = percentage.isPresent()
       ? percentage.get()
       : undefined;
@@ -128,7 +132,9 @@ export function makeRating(opts?: RatingOpts): Rating {
     });
   }
 
-  function calcPercentage(): Option<number> {
+  function calcPercentage(
+    balanceSheetVersion: BalanceSheetVersion
+  ): Option<number> {
     if (data.maxPoints === 0 || data.points < 0) {
       return none();
     }
@@ -139,8 +145,12 @@ export function makeRating(opts?: RatingOpts): Rating {
     const value =
       roundWithPrecision(data.points, excelPrecision) /
       roundWithPrecision(data.maxPoints, excelPrecision);
+    const rounding = gte(balanceSheetVersion, BalanceSheetVersion.v5_1_0)
+      ? 2
+      : 1;
     return some(
-      roundWithPrecision(roundWithPrecision(value, excelPrecision), 2) * 100
+      roundWithPrecision(roundWithPrecision(value, excelPrecision), rounding) *
+        100
     );
   }
 

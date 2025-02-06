@@ -23,9 +23,8 @@ import {
 import { z } from 'zod';
 import { Translations } from '../language/translations';
 import { MatrixBodySchema } from '@ecogood/e-calculator-schemas/dist/matrix.dto';
-import { eq } from '@mr42/version-comparator/dist/version.comparator';
+import { eq, gte } from '@mr42/version-comparator/dist/version.comparator';
 import { ValueError } from '../exceptions/value.error';
-import { gte } from 'lodash';
 import { makeWorkbook } from './workbook';
 
 export const BalanceSheetVersionSchema = z.nativeEnum(BalanceSheetVersion);
@@ -317,7 +316,7 @@ export function makeBalanceSheet(opts?: BalanceSheetOpts): BalanceSheet {
   function asMatrixRepresentation(language: keyof Translations) {
     const workBook = makeWorkbook.fromFile(data.version, data.type, language);
     return MatrixBodySchema.parse({
-      ratings: getTopics().map((r) => r.toMatrixFormat(workBook)),
+      ratings: getTopics().map((r) => r.toMatrixFormat(workBook, data.version)),
       totalPoints: totalPoints(),
     });
   }
