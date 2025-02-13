@@ -129,6 +129,13 @@ export function makeTopicWeightCalculator(
     }
   }
 
+  // Weighting'!O30
+  /**
+   * In excel this is equal to the cell $'9.Weighting'.O30
+   * Excel formula is:
+   * =IF(G69="empty";1;IF(AND(I31='12.lan'!D53;I30<10);'3. Calc'!C105;IF(I30>25;'3. Calc'!C103;'3. Calc'!C104)))
+   * @param calcResults
+   */
   function calculateTopicWeightOfC3(): number {
     if (
       companyFacts.averageJourneyToWorkForStaffInKm < 10 &&
