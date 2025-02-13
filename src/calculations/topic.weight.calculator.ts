@@ -132,6 +132,7 @@ export function makeTopicWeightCalculator(
   function calculateTopicWeightOfC3(): number {
     if (
       companyFacts.averageJourneyToWorkForStaffInKm < 10 &&
+      companyFacts.averageJourneyToWorkForStaffInKm !== 0 &&
       companyFacts.hasCanteen !== undefined &&
       !companyFacts.hasCanteen
     ) {
