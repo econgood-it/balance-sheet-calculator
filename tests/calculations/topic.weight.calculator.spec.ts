@@ -266,7 +266,7 @@ describe('Topic Weight Calculator', () => {
       topicShortName,
       calcResults,
       companyFacts.withFields({
-        hasCanteen: false,
+        hasCanteen: undefined,
         averageJourneyToWorkForStaffInKm: 0,
       })
     );
