@@ -261,6 +261,16 @@ describe('Topic Weight Calculator', () => {
       })
     );
     expect(result.weight).toBeCloseTo(1.5, numDigits);
+
+    result = await calc(
+      topicShortName,
+      calcResults,
+      companyFacts.withFields({
+        hasCanteen: undefined,
+        averageJourneyToWorkForStaffInKm: 0,
+      })
+    );
+    expect(result.weight).toBeCloseTo(1, numDigits);
   });
 
   it('should calculate topic weight of C4', async () => {
