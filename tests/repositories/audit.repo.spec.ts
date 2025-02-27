@@ -1,7 +1,6 @@
 import { DatabaseSourceCreator } from '../../src/databaseSourceCreator';
 import { DataSource } from 'typeorm';
 import { ConfigurationReader } from '../../src/reader/configuration.reader';
-import { makeOrganization } from '../../src/models/organization';
 import { makeBalanceSheet } from '../../src/models/balance.sheet';
 import {
   IBalanceSheetRepo,
@@ -11,10 +10,17 @@ import {
   IOrganizationRepo,
   makeOrganizationRepository,
 } from '../../src/repositories/organization.repo';
+import {
+  IAuditRepo,
+  makeAuditRepository,
+} from '../../src/repositories/audit.repo';
+import { makeAudit } from '../../src/models/audit';
+import { makeOrganization } from '../../src/models/organization';
 
 describe('AuditRepo', () => {
   let balanceSheetRepository: IBalanceSheetRepo;
   let auditRepository: IAuditRepo;
+  let orgaRepository: IOrganizationRepo;
   let dataSource: DataSource;
 
   beforeAll(async () => {
@@ -22,7 +28,8 @@ describe('AuditRepo', () => {
       ConfigurationReader.read()
     );
     balanceSheetRepository = makeBalanceSheetRepository(dataSource.manager);
-    auditRepository = makeOrganizationRepository(dataSource.manager);
+    auditRepository = makeAuditRepository(dataSource.manager);
+    orgaRepository = makeOrganizationRepository(dataSource.manager);
   });
 
   afterAll(async () => {
@@ -31,12 +38,24 @@ describe('AuditRepo', () => {
 
   it('saves audit', async () => {
     const balanceSheet = await balanceSheetRepository.save(makeBalanceSheet());
-    const audit = makeAudit();
-    audit.submitBalanceSheet(balanceSheet);
-    const auditEntity = await auditRepository.save(audit);
-    const result = await auditRepository.findByIdOrFail(auditEntity.id!);
-    expect(result.id).toBeDefined();
-    expect(result.id).toEqual(auditEntity.id);
+    const auditOrganization = await orgaRepository.save(makeOrganization());
+
+    const audit = makeAudit().submitBalanceSheet(
+      balanceSheet,
+      auditOrganization.id!
+    );
+    const savedAudit = await auditRepository.save(audit);
+    const { id } = await auditRepository.save(savedAudit);
+    const result = await auditRepository.findByIdOrFail(id!);
     expect(result.submittedBalanceSheetId).toEqual(balanceSheet.id);
+    expect(result.balanceSheetCopy).toEqual({
+      ...balanceSheet,
+      id: expect.any(Number),
+      organizationId: auditOrganization.id,
+    });
+    const foundCopy = await balanceSheetRepository.findByIdOrFail(
+      result.balanceSheetCopy!.id!
+    );
+    expect(foundCopy.id).toEqual(result.balanceSheetCopy!.id!);
   });
 });

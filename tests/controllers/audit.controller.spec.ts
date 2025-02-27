@@ -1,29 +1,24 @@
-import {
-  BalanceSheetType,
-  BalanceSheetVersion,
-} from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import { Application } from 'express';
 import supertest from 'supertest';
-import { DataSource, Repository } from 'typeorm';
-import App from '../../../src/app';
-import { DatabaseSourceCreator } from '../../../src/databaseSourceCreator';
+import { DataSource } from 'typeorm';
 
-import {
-  makeJsonFactory,
-  makeOrganizationCreateRequest,
-} from '../../../src/openapi/examples';
-import { ConfigurationReader } from '../../../src/reader/configuration.reader';
-
-import { AuthBuilder } from '../../AuthBuilder';
-import { InMemoryAuthentication } from '../in.memory.authentication';
-import { makeRepoProvider } from '../../../src/repositories/repo.provider';
-import { BalanceSheetPaths } from '../../../src/controllers/balance.sheet.controller';
-import { BalanceSheet, makeBalanceSheet } from '../../src/models/balance.sheet';
+import { makeBalanceSheet } from '../../src/models/balance.sheet';
+import { AuditPaths } from '../../src/controllers/audit.controller';
+import { IBalanceSheetRepo } from '../../src/repositories/balance.sheet.repo';
+import { IAuditRepo } from '../../src/repositories/audit.repo';
+import { ConfigurationReader } from '../../src/reader/configuration.reader';
+import { AuthBuilder } from '../AuthBuilder';
+import { DatabaseSourceCreator } from '../../src/databaseSourceCreator';
+import { makeRepoProvider } from '../../src/repositories/repo.provider';
+import { InMemoryAuthentication } from './in.memory.authentication';
+import App from '../../src/app';
 
 describe('Audit Controller', () => {
   let dataSource: DataSource;
   let app: Application;
-  let balanceSheetRepository: Repository<BalanceSheet>;
+  let balanceSheetRepository: IBalanceSheetRepo;
+  let auditRepository: IAuditRepo;
+
   const configuration = ConfigurationReader.read();
   const authBuilder = new AuthBuilder();
   const auth = authBuilder.addUser();
@@ -36,6 +31,7 @@ describe('Audit Controller', () => {
     balanceSheetRepository = repoProvider.getBalanceSheetRepo(
       dataSource.manager
     );
+    auditRepository = repoProvider.getAuditRepo(dataSource.manager);
 
     app = new App(
       dataSource,
@@ -50,18 +46,25 @@ describe('Audit Controller', () => {
   });
 
   it('should create audit for balance sheet', async () => {
-    // const balanceSheetEntity = await balanceSheetRepository.save(
-    //   makeBalanceSheet()
-    // );
-    // const auditJson = {
-    //   balanceSheetToBeSubmitted: balanceSheetEntity.id,
-    // };
-    // const testApp = supertest(app);
-    // const response = await testApp
-    //   .post(AuditPaths.submit)
-    //   .set(auth.toHeaderPair().key, auth.toHeaderPair().value)
-    //   .send(auditJson);
-    // expect(response.status).toBe(200);
+    const balanceSheetEntity = await balanceSheetRepository.save(
+      makeBalanceSheet()
+    );
+    const auditJson = {
+      balanceSheetToBeSubmitted: balanceSheetEntity.id,
+    };
+    const testApp = supertest(app);
+    const response = await testApp
+      .post(AuditPaths.post)
+      .set(auth.toHeaderPair().key, auth.toHeaderPair().value)
+      .send(auditJson);
+    expect(response.status).toBe(200);
+    expect(response.body.id).toBeDefined();
+    const result = await auditRepository.findByIdOrFail(response.body.id!);
+    expect(result.submittedBalanceSheetId).toEqual(balanceSheetEntity.id);
+    const foundCopy = await balanceSheetRepository.findByIdOrFail(
+      result.balanceSheetCopy!.id!
+    );
+    expect(foundCopy.id).toEqual(result.balanceSheetCopy!.id!);
     // expect(response.body.id).toBeUndefined();
   });
 });

@@ -28,6 +28,8 @@ import { makeWorkbookService } from './services/workbook.service';
 import { registerUserRoutes } from './controllers/user.controller';
 import { makeUserService } from './services/user.service';
 import { IRepoProvider } from './repositories/repo.provider';
+import { registerAuditRoutes } from './controllers/audit.controller';
+import { makeAuditService } from './services/audit.service';
 
 class App {
   public readonly app: Application;
@@ -75,6 +77,7 @@ class App {
       this.app,
       makeOrganizationService(dataSource, repoProvider)
     );
+    registerAuditRoutes(this.app, makeAuditService(dataSource, repoProvider));
     this.docsController = new DocsController(this.app, configuration);
     this.app.use(errorMiddleware);
   }

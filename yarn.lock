@@ -519,10 +519,10 @@
     enabled "2.0.x"
     kuler "^2.0.0"
 
-"@ecogood/e-calculator-schemas@^2.5.0":
-  version "2.5.0"
-  resolved "https://registry.yarnpkg.com/@ecogood/e-calculator-schemas/-/e-calculator-schemas-2.5.0.tgz#a3ea6f1c1ede4926cb679684451941ecdd2a8993"
-  integrity sha512-6I4AnyHdTZlZzQmHmxE2aDQd78JeOivyu3nnu+ZvX0SO//9npdKjycVTjuQdUc4H1kHsh6qgI+w7PSsTUP1zKQ==
+"@ecogood/e-calculator-schemas@^2.6.0":
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/@ecogood/e-calculator-schemas/-/e-calculator-schemas-2.6.0.tgz#af731a89f1a154dcae977407b6404b47c3240230"
+  integrity sha512-XKdYxWug51AqYIKz1jLGj8tF0nFpvc/2Xl0OjisYElGDTSwzQal25xDWE060Juv8Bs7RfefBehWV4P/3rUqwlw==
   dependencies:
     zod "^3.23.8"
 

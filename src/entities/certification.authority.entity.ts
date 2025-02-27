@@ -1,4 +1,11 @@
-import { Entity, JoinColumn, OneToOne, PrimaryColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryColumn,
+  RelationId,
+} from 'typeorm';
 import { OrganizationEntity } from './organization.entity';
 
 export enum CertificationAuthorityNames {
@@ -14,6 +21,13 @@ export class CertificationAuthorityEntity {
   @OneToOne(() => OrganizationEntity)
   @JoinColumn()
   public readonly organizationEntity: OrganizationEntity;
+
+  @Column()
+  @RelationId(
+    (certificationAuthority: CertificationAuthorityEntity) =>
+      certificationAuthority.organizationEntity
+  )
+  public readonly organizationEntityId!: number;
 
   public constructor(name: string, organizationEntity: OrganizationEntity) {
     this.name = name;
