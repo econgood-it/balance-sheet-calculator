@@ -12,10 +12,15 @@ import { DatabaseSourceCreator } from '../../src/databaseSourceCreator';
 import { makeRepoProvider } from '../../src/repositories/repo.provider';
 import { InMemoryAuthentication } from './in.memory.authentication';
 import App from '../../src/app';
+import { makeOrganization } from '../../src/models/organization';
+import { IOrganizationRepo } from '../../src/repositories/organization.repo';
+import { Role } from '../../src/models/user';
+import { v4 as uuid4 } from 'uuid';
 
 describe('Audit Controller', () => {
   let dataSource: DataSource;
   let app: Application;
+  let organizationRepo: IOrganizationRepo;
   let balanceSheetRepository: IBalanceSheetRepo;
   let auditRepository: IAuditRepo;
 
@@ -31,6 +36,7 @@ describe('Audit Controller', () => {
     balanceSheetRepository = repoProvider.getBalanceSheetRepo(
       dataSource.manager
     );
+    organizationRepo = repoProvider.getOrganizationRepo(dataSource.manager);
     auditRepository = repoProvider.getAuditRepo(dataSource.manager);
 
     app = new App(
@@ -46,8 +52,11 @@ describe('Audit Controller', () => {
   });
 
   it('should create audit for balance sheet', async () => {
+    const organization = await organizationRepo.save(
+      makeOrganization().invite(auth.user.email).join(auth.user)
+    );
     const balanceSheetEntity = await balanceSheetRepository.save(
-      makeBalanceSheet()
+      makeBalanceSheet().assignOrganization(organization)
     );
     const auditJson = {
       balanceSheetToBeSubmitted: balanceSheetEntity.id,
@@ -65,6 +74,25 @@ describe('Audit Controller', () => {
       result.balanceSheetCopy!.id!
     );
     expect(foundCopy.id).toEqual(result.balanceSheetCopy!.id!);
-    // expect(response.body.id).toBeUndefined();
+  });
+
+  it('should fail to submit balance sheet to audit if user has not the right permissions', async () => {
+    const user = { id: uuid4(), email: 'other@example.com', role: Role.User };
+    const organization = await organizationRepo.save(
+      makeOrganization().invite(user.email).join(user)
+    );
+    const balanceSheetEntity = await balanceSheetRepository.save(
+      makeBalanceSheet().assignOrganization(organization)
+    );
+
+    const auditJson = {
+      balanceSheetToBeSubmitted: balanceSheetEntity.id,
+    };
+    const testApp = supertest(app);
+    const response = await testApp
+      .post(AuditPaths.post)
+      .set(auth.toHeaderPair().key, auth.toHeaderPair().value)
+      .send(auditJson);
+    expect(response.status).toBe(403);
   });
 });
