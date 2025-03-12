@@ -29,6 +29,7 @@ type WorbookRatingApi = {
   type: string;
   shortName: string;
   name: string;
+  description: string;
   isPositive: boolean;
 };
 
@@ -154,11 +155,21 @@ const AspectSchemaApi = z
     isPositive: z.boolean(),
     shortName: z.string(),
     name: z.string(),
+    introductionTheme: z.object({
+      introduction: z.object({
+        shortName: z.string(),
+        content: z.string(),
+      })
+    }),
+    description: z.any(),
   })
-  .transform((a) => ({
-    ...a,
-    name: removeShortNameInName(a.name, a.shortName),
-  }));
+  .transform((a) => {
+    return {
+      ...a,
+      name: removeShortNameInName(a.name, a.shortName),
+      description: a.introductionTheme.introduction.content,
+    }
+  });
 
 const TopicSchema = z
   .object({
@@ -171,9 +182,9 @@ const TopicSchema = z
     }),
   })
   .transform((ts) => {
-    const topic = { ..._.omit(ts, 'aspects'), isPositive: true };
+    const topic = { ..._.omit(ts.topics, 'aspects'), isPositive: true };
     return [
-      { ...topic, name: removeShortNameInName(topic.topics.name, topic.topics.shortName) },
+      { ...topic, name: removeShortNameInName(topic.name, topic.shortName) },
       ...ts.topics.aspects,
     ];
   });
@@ -184,6 +195,12 @@ const TopicSchemaApi = z
   shortName: z.string(),
   name: z.string(),
   aspects: AspectSchemaApi.array(),
+  introductionTheme: z.object({
+    introduction: z.object({
+      shortName: z.string(),
+      content: z.string(),
+    })
+  }),
 })
 .transform((ts) => {
   const topic = { ..._.omit(ts, 'aspects'), isPositive: true };
@@ -205,6 +222,7 @@ const ValueSchemaApi = z
     name: removeShortNameInName(v.name, v.shortName),
     type: 'value',
     isPositive: true,
+    description: '',
   }));
 
 export const GroupSchema = z

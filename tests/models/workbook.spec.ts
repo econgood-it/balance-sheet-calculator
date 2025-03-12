@@ -260,6 +260,9 @@ describe('Compact Workbook', () => {
       BalanceSheetType.Compact,
       'en'
     );
+
+    console.log(workbook);
+
     expect(workbook.version).toEqual(BalanceSheetVersion.v5_1_0);
     expect(workbook.type).toEqual(BalanceSheetType.Compact);
 
@@ -358,6 +361,9 @@ describe('Compact Workbook', () => {
       BalanceSheetType.Compact,
       'en'
     );
+
+    console.log(workbook);
+
     expect(workbook.version).toEqual(BalanceSheetVersion.v5_1_0);
     expect(workbook.type).toEqual(BalanceSheetType.Compact);
 
