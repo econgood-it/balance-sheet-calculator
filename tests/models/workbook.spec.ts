@@ -2,7 +2,7 @@ import {
   BalanceSheetType,
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
-import { GroupSchema, makeWorkbook } from '../../src/models/workbook';
+import { GroupSchema, makeWorkbook, makeWorkbookApi } from '../../src/models/workbook';
 
 describe('Full Workbook', () => {
   it('is created from file for versions < 5.10 in English', async () => {
@@ -353,7 +353,7 @@ describe('Compact Workbook', () => {
   });
 
   it('is created from file for version >= 5.10 from the API in English', () => {
-    const workbook = makeWorkbook.fromApiFile(
+    const workbook = makeWorkbookApi.fromApiFile(
       BalanceSheetVersion.v5_1_0,
       BalanceSheetType.Compact,
       'en'
