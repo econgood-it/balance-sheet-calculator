@@ -164,8 +164,9 @@ const AspectSchemaApi = z
     description: z.any(),
   })
   .transform((a) => {
+    const aspect = { ..._.omit(a, 'introductionTheme') };
     return {
-      ...a,
+      ...aspect,
       name: removeShortNameInName(a.name, a.shortName),
       description: a.introductionTheme.introduction.content,
     }
@@ -203,9 +204,10 @@ const TopicSchemaApi = z
   }),
 })
 .transform((ts) => {
+  const description = ts.introductionTheme.introduction.content;
   const topic = { ..._.omit(ts, 'aspects'), isPositive: true };
   return [
-    { ...topic, name: removeShortNameInName(topic.name, topic.shortName) },
+    { ...topic, name: removeShortNameInName(topic.name, topic.shortName), description: description },
     ...ts.aspects,
   ];
 });
@@ -245,11 +247,14 @@ export const GroupSchemaApi = z
     name: z.string(),
     values: ValueSchemaApi.array(),
   })
-  .transform((g) => ({
-    shortName: g.shortName,
-    name: removeShortNameInName(g.name, `${g.shortName}.`),
-    ratings: g.values.flat(),
-  }));
+  .transform((g) => {
+    const topics_and_aspects = g.values.map((value) => ([ ...value.topics[0] ]));
+    return {
+      shortName: g.shortName,
+      name: removeShortNameInName(g.name, `${g.shortName}.`),
+      ratings: topics_and_aspects.flat(),
+    };
+  });
 
 const EvaluationLevelSchema = z.object({
   level: z.string().transform((s) => parseInt(s)),
@@ -284,6 +289,7 @@ makeWorkbook.fromFile = function fromJson(
   const groups: WorkbookGroup[] = [];
   const ratings: WorbookRating[] = [];
   for (const group of parsedGroups) {
+/*     console.log(group); */
     groups.push(_.omit(group, 'ratings'));
     ratings.push(...group.ratings);
   }
@@ -314,9 +320,11 @@ makeWorkbookApi.fromApiFile = function fromJson(
     jsonParsed.evaluationLevels
   );
   const parsedGroups = GroupSchemaApi.array().parse(jsonParsed.groups);
+
   const groups: WorkbookGroup[] = [];
   const ratings: WorbookRatingApi[] = [];
   for (const group of parsedGroups) {
+/*     console.log(group); */
     groups.push(_.omit(group, 'ratings'));
     ratings.push(...group.ratings);
   }
