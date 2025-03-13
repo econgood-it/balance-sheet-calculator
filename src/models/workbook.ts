@@ -248,11 +248,11 @@ export const GroupSchemaApi = z
     values: ValueSchemaApi.array(),
   })
   .transform((g) => {
-    const topics_and_aspects = g.values.map((value) => ([ ...value.topics[0] ]));
+    const topicsAndAspects = g.values.map((value) => ([ ...value.topics[0] ]));
     return {
       shortName: g.shortName,
       name: removeShortNameInName(g.name, `${g.shortName}.`),
-      ratings: topics_and_aspects.flat(),
+      ratings: topicsAndAspects.flat(),
     };
   });
 
