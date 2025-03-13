@@ -21,31 +21,37 @@ export function makeAuditRepository(manager: EntityManager): IAuditRepo {
     );
   }
   async function save(audit: Audit): Promise<Audit> {
+    if (audit.balanceSheetToCopy) {
+      const orginalCopy = await balanceSheetRepo.save(audit.balanceSheetToCopy);
+      const auditCopy = await balanceSheetRepo.save(audit.balanceSheetToCopy);
+
+      return convertToAudit(
+        await repo.save(
+          await convertToAuditEntity(
+            audit.assignAuditCopies(orginalCopy, auditCopy)
+          )
+        )
+      );
+    }
     return convertToAudit(await repo.save(await convertToAuditEntity(audit)));
   }
 
   async function convertToAudit(auditEntity: AuditEntity): Promise<Audit> {
-    const balanceSheetCopy = await balanceSheetRepo.findByIdOrFail(
-      auditEntity.balanceSheetCopyId
-    );
     return makeAudit({
       id: auditEntity.id,
       submittedBalanceSheetId: auditEntity.submittedBalanceSheetId,
-      balanceSheetCopy,
+      originalCopyId: auditEntity.originalCopyId,
+      auditCopyId: auditEntity.auditCopyId,
+      balanceSheetToCopy: undefined,
     });
   }
 
   async function convertToAuditEntity(audit: Audit): Promise<AuditEntity> {
-    const foundBalanceSheet = await balanceSheetRepo.findByIdOrFail(
-      audit.submittedBalanceSheetId!
-    );
-    const copiedBalanceSheet = await balanceSheetRepo.save(
-      audit.balanceSheetCopy!
-    );
     return new AuditEntity(
       audit.id,
-      foundBalanceSheet.id!,
-      copiedBalanceSheet.id!
+      audit.submittedBalanceSheetId!,
+      audit.auditCopyId!,
+      audit.originalCopyId!
     );
   }
 

@@ -4,7 +4,9 @@ import deepFreeze from 'deep-freeze';
 type AuditProps = {
   id?: number;
   submittedBalanceSheetId?: number;
-  balanceSheetCopy?: BalanceSheet;
+  originalCopyId?: number;
+  auditCopyId?: number;
+  balanceSheetToCopy?: BalanceSheet;
 };
 
 export type Audit = AuditProps & {
@@ -12,10 +14,15 @@ export type Audit = AuditProps & {
     balanceSheet: BalanceSheet,
     ecgAuditAdminId: number
   ) => Audit;
+  assignAuditCopies: (
+    originalCopy: BalanceSheet,
+    auditCopy: BalanceSheet
+  ) => Audit;
 };
 
 export function makeAudit(opts?: AuditProps): Audit {
   const data = opts ?? {};
+
   function submitBalanceSheet(
     balanceSheet: BalanceSheet,
     ecgAuditAdminId: number
@@ -28,9 +35,21 @@ export function makeAudit(opts?: AuditProps): Audit {
     return makeAudit({
       ...data,
       submittedBalanceSheetId: balanceSheet.id,
-      balanceSheetCopy: copy,
+      balanceSheetToCopy: copy,
     });
   }
 
-  return deepFreeze({ submitBalanceSheet, ...data });
+  function assignAuditCopies(
+    originalCopy: BalanceSheet,
+    auditCopy: BalanceSheet
+  ): Audit {
+    return makeAudit({
+      ...data,
+      balanceSheetToCopy: undefined,
+      auditCopyId: auditCopy.id,
+      originalCopyId: originalCopy.id,
+    });
+  }
+
+  return deepFreeze({ submitBalanceSheet, ...data, assignAuditCopies });
 }

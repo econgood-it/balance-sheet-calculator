@@ -48,14 +48,14 @@ describe('AuditRepo', () => {
     const { id } = await auditRepository.save(savedAudit);
     const result = await auditRepository.findByIdOrFail(id!);
     expect(result.submittedBalanceSheetId).toEqual(balanceSheet.id);
-    expect(result.balanceSheetCopy).toEqual({
-      ...balanceSheet,
-      id: expect.any(Number),
-      organizationId: auditOrganization.id,
-    });
-    const foundCopy = await balanceSheetRepository.findByIdOrFail(
-      result.balanceSheetCopy!.id!
+    expect(result.balanceSheetToCopy).toBeUndefined();
+    const foundOriginalCopy = await balanceSheetRepository.findByIdOrFail(
+      result.originalCopyId!
     );
-    expect(foundCopy.id).toEqual(result.balanceSheetCopy!.id!);
+    expect(foundOriginalCopy.id).toEqual(result.originalCopyId!);
+    const foundAuditCopy = await balanceSheetRepository.findByIdOrFail(
+      result.auditCopyId!
+    );
+    expect(foundAuditCopy.id).toEqual(result.auditCopyId!);
   });
 });

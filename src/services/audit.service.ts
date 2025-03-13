@@ -3,7 +3,10 @@ import { DataSource } from 'typeorm';
 import { handle } from '../exceptions/error.handler';
 import { IRepoProvider } from '../repositories/repo.provider';
 import deepFreeze from 'deep-freeze';
-import { AuditSubmitRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/audit.dto';
+import {
+  AuditSubmitRequestBodySchema,
+  AuditSubmitResponseBodySchema,
+} from '@ecogood/e-calculator-schemas/dist/audit.dto';
 import { makeAudit } from '../models/audit';
 import { CertificationAuthorityNames } from '../entities/certification.authority.entity';
 import { checkIfCurrentUserHasEditorPermissions } from '../security/authorization';
@@ -52,7 +55,7 @@ export function makeAuditService(
             certificationAuthority.organizationId
           )
         );
-        res.json({ id: audit.id });
+        res.json(AuditSubmitResponseBodySchema.parse({ id: audit.id }));
       })
       .catch((error) => {
         handle(error, next);

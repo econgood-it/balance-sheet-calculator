@@ -70,10 +70,14 @@ describe('Audit Controller', () => {
     expect(response.body.id).toBeDefined();
     const result = await auditRepository.findByIdOrFail(response.body.id!);
     expect(result.submittedBalanceSheetId).toEqual(balanceSheetEntity.id);
-    const foundCopy = await balanceSheetRepository.findByIdOrFail(
-      result.balanceSheetCopy!.id!
+    const foundOriginalCopy = await balanceSheetRepository.findByIdOrFail(
+      result.originalCopyId!
     );
-    expect(foundCopy.id).toEqual(result.balanceSheetCopy!.id!);
+    expect(foundOriginalCopy.id).toEqual(result.originalCopyId!);
+    const foundAuditCopy = await balanceSheetRepository.findByIdOrFail(
+      result.auditCopyId!
+    );
+    expect(foundAuditCopy.id).toEqual(result.auditCopyId!);
   });
 
   it('should fail to submit balance sheet to audit if user has not the right permissions', async () => {

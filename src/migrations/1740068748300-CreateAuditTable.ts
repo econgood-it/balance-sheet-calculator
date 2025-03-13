@@ -7,7 +7,8 @@ export class CreateAuditTable1740068748300 implements MigrationInterface {
                    (
                        "id"         SERIAL    NOT NULL,
                        "submittedBalanceSheetId"         SERIAL    NOT NULL,
-                       "balanceSheetCopyId"  SERIAL    NOT NULL,
+                       "originalCopyId"  SERIAL    NOT NULL,
+                       "auditCopyId"  SERIAL    NOT NULL,
                        CONSTRAINT "PK_audit_entity" PRIMARY KEY ("id")
                    )`,
     ];

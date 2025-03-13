@@ -20,10 +20,44 @@ describe('Audit', () => {
     const audit = makeAudit().submitBalanceSheet(balanceSheet, ecgAuditAdminId);
     expect(audit.id).toBeUndefined();
     expect(audit.submittedBalanceSheetId).toEqual(balanceSheet.id);
-    expect(audit.balanceSheetCopy).toEqual({
+    expect(audit.balanceSheetToCopy).toEqual({
       ...balanceSheet,
       id: undefined,
       organizationId: ecgAuditAdminId,
     });
+  });
+
+  it('should assign copies', () => {
+    const balanceSheet = makeBalanceSheet({
+      id: 9,
+      version: BalanceSheetVersion.v5_0_8,
+      type: BalanceSheetType.Full,
+      companyFacts: makeCompanyFacts(),
+      ratings: [],
+      stakeholderWeights: [],
+    });
+    const originalCopy = makeBalanceSheet({
+      id: 10,
+      version: BalanceSheetVersion.v5_0_8,
+      type: BalanceSheetType.Full,
+      companyFacts: makeCompanyFacts(),
+      ratings: [],
+      stakeholderWeights: [],
+    });
+    const auditCopy = makeBalanceSheet({
+      id: 11,
+      version: BalanceSheetVersion.v5_0_8,
+      type: BalanceSheetType.Full,
+      companyFacts: makeCompanyFacts(),
+      ratings: [],
+      stakeholderWeights: [],
+    });
+    const ecgAuditAdminId = 9;
+    const audit = makeAudit()
+      .submitBalanceSheet(balanceSheet, ecgAuditAdminId)
+      .assignAuditCopies(originalCopy, auditCopy);
+    expect(audit.balanceSheetToCopy).toBeUndefined();
+    expect(audit.originalCopyId).toEqual(originalCopy.id);
+    expect(audit.auditCopyId).toEqual(auditCopy.id);
   });
 });

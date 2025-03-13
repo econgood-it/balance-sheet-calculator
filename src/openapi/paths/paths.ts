@@ -12,8 +12,10 @@ import { registerWorkbookGet } from './workbook.get';
 import { registerUserGet } from './user.get';
 import { registerUserPatch } from './user.patch';
 import { registerBalanceSheetPost } from './balancesheet.post';
+import { registerAuditPost } from './audit.post';
 
 export const Tags = {
+  audit: 'audit',
   balanceSheets: 'balancesheets',
   organization: 'organization',
   user: 'user',
@@ -52,4 +54,5 @@ export function registerPaths(
   registerUserPatch(registry, params);
   registerWorkbookGet(registry, params);
   registerOrganizationGet(registry, params);
+  registerAuditPost(registry, params);
 }

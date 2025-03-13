@@ -9,15 +9,20 @@ export class AuditEntity {
   public submittedBalanceSheetId: number;
 
   @Column()
-  public balanceSheetCopyId: number;
+  public originalCopyId: number;
+
+  @Column()
+  public auditCopyId: number;
 
   constructor(
     id: number | undefined,
     submittedBalanceSheetId: number,
-    balanceSheetCopyId: number
+    originalCopyId: number,
+    auditCopyId: number
   ) {
     this.id = id;
     this.submittedBalanceSheetId = submittedBalanceSheetId;
-    this.balanceSheetCopyId = balanceSheetCopyId;
+    this.originalCopyId = originalCopyId;
+    this.auditCopyId = auditCopyId;
   }
 }
