@@ -66,7 +66,7 @@ export type WorkbookApi = WorkbookOptsApi & {
   toJson(): z.infer<typeof WorkbookResponseBodySchema>;
 };
 
-export function makeWorkbook({
+export function makeWorkbookOld({
   version,
   type,
   groups,
@@ -99,7 +99,7 @@ export function makeWorkbook({
   });
 }
 
-export function makeWorkbookApi({
+export function makeWorkbook({
   version,
   type,
   groups,
@@ -263,7 +263,7 @@ const EvaluationLevelSchema = z.object({
   pointsTo: z.string().transform((s) => parseInt(s)),
 });
 
-makeWorkbook.fromFile = function fromJson(
+makeWorkbookOld.fromFile = function fromJson(
   version: BalanceSheetVersion,
   type: BalanceSheetType,
   lng: keyof Translations
@@ -297,7 +297,7 @@ makeWorkbook.fromFile = function fromJson(
   return makeWorkbook({ version, type, groups, evaluationLevels, ratings });
 };
 
-makeWorkbookApi.fromApiFile = function fromJson(
+makeWorkbook.fromFile = function fromJson(
   version: BalanceSheetVersion,
   type: BalanceSheetType,
   lng: keyof Translations
@@ -329,7 +329,7 @@ makeWorkbookApi.fromApiFile = function fromJson(
     ratings.push(...group.ratings);
   }
 
-  return makeWorkbookApi({ version, type, groups, evaluationLevels, ratings });
+  return makeWorkbook({ version, type, groups, evaluationLevels, ratings });
 };
 
 makeWorkbook.fromRequest = function (req: Request) {
