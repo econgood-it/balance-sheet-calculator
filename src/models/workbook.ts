@@ -159,7 +159,7 @@ const AspectSchemaApi = z
       introduction: z.object({
         shortName: z.string(),
         content: z.string(),
-      })
+      }),
     }),
     description: z.any(),
   })
@@ -169,7 +169,7 @@ const AspectSchemaApi = z
       ...aspect,
       name: removeShortNameInName(a.name, a.shortName),
       description: a.introductionTheme.introduction.content,
-    }
+    };
   });
 
 const TopicSchema = z
@@ -191,26 +191,30 @@ const TopicSchema = z
   });
 
 const TopicSchemaApi = z
-.object({
-  type: z.string(),
-  shortName: z.string(),
-  name: z.string(),
-  aspects: AspectSchemaApi.array(),
-  introductionTheme: z.object({
-    introduction: z.object({
-      shortName: z.string(),
-      content: z.string(),
-    })
-  }),
-})
-.transform((ts) => {
-  const description = ts.introductionTheme.introduction.content;
-  const topic = { ..._.omit(ts, 'aspects'), isPositive: true };
-  return [
-    { ...topic, name: removeShortNameInName(topic.name, topic.shortName), description: description },
-    ...ts.aspects,
-  ];
-});
+  .object({
+    type: z.string(),
+    shortName: z.string(),
+    name: z.string(),
+    aspects: AspectSchemaApi.array(),
+    introductionTheme: z.object({
+      introduction: z.object({
+        shortName: z.string(),
+        content: z.string(),
+      }),
+    }),
+  })
+  .transform((ts) => {
+    const description = ts.introductionTheme.introduction.content;
+    const topic = { ..._.omit(ts, 'aspects'), isPositive: true };
+    return [
+      {
+        ...topic,
+        name: removeShortNameInName(topic.name, topic.shortName),
+        description,
+      },
+      ...ts.aspects,
+    ];
+  });
 
 const ValueSchemaApi = z
   .object({
@@ -248,7 +252,7 @@ export const GroupSchemaApi = z
     values: ValueSchemaApi.array(),
   })
   .transform((g) => {
-    const topicsAndAspects = g.values.map((value) => ([ ...value.topics[0] ]));
+    const topicsAndAspects = g.values.map((value) => [...value.topics[0]]);
     return {
       shortName: g.shortName,
       name: removeShortNameInName(g.name, `${g.shortName}.`),
@@ -276,8 +280,8 @@ makeWorkbook.fromFile = function fromJson(
     ? 'full'
     : type.toString().toLowerCase();
 
-  if( lt( version, BalanceSheetVersion.v5_1_0 ) ) {
-    return create_legacy_workbook(version, type, lng, typePath, versionPath);
+  if (lt(version, BalanceSheetVersion.v5_1_0)) {
+    return createLegacyWorkbook(version, type, lng, typePath, versionPath);
   }
 
   const workbookPath = path.join(
@@ -294,7 +298,7 @@ makeWorkbook.fromFile = function fromJson(
   const groups: WorkbookGroup[] = [];
   const ratings: WorbookRatingApi[] = [];
   for (const group of parsedGroups) {
-/*     console.log(group); */
+    /*     console.log(group); */
     groups.push(_.omit(group, 'ratings'));
     ratings.push(...group.ratings);
   }
@@ -302,13 +306,13 @@ makeWorkbook.fromFile = function fromJson(
   return makeWorkbook({ version, type, groups, evaluationLevels, ratings });
 };
 
-function create_legacy_workbook( 
+function createLegacyWorkbook(
   version: BalanceSheetVersion,
   type: BalanceSheetType,
   lng: keyof Translations,
   typePath: string,
   versionPath: string
- ) {
+) {
   const workbookPath = path.join(
     path.resolve(__dirname, '../files/workbook'),
     `${lng}_${typePath}_${versionPath}.json`
@@ -322,7 +326,7 @@ function create_legacy_workbook(
   const groups: WorkbookGroup[] = [];
   const ratings: WorbookRating[] = [];
   for (const group of parsedGroups) {
-/*     console.log(group); */
+    /*     console.log(group); */
     groups.push(_.omit(group, 'ratings'));
     ratings.push(...group.ratings);
   }

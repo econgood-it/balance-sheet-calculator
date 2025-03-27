@@ -360,7 +360,7 @@ describe('Compact Workbook', () => {
       'en'
     );
 
- /*    console.log(workbook); */
+    /*    console.log(workbook); */
 
     expect(workbook.version).toEqual(BalanceSheetVersion.v5_1_0);
     expect(workbook.type).toEqual(BalanceSheetType.Compact);
