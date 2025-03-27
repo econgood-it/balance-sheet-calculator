@@ -285,7 +285,7 @@ describe('Compact Workbook', () => {
       shortName: 'E4.3',
       name: 'Negative aspect: lack of transparency and deliberate misinformation',
       description:
-        'Organizations and companies have a responsibility to provide information to society transparently and comprehensively. If an organization deliberately publishes false information about itself, its plans, its understanding of facts, or its mission, it harms society and impedes informed choices and discourse. Harm can be caused by: * deliberate misleading through mis-information, non-disclosure of relevant facts, illegitimate interpretation of facts * biased reporting of risks to the detriment of the public, future generations, and nature * neglect of scientific findings or empirical facts * promotion of stereotypes, resentments, group-based misanthropy, or prejudices   * gather and disseminate information with the aim of manipulation or tailored opinion forming * prevent dissemination or discredit information for strategic reasons',
+        'Organizations and companies have a responsibility to provide information to society transparently and comprehensively. If an organization deliberately publishes false information about itself, its plans, its understanding of facts, or its mission, it harms society and impedes informed choices and discourse. Harm can be caused by: * deliberate misleading through mis-information, non-disclosure of relevant facts, illegitimate interpretation of facts * biased reporting of risks to the detriment of the public, future generations, and nature * neglect of scientific findings or empirical facts * promotion of stereotypes, resentments, group-based misanthropy, or prejudices * gather and disseminate information with the aim of manipulation or tailored opinion forming * prevent dissemination or discredit information for strategic reasons',
       isPositive: false,
       type: 'aspect',
     });
@@ -294,15 +294,15 @@ describe('Compact Workbook', () => {
     expect(workbook.evaluationLevels).toEqual([
       {
         level: 0,
-        name: 'Exemplary',
-        pointsFrom: 7,
-        pointsTo: 10,
+        name: 'Baseline',
+        pointsFrom: 0,
+        pointsTo: 0,
       },
       {
         level: 1,
-        name: 'Experienced',
-        pointsFrom: 4,
-        pointsTo: 6,
+        name: 'First Steps',
+        pointsFrom: 1,
+        pointsTo: 1,
       },
       {
         level: 2,
@@ -312,15 +312,15 @@ describe('Compact Workbook', () => {
       },
       {
         level: 3,
-        name: 'First Steps',
-        pointsFrom: 1,
-        pointsTo: 1,
+        name: 'Experienced',
+        pointsFrom: 4,
+        pointsTo: 6,
       },
       {
         level: 4,
-        name: 'Baseline',
-        pointsFrom: 0,
-        pointsTo: 0,
+        name: 'Exemplary',
+        pointsFrom: 7,
+        pointsTo: 10,
       },
     ]);
   });
