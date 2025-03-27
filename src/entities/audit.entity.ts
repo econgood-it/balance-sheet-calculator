@@ -9,6 +9,9 @@ export class AuditEntity {
   public submittedBalanceSheetId: number;
 
   @Column()
+  public submittedAt: Date;
+
+  @Column()
   public originalCopyId: number;
 
   @Column()
@@ -18,11 +21,13 @@ export class AuditEntity {
     id: number | undefined,
     submittedBalanceSheetId: number,
     originalCopyId: number,
-    auditCopyId: number
+    auditCopyId: number,
+    submittedAt: Date
   ) {
     this.id = id;
     this.submittedBalanceSheetId = submittedBalanceSheetId;
     this.originalCopyId = originalCopyId;
     this.auditCopyId = auditCopyId;
+    this.submittedAt = submittedAt;
   }
 }

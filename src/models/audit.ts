@@ -7,6 +7,7 @@ type AuditProps = {
   originalCopyId?: number;
   auditCopyId?: number;
   balanceSheetToCopy?: BalanceSheet;
+  submittedAt?: Date;
 };
 
 export type Audit = AuditProps & {
@@ -36,6 +37,7 @@ export function makeAudit(opts?: AuditProps): Audit {
       ...data,
       submittedBalanceSheetId: balanceSheet.id,
       balanceSheetToCopy: copy,
+      submittedAt: new Date(),
     });
   }
 

@@ -55,7 +55,12 @@ export function makeAuditService(
             certificationAuthority.organizationId
           )
         );
-        res.json(AuditSubmitResponseBodySchema.parse({ id: audit.id }));
+        res.json(
+          AuditSubmitResponseBodySchema.parse({
+            id: audit.id,
+            submittedAt: audit.submittedAt?.toISOString(),
+          })
+        );
       })
       .catch((error) => {
         handle(error, next);

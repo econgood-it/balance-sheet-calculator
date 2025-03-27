@@ -52,6 +52,9 @@ describe('Audit Controller', () => {
   });
 
   it('should create audit for balance sheet', async () => {
+    const isoString = '2025-03-27T00:00:00.000Z';
+    const fixedDate = new Date(isoString);
+    jest.spyOn(global, 'Date').mockImplementation(() => fixedDate);
     const organization = await organizationRepo.save(
       makeOrganization().invite(auth.user.email).join(auth.user)
     );
@@ -68,6 +71,7 @@ describe('Audit Controller', () => {
       .send(auditJson);
     expect(response.status).toBe(200);
     expect(response.body.id).toBeDefined();
+    expect(response.body.submittedAt).toEqual(isoString);
     const result = await auditRepository.findByIdOrFail(response.body.id!);
     expect(result.submittedBalanceSheetId).toEqual(balanceSheetEntity.id);
     const foundOriginalCopy = await balanceSheetRepository.findByIdOrFail(

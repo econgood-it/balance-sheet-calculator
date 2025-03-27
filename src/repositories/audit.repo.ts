@@ -43,6 +43,7 @@ export function makeAuditRepository(manager: EntityManager): IAuditRepo {
       originalCopyId: auditEntity.originalCopyId,
       auditCopyId: auditEntity.auditCopyId,
       balanceSheetToCopy: undefined,
+      submittedAt: auditEntity.submittedAt,
     });
   }
 
@@ -51,7 +52,8 @@ export function makeAuditRepository(manager: EntityManager): IAuditRepo {
       audit.id,
       audit.submittedBalanceSheetId!,
       audit.auditCopyId!,
-      audit.originalCopyId!
+      audit.originalCopyId!,
+      audit.submittedAt!
     );
   }
 

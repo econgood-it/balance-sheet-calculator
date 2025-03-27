@@ -47,8 +47,11 @@ describe('AuditRepo', () => {
     const savedAudit = await auditRepository.save(audit);
     const { id } = await auditRepository.save(savedAudit);
     const result = await auditRepository.findByIdOrFail(id!);
+    expect(result.submittedAt).toEqual(audit.submittedAt);
+    expect(result.submittedAt).toBeInstanceOf(Date);
     expect(result.submittedBalanceSheetId).toEqual(balanceSheet.id);
     expect(result.balanceSheetToCopy).toBeUndefined();
+
     const foundOriginalCopy = await balanceSheetRepository.findByIdOrFail(
       result.originalCopyId!
     );
