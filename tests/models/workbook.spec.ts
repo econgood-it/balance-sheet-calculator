@@ -187,24 +187,24 @@ describe('Full Workbook', () => {
       evaluationLevels: [
         {
           level: 0,
-          name: 'Vorbildlich',
-          pointsFrom: 7,
-          pointsTo: 10,
+          name: 'Basislinie',
+          pointsFrom: 0,
+          pointsTo: 0,
         },
         {
           level: 1,
-          name: 'Erfahren',
-          pointsFrom: 4,
-          pointsTo: 6,
-        },
-        { level: 2, name: 'Fortgeschritten', pointsFrom: 2, pointsTo: 3 },
-        {
-          level: 3,
           name: 'Erste Schritte',
           pointsFrom: 1,
           pointsTo: 1,
         },
-        { level: 4, name: 'Basislinie', pointsFrom: 0, pointsTo: 0 },
+        { level: 2, name: 'Fortgeschritten', pointsFrom: 2, pointsTo: 3 },
+        {
+          level: 3,
+          name: 'Erfahren',
+          pointsFrom: 4,
+          pointsTo: 6,
+        },
+        { level: 4, name: 'Vorbildlich', pointsFrom: 7, pointsTo: 10 },
       ],
     });
   });
