@@ -4,6 +4,7 @@ import { handle } from '../exceptions/error.handler';
 import { IRepoProvider } from '../repositories/repo.provider';
 import deepFreeze from 'deep-freeze';
 import {
+  AuditFullResponseBodySchema,
   AuditSubmitRequestBodySchema,
   AuditSubmitResponseBodySchema,
 } from '@ecogood/e-calculator-schemas/dist/audit.dto';
@@ -17,6 +18,8 @@ export interface IAuditService {
     res: Response,
     next: NextFunction
   ): Promise<void>;
+
+  getAudit(req: Request, res: Response, next: NextFunction): Promise<void>;
 }
 
 export function makeAuditService(
@@ -67,7 +70,28 @@ export function makeAuditService(
       });
   }
 
+  async function getAudit(req: Request, res: Response, next: NextFunction) {
+    dataSource.manager
+      .transaction(async (entityManager) => {
+        const auditRepo = repoProvider.getAuditRepo(entityManager);
+        const audit = await auditRepo.findByIdOrFail(Number(req.params.id));
+        res.json(
+          AuditFullResponseBodySchema.parse({
+            id: audit.id,
+            auditCopyId: audit.auditCopyId,
+            originalCopyId: audit.originalCopyId,
+            submittedBalanceSheetId: audit.submittedBalanceSheetId,
+            submittedAt: audit.submittedAt?.toISOString(),
+          })
+        );
+      })
+      .catch((error) => {
+        handle(error, next);
+      });
+  }
+
   return deepFreeze({
     submitBalanceSheetToAudit,
+    getAudit,
   });
 }

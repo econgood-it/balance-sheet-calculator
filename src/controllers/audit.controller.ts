@@ -34,7 +34,8 @@ import { IAuditService } from '../services/audit.service';
 const resourceUrl = '/v1/audit';
 
 export const AuditPaths = {
-  post: `${resourceUrl}`,
+  post: resourceUrl,
+  get: `${resourceUrl}/:id`,
 };
 
 export function registerAuditRoutes(
@@ -46,4 +47,5 @@ export function registerAuditRoutes(
     allowUserOnly,
     auditService.submitBalanceSheetToAudit
   );
+  app.get(AuditPaths.get, allowUserOnly, auditService.getAudit);
 }

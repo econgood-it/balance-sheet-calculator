@@ -16,6 +16,7 @@ import { makeOrganization } from '../../src/models/organization';
 import { IOrganizationRepo } from '../../src/repositories/organization.repo';
 import { Role } from '../../src/models/user';
 import { v4 as uuid4 } from 'uuid';
+import { makeAudit } from '../../src/models/audit';
 
 describe('Audit Controller', () => {
   let dataSource: DataSource;
@@ -102,5 +103,35 @@ describe('Audit Controller', () => {
       .set(auth.toHeaderPair().key, auth.toHeaderPair().value)
       .send(auditJson);
     expect(response.status).toBe(403);
+  });
+
+  it('should get audit for balance sheet', async () => {
+    const isoString = '2025-03-27T00:00:00.000Z';
+    const fixedDate = new Date(isoString);
+    jest.spyOn(global, 'Date').mockImplementation(() => fixedDate);
+    const organization = await organizationRepo.save(
+      makeOrganization().invite(auth.user.email).join(auth.user)
+    );
+    const balanceSheetEntity = await balanceSheetRepository.save(
+      makeBalanceSheet().assignOrganization(organization)
+    );
+    const auditOrganization = await organizationRepo.save(makeOrganization());
+    const audit = await auditRepository.save(
+      makeAudit().submitBalanceSheet(balanceSheetEntity, auditOrganization.id!)
+    );
+
+    const testApp = supertest(app);
+    const response = await testApp
+      .get(`/v1/audit/${audit.id}`)
+      .set(auth.toHeaderPair().key, auth.toHeaderPair().value);
+    expect(response.status).toBe(200);
+
+    expect(response.body).toEqual({
+      id: audit.id,
+      auditCopyId: audit.auditCopyId,
+      originalCopyId: audit.originalCopyId,
+      submittedBalanceSheetId: audit.submittedBalanceSheetId,
+      submittedAt: audit.submittedAt!.toISOString(),
+    });
   });
 });
