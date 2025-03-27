@@ -8,7 +8,7 @@ import fs from 'fs';
 import _, { parseInt } from 'lodash';
 import deepFreeze from 'deep-freeze';
 import { parseLanguageParameter, Translations } from '../language/translations';
-import { gte } from '@mr42/version-comparator/dist/version.comparator';
+import { gte, lt } from '@mr42/version-comparator/dist/version.comparator';
 import { Request } from 'express';
 import { WorkbookResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/workbook.dto';
 
@@ -263,7 +263,7 @@ const EvaluationLevelSchema = z.object({
   pointsTo: z.string().transform((s) => parseInt(s)),
 });
 
-makeWorkbookOld.fromFile = function fromJson(
+makeWorkbook.fromFile = function fromJson(
   version: BalanceSheetVersion,
   type: BalanceSheetType,
   lng: keyof Translations
@@ -276,39 +276,9 @@ makeWorkbookOld.fromFile = function fromJson(
     ? 'full'
     : type.toString().toLowerCase();
 
-  const workbookPath = path.join(
-    path.resolve(__dirname, '../files/workbook'),
-    `${lng}_${typePath}_${versionPath}.json`
-  );
-  const fileText = fs.readFileSync(workbookPath);
-  const jsonParsed = JSON.parse(fileText.toString());
-  const evaluationLevels = EvaluationLevelSchema.array().parse(
-    jsonParsed[0].evaluationLevels
-  );
-  const parsedGroups = GroupSchema.array().parse(jsonParsed.slice(1));
-  const groups: WorkbookGroup[] = [];
-  const ratings: WorbookRating[] = [];
-  for (const group of parsedGroups) {
-/*     console.log(group); */
-    groups.push(_.omit(group, 'ratings'));
-    ratings.push(...group.ratings);
+  if( lt( version, BalanceSheetVersion.v5_1_0 ) ) {
+    return create_legacy_workbook(version, type, lng, typePath, versionPath);
   }
-
-  return makeWorkbook({ version, type, groups, evaluationLevels, ratings });
-};
-
-makeWorkbook.fromFile = function fromJson(
-  version: BalanceSheetVersion,
-  type: BalanceSheetType,
-  lng: keyof Translations
-): WorkbookApi {
-  const versionPath = gte(version, BalanceSheetVersion.v5_1_0)
-    ? '5.10'
-    : '5.08';
-
-  const typePath = gte(version, BalanceSheetVersion.v5_1_0)
-    ? 'full'
-    : type.toString().toLowerCase();
 
   const workbookPath = path.join(
     path.resolve(__dirname, '../files/workbook'),
@@ -331,6 +301,34 @@ makeWorkbook.fromFile = function fromJson(
 
   return makeWorkbook({ version, type, groups, evaluationLevels, ratings });
 };
+
+function create_legacy_workbook( 
+  version: BalanceSheetVersion,
+  type: BalanceSheetType,
+  lng: keyof Translations,
+  typePath: string,
+  versionPath: string
+ ) {
+  const workbookPath = path.join(
+    path.resolve(__dirname, '../files/workbook'),
+    `${lng}_${typePath}_${versionPath}.json`
+  );
+  const fileText = fs.readFileSync(workbookPath);
+  const jsonParsed = JSON.parse(fileText.toString());
+  const evaluationLevels = EvaluationLevelSchema.array().parse(
+    jsonParsed[0].evaluationLevels
+  );
+  const parsedGroups = GroupSchema.array().parse(jsonParsed.slice(1));
+  const groups: WorkbookGroup[] = [];
+  const ratings: WorbookRating[] = [];
+  for (const group of parsedGroups) {
+/*     console.log(group); */
+    groups.push(_.omit(group, 'ratings'));
+    ratings.push(...group.ratings);
+  }
+
+  return makeWorkbook({ version, type, groups, evaluationLevels, ratings });
+}
 
 makeWorkbook.fromRequest = function (req: Request) {
   const language = parseLanguageParameter(req.query.lng);
