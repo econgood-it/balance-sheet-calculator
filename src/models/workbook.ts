@@ -8,7 +8,7 @@ import fs from 'fs';
 import _, { parseInt } from 'lodash';
 import deepFreeze from 'deep-freeze';
 import { parseLanguageParameter, Translations } from '../language/translations';
-import { gte } from '@mr42/version-comparator/dist/version.comparator';
+import { gte, lt } from '@mr42/version-comparator/dist/version.comparator';
 import { Request } from 'express';
 import { WorkbookResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/workbook.dto';
 
@@ -18,6 +18,14 @@ type WorkbookGroup = {
 };
 
 type WorbookRating = {
+  type: string;
+  shortName: string;
+  name: string;
+  description: string;
+  isPositive: boolean;
+};
+
+type WorbookRatingApi = {
   type: string;
   shortName: string;
   name: string;
@@ -40,12 +48,25 @@ type WorkbookOpts = {
   ratings: readonly WorbookRating[];
 };
 
+type WorkbookOptsApi = {
+  version: BalanceSheetVersion;
+  type: BalanceSheetType;
+  groups: readonly WorkbookGroup[];
+  evaluationLevels: readonly EvaluationLevel[];
+  ratings: readonly WorbookRatingApi[];
+};
+
 export type Workbook = WorkbookOpts & {
   findByShortName(shortName: string): WorbookRating | undefined;
   toJson(): z.infer<typeof WorkbookResponseBodySchema>;
 };
 
-export function makeWorkbook({
+export type WorkbookApi = WorkbookOptsApi & {
+  findByShortName(shortName: string): WorbookRatingApi | undefined;
+  toJson(): z.infer<typeof WorkbookResponseBodySchema>;
+};
+
+export function makeWorkbookOld({
   version,
   type,
   groups,
@@ -53,6 +74,39 @@ export function makeWorkbook({
   ratings,
 }: WorkbookOpts): Workbook {
   function findByShortName(shortName: string): WorbookRating | undefined {
+    return ratings.find((wr) => wr.shortName === shortName);
+  }
+  function toJson() {
+    return WorkbookResponseBodySchema.parse({
+      version,
+      type,
+      groups: groups.map((g) => ({
+        shortName: g.shortName,
+        name: g.name,
+      })),
+      evaluationLevels,
+    });
+  }
+
+  return deepFreeze({
+    version,
+    type,
+    groups,
+    evaluationLevels,
+    ratings,
+    findByShortName,
+    toJson,
+  });
+}
+
+export function makeWorkbook({
+  version,
+  type,
+  groups,
+  evaluationLevels,
+  ratings,
+}: WorkbookOptsApi): WorkbookApi {
+  function findByShortName(shortName: string): WorbookRatingApi | undefined {
     return ratings.find((wr) => wr.shortName === shortName);
   }
   function toJson() {
@@ -94,6 +148,30 @@ const AspectSchema = z
     ...a,
     name: removeShortNameInName(a.name, a.shortName),
   }));
+
+const AspectSchemaApi = z
+  .object({
+    type: z.string(),
+    isPositive: z.boolean(),
+    shortName: z.string(),
+    name: z.string(),
+    introductionTheme: z.object({
+      introduction: z.object({
+        shortName: z.string(),
+        content: z.string(),
+      })
+    }),
+    description: z.any(),
+  })
+  .transform((a) => {
+    const aspect = { ..._.omit(a, 'introductionTheme') };
+    return {
+      ...aspect,
+      name: removeShortNameInName(a.name, a.shortName),
+      description: a.introductionTheme.introduction.content,
+    }
+  });
+
 const TopicSchema = z
   .object({
     topics: z.object({
@@ -111,6 +189,44 @@ const TopicSchema = z
       ...ts.topics.aspects,
     ];
   });
+
+const TopicSchemaApi = z
+.object({
+  type: z.string(),
+  shortName: z.string(),
+  name: z.string(),
+  aspects: AspectSchemaApi.array(),
+  introductionTheme: z.object({
+    introduction: z.object({
+      shortName: z.string(),
+      content: z.string(),
+    })
+  }),
+})
+.transform((ts) => {
+  const description = ts.introductionTheme.introduction.content;
+  const topic = { ..._.omit(ts, 'aspects'), isPositive: true };
+  return [
+    { ...topic, name: removeShortNameInName(topic.name, topic.shortName), description: description },
+    ...ts.aspects,
+  ];
+});
+
+const ValueSchemaApi = z
+  .object({
+    label: z.string(),
+    shortName: z.string(),
+    name: z.string(),
+    topics: TopicSchemaApi.array(),
+  })
+  .transform((v) => ({
+    ...v,
+    name: removeShortNameInName(v.name, v.shortName),
+    type: 'value',
+    isPositive: true,
+    description: '',
+  }));
+
 export const GroupSchema = z
   .object({
     group: z.object({
@@ -124,6 +240,21 @@ export const GroupSchema = z
     name: removeShortNameInName(g.group.name, `${g.group.shortName}.`),
     ratings: g.group.values.flat(),
   }));
+
+export const GroupSchemaApi = z
+  .object({
+    shortName: z.string(),
+    name: z.string(),
+    values: ValueSchemaApi.array(),
+  })
+  .transform((g) => {
+    const topicsAndAspects = g.values.map((value) => ([ ...value.topics[0] ]));
+    return {
+      shortName: g.shortName,
+      name: removeShortNameInName(g.name, `${g.shortName}.`),
+      ratings: topicsAndAspects.flat(),
+    };
+  });
 
 const EvaluationLevelSchema = z.object({
   level: z.string().transform((s) => parseInt(s)),
@@ -145,6 +276,39 @@ makeWorkbook.fromFile = function fromJson(
     ? 'full'
     : type.toString().toLowerCase();
 
+  if( lt( version, BalanceSheetVersion.v5_1_0 ) ) {
+    return create_legacy_workbook(version, type, lng, typePath, versionPath);
+  }
+
+  const workbookPath = path.join(
+    path.resolve(__dirname, '../files/workbook'),
+    `${lng}_${typePath}_${versionPath}_api.json`
+  );
+  const fileText = fs.readFileSync(workbookPath);
+  const jsonParsed = JSON.parse(fileText.toString());
+  const evaluationLevels = EvaluationLevelSchema.array().parse(
+    jsonParsed.evaluationLevels
+  );
+  const parsedGroups = GroupSchemaApi.array().parse(jsonParsed.groups);
+
+  const groups: WorkbookGroup[] = [];
+  const ratings: WorbookRatingApi[] = [];
+  for (const group of parsedGroups) {
+/*     console.log(group); */
+    groups.push(_.omit(group, 'ratings'));
+    ratings.push(...group.ratings);
+  }
+
+  return makeWorkbook({ version, type, groups, evaluationLevels, ratings });
+};
+
+function create_legacy_workbook( 
+  version: BalanceSheetVersion,
+  type: BalanceSheetType,
+  lng: keyof Translations,
+  typePath: string,
+  versionPath: string
+ ) {
   const workbookPath = path.join(
     path.resolve(__dirname, '../files/workbook'),
     `${lng}_${typePath}_${versionPath}.json`
@@ -158,12 +322,13 @@ makeWorkbook.fromFile = function fromJson(
   const groups: WorkbookGroup[] = [];
   const ratings: WorbookRating[] = [];
   for (const group of parsedGroups) {
+/*     console.log(group); */
     groups.push(_.omit(group, 'ratings'));
     ratings.push(...group.ratings);
   }
 
   return makeWorkbook({ version, type, groups, evaluationLevels, ratings });
-};
+}
 
 makeWorkbook.fromRequest = function (req: Request) {
   const language = parseLanguageParameter(req.query.lng);
