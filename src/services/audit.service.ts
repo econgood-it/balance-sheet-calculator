@@ -13,6 +13,7 @@ import {
   checkIfCurrentUserHasEditorPermissions,
   checkIfCurrentUserIsMemberOfCertificationAuthority,
 } from '../security/authorization';
+import { ConflictError } from '../exceptions/conflict.error';
 
 export interface IAuditService {
   submitBalanceSheetToAudit(
@@ -36,11 +37,21 @@ export function makeAuditService(
     dataSource.manager
       .transaction(async (entityManager) => {
         const auditRequest = AuditSubmitRequestBodySchema.parse(req.body);
+        const auditRepo = repoProvider.getAuditRepo(entityManager);
+        if (
+          await auditRepo.findBySubmittedBalanceSheetId(
+            auditRequest.balanceSheetToBeSubmitted
+          )
+        ) {
+          throw new ConflictError(
+            `The balance sheet with id ${auditRequest.balanceSheetToBeSubmitted} has been already submitted to an audit`
+          );
+        }
         const balanceSheetRepository =
           repoProvider.getBalanceSheetRepo(entityManager);
         const certificationAuthorityRepo =
           repoProvider.getCertificationAuthorityRepo(entityManager);
-        const auditRepo = repoProvider.getAuditRepo(entityManager);
+
         const balanceSheetToSubmit =
           await balanceSheetRepository.findByIdOrFail(
             auditRequest.balanceSheetToBeSubmitted

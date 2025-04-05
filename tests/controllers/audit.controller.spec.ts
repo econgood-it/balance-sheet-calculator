@@ -72,7 +72,7 @@ describe('Audit Controller', () => {
     );
   }
 
-  it('should create audit for balance sheet', async () => {
+  it('should submit balance sheet for audit', async () => {
     const balanceSheet = await createBalanceSheet();
     const auditJson = {
       balanceSheetToBeSubmitted: balanceSheet.id,
@@ -102,6 +102,20 @@ describe('Audit Controller', () => {
     expect(foundAuditCopy.organizationId).toEqual(
       certificationAuthority.organizationId
     );
+  });
+
+  it('should submit balance sheet for audit fails if audit exists already', async () => {
+    const audit = await createAudit();
+    const auditJson = {
+      balanceSheetToBeSubmitted: audit.submittedBalanceSheetId,
+      certificationAuthority: CertificationAuthorityNames.AUDIT,
+    };
+    const testApp = supertest(app);
+    const response = await testApp
+      .post(AuditPaths.post)
+      .set(auth.toHeaderPair().key, auth.toHeaderPair().value)
+      .send(auditJson);
+    expect(response.status).toBe(409);
   });
 
   it('should create peer group audit for balance sheet', async () => {
@@ -200,10 +214,6 @@ describe('Audit Controller', () => {
 });
 
 /*
-Missing authorization for audit get endpoint.
-
-Authorization could be if user has permission to access at least one of the connected balance sheets
-
 GET /v1/audit?balanceSheet=id
 
 

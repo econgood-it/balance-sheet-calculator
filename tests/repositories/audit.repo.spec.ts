@@ -61,4 +61,19 @@ describe('AuditRepo', () => {
     );
     expect(foundAuditCopy.id).toEqual(result.auditCopyId!);
   });
+
+  it('find audit by submitted balance id', async () => {
+    const balanceSheet = await balanceSheetRepository.save(makeBalanceSheet());
+    const auditOrganization = await orgaRepository.save(makeOrganization());
+
+    const audit = makeAudit().submitBalanceSheet(
+      balanceSheet,
+      auditOrganization.id!
+    );
+    const savedAudit = await auditRepository.save(audit);
+    const result = await auditRepository.findBySubmittedBalanceSheetId(
+      balanceSheet.id!
+    );
+    expect(result).toEqual(savedAudit);
+  });
 });
