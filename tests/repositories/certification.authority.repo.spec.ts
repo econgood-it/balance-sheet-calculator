@@ -1,11 +1,11 @@
 import { DataSource } from 'typeorm';
 import { DatabaseSourceCreator } from '../../src/databaseSourceCreator';
 import { ConfigurationReader } from '../../src/reader/configuration.reader';
-import { CertificationAuthorityNames } from '../../src/entities/certification.authority.entity';
 import {
   ICertificationAuthorityRepo,
   makeCertificationAuthorityRepo,
 } from '../../src/repositories/certification.authority.repo';
+import { CertificationAuthorityNames } from '@ecogood/e-calculator-schemas/dist/audit.dto';
 
 describe('CertificationAuthorityRepo', () => {
   let certificationAuthorityRepo: ICertificationAuthorityRepo;

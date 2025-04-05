@@ -1,13 +1,11 @@
 import { EntityManager } from 'typeorm';
 import deepFreeze from 'deep-freeze';
-import {
-  CertificationAuthorityEntity,
-  CertificationAuthorityNames,
-} from '../entities/certification.authority.entity';
+import { CertificationAuthorityEntity } from '../entities/certification.authority.entity';
 import {
   CertificationAuthority,
   makeCertificationAuthority,
 } from '../models/certification.authoriy';
+import { CertificationAuthorityNames } from '@ecogood/e-calculator-schemas/dist/audit.dto';
 
 export interface ICertificationAuthorityRepo {
   findByName(

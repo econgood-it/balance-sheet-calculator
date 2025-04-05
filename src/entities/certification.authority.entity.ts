@@ -8,11 +8,6 @@ import {
 } from 'typeorm';
 import { OrganizationEntity } from './organization.entity';
 
-export enum CertificationAuthorityNames {
-  AUDIT = 'AUDIT',
-  PEER_GROUP = 'PEER_GROUP',
-}
-
 @Entity()
 export class CertificationAuthorityEntity {
   @PrimaryColumn()

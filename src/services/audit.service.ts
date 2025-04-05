@@ -9,10 +9,9 @@ import {
   AuditSubmitResponseBodySchema,
 } from '@ecogood/e-calculator-schemas/dist/audit.dto';
 import { makeAudit } from '../models/audit';
-import { CertificationAuthorityNames } from '../entities/certification.authority.entity';
 import {
   checkIfCurrentUserHasEditorPermissions,
-  checkIfCurrentUserIsMember,
+  checkIfCurrentUserIsMemberOfCertificationAuthority,
 } from '../security/authorization';
 
 export interface IAuditService {
@@ -53,7 +52,7 @@ export function makeAuditService(
         );
         const certificationAuthority =
           await certificationAuthorityRepo.findByName(
-            CertificationAuthorityNames.AUDIT
+            auditRequest.certificationAuthority
           );
         const audit = await auditRepo.save(
           makeAudit().submitBalanceSheet(
@@ -81,14 +80,10 @@ export function makeAuditService(
         const certificationAuthorityRepo =
           repoProvider.getCertificationAuthorityRepo(entityManager);
         const orgaRepo = repoProvider.getOrganizationRepo(entityManager);
-        const certificationAuthority =
-          await certificationAuthorityRepo.findByName(
-            CertificationAuthorityNames.AUDIT
-          );
-
-        checkIfCurrentUserIsMember(
+        await checkIfCurrentUserIsMemberOfCertificationAuthority(
           req,
-          await orgaRepo.findByIdOrFail(certificationAuthority.organizationId)
+          certificationAuthorityRepo,
+          orgaRepo
         );
 
         res.json(

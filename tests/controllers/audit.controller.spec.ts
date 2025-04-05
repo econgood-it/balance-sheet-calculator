@@ -14,11 +14,11 @@ import { InMemoryAuthentication } from './in.memory.authentication';
 import App from '../../src/app';
 import { makeOrganization } from '../../src/models/organization';
 import { IOrganizationRepo } from '../../src/repositories/organization.repo';
-import { Role } from '../../src/models/user';
+import { Role, User } from '../../src/models/user';
 import { v4 as uuid4 } from 'uuid';
 import { makeAudit } from '../../src/models/audit';
 import { ICertificationAuthorityRepo } from '../../src/repositories/certification.authority.repo';
-import { CertificationAuthorityNames } from '../../src/entities/certification.authority.entity';
+import { CertificationAuthorityNames } from '@ecogood/e-calculator-schemas/dist/audit.dto';
 
 describe('Audit Controller', () => {
   let dataSource: DataSource;
@@ -59,18 +59,24 @@ describe('Audit Controller', () => {
     await dataSource.destroy();
   });
 
-  it('should create audit for balance sheet', async () => {
-    const isoString = '2025-03-27T00:00:00.000Z';
+  const isoString = '2025-03-27T00:00:00.000Z';
+
+  async function createBalanceSheet(user?: User) {
     const fixedDate = new Date(isoString);
     jest.spyOn(global, 'Date').mockImplementation(() => fixedDate);
     const organization = await organizationRepo.save(
       makeOrganization().invite(auth.user.email).join(auth.user)
     );
-    const balanceSheetEntity = await balanceSheetRepository.save(
+    return await balanceSheetRepository.save(
       makeBalanceSheet().assignOrganization(organization)
     );
+  }
+
+  it('should create audit for balance sheet', async () => {
+    const balanceSheet = await createBalanceSheet();
     const auditJson = {
-      balanceSheetToBeSubmitted: balanceSheetEntity.id,
+      balanceSheetToBeSubmitted: balanceSheet.id,
+      certificationAuthority: CertificationAuthorityNames.AUDIT,
     };
     const testApp = supertest(app);
     const response = await testApp
@@ -81,7 +87,7 @@ describe('Audit Controller', () => {
     expect(response.body.id).toBeDefined();
     expect(response.body.submittedAt).toEqual(isoString);
     const result = await auditRepository.findByIdOrFail(response.body.id!);
-    expect(result.submittedBalanceSheetId).toEqual(balanceSheetEntity.id);
+    expect(result.submittedBalanceSheetId).toEqual(balanceSheet.id);
     const foundOriginalCopy = await balanceSheetRepository.findByIdOrFail(
       result.originalCopyId!
     );
@@ -90,6 +96,38 @@ describe('Audit Controller', () => {
       result.auditCopyId!
     );
     expect(foundAuditCopy.id).toEqual(result.auditCopyId!);
+    const certificationAuthority = await certificationAuthorityRepo.findByName(
+      CertificationAuthorityNames.AUDIT
+    );
+    expect(foundAuditCopy.organizationId).toEqual(
+      certificationAuthority.organizationId
+    );
+  });
+
+  it('should create peer group audit for balance sheet', async () => {
+    const balanceSheet = await createBalanceSheet();
+    const auditJson = {
+      balanceSheetToBeSubmitted: balanceSheet.id,
+      certificationAuthority: CertificationAuthorityNames.PEER_GROUP,
+    };
+    const testApp = supertest(app);
+    const response = await testApp
+      .post(AuditPaths.post)
+      .set(auth.toHeaderPair().key, auth.toHeaderPair().value)
+      .send(auditJson);
+    expect(response.status).toBe(200);
+    expect(response.body.id).toBeDefined();
+    const certificationAuthority = await certificationAuthorityRepo.findByName(
+      CertificationAuthorityNames.PEER_GROUP
+    );
+    const result = await auditRepository.findByIdOrFail(response.body.id!);
+
+    const foundAuditCopy = await balanceSheetRepository.findByIdOrFail(
+      result.auditCopyId!
+    );
+    expect(foundAuditCopy.organizationId).toEqual(
+      certificationAuthority.organizationId
+    );
   });
 
   it('should fail to submit balance sheet to audit if user has not the right permissions', async () => {
@@ -103,6 +141,7 @@ describe('Audit Controller', () => {
 
     const auditJson = {
       balanceSheetToBeSubmitted: balanceSheetEntity.id,
+      certificationAuthority: CertificationAuthorityNames.AUDIT,
     };
     const testApp = supertest(app);
     const response = await testApp
@@ -112,7 +151,7 @@ describe('Audit Controller', () => {
     expect(response.status).toBe(403);
   });
 
-  it('should get audit for balance sheet', async () => {
+  async function createAudit() {
     const isoString = '2025-03-27T00:00:00.000Z';
     const fixedDate = new Date(isoString);
     jest.spyOn(global, 'Date').mockImplementation(() => fixedDate);
@@ -125,13 +164,16 @@ describe('Audit Controller', () => {
     const certificationAuthority = await certificationAuthorityRepo.findByName(
       CertificationAuthorityNames.AUDIT
     );
-    const audit = await auditRepository.save(
+    return await auditRepository.save(
       makeAudit().submitBalanceSheet(
         balanceSheetEntity,
         certificationAuthority.organizationId!
       )
     );
+  }
 
+  it('should get audit for balance sheet', async () => {
+    const audit = await createAudit();
     const testApp = supertest(app);
     const response = await testApp
       .get(`/v1/audit/${audit.id}`)
@@ -147,26 +189,8 @@ describe('Audit Controller', () => {
     });
   });
 
-  it('should get audit for balance sheet fails if user is not member of audit organization', async () => {
-    const isoString = '2025-03-27T00:00:00.000Z';
-    const fixedDate = new Date(isoString);
-    jest.spyOn(global, 'Date').mockImplementation(() => fixedDate);
-    const organization = await organizationRepo.save(
-      makeOrganization().invite(auth.user.email).join(auth.user)
-    );
-    const balanceSheetEntity = await balanceSheetRepository.save(
-      makeBalanceSheet().assignOrganization(organization)
-    );
-    const certificationAuthority = await certificationAuthorityRepo.findByName(
-      CertificationAuthorityNames.AUDIT
-    );
-    const audit = await auditRepository.save(
-      makeAudit().submitBalanceSheet(
-        balanceSheetEntity,
-        certificationAuthority.organizationId!
-      )
-    );
-
+  it('should get audit for balance sheet fails if user is not member of audit or peer group organization', async () => {
+    const audit = await createAudit();
     const testApp = supertest(app);
     const response = await testApp
       .get(`/v1/audit/${audit.id}`)

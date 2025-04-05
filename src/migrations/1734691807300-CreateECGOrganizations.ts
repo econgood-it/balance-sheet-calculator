@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 import * as dotenv from 'dotenv';
-import { CertificationAuthorityNames } from '../entities/certification.authority.entity';
+import { CertificationAuthorityNames } from '@ecogood/e-calculator-schemas/dist/audit.dto';
 
 // Load the environment variables
 dotenv.config();
