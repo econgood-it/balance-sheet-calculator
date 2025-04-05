@@ -1,4 +1,4 @@
-import { EntityManager } from 'typeorm';
+import { EntityManager, Equal } from 'typeorm';
 import { OrganizationEntity } from '../entities/organization.entity';
 import { makeOrganization, Organization } from '../models/organization';
 import deepFreeze from 'deep-freeze';
@@ -23,7 +23,7 @@ export function makeOrganizationRepository(
 
   async function findByIdOrFail(id: number): Promise<Organization> {
     const organizationEntity = await repo.findOneOrFail({
-      where: { id },
+      where: { id: Equal(id) },
       loadRelationIds: true,
     });
     return convertToOrganization(organizationEntity);

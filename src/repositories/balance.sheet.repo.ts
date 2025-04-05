@@ -1,4 +1,4 @@
-import { EntityManager } from 'typeorm';
+import { EntityManager, Equal } from 'typeorm';
 import { BalanceSheetEntity } from '../entities/balance.sheet.entity';
 import { BalanceSheet, makeBalanceSheet } from '../models/balance.sheet';
 import {
@@ -27,7 +27,7 @@ export function makeBalanceSheetRepository(
 
   async function findByIdOrFail(id: number): Promise<BalanceSheet> {
     const balanceSheetEntity = await repo.findOneOrFail({
-      where: { id },
+      where: { id: Equal(id) },
       loadRelationIds: true,
     });
     return convertToBalanceSheet(balanceSheetEntity);

@@ -1,4 +1,4 @@
-import { EntityManager } from 'typeorm';
+import { EntityManager, Equal } from 'typeorm';
 import deepFreeze from 'deep-freeze';
 import { Audit, makeAudit } from '../models/audit';
 import { AuditEntity } from '../entities/audit.entity';
@@ -16,7 +16,7 @@ export function makeAuditRepository(manager: EntityManager): IAuditRepo {
   async function findByIdOrFail(id: number): Promise<Audit> {
     return convertToAudit(
       await repo.findOneOrFail({
-        where: { id },
+        where: { id: Equal(id) },
       })
     );
   }
