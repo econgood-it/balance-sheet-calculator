@@ -1,13 +1,14 @@
 import { v4 as uuid4 } from 'uuid';
 import { Role, User } from '../src/models/user';
+import { Configuration } from '../src/reader/configuration.reader';
 
 export class Auth {
   public readonly token: string;
   public readonly user: User;
-  constructor(role: Role) {
+  constructor(role: Role, id?: string) {
     this.token = uuid4();
     this.user = {
-      id: uuid4(),
+      id: id ?? uuid4(),
       email: `${uuid4()}@example.com`,
       role,
     };
@@ -28,6 +29,12 @@ export class AuthBuilder {
 
   public addUser(): Auth {
     const auth = new Auth(Role.User);
+    this.tokenToUserMap.set(auth.token, auth.user);
+    return auth;
+  }
+
+  public addApiAuditUser(configuration: Configuration): Auth {
+    const auth = new Auth(Role.User, configuration.ecgAuditApiUserId);
     this.tokenToUserMap.set(auth.token, auth.user);
     return auth;
   }

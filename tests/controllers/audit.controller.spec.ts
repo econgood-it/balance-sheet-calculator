@@ -17,17 +17,21 @@ import { IOrganizationRepo } from '../../src/repositories/organization.repo';
 import { Role } from '../../src/models/user';
 import { v4 as uuid4 } from 'uuid';
 import { makeAudit } from '../../src/models/audit';
+import { ICertificationAuthorityRepo } from '../../src/repositories/certification.authority.repo';
+import { CertificationAuthorityNames } from '../../src/entities/certification.authority.entity';
 
 describe('Audit Controller', () => {
   let dataSource: DataSource;
   let app: Application;
   let organizationRepo: IOrganizationRepo;
   let balanceSheetRepository: IBalanceSheetRepo;
+  let certificationAuthorityRepo: ICertificationAuthorityRepo;
   let auditRepository: IAuditRepo;
 
   const configuration = ConfigurationReader.read();
   const authBuilder = new AuthBuilder();
   const auth = authBuilder.addUser();
+  const auditApiUser = authBuilder.addApiAuditUser(configuration);
 
   beforeAll(async () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
@@ -39,6 +43,9 @@ describe('Audit Controller', () => {
     );
     organizationRepo = repoProvider.getOrganizationRepo(dataSource.manager);
     auditRepository = repoProvider.getAuditRepo(dataSource.manager);
+    certificationAuthorityRepo = repoProvider.getCertificationAuthorityRepo(
+      dataSource.manager
+    );
 
     app = new App(
       dataSource,
@@ -115,15 +122,20 @@ describe('Audit Controller', () => {
     const balanceSheetEntity = await balanceSheetRepository.save(
       makeBalanceSheet().assignOrganization(organization)
     );
-    const auditOrganization = await organizationRepo.save(makeOrganization());
+    const certificationAuthority = await certificationAuthorityRepo.findByName(
+      CertificationAuthorityNames.AUDIT
+    );
     const audit = await auditRepository.save(
-      makeAudit().submitBalanceSheet(balanceSheetEntity, auditOrganization.id!)
+      makeAudit().submitBalanceSheet(
+        balanceSheetEntity,
+        certificationAuthority.organizationId!
+      )
     );
 
     const testApp = supertest(app);
     const response = await testApp
       .get(`/v1/audit/${audit.id}`)
-      .set(auth.toHeaderPair().key, auth.toHeaderPair().value);
+      .set(auditApiUser.toHeaderPair().key, auditApiUser.toHeaderPair().value);
     expect(response.status).toBe(200);
 
     expect(response.body).toEqual({
@@ -134,4 +146,71 @@ describe('Audit Controller', () => {
       submittedAt: audit.submittedAt!.toISOString(),
     });
   });
+
+  it('should get audit for balance sheet fails if user is not member of audit organization', async () => {
+    const isoString = '2025-03-27T00:00:00.000Z';
+    const fixedDate = new Date(isoString);
+    jest.spyOn(global, 'Date').mockImplementation(() => fixedDate);
+    const organization = await organizationRepo.save(
+      makeOrganization().invite(auth.user.email).join(auth.user)
+    );
+    const balanceSheetEntity = await balanceSheetRepository.save(
+      makeBalanceSheet().assignOrganization(organization)
+    );
+    const certificationAuthority = await certificationAuthorityRepo.findByName(
+      CertificationAuthorityNames.AUDIT
+    );
+    const audit = await auditRepository.save(
+      makeAudit().submitBalanceSheet(
+        balanceSheetEntity,
+        certificationAuthority.organizationId!
+      )
+    );
+
+    const testApp = supertest(app);
+    const response = await testApp
+      .get(`/v1/audit/${audit.id}`)
+      .set(auth.toHeaderPair().key, auth.toHeaderPair().value);
+    expect(response.status).toBe(403);
+  });
 });
+
+/*
+Missing authorization for audit get endpoint.
+
+Authorization could be if user has permission to access at least one of the connected balance sheets
+
+GET /v1/audit?balanceSheet=id
+
+
+
+
+
+GET /v1/audit/id
+
+
+{ id: number, // Audit Entit orginalId: number, // Company Orga origanalCopyId: number, // Audit Orga auditCopyId: number // Audit Orga }
+endpoint to create audit for balance sheet
+
+POST /v1/audit with body
+
+{{{}}
+
+balanceSheetToBeSubmitted: <id>
+
+}
+
+Does internally all the copy logic and saves the references between the balance sheets in a AuditProcessEntity or AuditEntity.
+endpoint to perform updates on audit
+
+PUT /v1/audit/7
+
+{{{}}
+
+action: re-import
+
+}
+
+Overites balance sheet copy of original in audit organization by the new orignal
+
+ */
