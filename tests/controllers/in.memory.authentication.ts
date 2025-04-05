@@ -35,6 +35,7 @@ export class InMemoryAuthentication implements IAuthenticationProvider {
         if (err) {
           return next(new UnauthorizedException(err.message));
         }
+        // @ts-ignore
         req.authenticatedUser = user;
         return next();
       }

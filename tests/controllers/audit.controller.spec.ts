@@ -211,40 +211,32 @@ describe('Audit Controller', () => {
       .set(auth.toHeaderPair().key, auth.toHeaderPair().value);
     expect(response.status).toBe(403);
   });
+
+  it('should find audit by submitted balance sheet', async () => {
+    const audit = await createAudit();
+    const testApp = supertest(app);
+    const response = await testApp
+      .get(`/v1/audit?submittedBalanceSheetId=${audit.submittedBalanceSheetId}`)
+      .set(auth.toHeaderPair().key, auth.toHeaderPair().value);
+    expect(response.status).toBe(200);
+    expect(response.body.id).toEqual(audit.id);
+  });
+
+  it('should fail with 404 if audit could not be found by submitted balance sheet', async () => {
+    await createAudit();
+    const testApp = supertest(app);
+    const response = await testApp
+      .get(`/v1/audit?submittedBalanceSheetId=919291929`)
+      .set(auth.toHeaderPair().key, auth.toHeaderPair().value);
+    expect(response.status).toBe(404);
+  });
+
+  it('should fail to find audit by submitted balance sheet if user has no permission', async () => {
+    const audit = await createAudit();
+    const testApp = supertest(app);
+    const response = await testApp
+      .get(`/v1/audit?submittedBalanceSheetId=${audit.submittedBalanceSheetId}`)
+      .set(auditApiUser.toHeaderPair().key, auditApiUser.toHeaderPair().value);
+    expect(response.status).toBe(403);
+  });
 });
-
-/*
-GET /v1/audit?balanceSheet=id
-
-
-
-
-
-GET /v1/audit/id
-
-
-{ id: number, // Audit Entit orginalId: number, // Company Orga origanalCopyId: number, // Audit Orga auditCopyId: number // Audit Orga }
-endpoint to create audit for balance sheet
-
-POST /v1/audit with body
-
-{{{}}
-
-balanceSheetToBeSubmitted: <id>
-
-}
-
-Does internally all the copy logic and saves the references between the balance sheets in a AuditProcessEntity or AuditEntity.
-endpoint to perform updates on audit
-
-PUT /v1/audit/7
-
-{{{}}
-
-action: re-import
-
-}
-
-Overites balance sheet copy of original in audit organization by the new orignal
-
- */

@@ -5,6 +5,7 @@ import { IRepoProvider } from '../repositories/repo.provider';
 import deepFreeze from 'deep-freeze';
 import {
   AuditFullResponseBodySchema,
+  AuditSearchResponseBodySchema,
   AuditSubmitRequestBodySchema,
   AuditSubmitResponseBodySchema,
 } from '@ecogood/e-calculator-schemas/dist/audit.dto';
@@ -13,7 +14,9 @@ import {
   checkIfCurrentUserHasEditorPermissions,
   checkIfCurrentUserIsMemberOfCertificationAuthority,
 } from '../security/authorization';
-import { ConflictError } from '../exceptions/conflict.error';
+import { z } from 'zod';
+import NotFoundException from '../exceptions/not.found.exception';
+import { ConflictException } from '../exceptions/conflict.exception';
 
 export interface IAuditService {
   submitBalanceSheetToAudit(
@@ -23,6 +26,7 @@ export interface IAuditService {
   ): Promise<void>;
 
   getAudit(req: Request, res: Response, next: NextFunction): Promise<void>;
+  findAudit(req: Request, res: Response, next: NextFunction): Promise<void>;
 }
 
 export function makeAuditService(
@@ -43,7 +47,7 @@ export function makeAuditService(
             auditRequest.balanceSheetToBeSubmitted
           )
         ) {
-          throw new ConflictError(
+          throw new ConflictException(
             `The balance sheet with id ${auditRequest.balanceSheetToBeSubmitted} has been already submitted to an audit`
           );
         }
@@ -112,8 +116,52 @@ export function makeAuditService(
       });
   }
 
+  async function findAudit(req: Request, res: Response, next: NextFunction) {
+    const submittedBalanceSheetId = Number(
+      z.coerce.number().min(0).parse(req.query.submittedBalanceSheetId)
+    );
+
+    dataSource.manager
+      .transaction(async (entityManager) => {
+        const auditRepo = repoProvider.getAuditRepo(entityManager);
+        const balanceSheetRepo =
+          repoProvider.getBalanceSheetRepo(entityManager);
+
+        const foundBalanceSheet = await balanceSheetRepo.findByIdOrFail(
+          submittedBalanceSheetId
+        );
+
+        await checkIfCurrentUserHasEditorPermissions(
+          req,
+          repoProvider.getOrganizationRepo(entityManager),
+          foundBalanceSheet
+        );
+
+        const audit = await auditRepo.findBySubmittedBalanceSheetId(
+          submittedBalanceSheetId
+        );
+
+        if (!audit) {
+          throw new NotFoundException(
+            `Could not find audit for balance sheet ${submittedBalanceSheetId}`
+          );
+        }
+
+        res.json(
+          AuditSearchResponseBodySchema.parse({
+            id: audit.id,
+            submittedAt: audit.submittedAt?.toISOString(),
+          })
+        );
+      })
+      .catch((error) => {
+        handle(error, next);
+      });
+  }
+
   return deepFreeze({
     submitBalanceSheetToAudit,
+    findAudit,
     getAudit,
   });
 }

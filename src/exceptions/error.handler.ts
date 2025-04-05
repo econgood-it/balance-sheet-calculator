@@ -35,7 +35,8 @@ export const handle = (error: Error, next: NextFunction) => {
     error instanceof BadRequestException ||
     error instanceof UnauthorizedException ||
     error instanceof ForbiddenException ||
-    error instanceof NotFoundException
+    error instanceof NotFoundException ||
+    error instanceof ConflictException
   ) {
     return next(error);
   }

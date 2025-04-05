@@ -62,7 +62,7 @@ describe('AuditRepo', () => {
     expect(foundAuditCopy.id).toEqual(result.auditCopyId!);
   });
 
-  it('find audit by submitted balance id', async () => {
+  it('find audit by submitted balance sheet id', async () => {
     const balanceSheet = await balanceSheetRepository.save(makeBalanceSheet());
     const auditOrganization = await orgaRepository.save(makeOrganization());
 
