@@ -117,9 +117,15 @@ export function makeAuditService(
   }
 
   async function findAudit(req: Request, res: Response, next: NextFunction) {
-    const submittedBalanceSheetId = Number(
-      z.coerce.number().min(0).parse(req.query.submittedBalanceSheetId)
-    );
+    let submittedBalanceSheetId: number;
+    try {
+      submittedBalanceSheetId = z
+        .number()
+        .min(0)
+        .parse(Number(req.query.submittedBalanceSheetId));
+    } catch (error: any) {
+      handle(error, next);
+    }
 
     dataSource.manager
       .transaction(async (entityManager) => {
