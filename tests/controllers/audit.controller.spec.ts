@@ -179,10 +179,7 @@ describe('Audit Controller', () => {
       CertificationAuthorityNames.AUDIT
     );
     return await auditRepository.save(
-      makeAudit().submitBalanceSheet(
-        balanceSheetEntity,
-        certificationAuthority.organizationId!
-      )
+      makeAudit().submitBalanceSheet(balanceSheetEntity, certificationAuthority)
     );
   }
 
@@ -200,6 +197,7 @@ describe('Audit Controller', () => {
       originalCopyId: audit.originalCopyId,
       submittedBalanceSheetId: audit.submittedBalanceSheetId,
       submittedAt: audit.submittedAt!.toISOString(),
+      certificationAuthority: CertificationAuthorityNames.AUDIT,
     });
   });
 
