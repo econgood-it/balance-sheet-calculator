@@ -5,6 +5,8 @@ import {
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import { makeCompanyFacts } from '../../src/models/company.facts';
 import { makeAudit } from '../../src/models/audit';
+import { makeCertificationAuthority } from '../../src/models/certification.authoriy';
+import { CertificationAuthorityNames } from '@ecogood/e-calculator-schemas/dist/audit.dto';
 
 describe('Audit', () => {
   it('should be created', () => {
@@ -16,14 +18,17 @@ describe('Audit', () => {
       ratings: [],
       stakeholderWeights: [],
     });
-    const ecgAuditAdminId = 9;
-    const audit = makeAudit().submitBalanceSheet(balanceSheet, ecgAuditAdminId);
+    const ecgAudit = makeCertificationAuthority({
+      name: CertificationAuthorityNames.AUDIT,
+      organizationId: 9,
+    });
+    const audit = makeAudit().submitBalanceSheet(balanceSheet, ecgAudit);
     expect(audit.id).toBeUndefined();
     expect(audit.submittedBalanceSheetId).toEqual(balanceSheet.id);
     expect(audit.balanceSheetToCopy).toEqual({
       ...balanceSheet,
       id: undefined,
-      organizationId: ecgAuditAdminId,
+      organizationId: ecgAudit.organizationId,
     });
   });
 
@@ -52,9 +57,13 @@ describe('Audit', () => {
       ratings: [],
       stakeholderWeights: [],
     });
-    const ecgAuditAdminId = 9;
+
+    const ecgAudit = makeCertificationAuthority({
+      name: CertificationAuthorityNames.AUDIT,
+      organizationId: 9,
+    });
     const audit = makeAudit()
-      .submitBalanceSheet(balanceSheet, ecgAuditAdminId)
+      .submitBalanceSheet(balanceSheet, ecgAudit)
       .assignAuditCopies(originalCopy, auditCopy);
     expect(audit.balanceSheetToCopy).toBeUndefined();
     expect(audit.originalCopyId).toEqual(originalCopy.id);

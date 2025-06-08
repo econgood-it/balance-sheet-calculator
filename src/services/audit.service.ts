@@ -72,13 +72,14 @@ export function makeAuditService(
         const audit = await auditRepo.save(
           makeAudit().submitBalanceSheet(
             balanceSheetToSubmit,
-            certificationAuthority.organizationId
+            certificationAuthority
           )
         );
         res.json(
           AuditSubmitResponseBodySchema.parse({
             id: audit.id,
             submittedAt: audit.submittedAt?.toISOString(),
+            certificationAuthority: audit.certificationAuthorityName,
           })
         );
       })
@@ -108,6 +109,7 @@ export function makeAuditService(
             originalCopyId: audit.originalCopyId,
             submittedBalanceSheetId: audit.submittedBalanceSheetId,
             submittedAt: audit.submittedAt?.toISOString(),
+            certificationAuthority: audit.certificationAuthorityName,
           })
         );
       })
@@ -157,6 +159,7 @@ export function makeAuditService(
           AuditSearchResponseBodySchema.parse({
             id: audit.id,
             submittedAt: audit.submittedAt?.toISOString(),
+            certificationAuthority: audit.certificationAuthorityName,
           })
         );
       })

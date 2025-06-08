@@ -1,5 +1,7 @@
 import { BalanceSheet, makeBalanceSheet } from './balance.sheet';
 import deepFreeze from 'deep-freeze';
+import { CertificationAuthorityNames } from '@ecogood/e-calculator-schemas/dist/audit.dto';
+import { CertificationAuthority } from './certification.authoriy';
 
 type AuditProps = {
   id?: number;
@@ -8,12 +10,13 @@ type AuditProps = {
   auditCopyId?: number;
   balanceSheetToCopy?: BalanceSheet;
   submittedAt?: Date;
+  certificationAuthorityName?: CertificationAuthorityNames;
 };
 
 export type Audit = AuditProps & {
   submitBalanceSheet: (
     balanceSheet: BalanceSheet,
-    ecgAuditAdminId: number
+    certificationAuthority: CertificationAuthority
   ) => Audit;
   assignAuditCopies: (
     originalCopy: BalanceSheet,
@@ -26,18 +29,19 @@ export function makeAudit(opts?: AuditProps): Audit {
 
   function submitBalanceSheet(
     balanceSheet: BalanceSheet,
-    ecgAuditAdminId: number
+    certificationAuthority: CertificationAuthority
   ) {
     const copy = makeBalanceSheet({
       ...balanceSheet,
       id: undefined,
-      organizationId: ecgAuditAdminId,
+      organizationId: certificationAuthority.organizationId,
     });
     return makeAudit({
       ...data,
       submittedBalanceSheetId: balanceSheet.id,
       balanceSheetToCopy: copy,
       submittedAt: new Date(),
+      certificationAuthorityName: certificationAuthority.name,
     });
   }
 

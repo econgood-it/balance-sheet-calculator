@@ -16,6 +16,8 @@ import {
 } from '../../src/repositories/audit.repo';
 import { makeAudit } from '../../src/models/audit';
 import { makeOrganization } from '../../src/models/organization';
+import { makeCertificationAuthority } from '../../src/models/certification.authoriy';
+import { CertificationAuthorityNames } from '@ecogood/e-calculator-schemas/dist/audit.dto';
 
 describe('AuditRepo', () => {
   let balanceSheetRepository: IBalanceSheetRepo;
@@ -39,10 +41,14 @@ describe('AuditRepo', () => {
   it('saves audit', async () => {
     const balanceSheet = await balanceSheetRepository.save(makeBalanceSheet());
     const auditOrganization = await orgaRepository.save(makeOrganization());
+    const certificationAuthority = makeCertificationAuthority({
+      name: CertificationAuthorityNames.AUDIT,
+      organizationId: auditOrganization.id!,
+    });
 
     const audit = makeAudit().submitBalanceSheet(
       balanceSheet,
-      auditOrganization.id!
+      certificationAuthority
     );
     const savedAudit = await auditRepository.save(audit);
     const { id } = await auditRepository.save(savedAudit);
@@ -65,10 +71,14 @@ describe('AuditRepo', () => {
   it('find audit by submitted balance sheet id', async () => {
     const balanceSheet = await balanceSheetRepository.save(makeBalanceSheet());
     const auditOrganization = await orgaRepository.save(makeOrganization());
+    const certificationAuthority = makeCertificationAuthority({
+      name: CertificationAuthorityNames.AUDIT,
+      organizationId: auditOrganization.id!,
+    });
 
     const audit = makeAudit().submitBalanceSheet(
       balanceSheet,
-      auditOrganization.id!
+      certificationAuthority
     );
     const savedAudit = await auditRepository.save(audit);
     const result = await auditRepository.findBySubmittedBalanceSheetId(
