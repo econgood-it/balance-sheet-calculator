@@ -8,7 +8,7 @@ export const allowUserOnly = async (
   res: Response,
   next: NextFunction
 ) => {
-  if (req.authenticatedUser && req.authenticatedUser.role === Role.User) {
+  if (req.authenticatedUser && ( req.authenticatedUser.role === Role.User || req.authenticatedUser.role === Role.Admin ) ) {
     return next();
   } else {
     return next(new ForbiddenException('No access'));

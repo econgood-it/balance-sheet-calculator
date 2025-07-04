@@ -145,9 +145,7 @@ export function makeAuditService(
           foundBalanceSheet
         );
 
-        const audit = await auditRepo.findBySubmittedBalanceSheetId(
-          submittedBalanceSheetId
-        );
+        const audit = req.query.requestForAuditor !== undefined && req.query.requestForAuditor ? await auditRepo.findBySubmittedAuditId( submittedBalanceSheetId ) : await auditRepo.findBySubmittedBalanceSheetId( submittedBalanceSheetId );
 
         if (!audit) {
           throw new NotFoundException(

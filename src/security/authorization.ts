@@ -54,7 +54,7 @@ export function checkIfCurrentUserIsMember(
     !(
       request.authenticatedUser &&
       organization.hasMember(request.authenticatedUser)
-    )
+    ) && request.authenticatedUser?.role !== 'Admin'
   ) {
     throw new NoAccessError();
   }
