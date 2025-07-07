@@ -146,7 +146,7 @@ export function makeAuditService(
         );
 
         const audit = req.query.requestForAuditor !== undefined && req.query.requestForAuditor ? await auditRepo.findBySubmittedAuditId( submittedBalanceSheetId ) : await auditRepo.findBySubmittedBalanceSheetId( submittedBalanceSheetId );
-
+        
         if (!audit) {
           throw new NotFoundException(
             `Could not find audit for balance sheet ${submittedBalanceSheetId}`
@@ -156,6 +156,7 @@ export function makeAuditService(
         res.json(
           AuditSearchResponseBodySchema.parse({
             id: audit.id,
+            submittedBalanceSheetId: audit.submittedBalanceSheetId,
             submittedAt: audit.submittedAt?.toISOString(),
             certificationAuthority: audit.certificationAuthorityName,
           })

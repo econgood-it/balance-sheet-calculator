@@ -23,7 +23,7 @@
   "license": "MIT",
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "^7.3.4",
-    "@ecogood/e-calculator-schemas": "^2.7.4",
+    "@ecogood/e-calculator-schemas": "^2.7.5",
     "@mr42/version-comparator": "^1.2.2",
     "@types/morgan": "^1.9.10",
     "axios": "^1.10.0",
