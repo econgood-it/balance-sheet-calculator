@@ -55,7 +55,7 @@ describe('Balance Sheet Controller', () => {
       .set(auth.toHeaderPair().key, auth.toHeaderPair().value)
       .send(balanceSheetJson);
     expect(response.status).toBe(200);
-    expect(response.body.id).toBeUndefined();
+    expect(response.body.id).toEqual(-1);
   });
 
   it('should return matrix for balance sheet without saving results', async () => {

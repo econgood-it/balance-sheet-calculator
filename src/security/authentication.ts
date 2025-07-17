@@ -48,7 +48,12 @@ export class ZitadelAuthentication implements IAuthenticationProvider {
       { session: false },
       (
         err: any,
-        user: { sub: string; email?: string; username?: string; 'urn:zitadel:iam:org:project:roles'?: string; }
+        user: {
+          sub: string;
+          email?: string;
+          username?: string;
+          'urn:zitadel:iam:org:project:roles': any;
+        }
       ) => {
         if (err) {
           return next(new UnauthorizedException(err.message));
@@ -71,16 +76,22 @@ export class ZitadelAuthentication implements IAuthenticationProvider {
       }
     )(req, res, next);
   }
-  private getRole( userRoles: string | undefined ): Role {
-    if (userRoles?.hasOwnProperty('auditor')) {
+
+  private getRole(userRoles: any): Role {
+    if (
+      userRoles &&
+      Object.prototype.hasOwnProperty.call(userRoles, 'auditor')
+    ) {
       return Role.Auditor;
-    } else if ( userRoles?.hasOwnProperty('peer')) {
+    } else if (
+      userRoles &&
+      Object.prototype.hasOwnProperty.call(userRoles, 'peer')
+    ) {
       return Role.Peer;
     }
     return Role.User;
   }
 }
-
 
 export class Authentication {
   constructor(private authenticationProvider: IAuthenticationProvider) {}

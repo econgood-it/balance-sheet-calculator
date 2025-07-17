@@ -31,7 +31,7 @@ describe('Audit Controller', () => {
   const configuration = ConfigurationReader.read();
   const authBuilder = new AuthBuilder();
   const auth = authBuilder.addUser();
-  const auditApiUser = authBuilder.addApiAuditUser(configuration);
+  const auditor = authBuilder.addAuditor();
 
   beforeAll(async () => {
     dataSource = await DatabaseSourceCreator.createDataSourceAndRunMigrations(
@@ -188,7 +188,7 @@ describe('Audit Controller', () => {
     const testApp = supertest(app);
     const response = await testApp
       .get(`/v1/audit/${audit.id}`)
-      .set(auditApiUser.toHeaderPair().key, auditApiUser.toHeaderPair().value);
+      .set(auditor.toHeaderPair().key, auditor.toHeaderPair().value);
     expect(response.status).toBe(200);
 
     expect(response.body).toEqual({
@@ -234,7 +234,7 @@ describe('Audit Controller', () => {
     const testApp = supertest(app);
     const response = await testApp
       .get(`/v1/audit?submittedBalanceSheetId=${audit.submittedBalanceSheetId}`)
-      .set(auditApiUser.toHeaderPair().key, auditApiUser.toHeaderPair().value);
+      .set(auditor.toHeaderPair().key, auditor.toHeaderPair().value);
     expect(response.status).toBe(403);
   });
 });

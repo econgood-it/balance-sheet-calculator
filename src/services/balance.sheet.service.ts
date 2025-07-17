@@ -51,7 +51,12 @@ export function makeBalanceSheetService(
     next: NextFunction
   ) {
     try {
-      const balanceSheet = makeBalanceSheet.fromJson(req.body);
+      const balanceSheet = makeBalanceSheet({
+        ...makeBalanceSheet.fromJson({
+          ...req.body,
+        }),
+        id: -1, // dummy id
+      });
       const language = parseLanguageParameter(req.query.lng);
       res.json((await balanceSheet.reCalculate()).toJson(language));
     } catch (error: any) {

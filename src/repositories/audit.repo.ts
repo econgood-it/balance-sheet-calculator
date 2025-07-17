@@ -7,7 +7,7 @@ import { makeBalanceSheetRepository } from './balance.sheet.repo';
 export interface IAuditRepo {
   findByIdOrFail(id: number): Promise<Audit>;
   findBySubmittedBalanceSheetId(id: number): Promise<Audit | undefined>;
-  findBySubmittedAuditId(id: number): Promise<Audit | undefined>;
+  findByAuditCopyId(id: number): Promise<Audit | undefined>;
   save(audit: Audit): Promise<Audit>;
 }
 
@@ -30,7 +30,7 @@ export function makeAuditRepository(manager: EntityManager): IAuditRepo {
     return found ? convertToAudit(found) : undefined;
   }
 
-  async function findBySubmittedAuditId(id: number) {
+  async function findByAuditCopyId(id: number) {
     const found = await repo.findOne({
       where: { auditCopyId: Equal(id) },
     });
@@ -79,7 +79,7 @@ export function makeAuditRepository(manager: EntityManager): IAuditRepo {
   return deepFreeze({
     findByIdOrFail,
     findBySubmittedBalanceSheetId,
-    findBySubmittedAuditId,
+    findByAuditCopyId,
     save,
   });
 }
