@@ -3,7 +3,6 @@ import { NoAccessError } from '../exceptions/no.access.error';
 import { Organization } from '../models/organization';
 import { BalanceSheet } from '../models/balance.sheet';
 import { IOrganizationRepo } from '../repositories/organization.repo';
-import { Role } from '../models/user';
 
 export async function checkIfCurrentUserHasEditorPermissions(
   request: Request,
@@ -26,9 +25,7 @@ export function checkIfCurrentUserIsMember(
   if (
     !(
       request.authenticatedUser &&
-      ( organization.hasMember(request.authenticatedUser)
-      || request.authenticatedUser.role === Role.Peer
-      || request.authenticatedUser.role === Role.Auditor ) 
+      organization.hasMember(request.authenticatedUser)
     )
   ) {
     throw new NoAccessError();
