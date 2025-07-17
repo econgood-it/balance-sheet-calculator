@@ -21,31 +21,6 @@ export async function checkIfCurrentUserHasEditorPermissions(
   checkIfCurrentUserIsMember(request, organization);
 }
 
-export async function checkIfCurrentUserIsMemberOfCertificationAuthority(
-  request: Request,
-  certificationAuthorityRepo: ICertificationAuthorityRepo,
-  orgaRepo: IOrganizationRepo
-) {
-  let isMember = false;
-  for (const [, name] of Object.entries(CertificationAuthorityNames)) {
-    const certificationAuthority = await certificationAuthorityRepo.findByName(
-      name
-    );
-    const organization = await orgaRepo.findByIdOrFail(
-      certificationAuthority.organizationId
-    );
-    if (
-      request.authenticatedUser &&
-      organization.hasMember(request.authenticatedUser)
-    ) {
-      isMember = true;
-    }
-  }
-  if (!isMember) {
-    throw new NoAccessError();
-  }
-}
-
 export function checkIfCurrentUserIsMember(
   request: Request,
   organization: Organization
@@ -54,7 +29,7 @@ export function checkIfCurrentUserIsMember(
     !(
       request.authenticatedUser &&
       organization.hasMember(request.authenticatedUser)
-    ) && request.authenticatedUser?.role !== 'Admin'
+    )
   ) {
     throw new NoAccessError();
   }

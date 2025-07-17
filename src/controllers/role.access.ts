@@ -8,7 +8,31 @@ export const allowUserOnly = async (
   res: Response,
   next: NextFunction
 ) => {
-  if (req.authenticatedUser && ( req.authenticatedUser.role === Role.User || req.authenticatedUser.role === Role.Admin ) ) {
+  if (req.authenticatedUser && ( req.authenticatedUser.role === Role.User ) ) {
+    return next();
+  } else {
+    return next(new ForbiddenException('No access'));
+  }
+};
+
+export const allowAnyone = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  if (req.authenticatedUser ) {
+    return next();
+  } else {
+    return next(new ForbiddenException('No access'));
+  }
+};
+
+export const allowMemberOfCertificationAuthority = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  if (req.authenticatedUser && ( req.authenticatedUser.role === Role.Auditor || req.authenticatedUser.role === Role.Peer ) ) {
     return next();
   } else {
     return next(new ForbiddenException('No access'));

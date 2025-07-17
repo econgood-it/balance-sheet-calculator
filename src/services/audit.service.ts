@@ -12,7 +12,6 @@ import {
 import { makeAudit } from '../models/audit';
 import {
   checkIfCurrentUserHasEditorPermissions,
-  checkIfCurrentUserIsMemberOfCertificationAuthority,
 } from '../security/authorization';
 import { z } from 'zod';
 import NotFoundException from '../exceptions/not.found.exception';
@@ -93,14 +92,6 @@ export function makeAuditService(
       .transaction(async (entityManager) => {
         const auditRepo = repoProvider.getAuditRepo(entityManager);
         const audit = await auditRepo.findByIdOrFail(Number(req.params.id));
-        const certificationAuthorityRepo =
-          repoProvider.getCertificationAuthorityRepo(entityManager);
-        const orgaRepo = repoProvider.getOrganizationRepo(entityManager);
-        await checkIfCurrentUserIsMemberOfCertificationAuthority(
-          req,
-          certificationAuthorityRepo,
-          orgaRepo
-        );
 
         res.json(
           AuditFullResponseBodySchema.parse({
@@ -145,8 +136,10 @@ export function makeAuditService(
           foundBalanceSheet
         );
 
-        const audit = req.query.requestForAuditor !== undefined && req.query.requestForAuditor ? await auditRepo.findBySubmittedAuditId( submittedBalanceSheetId ) : await auditRepo.findBySubmittedBalanceSheetId( submittedBalanceSheetId );
-        
+        const audit = await auditRepo.findBySubmittedBalanceSheetId(
+          submittedBalanceSheetId
+        );
+
         if (!audit) {
           throw new NotFoundException(
             `Could not find audit for balance sheet ${submittedBalanceSheetId}`
@@ -156,7 +149,6 @@ export function makeAuditService(
         res.json(
           AuditSearchResponseBodySchema.parse({
             id: audit.id,
-            submittedBalanceSheetId: audit.submittedBalanceSheetId,
             submittedAt: audit.submittedAt?.toISOString(),
             certificationAuthority: audit.certificationAuthorityName,
           })

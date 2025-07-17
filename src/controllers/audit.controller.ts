@@ -8,7 +8,7 @@
 //
 // }
 import { Application } from 'express';
-import { allowUserOnly } from './role.access';
+import { allowMemberOfCertificationAuthority, allowUserOnly, allowAnyone } from './role.access';
 import { IAuditService } from '../services/audit.service';
 
 const resourceUrl = '/v1/audit';
@@ -28,6 +28,6 @@ export function registerAuditRoutes(
     allowUserOnly,
     auditService.submitBalanceSheetToAudit
   );
-  app.get(AuditPaths.get, allowUserOnly, auditService.getAudit);
-  app.get(AuditPaths.find, allowUserOnly, auditService.findAudit);
+  app.get(AuditPaths.get, allowMemberOfCertificationAuthority, auditService.getAudit);
+  app.get(AuditPaths.find, allowAnyone, auditService.findAudit);
 }

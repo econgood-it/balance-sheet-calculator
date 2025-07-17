@@ -48,7 +48,7 @@ export class ZitadelAuthentication implements IAuthenticationProvider {
       { session: false },
       (
         err: any,
-        user: { sub: string; email?: string; scope: string; username?: string; 'urn:zitadel:iam:org:project:roles'?: string; }
+        user: { sub: string; email?: string; username?: string; 'urn:zitadel:iam:org:project:roles'?: string; }
       ) => {
         if (err) {
           return next(new UnauthorizedException(err.message));
@@ -61,20 +61,26 @@ export class ZitadelAuthentication implements IAuthenticationProvider {
           return next(new UnauthorizedException('User information missing'));
         }
 
-        const isAdmin = user['urn:zitadel:iam:org:project:roles'] !== undefined && ( user['urn:zitadel:iam:org:project:roles'].hasOwnProperty('auditor') || user['urn:zitadel:iam:org:project:roles'].hasOwnProperty('peer') )  ? true : false;
         req.authenticatedUser = {
           id: user.sub,
           email: user.email ?? 'service-user@econgood.org',
-          role: user.scope.split(' ').some((s) => s.includes('role:admin')) || isAdmin
-            ? Role.Admin
-            : Role.User,
+          role: this.getRole(user['urn:zitadel:iam:org:project:roles']),
         };
 
         return next();
       }
     )(req, res, next);
   }
+  private getRole( userRoles: string | undefined ): Role {
+    if (userRoles?.hasOwnProperty('auditor')) {
+      return Role.Auditor;
+    } else if ( userRoles?.hasOwnProperty('peer')) {
+      return Role.Peer;
+    }
+    return Role.User;
+  }
 }
+
 
 export class Authentication {
   constructor(private authenticationProvider: IAuthenticationProvider) {}
