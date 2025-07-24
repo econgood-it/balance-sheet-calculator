@@ -86,4 +86,35 @@ describe('AuditRepo', () => {
     );
     expect(result).toEqual(savedAudit);
   });
+
+  it('removes audit with all its copies', async () => {
+    const balanceSheet = await balanceSheetRepository.save(makeBalanceSheet());
+    const auditOrganization = await orgaRepository.save(makeOrganization());
+    const certificationAuthority = makeCertificationAuthority({
+      name: CertificationAuthorityNames.AUDIT,
+      organizationId: auditOrganization.id!,
+    });
+
+    const audit = makeAudit().submitBalanceSheet(
+      balanceSheet,
+      certificationAuthority
+    );
+    const savedAudit = await auditRepository.save(audit);
+    const foundAudit = await auditRepository.findByIdOrFail(savedAudit.id!);
+    await auditRepository.remove(foundAudit);
+    await expect(
+      auditRepository.findByIdOrFail(savedAudit.id!)
+    ).rejects.toThrow();
+    await expect(
+      balanceSheetRepository.findByIdOrFail(savedAudit.originalCopyId!)
+    ).rejects.toThrow();
+    await expect(
+      balanceSheetRepository.findByIdOrFail(savedAudit.auditCopyId!)
+    ).rejects.toThrow();
+
+    const submittedBalanceSheet = await balanceSheetRepository.findByIdOrFail(
+      savedAudit.submittedBalanceSheetId!
+    );
+    expect(submittedBalanceSheet.id).toEqual(balanceSheet.id);
+  });
 });

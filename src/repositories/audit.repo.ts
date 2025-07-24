@@ -9,6 +9,7 @@ export interface IAuditRepo {
   findBySubmittedBalanceSheetId(id: number): Promise<Audit | undefined>;
   findByAuditCopyId(id: number): Promise<Audit | undefined>;
   save(audit: Audit): Promise<Audit>;
+  remove(audit: Audit): Promise<boolean>;
 }
 
 export function makeAuditRepository(manager: EntityManager): IAuditRepo {
@@ -76,10 +77,18 @@ export function makeAuditRepository(manager: EntityManager): IAuditRepo {
     );
   }
 
+  async function remove(audit: Audit) {
+    await repo.remove(await convertToAuditEntity(audit));
+    await balanceSheetRepo.removeById(audit.originalCopyId!);
+    await balanceSheetRepo.removeById(audit.auditCopyId!);
+    return true;
+  }
+
   return deepFreeze({
     findByIdOrFail,
     findBySubmittedBalanceSheetId,
     findByAuditCopyId,
     save,
+    remove,
   });
 }

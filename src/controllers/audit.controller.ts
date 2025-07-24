@@ -11,6 +11,7 @@ export const AuditPaths = {
   post: resourceUrl,
   get: `${resourceUrl}/:id`,
   find: resourceUrl,
+  delete: `${resourceUrl}/:id`,
 };
 
 export function registerAuditRoutes(
@@ -26,6 +27,11 @@ export function registerAuditRoutes(
     AuditPaths.get,
     allowMemberOfCertificationAuthority,
     auditService.getAudit
+  );
+  app.delete(
+    AuditPaths.delete,
+    allowMemberOfCertificationAuthority,
+    auditService.deleteAudit
   );
   app.get(AuditPaths.find, allowAnyone, auditService.findAudit);
 }

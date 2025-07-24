@@ -220,6 +220,19 @@ describe('Audit Controller', () => {
     expect(response.body.id).toEqual(audit.id);
   });
 
+  it('should remove audit for balance sheet', async () => {
+    const audit = await createAudit();
+    const testApp = supertest(app);
+    const response = await testApp
+      .delete(`/v1/audit/${audit.id}`)
+      .set(auditor.toHeaderPair().key, auditor.toHeaderPair().value);
+    expect(response.status).toBe(200);
+
+    expect(response.body).toEqual({
+      message: `Successfully deleted audit with id ${audit.id}`,
+    });
+  });
+
   it('should fail with 404 if audit could not be found by submitted balance sheet', async () => {
     await createAudit();
     const testApp = supertest(app);
