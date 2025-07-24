@@ -1,6 +1,5 @@
 import { v4 as uuid4 } from 'uuid';
 import { Role, User } from '../src/models/user';
-import { Configuration } from '../src/reader/configuration.reader';
 
 export class Auth {
   public readonly token: string;
@@ -21,20 +20,14 @@ export class Auth {
 
 export class AuthBuilder {
   private tokenToUserMap: Map<string, User> = new Map<string, User>();
-  public addAdmin(): Auth {
-    const auth = new Auth(Role.Admin);
+  public addAuditor(): Auth {
+    const auth = new Auth(Role.Auditor);
     this.tokenToUserMap.set(auth.token, auth.user);
     return auth;
   }
 
   public addUser(): Auth {
     const auth = new Auth(Role.User);
-    this.tokenToUserMap.set(auth.token, auth.user);
-    return auth;
-  }
-
-  public addApiAuditUser(configuration: Configuration): Auth {
-    const auth = new Auth(Role.User, configuration.ecgAuditApiUserId);
     this.tokenToUserMap.set(auth.token, auth.user);
     return auth;
   }

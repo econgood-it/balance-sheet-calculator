@@ -1,5 +1,5 @@
 import { Application } from 'express';
-import { allowUserOnly } from './role.access';
+import { allowAnyone } from '../security/role.access';
 import { IndustryService } from '../services/industry.service';
 
 export class IndustryController {
@@ -13,7 +13,7 @@ export class IndustryController {
   public routes() {
     this.app.get(
       '/v1/industries',
-      allowUserOnly,
+      allowAnyone,
       this.industryService.getIndustries.bind(this.industryService)
     );
   }

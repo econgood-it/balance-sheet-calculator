@@ -48,7 +48,12 @@ export class ZitadelAuthentication implements IAuthenticationProvider {
       { session: false },
       (
         err: any,
-        user: { sub: string; email?: string; scope: string; username?: string }
+        user: {
+          sub: string;
+          email?: string;
+          username?: string;
+          'urn:zitadel:iam:org:project:roles': any;
+        }
       ) => {
         if (err) {
           return next(new UnauthorizedException(err.message));
@@ -60,17 +65,31 @@ export class ZitadelAuthentication implements IAuthenticationProvider {
         if (!isValidUser && !isValidServiceUser) {
           return next(new UnauthorizedException('User information missing'));
         }
+
         req.authenticatedUser = {
           id: user.sub,
           email: user.email ?? 'service-user@econgood.org',
-          role: user.scope.split(' ').some((s) => s.includes('role:admin'))
-            ? Role.Admin
-            : Role.User,
+          role: this.getRole(user['urn:zitadel:iam:org:project:roles']),
         };
 
         return next();
       }
     )(req, res, next);
+  }
+
+  private getRole(userRoles: any): Role {
+    if (
+      userRoles &&
+      Object.prototype.hasOwnProperty.call(userRoles, 'auditor')
+    ) {
+      return Role.Auditor;
+    } else if (
+      userRoles &&
+      Object.prototype.hasOwnProperty.call(userRoles, 'peer')
+    ) {
+      return Role.Peer;
+    }
+    return Role.User;
   }
 }
 

@@ -1,8 +1,9 @@
 import { z } from 'zod';
 
 export enum Role {
-  Admin = 'Admin',
   User = 'User',
+  Auditor = 'Auditor',
+  Peer = 'Peer',
 }
 
 export const UserSchema = z.object({

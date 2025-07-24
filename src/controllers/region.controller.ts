@@ -1,5 +1,5 @@
 import { Application } from 'express';
-import { allowUserOnly } from './role.access';
+import { allowAnyone } from '../security/role.access';
 import { RegionService } from '../services/region.service';
 
 export class RegionController {
@@ -10,7 +10,7 @@ export class RegionController {
   public routes() {
     this.app.get(
       '/v1/regions',
-      allowUserOnly,
+      allowAnyone,
       this.regionService.getRegions.bind(this.regionService)
     );
   }

@@ -1,5 +1,5 @@
 import { Application } from 'express';
-import { allowUserOnly } from './role.access';
+import { allowAnyone } from '../security/role.access';
 import { IWorkbookService } from '../services/workbook.service';
 
 export const WorkbookPaths = {
@@ -10,5 +10,5 @@ export function registerWorkbookRoutes(
   app: Application,
   workbookService: IWorkbookService
 ) {
-  app.get(WorkbookPaths.get, allowUserOnly, workbookService.getWorkbook);
+  app.get(WorkbookPaths.get, allowAnyone, workbookService.getWorkbook);
 }

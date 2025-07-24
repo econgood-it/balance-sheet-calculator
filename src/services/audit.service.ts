@@ -10,13 +10,11 @@ import {
   AuditSubmitResponseBodySchema,
 } from '@ecogood/e-calculator-schemas/dist/audit.dto';
 import { makeAudit } from '../models/audit';
-import {
-  checkIfCurrentUserHasEditorPermissions,
-  checkIfCurrentUserIsMemberOfCertificationAuthority,
-} from '../security/authorization';
+import { checkIfCurrentUserHasEditorPermissions } from '../security/authorization';
 import { z } from 'zod';
 import NotFoundException from '../exceptions/not.found.exception';
 import { ConflictException } from '../exceptions/conflict.exception';
+import BadRequestException from '../exceptions/bad.request.exception';
 
 export interface IAuditService {
   submitBalanceSheetToAudit(
@@ -93,14 +91,6 @@ export function makeAuditService(
       .transaction(async (entityManager) => {
         const auditRepo = repoProvider.getAuditRepo(entityManager);
         const audit = await auditRepo.findByIdOrFail(Number(req.params.id));
-        const certificationAuthorityRepo =
-          repoProvider.getCertificationAuthorityRepo(entityManager);
-        const orgaRepo = repoProvider.getOrganizationRepo(entityManager);
-        await checkIfCurrentUserIsMemberOfCertificationAuthority(
-          req,
-          certificationAuthorityRepo,
-          orgaRepo
-        );
 
         res.json(
           AuditFullResponseBodySchema.parse({
@@ -119,16 +109,7 @@ export function makeAuditService(
   }
 
   async function findAudit(req: Request, res: Response, next: NextFunction) {
-    let submittedBalanceSheetId: number;
-    try {
-      submittedBalanceSheetId = z
-        .number()
-        .min(0)
-        .parse(Number(req.query.submittedBalanceSheetId));
-    } catch (error: any) {
-      handle(error, next);
-    }
-
+    const { balanceSheetId, searchBy } = parseSearchQueryParameters(req);
     dataSource.manager
       .transaction(async (entityManager) => {
         const auditRepo = repoProvider.getAuditRepo(entityManager);
@@ -136,7 +117,7 @@ export function makeAuditService(
           repoProvider.getBalanceSheetRepo(entityManager);
 
         const foundBalanceSheet = await balanceSheetRepo.findByIdOrFail(
-          submittedBalanceSheetId
+          balanceSheetId
         );
 
         await checkIfCurrentUserHasEditorPermissions(
@@ -145,13 +126,14 @@ export function makeAuditService(
           foundBalanceSheet
         );
 
-        const audit = await auditRepo.findBySubmittedBalanceSheetId(
-          submittedBalanceSheetId
-        );
+        const audit =
+          searchBy === 'submittedBalanceSheetId'
+            ? await auditRepo.findBySubmittedBalanceSheetId(balanceSheetId)
+            : await auditRepo.findByAuditCopyId(balanceSheetId);
 
         if (!audit) {
           throw new NotFoundException(
-            `Could not find audit for balance sheet ${submittedBalanceSheetId}`
+            `Could not find audit for balance sheet ${balanceSheetId}`
           );
         }
 
@@ -166,6 +148,28 @@ export function makeAuditService(
       .catch((error) => {
         handle(error, next);
       });
+  }
+
+  function parseSearchQueryParameters(req: Request) {
+    const { submittedBalanceSheetId, auditCopyId } = req.query;
+
+    if (submittedBalanceSheetId) {
+      return {
+        balanceSheetId: z
+          .number()
+          .min(0)
+          .parse(Number(req.query.submittedBalanceSheetId)),
+        searchBy: 'submittedBalanceSheetId',
+      };
+    } else if (auditCopyId) {
+      return {
+        balanceSheetId: z.number().min(0).parse(Number(req.query.auditCopyId)),
+        searchBy: 'auditCopyId',
+      };
+    }
+    throw new BadRequestException(
+      'Missing search query parameter. Please provide one of: submittedBalanceSheetId, auditCopyId'
+    );
   }
 
   return deepFreeze({

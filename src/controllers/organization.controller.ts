@@ -1,6 +1,6 @@
 import { Application } from 'express';
 import { IOrganizationService } from '../services/organization.service';
-import { allowUserOnly } from './role.access';
+import { allowAnyone } from '../security/role.access';
 
 const resourceUrl = '/v1/organization';
 export const OrganizationPaths = {
@@ -19,37 +19,37 @@ export function registerOrganizationRoutes(
 ) {
   app.post(
     OrganizationPaths.post,
-    allowUserOnly,
+    allowAnyone,
     organizationService.createOrganization
   );
   app.post(
     OrganizationPaths.orgaInvitation,
-    allowUserOnly,
+    allowAnyone,
     organizationService.inviteUser
   );
   app.get(
     OrganizationPaths.getAll,
-    allowUserOnly,
+    allowAnyone,
     organizationService.getOrganizationsOfCurrentUser
   );
   app.get(
     OrganizationPaths.get,
-    allowUserOnly,
+    allowAnyone,
     organizationService.getOrganization
   );
   app.put(
     OrganizationPaths.put,
-    allowUserOnly,
+    allowAnyone,
     organizationService.updateOrganization
   );
   app.post(
     OrganizationPaths.orgaBalanceSheet,
-    allowUserOnly,
+    allowAnyone,
     organizationService.createBalanceSheet
   );
   app.get(
     OrganizationPaths.orgaBalanceSheet,
-    allowUserOnly,
+    allowAnyone,
     organizationService.getBalanceSheets
   );
 }

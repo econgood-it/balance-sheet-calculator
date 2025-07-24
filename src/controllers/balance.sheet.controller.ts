@@ -1,6 +1,6 @@
 import { Application } from 'express';
 import { IBalanceSheetService } from '../services/balance.sheet.service';
-import { allowUserOnly } from './role.access';
+import { allowAnyone } from '../security/role.access';
 
 const resourceUrl = '/v1/balancesheets';
 export const BalanceSheetPaths = {
@@ -20,32 +20,32 @@ export function registerBalanceSheetRoutes(
 ) {
   app.post(
     BalanceSheetPaths.post,
-    allowUserOnly,
+    allowAnyone,
     balanceSheetService.calculateBalanceSheet
   );
   app.post(
     BalanceSheetPaths.matrixWithoutSave,
-    allowUserOnly,
+    allowAnyone,
     balanceSheetService.calculateBalanceSheetMatrix
   );
   app.patch(
     BalanceSheetPaths.patch,
-    allowUserOnly,
+    allowAnyone,
     balanceSheetService.updateBalanceSheet
   );
   app.get(
     BalanceSheetPaths.get,
-    allowUserOnly,
+    allowAnyone,
     balanceSheetService.getBalanceSheet
   );
   app.delete(
     BalanceSheetPaths.delete,
-    allowUserOnly,
+    allowAnyone,
     balanceSheetService.deleteBalanceSheet
   );
   app.get(
     BalanceSheetPaths.matrix,
-    allowUserOnly,
+    allowAnyone,
     balanceSheetService.getMatrixRepresentationOfBalanceSheet
   );
 }

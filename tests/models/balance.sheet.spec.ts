@@ -497,7 +497,19 @@ describe('BalanceSheet', () => {
 
   describe('toJson', () => {
     it('should return json', () => {
-      const balanceSheet = makeBalanceSheet();
+      const balanceSheet = makeBalanceSheet({
+        id: 1,
+        type: BalanceSheetType.Full,
+        version: BalanceSheetVersion.v5_0_8,
+        companyFacts: makeCompanyFacts(),
+        ratings: makeRatingFactory().createDefaultRatings(
+          BalanceSheetType.Full,
+          BalanceSheetVersion.v5_0_8
+        ),
+        stakeholderWeights: [],
+        organizationId: undefined,
+      });
+
       const json = balanceSheet.toJson('en');
       expect(json).toMatchObject({
         version: BalanceSheetVersion.v5_0_8,
