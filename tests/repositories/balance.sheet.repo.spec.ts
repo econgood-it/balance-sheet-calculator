@@ -77,6 +77,14 @@ describe('BalanceSheetRepo', () => {
     ).rejects.toThrow();
   });
 
+  it('removes balance sheet by id', async () => {
+    const balanceSheet = await balanceSheetRepository.save(makeBalanceSheet());
+    await balanceSheetRepository.removeById(balanceSheet.id!);
+    await expect(
+      balanceSheetRepository.findByIdOrFail(balanceSheet.id!)
+    ).rejects.toThrow();
+  });
+
   it('saves and finds all balance sheet entities of organization', async () => {
     const organization = await organizationRepository.save(makeOrganization());
     const otherOrganization = await organizationRepository.save(

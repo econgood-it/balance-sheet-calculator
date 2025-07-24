@@ -1,4 +1,4 @@
-import { EntityManager, Equal } from 'typeorm';
+import { DeleteResult, EntityManager, Equal } from 'typeorm';
 import { BalanceSheetEntity } from '../entities/balance.sheet.entity';
 import { BalanceSheet, makeBalanceSheet } from '../models/balance.sheet';
 import {
@@ -18,6 +18,7 @@ export interface IBalanceSheetRepo {
   findByOrganization(organization: Organization): Promise<BalanceSheet[]>;
   save(balanceSheet: BalanceSheet): Promise<BalanceSheet>;
   remove(balanceSheet: BalanceSheet): Promise<BalanceSheet>;
+  removeById(balanceSheetId: number): Promise<DeleteResult>;
 }
 
 export function makeBalanceSheetRepository(
@@ -52,6 +53,10 @@ export function makeBalanceSheetRepository(
     return convertToBalanceSheet(
       await repo.remove(convertToBalanceSheetEntity(balanceSheet))
     );
+  }
+
+  async function removeById(balanceSheetId: number): Promise<DeleteResult> {
+    return await repo.delete(balanceSheetId);
   }
 
   function convertToBalanceSheet(
@@ -156,5 +161,6 @@ export function makeBalanceSheetRepository(
     findByOrganization,
     save,
     remove,
+    removeById,
   });
 }

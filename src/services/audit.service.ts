@@ -15,6 +15,7 @@ import { z } from 'zod';
 import NotFoundException from '../exceptions/not.found.exception';
 import { ConflictException } from '../exceptions/conflict.exception';
 import BadRequestException from '../exceptions/bad.request.exception';
+import InternalServerException from '../exceptions/internal.server.exception';
 
 export interface IAuditService {
   submitBalanceSheetToAudit(
@@ -25,6 +26,7 @@ export interface IAuditService {
 
   getAudit(req: Request, res: Response, next: NextFunction): Promise<void>;
   findAudit(req: Request, res: Response, next: NextFunction): Promise<void>;
+  deleteAudit(req: Request, res: Response, next: NextFunction): Promise<void>;
 }
 
 export function makeAuditService(
@@ -150,6 +152,27 @@ export function makeAuditService(
       });
   }
 
+  async function deleteAudit(req: Request, res: Response, next: NextFunction) {
+    dataSource.manager
+      .transaction(async (entityManager) => {
+        const auditRepo = repoProvider.getAuditRepo(entityManager);
+        const foundAudit = await auditRepo.findByIdOrFail(
+          Number(req.params.id)
+        );
+        if (!(await auditRepo.remove(foundAudit))) {
+          throw new InternalServerException(
+            `Deleting audit with id ${foundAudit.id} failed.`
+          );
+        }
+        res.json({
+          message: `Successfully deleted audit with id ${foundAudit.id}`,
+        });
+      })
+      .catch((error) => {
+        handle(error, next);
+      });
+  }
+
   function parseSearchQueryParameters(req: Request) {
     const { submittedBalanceSheetId, auditCopyId } = req.query;
 
@@ -176,5 +199,6 @@ export function makeAuditService(
     submitBalanceSheetToAudit,
     findAudit,
     getAudit,
+    deleteAudit,
   });
 }
