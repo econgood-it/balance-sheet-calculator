@@ -64,7 +64,15 @@ export function makeFinanceCalc() {
       : some(companyFacts.turnover / companyFacts.totalAssets);
   }
 
-  // In Excel Weight.E22
+  /**
+   * In Excel Weight.E22
+   *
+   * (Additions to fixed assets + Investments)/(Balance Sheet Total)
+   *
+   * 0.2: if Balance Sheet Total is 0, since we cannot divide by 0
+   *
+   * @param companyFacts
+   */
   function calculateEconomicRatioE22(
     companyFacts: CompanyFacts
   ): Option<number> {

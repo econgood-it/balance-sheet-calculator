@@ -109,6 +109,21 @@ export function makeTopicWeightCalculator(
     return 1;
   }
 
+  /**
+   * Three variables are taken into account: additions to fix assets, investments, and balance sheet total (in Company Facts). The calculated ratio is
+   *
+   * ratio = (Additions to fixed assets + Investments)/(Balance Sheet Total)
+   *
+   * 0.2: if Balance Sheet Total is 0, since we cannot divide by 0
+   *
+   * The weighting is according to the following thresholds
+   *
+   * a) Very high: if the industry corresponds to Finance
+   * b) High: if the ratio > 0.25
+   * c) Middle: if 0.1 <= ratio <= 0.25
+   * d) Low: if ratio < 0.1
+   *
+   */
   function calculateTopicWeightOfB3(): number {
     if (calcResults.financeCalcResults.companyIsActiveInFinancialServices) {
       return 2;
