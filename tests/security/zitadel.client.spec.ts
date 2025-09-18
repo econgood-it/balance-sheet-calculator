@@ -1,7 +1,6 @@
 import { makeZitadelClient } from '../../src/security/zitadel.client';
 
 import axios from 'axios';
-import { z } from 'zod';
 
 // Mock axios module
 jest.mock('axios');

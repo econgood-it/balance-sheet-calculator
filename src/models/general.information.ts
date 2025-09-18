@@ -11,6 +11,16 @@ export function makePeriod(data: PeriodOpts): Period {
   return deepFreeze({ ...data });
 }
 
+type CompanyOpts = {
+  name: string;
+};
+
+export type Company = CompanyOpts & {};
+
+export function makeCompany(data: CompanyOpts): Company {
+  return deepFreeze({ ...data });
+}
+
 type ContactPersonOpts = {
   name: string;
   email: string;
@@ -24,7 +34,8 @@ export function makeContactPerson(data: ContactPerson): ContactPerson {
 
 type GeneralInformationOpts = {
   contactPerson: ContactPerson;
-  period: Period;
+  company: Company;
+  period?: Period;
 };
 
 export type GeneralInformation = GeneralInformationOpts & {};

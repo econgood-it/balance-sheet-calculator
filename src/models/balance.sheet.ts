@@ -26,6 +26,7 @@ import { MatrixBodySchema } from '@ecogood/e-calculator-schemas/dist/matrix.dto'
 import { eq, gte } from '@mr42/version-comparator/dist/version.comparator';
 import { ValueError } from '../exceptions/value.error';
 import { makeWorkbook } from './workbook';
+import { makeCompany, makeContactPerson } from './general.information';
 
 export const BalanceSheetVersionSchema = z.nativeEnum(BalanceSheetVersion);
 
@@ -65,6 +66,15 @@ export function makeBalanceSheet(opts?: BalanceSheetOpts): BalanceSheet {
     id: undefined,
     type: BalanceSheetType.Full,
     version: BalanceSheetVersion.v5_0_8,
+    generalInformation: {
+      contactPerson: makeContactPerson({
+        email: '',
+        name: '',
+      }),
+      company: makeCompany({
+        name: '',
+      }),
+    },
     companyFacts: makeCompanyFacts(),
     ratings: makeRatingFactory().createDefaultRatings(
       BalanceSheetType.Full,

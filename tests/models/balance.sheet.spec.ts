@@ -14,6 +14,11 @@ import { LookupError } from '../../src/exceptions/lookup.error';
 import { makeWeighting } from '../../src/models/weighting';
 import { ValueError } from '../../src/exceptions/value.error';
 import { lt } from '@mr42/version-comparator/dist/version.comparator';
+import {
+  makeCompany,
+  makeContactPerson,
+  makeGeneralInformation,
+} from '../../src/models/general.information';
 
 describe('BalanceSheet', () => {
   it('is created with default values', () => {
@@ -21,6 +26,15 @@ describe('BalanceSheet', () => {
     expect(balanceSheet).toMatchObject({
       version: BalanceSheetVersion.v5_0_8,
       type: BalanceSheetType.Full,
+      generalInformation: makeGeneralInformation({
+        contactPerson: makeContactPerson({
+          email: '',
+          name: '',
+        }),
+        company: makeCompany({
+          name: '',
+        }),
+      }),
       companyFacts: makeCompanyFacts(),
       ratings: makeRatingFactory().createDefaultRatings(
         BalanceSheetType.Full,

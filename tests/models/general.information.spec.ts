@@ -1,4 +1,5 @@
 import {
+  makeCompany,
   makeContactPerson,
   makeGeneralInformation,
   makePeriod,
@@ -15,12 +16,17 @@ describe('GeneralInformation', () => {
       email: 'test@example.com',
       name: 'John Doe',
     });
+    const company = makeCompany({
+      name: 'Test Company',
+    });
     const generalInformation = makeGeneralInformation({
       contactPerson,
+      company,
       period,
     });
     expect(generalInformation).toMatchObject({
       contactPerson,
+      company,
       period,
     });
   });
