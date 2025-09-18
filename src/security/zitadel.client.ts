@@ -6,19 +6,16 @@ type ZitadelClient = {
   getUser(userId: string): Promise<{ email: string; fullName: string }>;
 };
 
-export function makeZitadelClient(token: string): ZitadelClient {
+export function makeZitadelClient(url: string, token: string): ZitadelClient {
   async function getUser(
     userId: string
   ): Promise<{ email: string; fullName: string }> {
-    const response = await axios.get(
-      `https://zitadel.dev.econgood.org/management/v1/users/${userId}`,
-      {
-        headers: {
-          Accept: 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await axios.get(`${url}/management/v1/users/${userId}`, {
+      headers: {
+        Accept: 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
     const UserSchema = z
       .object({
         user: z.object({

@@ -22,6 +22,8 @@ export class Configuration {
     public readonly zitadelAppId: string,
     public readonly zitadelClientId: string,
     public readonly zitadelAuthorityUrl: string,
+    public readonly zitadelApiToken: string,
+    public readonly zitadelApiUrl: string,
     public readonly ecgAuditAdminId: string,
     public readonly ecgPeerGroupAdminId: string,
     public readonly ecgAuditApiUserId: string
@@ -55,6 +57,7 @@ export class ConfigurationReader {
     const zitadelAppId = process.env.ZITADEL_APP_ID;
     const zitadelClientId = process.env.ZITADEL_CLIENT_ID;
     const zitadelAuthorityUrl = process.env.ZITADEL_AUTHORITY_URL;
+    const zitadelApiToken = process.env.ZITADEL_API_TOKEN;
     const ecgAuditAdminId = process.env.ECG_AUDIT_ADMIN_ID;
     const ecgPeerGroupAdminId = process.env.ECG_PEER_GROUP_ADMIN_ID;
     const ecgAuditApiUserId = process.env.ECG_AUDIT_API_USER_ID;
@@ -99,6 +102,10 @@ export class ConfigurationReader {
       zitadelAuthorityUrl
     );
     ConfigurationReader.checkIfEnvironmentVariableIsSet(
+      'ZITADEL_API_TOKEN',
+      zitadelApiToken
+    );
+    ConfigurationReader.checkIfEnvironmentVariableIsSet(
       'ECG_AUDIT_ADMIN_ID',
       ecgAuditAdminId
     );
@@ -123,6 +130,9 @@ export class ConfigurationReader {
         'Unsupported value for ENVIRONMENT. Allowed are only DEV, TEST and PROD'
       );
     }
+    const authUrl = zitadelAuthorityUrl as string;
+    const zitadelApiUrl = new URL(authUrl).origin;
+
     return new Configuration(
       dbName as string,
       dbHost as string,
@@ -137,7 +147,9 @@ export class ConfigurationReader {
       zitadelKey as string,
       zitadelAppId as string,
       zitadelClientId as string,
-      zitadelAuthorityUrl as string,
+      authUrl,
+      zitadelApiToken as string,
+      zitadelApiUrl,
       ecgAuditAdminId as string,
       ecgPeerGroupAdminId as string,
       ecgAuditApiUserId as string

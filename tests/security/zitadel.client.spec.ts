@@ -29,16 +29,17 @@ describe('Zitadel Client', () => {
     };
     const userId = 'user-id';
     const token = 'mocked-token';
+    const url = 'https://www.example.com';
     mockedAxios.get.mockResolvedValue({ data: mockedUser });
 
-    const client = makeZitadelClient(token);
+    const client = makeZitadelClient(url, token);
     const user = await client.getUser(userId);
     expect(user).toEqual({
       email: 'mail@example.com',
       fullName: 'John Doe',
     });
     expect(mockedAxios.get).toHaveBeenCalledWith(
-      'https://zitadel.dev.econgood.org/management/v1/users/user-id',
+      `${url}/management/v1/users/user-id`,
       {
         headers: {
           Accept: 'application/json',

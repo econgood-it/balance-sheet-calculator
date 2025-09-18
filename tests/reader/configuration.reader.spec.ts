@@ -14,7 +14,7 @@ describe('ConfigurationReader', () => {
   const docsUser = 'docsuser';
   const docsPwd = 'crazydocspwd';
   const port = '4000';
-  const zitadelAuthUrl = 'https://zitadel.com';
+  const zitadelAuthUrl = 'https://zitadel.com:443';
   const zitadelKeyId = '382903810845309';
   const zitadelKey = 'fdjalrejwqpjl j---';
   const zitadelAppId = '489328014';
@@ -22,6 +22,7 @@ describe('ConfigurationReader', () => {
   const ecgAuditAdminId = '9489032859043872590';
   const ecgPeerGroupAdminId = '4832901483921748';
   const ecgAuditApiUserId = '43214838409312';
+  const zitadelApiToken = 'fdjaklrheawhrelawjrklajfejkwajfioaewjfka';
 
   beforeEach(() => {
     jest.resetModules(); // Most important - it clears the cache
@@ -50,6 +51,7 @@ describe('ConfigurationReader', () => {
     process.env.ZITADEL_APP_ID = zitadelAppId;
     process.env.ZITADEL_CLIENT_ID = zitadelClientId;
     process.env.ZITADEL_AUTHORITY_URL = zitadelAuthUrl;
+    process.env.ZITADEL_API_TOKEN = zitadelApiToken;
   }
 
   it('should use environment variables for config', function () {
@@ -69,6 +71,8 @@ describe('ConfigurationReader', () => {
     expect(config.zitadelAppId).toBe(zitadelAppId);
     expect(config.zitadelClientId).toBe(zitadelClientId);
     expect(config.zitadelAuthorityUrl).toBe(zitadelAuthUrl);
+    expect(config.zitadelApiToken).toBe(zitadelApiToken);
+    expect(config.zitadelApiUrl).toBe('https://zitadel.com');
     expect(config.ecgAuditAdminId).toBe(ecgAuditAdminId);
     expect(config.ecgPeerGroupAdminId).toBe(ecgPeerGroupAdminId);
     expect(config.ecgAuditApiUserId).toBe(ecgAuditApiUserId);
