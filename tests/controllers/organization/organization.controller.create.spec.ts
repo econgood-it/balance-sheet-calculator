@@ -25,6 +25,7 @@ import { IBalanceSheetRepo } from '../../../src/repositories/balance.sheet.repo'
 import { RatingResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/rating.dto';
 import { z } from 'zod';
 import { INDUSTRY_CODE_FOR_FINANCIAL_SERVICES } from '../../../src/calculations/finance.calc';
+import { generalInformationDummyJson } from '../../models/general.information.dummy';
 
 const assertTopicWeight = (
   shortName: string,
@@ -132,6 +133,7 @@ describe('Organization Balance Sheet Controller', () => {
       .send({
         type: BalanceSheetType.Compact,
         version: BalanceSheetVersion.v5_0_8,
+        generalInformation: generalInformationDummyJson,
       });
     expect(response.status).toBe(200);
     const response2 = await testApp

@@ -87,7 +87,12 @@ export function makeBalanceSheetRepository(
         }),
         company: makeCompany(balanceSheetEntity.generalInformation.company),
         period: balanceSheetEntity.generalInformation.period
-          ? makePeriod(balanceSheetEntity.generalInformation.period)
+          ? makePeriod({
+              start: new Date(
+                balanceSheetEntity.generalInformation.period.start
+              ),
+              end: new Date(balanceSheetEntity.generalInformation.period.end),
+            })
           : undefined,
       }),
       companyFacts: makeCompanyFacts({
@@ -132,7 +137,16 @@ export function makeBalanceSheetRepository(
       BalanceSheetDBSchema.parse({
         version: balanceSheet.version,
         type: balanceSheet.type,
-        generalInformation: balanceSheet.generalInformation,
+        generalInformation: {
+          ...balanceSheet.generalInformation,
+          period: balanceSheet.generalInformation.period
+            ? {
+                start:
+                  balanceSheet.generalInformation.period.start.toISOString(),
+                end: balanceSheet.generalInformation.period.end.toISOString(),
+              }
+            : undefined,
+        },
         companyFacts: {
           ...balanceSheet.companyFacts,
           hasCanteen: balanceSheet.companyFacts.hasCanteen,

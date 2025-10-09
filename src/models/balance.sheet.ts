@@ -72,7 +72,7 @@ export function makeBalanceSheet(opts?: BalanceSheetOpts): BalanceSheet {
     id: undefined,
     type: BalanceSheetType.Full,
     version: BalanceSheetVersion.v5_0_8,
-    generalInformation: {
+    generalInformation: makeGeneralInformation({
       contactPerson: makeContactPerson({
         email: '',
         name: '',
@@ -80,7 +80,7 @@ export function makeBalanceSheet(opts?: BalanceSheetOpts): BalanceSheet {
       company: makeCompany({
         name: '',
       }),
-    },
+    }),
     companyFacts: makeCompanyFacts(),
     ratings: makeRatingFactory().createDefaultRatings(
       BalanceSheetType.Full,
@@ -348,6 +348,7 @@ export function makeBalanceSheet(opts?: BalanceSheetOpts): BalanceSheet {
       ratings: data.ratings.map((r) => r.toJson(workBook)),
       stakeholderWeights: data.stakeholderWeights,
       organizationId: data.organizationId,
+      generalInformation: data.generalInformation.toJson(),
     });
   }
 
