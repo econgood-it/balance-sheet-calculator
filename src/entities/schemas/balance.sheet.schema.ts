@@ -6,6 +6,7 @@ import {
 import { CompanyFactsDBSchema } from './company.facts.schema';
 import { RatingDBSchema } from './rating.schema';
 import { StakeholderWeightDBSchema } from './stakeholder.weight.schema';
+import { GeneralInformationDBSchema } from './general.information.schema';
 
 const BalanceSheetVersionSchema = z.nativeEnum(BalanceSheetVersion);
 export const BalanceSheetDBSchema = z.object({
@@ -13,6 +14,7 @@ export const BalanceSheetDBSchema = z.object({
   version: BalanceSheetVersionSchema,
   companyFacts: CompanyFactsDBSchema,
   ratings: RatingDBSchema.array(),
+  generalInformation: GeneralInformationDBSchema,
   stakeholderWeights: StakeholderWeightDBSchema.array(),
 });
 export type BalanceSheetDB = z.infer<typeof BalanceSheetDBSchema>;

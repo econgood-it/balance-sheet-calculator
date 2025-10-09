@@ -1,4 +1,6 @@
 import deepFreeze from 'deep-freeze';
+import { z } from 'zod';
+import { GeneralInformationSchema } from '@ecogood/e-calculator-schemas/dist/general.information.dto';
 
 type PeriodOpts = {
   start: Date;
@@ -45,3 +47,15 @@ export function makeGeneralInformation(
 ): GeneralInformation {
   return deepFreeze({ ...data });
 }
+
+makeGeneralInformation.fromJson = function fromJson(
+  json: z.input<typeof GeneralInformationSchema>
+): GeneralInformation {
+  const generalInformation = GeneralInformationSchema.parse(json);
+  const contactPerson = makeContactPerson(generalInformation.contactPerson);
+  const company = makeCompany(generalInformation.company);
+  const period = generalInformation.period
+    ? makePeriod(generalInformation.period)
+    : undefined;
+  return makeGeneralInformation({ contactPerson, company, period });
+};

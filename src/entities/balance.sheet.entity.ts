@@ -45,6 +45,10 @@ export class BalanceSheetEntity {
     return this.balanceSheet.type;
   }
 
+  public get generalInformation() {
+    return this.balanceSheet.generalInformation;
+  }
+
   public get companyFacts() {
     return this.balanceSheet.companyFacts;
   }

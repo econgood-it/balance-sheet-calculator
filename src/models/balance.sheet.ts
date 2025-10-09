@@ -26,7 +26,12 @@ import { MatrixBodySchema } from '@ecogood/e-calculator-schemas/dist/matrix.dto'
 import { eq, gte } from '@mr42/version-comparator/dist/version.comparator';
 import { ValueError } from '../exceptions/value.error';
 import { makeWorkbook } from './workbook';
-import { makeCompany, makeContactPerson } from './general.information';
+import {
+  GeneralInformation,
+  makeCompany,
+  makeContactPerson,
+  makeGeneralInformation,
+} from './general.information';
 
 export const BalanceSheetVersionSchema = z.nativeEnum(BalanceSheetVersion);
 
@@ -36,6 +41,7 @@ type BalanceSheetOpts = {
   version: BalanceSheetVersion;
   companyFacts: CompanyFacts;
   ratings: readonly Rating[];
+  generalInformation: GeneralInformation;
   stakeholderWeights: readonly Weighting[];
   organizationId?: number;
 };
@@ -370,11 +376,16 @@ makeBalanceSheet.fromJson = function fromJson(
   const type = balanceSheet.type;
   const companyFacts = makeCompanyFacts.fromJson(balanceSheet.companyFacts);
   const ratings = makeRatingFactory().createDefaultRatings(type, version);
+  const generalInformation = makeGeneralInformation.fromJson(
+    balanceSheet.generalInformation
+  );
+
   return makeBalanceSheet({
     version,
     type,
     companyFacts,
     ratings,
     stakeholderWeights: balanceSheet.stakeholderWeights,
+    generalInformation,
   }).merge({ ratings: balanceSheet.ratings });
 };

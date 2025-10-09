@@ -12,6 +12,12 @@ import { makeRating } from '../models/rating';
 import deepFreeze from 'deep-freeze';
 import { Organization } from '../models/organization';
 import { BalanceSheetDBSchema } from '../entities/schemas/balance.sheet.schema';
+import {
+  makeCompany,
+  makeContactPerson,
+  makeGeneralInformation,
+  makePeriod,
+} from '../models/general.information';
 
 export interface IBalanceSheetRepo {
   findByIdOrFail(id: number): Promise<BalanceSheet>;
@@ -75,6 +81,15 @@ export function makeBalanceSheetRepository(
       id: balanceSheetEntity.id,
       type: balanceSheetEntity.type,
       version: balanceSheetEntity.version,
+      generalInformation: makeGeneralInformation({
+        contactPerson: makeContactPerson({
+          ...balanceSheetEntity.generalInformation.contactPerson,
+        }),
+        company: makeCompany(balanceSheetEntity.generalInformation.company),
+        period: balanceSheetEntity.generalInformation.period
+          ? makePeriod(balanceSheetEntity.generalInformation.period)
+          : undefined,
+      }),
       companyFacts: makeCompanyFacts({
         ...balanceSheetEntity.companyFacts,
         hasCanteen: balanceSheetEntity.companyFacts.hasCanteen,
@@ -117,6 +132,7 @@ export function makeBalanceSheetRepository(
       BalanceSheetDBSchema.parse({
         version: balanceSheet.version,
         type: balanceSheet.type,
+        generalInformation: balanceSheet.generalInformation,
         companyFacts: {
           ...balanceSheet.companyFacts,
           hasCanteen: balanceSheet.companyFacts.hasCanteen,
