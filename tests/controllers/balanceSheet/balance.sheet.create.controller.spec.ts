@@ -18,6 +18,7 @@ import { AuthBuilder } from '../../AuthBuilder';
 import { InMemoryAuthentication } from '../in.memory.authentication';
 import { makeRepoProvider } from '../../../src/repositories/repo.provider';
 import { BalanceSheetPaths } from '../../../src/controllers/balance.sheet.controller';
+import { generalInformationDummy } from '../../models/general.information.dummy';
 
 describe('Balance Sheet Controller', () => {
   let dataSource: DataSource;
@@ -48,6 +49,7 @@ describe('Balance Sheet Controller', () => {
       type: BalanceSheetType.Full,
       version: BalanceSheetVersion.v5_0_9,
       companyFacts: makeJsonFactory().emptyCompanyFacts(),
+      generalInformation: { ...generalInformationDummy },
     };
     const testApp = supertest(app);
     const response = await testApp
@@ -63,6 +65,7 @@ describe('Balance Sheet Controller', () => {
       type: BalanceSheetType.Full,
       version: BalanceSheetVersion.v5_0_9,
       companyFacts: makeJsonFactory().emptyCompanyFacts(),
+      generalInformation: { ...generalInformationDummy },
     };
     const testApp = supertest(app);
     const response = await testApp

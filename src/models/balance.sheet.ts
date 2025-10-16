@@ -74,7 +74,7 @@ export function makeBalanceSheet(opts?: BalanceSheetOpts): BalanceSheet {
     version: BalanceSheetVersion.v5_0_8,
     generalInformation: makeGeneralInformation({
       contactPerson: makeContactPerson({
-        email: '',
+        email: 'john.doe@example.com',
         name: '',
       }),
       company: makeCompany({

@@ -12,6 +12,7 @@ import {
   makeSupplyFraction,
 } from '../models/company.facts';
 import { OrganizationRequestSchema } from '@ecogood/e-calculator-schemas/dist/organization.dto';
+import { generalInformationDummy } from '../../tests/models/general.information.dummy';
 
 const arabEmiratesCode = 'ARE';
 const afghanistanCode = 'AFG';
@@ -110,6 +111,7 @@ export function makeJsonFactory() {
       type: BalanceSheetType.Full,
       version: BalanceSheetVersion.v5_0_8,
       companyFacts: emptyCompanyFacts(),
+      generalInformation: { ...generalInformationDummy },
       ratings: [
         {
           shortName: 'A1',

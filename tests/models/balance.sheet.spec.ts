@@ -32,7 +32,7 @@ describe('BalanceSheet', () => {
       type: BalanceSheetType.Full,
       generalInformation: makeGeneralInformation({
         contactPerson: makeContactPerson({
-          email: '',
+          email: 'john.doe@example.com',
           name: '',
         }),
         company: makeCompany({

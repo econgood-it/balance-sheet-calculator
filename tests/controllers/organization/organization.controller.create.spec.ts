@@ -190,6 +190,7 @@ describe('Organization Balance Sheet Controller', () => {
             },
           ],
         },
+        generalInformation: { ...generalInformationDummyJson },
       };
       const response = await testApp
         .post(`${OrganizationPaths.getAll}/${organization.id}/balancesheet`)
@@ -212,6 +213,7 @@ describe('Organization Balance Sheet Controller', () => {
           profit: 12,
           turnover: 100,
         },
+        generalInformation: { ...generalInformationDummyJson },
       };
       const response = await testApp
         .post(`${OrganizationPaths.getAll}/${organization.id}/balancesheet`)
@@ -231,6 +233,7 @@ describe('Organization Balance Sheet Controller', () => {
           ...balanceSheetJson.companyFacts,
           numberOfEmployees: 9,
         },
+        generalInformation: { ...generalInformationDummyJson },
       };
 
       const response = await testApp
@@ -252,6 +255,7 @@ describe('Organization Balance Sheet Controller', () => {
           ...balanceSheetJson.companyFacts,
           numberOfEmployees: 10,
         },
+        generalInformation: { ...generalInformationDummyJson },
       };
       const response = await testApp
         .post(`${OrganizationPaths.getAll}/${organization.id}/balancesheet`)
