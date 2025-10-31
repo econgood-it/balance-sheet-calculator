@@ -311,6 +311,9 @@ export function makeBalanceSheet(opts?: BalanceSheetOpts): BalanceSheet {
       companyFacts: requestBody.companyFacts
         ? data.companyFacts.merge(requestBody.companyFacts)
         : data.companyFacts,
+      generalInformation: requestBody.generalInformation
+        ? makeGeneralInformation.fromJson(requestBody.generalInformation)
+        : data.generalInformation,
       ratings: data.ratings.map((rating) => {
         const newRating = requestBody.ratings.find(
           (newRating) => newRating.shortName === rating.shortName

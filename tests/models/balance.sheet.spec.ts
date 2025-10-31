@@ -296,6 +296,19 @@ describe('BalanceSheet', () => {
     it('with request body', () => {
       const balanceSheet = makeBalanceSheet();
       const requestBody = {
+        generalInformation: {
+          contactPerson: {
+            name: 'John Update',
+            email: 'update@example.com',
+          },
+          company: {
+            name: 'Test Company Update',
+          },
+          period: {
+            start: new Date('2026-01-01').toISOString(),
+            end: new Date('2027-01-01').toISOString(),
+          },
+        },
         ratings: [
           {
             shortName: 'D4.2',
@@ -329,6 +342,9 @@ describe('BalanceSheet', () => {
           industryCode: 'B',
         }),
       ]);
+      expect(newBalanceSheet.generalInformation).toEqual(
+        makeGeneralInformation.fromJson(requestBody.generalInformation)
+      );
     });
 
     it('where B1.1 has weight 0 and has not been selected by user', () => {
