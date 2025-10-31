@@ -157,7 +157,6 @@ describe('Organization Balance Sheet Controller', () => {
     const organization = await organizationRepo.save(
       makeOrganization().invite(auth.user.email).join(auth.user)
     );
-
     const response = await testApp
       .post(`${OrganizationPaths.getAll}/${organization.id}/balancesheet`)
       .set(auth.toHeaderPair().key, auth.toHeaderPair().value)

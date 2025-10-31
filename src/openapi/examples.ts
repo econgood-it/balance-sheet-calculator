@@ -12,7 +12,10 @@ import {
   makeSupplyFraction,
 } from '../models/company.facts';
 import { OrganizationRequestSchema } from '@ecogood/e-calculator-schemas/dist/organization.dto';
-import { generalInformationDummy } from '../../tests/models/general.information.dummy';
+import {
+  generalInformationDummy,
+  generalInformationDummyJson,
+} from '../../tests/models/general.information.dummy';
 
 const arabEmiratesCode = 'ARE';
 const afghanistanCode = 'AFG';
@@ -522,6 +525,7 @@ export function makeJsonFactory() {
     return {
       type: BalanceSheetType.Compact,
       version: BalanceSheetVersion.v5_0_6,
+      generalInformation: generalInformationDummyJson,
     };
   }
 
