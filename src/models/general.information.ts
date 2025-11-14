@@ -1,8 +1,6 @@
 import deepFreeze from 'deep-freeze';
 import { z } from 'zod';
 import { GeneralInformationSchema } from '@ecogood/e-calculator-schemas/dist/general.information.dto';
-import { CompanyFactsResponseBodySchema } from '../../../e-calculator-schemas/src/company.facts.dto';
-import { RatingRequestBodySchema } from '../../../e-calculator-schemas/src/rating.dto';
 
 type PeriodOpts = {
   start: Date;
