@@ -17,7 +17,7 @@ import {
   BalanceSheetType,
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
-import { generalInformationDummyJson } from '../../models/general.information.dummy';
+import { makeJsonFactory } from '../../../src/openapi/examples';
 
 describe('Organization Controller Get Endpoint', () => {
   let dataSource: DataSource;
@@ -160,7 +160,7 @@ describe('Organization Controller Get Balance Sheets Endpoint', () => {
         .fromJson({
           version: BalanceSheetVersion.v5_0_8,
           type: BalanceSheetType.Compact,
-          generalInformation: generalInformationDummyJson,
+          generalInformation: makeJsonFactory().minimalGeneralInformation(),
         })
         .assignOrganization(organization)
     );
@@ -169,7 +169,7 @@ describe('Organization Controller Get Balance Sheets Endpoint', () => {
         .fromJson({
           version: BalanceSheetVersion.v5_1_0,
           type: BalanceSheetType.Full,
-          generalInformation: generalInformationDummyJson,
+          generalInformation: makeJsonFactory().minimalGeneralInformation(),
         })
         .assignOrganization(organization)
     );

@@ -75,10 +75,10 @@ export function makeBalanceSheet(opts?: BalanceSheetOpts): BalanceSheet {
     generalInformation: makeGeneralInformation({
       contactPerson: makeContactPerson({
         email: 'john.doe@example.com',
-        name: '',
+        name: 'john doe',
       }),
       company: makeCompany({
-        name: '',
+        name: 'ECG e.V.',
       }),
     }),
     companyFacts: makeCompanyFacts(),

@@ -12,15 +12,38 @@ import {
   makeSupplyFraction,
 } from '../models/company.facts';
 import { OrganizationRequestSchema } from '@ecogood/e-calculator-schemas/dist/organization.dto';
+
 import {
-  generalInformationDummy,
-  generalInformationDummyJson,
-} from '../../tests/models/general.information.dummy';
+  GeneralInformation,
+  makeCompany,
+  makeContactPerson,
+  makeGeneralInformation,
+  makePeriod,
+} from '../models/general.information';
 
 const arabEmiratesCode = 'ARE';
 const afghanistanCode = 'AFG';
 const agricultureCode = 'A';
 const pharmaceuticCode = 'Ce';
+
+export function makeGeneralInformationFactory() {
+  function nonEmpty(): GeneralInformation {
+    return makeGeneralInformation({
+      contactPerson: makeContactPerson({
+        name: 'John Doe',
+        email: 'john@example.com',
+      }),
+      company: makeCompany({
+        name: 'Test Company',
+      }),
+      period: makePeriod({
+        start: new Date('2025-01-01'),
+        end: new Date('2026-01-01'),
+      }),
+    });
+  }
+  return deepFreeze({ nonEmpty });
+}
 
 export function makeCompanyFactsFactory() {
   function nonEmpty(): CompanyFacts {
@@ -114,7 +137,7 @@ export function makeJsonFactory() {
       type: BalanceSheetType.Full,
       version: BalanceSheetVersion.v5_0_8,
       companyFacts: emptyCompanyFacts(),
-      generalInformation: { ...generalInformationDummy },
+      generalInformation: minimalGeneralInformation(),
       ratings: [
         {
           shortName: 'A1',
@@ -525,7 +548,7 @@ export function makeJsonFactory() {
     return {
       type: BalanceSheetType.Compact,
       version: BalanceSheetVersion.v5_0_6,
-      generalInformation: generalInformationDummyJson,
+      generalInformation: minimalGeneralInformation(),
     };
   }
 
@@ -550,10 +573,28 @@ export function makeJsonFactory() {
       mainOriginOfOtherSuppliers: 'AWO',
     };
   }
+
+  function minimalGeneralInformation() {
+    return {
+      contactPerson: {
+        name: 'John Doe',
+        email: 'john@example.com',
+      },
+      company: {
+        name: 'Test Company',
+      },
+      period: {
+        start: new Date('2025-01-01').toISOString(),
+        end: new Date('2026-01-01').toISOString(),
+      },
+    };
+  }
+
   return deepFreeze({
     emptyFullV508,
     minimalCompactV506,
     emptyCompanyFacts,
+    minimalGeneralInformation,
   });
 }
 

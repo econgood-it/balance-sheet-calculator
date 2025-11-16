@@ -7,7 +7,7 @@ import { makeCompanyFacts } from '../../src/models/company.facts';
 import { makeAudit } from '../../src/models/audit';
 import { makeCertificationAuthority } from '../../src/models/certification.authoriy';
 import { CertificationAuthorityNames } from '@ecogood/e-calculator-schemas/dist/audit.dto';
-import { generalInformationDummy } from './general.information.dummy';
+import { makeGeneralInformationFactory } from '../../src/openapi/examples';
 
 describe('Audit', () => {
   it('should be created', () => {
@@ -18,7 +18,7 @@ describe('Audit', () => {
       companyFacts: makeCompanyFacts(),
       ratings: [],
       stakeholderWeights: [],
-      generalInformation: generalInformationDummy,
+      generalInformation: makeGeneralInformationFactory().nonEmpty(),
     });
     const ecgAudit = makeCertificationAuthority({
       name: CertificationAuthorityNames.AUDIT,
@@ -42,7 +42,7 @@ describe('Audit', () => {
       companyFacts: makeCompanyFacts(),
       ratings: [],
       stakeholderWeights: [],
-      generalInformation: generalInformationDummy,
+      generalInformation: makeGeneralInformationFactory().nonEmpty(),
     });
     const originalCopy = makeBalanceSheet({
       id: 10,
@@ -51,7 +51,7 @@ describe('Audit', () => {
       companyFacts: makeCompanyFacts(),
       ratings: [],
       stakeholderWeights: [],
-      generalInformation: generalInformationDummy,
+      generalInformation: makeGeneralInformationFactory().nonEmpty(),
     });
     const auditCopy = makeBalanceSheet({
       id: 11,
@@ -60,7 +60,7 @@ describe('Audit', () => {
       companyFacts: makeCompanyFacts(),
       ratings: [],
       stakeholderWeights: [],
-      generalInformation: generalInformationDummy,
+      generalInformation: makeGeneralInformationFactory().nonEmpty(),
     });
 
     const ecgAudit = makeCertificationAuthority({

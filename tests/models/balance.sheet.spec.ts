@@ -20,9 +20,9 @@ import {
   makeGeneralInformation,
 } from '../../src/models/general.information';
 import {
-  generalInformationDummy,
-  generalInformationDummyJson,
-} from './general.information.dummy';
+  makeGeneralInformationFactory,
+  makeJsonFactory,
+} from '../../src/openapi/examples';
 
 describe('BalanceSheet', () => {
   it('is created with default values', () => {
@@ -33,10 +33,10 @@ describe('BalanceSheet', () => {
       generalInformation: makeGeneralInformation({
         contactPerson: makeContactPerson({
           email: 'john.doe@example.com',
-          name: '',
+          name: 'john doe',
         }),
         company: makeCompany({
-          name: '',
+          name: 'ECG e.V.',
         }),
       }),
       companyFacts: makeCompanyFacts(),
@@ -116,7 +116,7 @@ describe('BalanceSheet', () => {
     const balanceSheet = makeBalanceSheet.fromJson({
       version: BalanceSheetVersion.v5_0_8,
       type: BalanceSheetType.Compact,
-      generalInformation: generalInformationDummyJson,
+      generalInformation: makeJsonFactory().minimalGeneralInformation(),
     });
     const aspects = balanceSheet.getPositiveAspects();
     expect(aspects.length).toBe(20);
@@ -225,7 +225,7 @@ describe('BalanceSheet', () => {
       const balanceSheet = makeBalanceSheet.fromJson({
         version: BalanceSheetVersion.v5_1_0,
         type: BalanceSheetType.Full,
-        generalInformation: generalInformationDummyJson,
+        generalInformation: makeJsonFactory().minimalGeneralInformation(),
       });
       const estimations = [
         { shortName: 'B1.1', estimations: 10, weight: b11 },
@@ -256,7 +256,7 @@ describe('BalanceSheet', () => {
     'should fail for version < 5.10 if B1.1 and B1.2 have a weight greater 0',
     (version) => {
       const balanceSheet = makeBalanceSheet.fromJson({
-        generalInformation: generalInformationDummyJson,
+        generalInformation: makeJsonFactory().minimalGeneralInformation(),
         version,
         type: BalanceSheetType.Full,
       });
@@ -273,7 +273,7 @@ describe('BalanceSheet', () => {
   it('should reset weights correctly', async () => {
     const balancesheet = makeBalanceSheet
       .fromJson({
-        generalInformation: generalInformationDummyJson,
+        generalInformation: makeJsonFactory().minimalGeneralInformation(),
         version: BalanceSheetVersion.v5_1_0,
         type: BalanceSheetType.Full,
       })
@@ -349,7 +349,7 @@ describe('BalanceSheet', () => {
 
     it('where B1.1 has weight 0 and has not been selected by user', () => {
       const balanceSheet = makeBalanceSheet.fromJson({
-        generalInformation: generalInformationDummyJson,
+        generalInformation: makeJsonFactory().minimalGeneralInformation(),
         version: BalanceSheetVersion.v5_1_0,
         type: BalanceSheetType.Full,
       });
@@ -377,7 +377,7 @@ describe('BalanceSheet', () => {
 
     it('where B1.1 has weight 0 and has been selected by user', () => {
       const balanceSheet = makeBalanceSheet.fromJson({
-        generalInformation: generalInformationDummyJson,
+        generalInformation: makeJsonFactory().minimalGeneralInformation(),
         version: BalanceSheetVersion.v5_1_0,
         type: BalanceSheetType.Full,
       });
@@ -406,7 +406,7 @@ describe('BalanceSheet', () => {
 
     it('where B1.1 has weight 0 and weights of B1.1 and B1.2 have been selected by user', () => {
       const balanceSheet = makeBalanceSheet.fromJson({
-        generalInformation: generalInformationDummyJson,
+        generalInformation: makeJsonFactory().minimalGeneralInformation(),
         version: BalanceSheetVersion.v5_1_0,
         type: BalanceSheetType.Full,
       });
@@ -435,7 +435,7 @@ describe('BalanceSheet', () => {
 
     it('where B1.1 has weight 0 and has been selected by user for version < 5.10', () => {
       const balanceSheet = makeBalanceSheet.fromJson({
-        generalInformation: generalInformationDummyJson,
+        generalInformation: makeJsonFactory().minimalGeneralInformation(),
         version: BalanceSheetVersion.v5_0_9,
         type: BalanceSheetType.Full,
       });
@@ -550,7 +550,7 @@ describe('BalanceSheet', () => {
         ),
         stakeholderWeights: [],
         organizationId: undefined,
-        generalInformation: generalInformationDummy,
+        generalInformation: makeGeneralInformationFactory().nonEmpty(),
       });
 
       const json = balanceSheet.toJson('en');
@@ -559,7 +559,7 @@ describe('BalanceSheet', () => {
         type: 'Full',
         companyFacts: balanceSheet.companyFacts.toJson(),
         stakeholderWeights: [],
-        generalInformation: generalInformationDummyJson,
+        generalInformation: makeJsonFactory().minimalGeneralInformation(),
       });
       expect(json.ratings.length).toBe(80);
     });
@@ -570,7 +570,7 @@ describe('BalanceSheet', () => {
       const json = {
         type: BalanceSheetType.Full,
         version: BalanceSheetVersion.v5_0_8,
-        generalInformation: generalInformationDummyJson,
+        generalInformation: makeJsonFactory().minimalGeneralInformation(),
       };
 
       const result = makeBalanceSheet.fromJson(json);
@@ -586,7 +586,7 @@ describe('BalanceSheet', () => {
       const json = {
         type: BalanceSheetType.Compact,
         version: BalanceSheetVersion.v5_0_6,
-        generalInformation: generalInformationDummyJson,
+        generalInformation: makeJsonFactory().minimalGeneralInformation(),
       };
 
       const result = makeBalanceSheet.fromJson(json);
@@ -603,7 +603,7 @@ describe('BalanceSheet', () => {
           { shortName: 'A', weight: 0.5 },
           { shortName: 'B', weight: 1 },
         ],
-        generalInformation: generalInformationDummyJson,
+        generalInformation: makeJsonFactory().minimalGeneralInformation(),
       };
 
       const result = makeBalanceSheet.fromJson(json);
@@ -623,7 +623,7 @@ describe('BalanceSheet', () => {
           { shortName: 'D1.2', estimations: 3, weight: 0.5 },
           { shortName: 'E2.1', estimations: 3 },
         ],
-        generalInformation: generalInformationDummyJson,
+        generalInformation: makeJsonFactory().minimalGeneralInformation(),
       };
       const result = makeBalanceSheet.fromJson(json);
 

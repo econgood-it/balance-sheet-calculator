@@ -25,7 +25,6 @@ import { IBalanceSheetRepo } from '../../../src/repositories/balance.sheet.repo'
 import { RatingResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/rating.dto';
 import { z } from 'zod';
 import { INDUSTRY_CODE_FOR_FINANCIAL_SERVICES } from '../../../src/calculations/finance.calc';
-import { generalInformationDummyJson } from '../../models/general.information.dummy';
 
 const assertTopicWeight = (
   shortName: string,
@@ -133,7 +132,7 @@ describe('Organization Balance Sheet Controller', () => {
       .send({
         type: BalanceSheetType.Compact,
         version: BalanceSheetVersion.v5_0_8,
-        generalInformation: generalInformationDummyJson,
+        generalInformation: makeJsonFactory().minimalGeneralInformation(),
       });
     expect(response.status).toBe(200);
     const response2 = await testApp
@@ -189,7 +188,7 @@ describe('Organization Balance Sheet Controller', () => {
             },
           ],
         },
-        generalInformation: { ...generalInformationDummyJson },
+        generalInformation: makeJsonFactory().minimalGeneralInformation(),
       };
       const response = await testApp
         .post(`${OrganizationPaths.getAll}/${organization.id}/balancesheet`)
@@ -212,7 +211,7 @@ describe('Organization Balance Sheet Controller', () => {
           profit: 12,
           turnover: 100,
         },
-        generalInformation: { ...generalInformationDummyJson },
+        generalInformation: makeJsonFactory().minimalGeneralInformation(),
       };
       const response = await testApp
         .post(`${OrganizationPaths.getAll}/${organization.id}/balancesheet`)
@@ -232,7 +231,7 @@ describe('Organization Balance Sheet Controller', () => {
           ...balanceSheetJson.companyFacts,
           numberOfEmployees: 9,
         },
-        generalInformation: { ...generalInformationDummyJson },
+        generalInformation: makeJsonFactory().minimalGeneralInformation(),
       };
 
       const response = await testApp
@@ -254,7 +253,7 @@ describe('Organization Balance Sheet Controller', () => {
           ...balanceSheetJson.companyFacts,
           numberOfEmployees: 10,
         },
-        generalInformation: { ...generalInformationDummyJson },
+        generalInformation: makeJsonFactory().minimalGeneralInformation(),
       };
       const response = await testApp
         .post(`${OrganizationPaths.getAll}/${organization.id}/balancesheet`)

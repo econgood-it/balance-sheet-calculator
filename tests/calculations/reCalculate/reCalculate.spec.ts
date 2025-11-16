@@ -12,8 +12,10 @@ import {
 } from '../../../src/models/company.facts';
 import { makeRating, Rating } from '../../../src/models/rating';
 import { assertRatings } from '../../Assertions';
-import { makeCompanyFactsFactory } from '../../../src/openapi/examples';
-import { generalInformationDummy } from '../../models/general.information.dummy';
+import {
+  makeCompanyFactsFactory,
+  makeGeneralInformationFactory,
+} from '../../../src/openapi/examples';
 
 describe('Recalculation of ratings', () => {
   async function readRatingsFromJsonFile(fileName: string): Promise<Rating[]> {
@@ -47,7 +49,7 @@ describe('Recalculation of ratings', () => {
       companyFacts,
       ratings,
       stakeholderWeights,
-      generalInformation: generalInformationDummy,
+      generalInformation: makeGeneralInformationFactory().nonEmpty(),
     });
 
     const newBalanceSheet = await balanceSheet.reCalculate();
@@ -79,7 +81,7 @@ describe('Recalculation of ratings', () => {
       companyFacts,
       ratings,
       stakeholderWeights: [],
-      generalInformation: generalInformationDummy,
+      generalInformation: makeGeneralInformationFactory().nonEmpty(),
     });
 
     expect(balanceSheetEntity.ratings[0].weight).toBeCloseTo(2, 2);
