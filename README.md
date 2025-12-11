@@ -6,8 +6,7 @@ sudo apt install npm
 ```
 
 # Update node to current version
-
-
+TESTETSA
 ```
 sudo npm cache clean -f
 sudo npm install -g n
