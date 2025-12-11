@@ -7,6 +7,7 @@ sudo apt install npm
 
 # Update node to current version
 
+
 ```
 sudo npm cache clean -f
 sudo npm install -g n
