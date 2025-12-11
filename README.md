@@ -6,7 +6,7 @@ sudo apt install npm
 ```
 
 # Update node to current version
-TESTETSA
+
 ```
 sudo npm cache clean -f
 sudo npm install -g n
@@ -14,6 +14,7 @@ sudo n stable
 ```
 
 # Install docker and docker-compose
+
 ```
 sudo snap install docker
 sudo apt  install docker-compose
@@ -36,6 +37,7 @@ For type safety it is written in [typescript](https://www.typescriptlang.org/).
 # Local Development
 
 ## Run database
+
 Our application uses a postgresql database to store the data. To run the database locally, you can use
 the docker-compose.yml file. If docker-compose is not installed yet see [the installation guide](#Install docker and docker-compose).
 
@@ -116,6 +118,5 @@ date +%s%300
 To deploy the application use the docker commands explained below:
 
 ```
-python deploy_to_server [test|prod] 
+python deploy_to_server [test|prod]
 ```
-
