@@ -1,8 +1,0 @@
-name: 'Run tests'
-inputs:
-  node-version:  # id of input
-    required: true
-
-runs:
-  using: "composite"
-
