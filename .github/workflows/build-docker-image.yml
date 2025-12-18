@@ -32,3 +32,29 @@ jobs:
         run: yarn install
       - name: Run check-ts
         run: yarn check-ts
+
+  tests:
+    name: 'Tests'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      NODE_VERSION: ${{ env.NODE_VERSION }}
+
+    steps:
+      # Step 1: Checkout code
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'yarn'
+
+      - name: Start test stack
+        run: |
+          docker compose -f docker-compose-db.yml up -d
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Run tests
+        run: yarn run test
