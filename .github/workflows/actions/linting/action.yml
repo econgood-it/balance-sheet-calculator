@@ -7,9 +7,7 @@ runs:
   using: "composite"
   steps:
     - uses: actions/checkout@v5
-      shell: bash
     - uses: actions/setup-node@v4
-      shell: bash
       with:
         node-version: ${{ inputs.node-version }}
         cache: 'yarn'
