@@ -8,32 +8,8 @@ env:
   NODE_VERSION: 18.7.0
 
 jobs:
-  lint:
-    name: 'Linting'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-      - id: linting
-        uses: ./.github/workflows/actions/linting
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-  check-ts:
-    name: 'Check typescript'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-      - id: typecheck
-        uses: ./.github/workflows/actions/typecheck
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-  tests:
-    name: 'Tests'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - uses: actions/checkout@v5
-      - id: testing
-        uses: ./.github/workflows/actions/testing
-        with:
-          node-version: ${{ env.NODE_VERSION }}
+  checks:
+    uses: ./.github/workflows/check-workflow.yml
+    with:
+      node-version: ${{ env.NODE_VERSION }}
+    secrets: inherit
