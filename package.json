@@ -12,7 +12,7 @@
     "format": "prettier --write .",
     "test": "env-cmd -e development jest --watch --runInBand",
     "coverage": "env-cmd -e development jest --runInBand --coverage",
-    "test:ci": "env-cmd -e development jest --runInBand",
+    "test:ci": "jest --runInBand",
     "update:to:latest": "ncu -u && yarn update && yarn install && yarn audit fix"
   },
   "repository": {
