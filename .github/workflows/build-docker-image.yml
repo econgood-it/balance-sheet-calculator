@@ -2,6 +2,8 @@ name: Build docker image
 on:
   push:
     branches: ['main']
+  pull_request:
+    branches: [ 'main' ]
 env:
   NODE_VERSION: 18.7.0
 
@@ -11,14 +13,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: actions/setup-node@v4
+      - id: linting
+        uses: ./.github/workflows/actions/linting
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'yarn'
-      - name: Install dependencies
-        run: yarn install
-      - name: Run lint
-        run: yarn lint
   check-ts:
     name: 'Check typescript'
     runs-on: ubuntu-latest
@@ -32,7 +30,6 @@ jobs:
         run: yarn install
       - name: Run check-ts
         run: yarn check-ts
-
   tests:
     name: 'Tests'
     runs-on: ubuntu-latest
