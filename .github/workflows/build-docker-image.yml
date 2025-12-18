@@ -38,8 +38,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    env:
-      NODE_VERSION: ${{ env.NODE_VERSION }}
 
     steps:
       # Step 1: Checkout code
