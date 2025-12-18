@@ -1,7 +1,7 @@
-name: Build docker image when pushed to main
+name: Perform checks on pull request
 on:
-  push:
-    branches: ['main']
+  pull_request:
+    branches: [ 'main' ]
 
 jobs:
   checks:
