@@ -1,0 +1,44 @@
+name: 'Run tests'
+inputs:
+  node-version:  # id of input
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v5
+    - uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: 'yarn'
+    - name: Start test stack
+      shell: bash
+      run: |
+        docker compose -f docker-compose-db.yml up -d
+
+    - name: Install dependencies
+      shell: bash
+      run: yarn install
+
+    - name: Run tests
+      shell: bash
+      env:
+        DB_NAME: "balancesheet"
+        DB_HOST: "localhost"
+        DB_PORT: 5433
+        DB_USER: "postgres"
+        DB_PASSWORD: "oKLyNUr2doEBlMup47ii"
+        ENVIRONMENT: "DEV"
+        DOCS_USER: "user-for-docs"
+        DOCS_PASSWORD: "MbUcdIHhvP5Mv7N0"
+        PORT: 4000
+        ZITADEL_KEY_ID: "${{ secrets.DEV_ZITADEL_KEY_ID }}"
+        ZITADEL_KEY: "${{ secrets.DEV_ZITADEL_KEY }}"
+        ZITADEL_APP_ID: "${{ secrets.DEV_ZITADEL_APP_ID }}"
+        ZITADEL_CLIENT_ID: "${{ secrets.DEV_ZITADEL_CLIENT_ID }}"
+        ZITADEL_AUTHORITY_URL: "${{ secrets.DEV_ZITADEL_AUTHORITY_URL }}"
+        ZITADEL_API_TOKEN: "${{ secrets.DEV_ZITADEL_API_TOKEN }}"
+        ECG_AUDIT_ADMIN_ID: "${{ secrets.DEV_ECG_AUDIT_ADMIN_ID }}"
+        ECG_PEER_GROUP_ADMIN_ID: "${{ secrets.DEV_ECG_PEER_GROUP_ADMIN_ID }}"
+        ECG_AUDIT_API_USER_ID: "${{ secrets.DEV_ECG_AUDIT_API_USER_ID }}"
+      run: yarn run test:ci

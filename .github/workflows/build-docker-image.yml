@@ -22,53 +22,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: actions/setup-node@v4
+      - id: typecheck
+        uses: ./.github/workflows/actions/typecheck
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'yarn'
-      - name: Install dependencies
-        run: yarn install
-      - name: Run check-ts
-        run: yarn check-ts
   tests:
     name: 'Tests'
     runs-on: ubuntu-latest
     permissions:
       contents: read
-
     steps:
-      # Step 1: Checkout code
       - uses: actions/checkout@v5
-      - uses: actions/setup-node@v4
+      - id: testing
+        uses: ./.github/workflows/actions/testing
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'yarn'
-
-      - name: Start test stack
-        run: |
-          docker compose -f docker-compose-db.yml up -d
-
-      - name: Install dependencies
-        run: yarn install
-
-      - name: Run tests
-        env:
-          DB_NAME: "balancesheet"
-          DB_HOST: "localhost"
-          DB_PORT: 5433
-          DB_USER: "postgres"
-          DB_PASSWORD: "oKLyNUr2doEBlMup47ii"
-          ENVIRONMENT: "DEV"
-          DOCS_USER: "user-for-docs"
-          DOCS_PASSWORD: "MbUcdIHhvP5Mv7N0"
-          PORT: 4000
-          ZITADEL_KEY_ID: "${{ secrets.DEV_ZITADEL_KEY_ID }}"
-          ZITADEL_KEY: "${{ secrets.DEV_ZITADEL_KEY }}"
-          ZITADEL_APP_ID: "${{ secrets.DEV_ZITADEL_APP_ID }}"
-          ZITADEL_CLIENT_ID: "${{ secrets.DEV_ZITADEL_CLIENT_ID }}"
-          ZITADEL_AUTHORITY_URL: "${{ secrets.DEV_ZITADEL_AUTHORITY_URL }}"
-          ZITADEL_API_TOKEN: "${{ secrets.DEV_ZITADEL_API_TOKEN }}"
-          ECG_AUDIT_ADMIN_ID: "${{ secrets.DEV_ECG_AUDIT_ADMIN_ID }}"
-          ECG_PEER_GROUP_ADMIN_ID: "${{ secrets.DEV_ECG_PEER_GROUP_ADMIN_ID }}"
-          ECG_AUDIT_API_USER_ID: "${{ secrets.DEV_ECG_AUDIT_API_USER_ID }}"
-        run: yarn run test:ci
