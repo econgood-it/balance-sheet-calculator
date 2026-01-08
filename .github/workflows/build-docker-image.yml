@@ -9,3 +9,13 @@ jobs:
     with:
       node-version: 18.7.0
     secrets: inherit
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Build and tag image
+        run: |
+          docker build -t econgood/balance-sheet-api:${{ github.sha }} -t econgood/balance-sheet-api:latest .
+
+    
