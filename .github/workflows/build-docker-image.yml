@@ -4,25 +4,22 @@ on:
     branches: ['main']
 
 
-env:
-  IMAGE_NAME: econgood/balance-sheet-api
-
 jobs:
-#  checks:
-#    uses: ./.github/workflows/check-workflow.yml
-#    with:
-#      node-version: 18.7.0
-#    secrets: inherit
+  checks:
+    uses: ./.github/workflows/check-workflow.yml
+    with:
+      node-version: 18.7.0
+    secrets: inherit
 
   build:
     runs-on: ubuntu-latest
-#    needs:
-#      - checks
+    needs:
+      - checks
     steps:
       - uses: actions/checkout@v5
       - name: Build and tag image
         run: |
-          docker build -t ${{env.IMAGE_NAME}}:${{ github.sha }} -t ${{env.IMAGE_NAME}}:latest .
+          docker build -t ${{vars.IMAGE_NAME}}:${{ github.sha }} -t ${{vars.IMAGE_NAME}}:latest .
 
       - name: Login to econgood repo
         run: |
@@ -30,6 +27,6 @@ jobs:
 
       - name: Push the image
         run: |
-          docker push ${{env.IMAGE_NAME}} --all-tags
+          docker push ${{vars.IMAGE_NAME}} --all-tags
 
 

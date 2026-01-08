@@ -15,15 +15,20 @@ env:
   NODE_VERSION: 18.7.0
 
 jobs:
-  lint:
+  deploy:
     runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v4
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.5.4
         with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'yarn'
-      - name: Install dependencies
-        run: yarn install
-      - name: Run lint
-        run: yarn lint
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Deploy to server
+        run: |
+          ssh-keyscan ${{ vars.HOST_URL }} >> ~/.ssh/known_hosts
+          ssh root@${{ vars.HOST_URL }} docker login -u econgood -p ${{ secrets.ECONGOOD_CONTAINER_REGISTRY }} && cd ${{vars.APP_DIR}} && ${{vars.IMAGE_NAME}} && docker compose pull && docker compose up -d
+ 
