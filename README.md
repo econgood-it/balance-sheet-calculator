@@ -113,10 +113,3 @@ On linux systems you can retrieve the EPOCHMILLISECONDS via
 date +%s%300
 ```
 
-# Deployments
-
-To deploy the application use the docker commands explained below:
-
-```
-python deploy_to_server [test|prod]
-```
