@@ -18,6 +18,7 @@ import {
   makeGeneralInformation,
   makePeriod,
 } from '../models/general.information';
+import { Currency } from '@ecogood/e-calculator-schemas/dist/general.information.dto';
 
 export interface IBalanceSheetRepo {
   findByIdOrFail(id: number): Promise<BalanceSheet>;
@@ -94,6 +95,7 @@ export function makeBalanceSheetRepository(
               end: new Date(balanceSheetEntity.generalInformation.period.end),
             })
           : undefined,
+        currency: balanceSheetEntity.generalInformation.currency,
       }),
       companyFacts: makeCompanyFacts({
         ...balanceSheetEntity.companyFacts,

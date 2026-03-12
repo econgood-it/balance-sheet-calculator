@@ -1,4 +1,5 @@
 import {
+  Currency,
   makeCompany,
   makeContactPerson,
   makeGeneralInformation,
@@ -28,6 +29,7 @@ describe('GeneralInformation', () => {
       contactPerson,
       company,
       period,
+      currency: Currency.EUR,
     });
   });
 });

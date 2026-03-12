@@ -16,7 +16,6 @@ export class AddGeneralInformation1758206595300 implements MigrationInterface {
     );
     // TODO: Handle copied audit balance sheets differently
     for (const { id, organization, members, balanceSheet } of result) {
-      console.log(members);
       if (members?.length > 0) {
         try {
           const user = await zitadelClient.getUser(members[0].id);
@@ -38,7 +37,7 @@ export class AddGeneralInformation1758206595300 implements MigrationInterface {
             )}'::jsonb WHERE id = ${id};`
           );
         } catch (error: any) {
-          console.log(
+          console.error(
             `Error when getting user ${members[0].id}, ${error.message}`
           );
         }

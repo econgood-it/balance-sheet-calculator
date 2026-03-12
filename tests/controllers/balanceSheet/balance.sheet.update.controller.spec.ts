@@ -19,6 +19,7 @@ import { makeBalanceSheet } from '../../../src/models/balance.sheet';
 import { IOrganizationRepo } from '../../../src/repositories/organization.repo';
 import { IBalanceSheetRepo } from '../../../src/repositories/balance.sheet.repo';
 import { Rating } from '../../../src/models/rating';
+import { Currency } from '@ecogood/e-calculator-schemas/dist/general.information.dto';
 
 describe('Update endpoint of Balance Sheet Controller', () => {
   let dataSource: DataSource;
@@ -49,6 +50,29 @@ describe('Update endpoint of Balance Sheet Controller', () => {
 
   afterAll(async () => {
     await dataSource.destroy();
+  });
+
+  it('should update general information of balance sheet', async () => {
+    const testApp = supertest(app);
+    const organization = await organizationRepo.save(
+      makeOrganization().invite(auth.user.email).join(auth.user)
+    );
+    const balanceSheet = await balanceSheetRepo.save(
+      makeBalanceSheet().assignOrganization(organization)
+    );
+
+    const balanceSheetUpdate = {
+      generalInformation: {
+        ...balanceSheet.generalInformation,
+        currency: Currency.USD,
+      },
+    };
+    const response = await testApp
+      .patch(`${endpointPath}/${balanceSheet.id}`)
+      .set(auth.toHeaderPair().key, auth.toHeaderPair().value)
+      .send({ ...balanceSheetUpdate });
+    expect(response.status).toEqual(200);
+    expect(response.body.generalInformation.currency).toEqual(Currency.USD);
   });
 
   it('should update company facts of balance sheet', async () => {
