@@ -20,6 +20,7 @@ import {
   makeGeneralInformation,
   makePeriod,
 } from '../models/general.information';
+import { Currency } from '@ecogood/e-calculator-schemas/dist/general.information.dto';
 
 const arabEmiratesCode = 'ARE';
 const afghanistanCode = 'AFG';
@@ -587,6 +588,7 @@ export function makeJsonFactory() {
         start: new Date('2025-01-01').toISOString(),
         end: new Date('2026-01-01').toISOString(),
       },
+      currency: Currency.EUR,
     };
   }
 
