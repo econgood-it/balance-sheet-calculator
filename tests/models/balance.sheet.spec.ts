@@ -23,6 +23,7 @@ import {
   makeGeneralInformationFactory,
   makeJsonFactory,
 } from '../../src/openapi/examples';
+import { Currency } from '@ecogood/e-calculator-schemas/dist/general.information.dto';
 
 describe('BalanceSheet', () => {
   it('is created with default values', () => {
@@ -308,6 +309,7 @@ describe('BalanceSheet', () => {
             start: new Date('2026-01-01').toISOString(),
             end: new Date('2027-01-01').toISOString(),
           },
+          currency: Currency.USD,
         },
         ratings: [
           {

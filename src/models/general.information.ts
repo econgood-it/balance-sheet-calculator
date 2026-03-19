@@ -1,6 +1,10 @@
 import deepFreeze from 'deep-freeze';
 import { z } from 'zod';
-import { GeneralInformationSchema } from '@ecogood/e-calculator-schemas/dist/general.information.dto';
+
+import {
+  GeneralInformationSchema,
+  Currency,
+} from '@ecogood/e-calculator-schemas/dist/general.information.dto';
 
 type PeriodOpts = {
   start: Date;
@@ -38,6 +42,7 @@ type GeneralInformationOpts = {
   contactPerson: ContactPerson;
   company: Company;
   period?: Period;
+  currency?: Currency;
 };
 
 export type GeneralInformation = GeneralInformationOpts & {
@@ -45,8 +50,9 @@ export type GeneralInformation = GeneralInformationOpts & {
 };
 
 export function makeGeneralInformation(
-  data: GeneralInformationOpts
+  opts: GeneralInformationOpts
 ): GeneralInformation {
+  const data = { ...opts, currency: opts.currency ?? Currency.EUR };
   function toJson(): z.infer<typeof GeneralInformationSchema> {
     return GeneralInformationSchema.parse({
       ...data,
@@ -74,5 +80,10 @@ makeGeneralInformation.fromJson = function fromJson(
         end: new Date(generalInformation.period.end),
       })
     : undefined;
-  return makeGeneralInformation({ contactPerson, company, period });
+  return makeGeneralInformation({
+    contactPerson,
+    company,
+    period,
+    currency: generalInformation.currency,
+  });
 };

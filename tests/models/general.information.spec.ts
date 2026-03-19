@@ -4,6 +4,7 @@ import {
   makeGeneralInformation,
   makePeriod,
 } from '../../src/models/general.information';
+import { Currency } from '@ecogood/e-calculator-schemas/dist/general.information.dto';
 
 describe('GeneralInformation', () => {
   const start = new Date(Date.now());
@@ -28,6 +29,7 @@ describe('GeneralInformation', () => {
       contactPerson,
       company,
       period,
+      currency: Currency.EUR,
     });
   });
 });

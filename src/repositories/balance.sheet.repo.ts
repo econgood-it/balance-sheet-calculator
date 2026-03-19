@@ -94,6 +94,7 @@ export function makeBalanceSheetRepository(
               end: new Date(balanceSheetEntity.generalInformation.period.end),
             })
           : undefined,
+        currency: balanceSheetEntity.generalInformation.currency,
       }),
       companyFacts: makeCompanyFacts({
         ...balanceSheetEntity.companyFacts,

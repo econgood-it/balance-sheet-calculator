@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { Currency } from '@ecogood/e-calculator-schemas/dist/general.information.dto';
 
 const CompanySchema = z.object({
   name: z.string(),
@@ -20,4 +21,5 @@ export const GeneralInformationDBSchema = z.object({
   company: CompanySchema,
   contactPerson: ContactPersonSchema,
   period: PeriodSchema.optional(),
+  currency: z.nativeEnum(Currency).optional(),
 });
