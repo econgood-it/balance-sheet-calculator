@@ -149,8 +149,13 @@ export function makeRating(opts?: RatingOpts): Rating {
       ? 2
       : 1;
     return some(
-      roundWithPrecision(roundWithPrecision(value, excelPrecision), rounding) *
-        100
+      roundWithPrecision(
+        roundWithPrecision(
+          roundWithPrecision(value, excelPrecision),
+          rounding
+        ) * 100,
+        rounding
+      )
     );
   }
 
