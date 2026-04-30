@@ -607,4 +607,46 @@ describe('Workbook group', () => {
       ],
     });
   });
+
+  it('is created from file for versions 5.20 in English', async () => {
+    const workbook = makeWorkbook.fromFile(
+      BalanceSheetVersion.v5_2_0,
+      BalanceSheetType.Full,
+      'en'
+    );
+    expect(workbook.version).toEqual(BalanceSheetVersion.v5_2_0);
+    expect(workbook.type).toEqual(BalanceSheetType.Full);
+
+    expect(workbook.findByShortName('B1.2')).toEqual({
+      shortName: 'B1.2',
+      name: 'Common good-oriented borrowing',
+      description:
+        '**Note**: This section is only relevant if the organisation uses debt capital.',
+      isPositive: true,
+      type: 'aspect',
+    });
+    expect(workbook.ratings).toHaveLength(80);
+    expect(workbook.findByShortName('B1.4')).toBeUndefined();
+  });
+
+  it('is created from file for versions 5.20 in German', async () => {
+    const workbook = makeWorkbook.fromFile(
+      BalanceSheetVersion.v5_2_0,
+      BalanceSheetType.Full,
+      'de'
+    );
+    expect(workbook.version).toEqual(BalanceSheetVersion.v5_2_0);
+    expect(workbook.type).toEqual(BalanceSheetType.Full);
+
+    expect(workbook.findByShortName('B1.2')).toEqual({
+      shortName: 'B1.2',
+      name: 'Gemeinwohlorientierte Fremdfinanzierung',
+      description:
+        '**Hinweis**: Dieser Abschnitt ist nur relevant, wenn die Organisation Fremdkapital einsetzt.',
+      isPositive: true,
+      type: 'aspect',
+    });
+    expect(workbook.ratings).toHaveLength(80);
+    expect(workbook.findByShortName('B1.4')).toBeUndefined();
+  });
 });

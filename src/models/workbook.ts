@@ -273,10 +273,10 @@ makeWorkbook.fromFile = function fromJson(
   lng: keyof Translations
 ): Workbook {
   const versionPath = gte(version, BalanceSheetVersion.v5_1_0)
-    ? '5.10'
+    ? version
     : '5.08';
 
-  const typePath = gte(version, BalanceSheetVersion.v5_1_0)
+  const typePath = gte(version, BalanceSheetVersion.v5_2_0)
     ? 'full'
     : type.toString().toLowerCase();
 
