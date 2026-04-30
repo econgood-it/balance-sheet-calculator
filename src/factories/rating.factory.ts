@@ -9,7 +9,7 @@ import { z } from 'zod';
 import { makeFull5v10 } from './ratings_full_5.10';
 import { makeFull5v20 } from './ratings_full_5.20';
 import { makeCompact5v08 } from './ratings_compact_5.08';
-import { lt } from '@mr42/version-comparator/dist/version.comparator';
+import { eq, lt } from '@mr42/version-comparator/dist/version.comparator';
 import { makeWorkbook, Workbook } from '../models/workbook';
 import { ValueError } from '../exceptions/value.error';
 import { makeFull5v08 } from './ratings_full_5.08';
@@ -36,15 +36,12 @@ export function makeRatingFactory() {
       balanceSheetType,
       'en'
     );
-    if (
-      lt(balanceSheetVersion, BalanceSheetVersion.v5_1_0) &&
-      lt(balanceSheetVersion, BalanceSheetVersion.v5_2_0)
-    ) {
+    if (lt(balanceSheetVersion, BalanceSheetVersion.v5_1_0)) {
       return balanceSheetType === BalanceSheetType.Full
         ? fromObject(makeFull5v08(), workbook)
         : fromObject(makeCompact5v08(), workbook);
     }
-    if (lt(balanceSheetVersion, BalanceSheetVersion.v5_2_0)) {
+    if (eq(balanceSheetVersion, BalanceSheetVersion.v5_1_0)) {
       return fromObject(makeFull5v10(), workbook);
     }
     return fromObject(makeFull5v20(), workbook);
