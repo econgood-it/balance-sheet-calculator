@@ -94,7 +94,7 @@ export function makeBalanceSheet(opts?: BalanceSheetOpts): BalanceSheet {
     if (eq(data.version, BalanceSheetVersion.v5_1_0)) {
       if (getRating('B1.1').weight !== 0 && getRating('B1.2').weight !== 0) {
         throw new ValueError(
-          'At least one of B1.1 and B1.2 must have weight 0'
+          'At least one of B1.1 or B1.2 must have weight 0'
         );
       }
     }
@@ -289,7 +289,7 @@ export function makeBalanceSheet(opts?: BalanceSheetOpts): BalanceSheet {
     requestBody: z.infer<typeof BalanceSheetPatchRequestBodySchema>,
     defaultRatingsQuery: RatingsQuery
   ) {
-    if (gte(data.version, BalanceSheetVersion.v5_1_0) && shortName === 'B1.2') {
+    if (eq(data.version, BalanceSheetVersion.v5_1_0) && shortName === 'B1.2') {
       const b11Rating = requestBody.ratings.find(
         (newRating) => newRating.shortName === 'B1.1'
       );
