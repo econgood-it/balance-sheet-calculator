@@ -621,7 +621,7 @@ describe('Workbook group', () => {
       shortName: 'B1.2',
       name: 'Common good-oriented borrowing',
       description:
-        '**Note**: This section is only relevant if the organisation uses debt capital.',
+        '**Note**: This section is only relevant if the organisation uses debt capital. Debt capital refers to all forms of loans with a term of more than 90 days, as well as checking account overdrafts or line-of-credit facilities, provided that the average annual utilization rate is 10% or more of revenue.',
       isPositive: true,
       type: 'aspect',
     });
@@ -642,7 +642,7 @@ describe('Workbook group', () => {
       shortName: 'B1.2',
       name: 'Gemeinwohlorientierte Fremdfinanzierung',
       description:
-        '**Hinweis**: Dieser Abschnitt ist nur relevant, wenn die Organisation Fremdkapital einsetzt.',
+        '**Hinweis**: Dieser Abschnitt ist nur relevant, wenn die Organisation Fremdkapital einsetzt. Fremdkapital umfasst alle Formen von Darlehen mit einer Laufzeit von mehr als 90 Tagen sowie Kontokorrentüberziehungen oder Kreditlinien, sofern die durchschnittliche jährliche Auslastung 10 % oder mehr des Umsatzes beträgt.',
       isPositive: true,
       type: 'aspect',
     });
