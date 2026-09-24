@@ -23,7 +23,7 @@ import {
 import { z } from 'zod';
 import { Translations } from '../language/translations';
 import { MatrixBodySchema } from '@ecogood/e-calculator-schemas/dist/matrix.dto';
-import { eq, gte } from '@mr42/version-comparator/dist/version.comparator';
+import { eq } from '@mr42/version-comparator/dist/version.comparator';
 import { ValueError } from '../exceptions/value.error';
 import { makeWorkbook } from './workbook';
 import {
