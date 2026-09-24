@@ -2,6 +2,9 @@ import { BalanceSheet, makeBalanceSheet } from './balance.sheet';
 import deepFreeze from 'deep-freeze';
 import { CertificationAuthorityNames } from '@ecogood/e-calculator-schemas/dist/audit.dto';
 import { CertificationAuthority } from './certification.authoriy';
+import { ValueError } from '../exceptions/value.error';
+import { BalanceSheetVersion } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
+import { gte } from '@mr42/version-comparator/dist/version.comparator';
 
 type AuditProps = {
   id?: number;
@@ -31,6 +34,11 @@ export function makeAudit(opts?: AuditProps): Audit {
     balanceSheet: BalanceSheet,
     certificationAuthority: CertificationAuthority
   ) {
+    if (gte(balanceSheet.version, BalanceSheetVersion.v5_2_0)) {
+      if ( balanceSheet.generalInformation.period?.start === undefined || balanceSheet.generalInformation.period?.end === undefined ) {
+        throw new ValueError('Reporting period is not defined');
+      }
+    }
     const copy = makeBalanceSheet({
       ...balanceSheet,
       id: undefined,

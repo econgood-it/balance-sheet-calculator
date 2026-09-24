@@ -96,11 +96,6 @@ export function makeBalanceSheet(opts?: BalanceSheetOpts): BalanceSheet {
         throw new ValueError('At least one of B1.1 or B1.2 must have weight 0');
       }
     }
-    if (gte(data.version, BalanceSheetVersion.v5_2_0)) {
-      if ( data.generalInformation.period?.start === undefined || data.generalInformation.period?.end === undefined ) {
-        throw new ValueError('Reporting period is not defined');
-      }
-    }
     return data;
   }
 
