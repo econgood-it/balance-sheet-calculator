@@ -35,7 +35,10 @@ export function makeAudit(opts?: AuditProps): Audit {
     certificationAuthority: CertificationAuthority
   ) {
     if (gte(balanceSheet.version, BalanceSheetVersion.v5_2_0)) {
-      if (balanceSheet.generalInformation.period?.start === undefined || balanceSheet.generalInformation.period?.end === undefined) {
+      if (
+        balanceSheet.generalInformation.period?.start === undefined ||
+        balanceSheet.generalInformation.period?.end === undefined
+      ) {
         throw new ValueError('Reporting period is not defined');
       }
     }
