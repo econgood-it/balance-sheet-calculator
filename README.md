@@ -112,4 +112,3 @@ On linux systems you can retrieve the EPOCHMILLISECONDS via
 ```shell script
 date +%s%300
 ```
-
